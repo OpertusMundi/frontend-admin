@@ -146,6 +146,9 @@
     "contract": {
       "master": {
         "title": "Master Contract"
+      },
+      "list":{
+        "title": "Master Contract List "
       }
     },
     "dashboard": "Overview",
@@ -224,7 +227,8 @@
       },
       "message": {
         "cancel-confirm": "All changes will be discarded. Would you like to continue?",
-        "delete-confirm": "Record {name} will be deleted. Would you like to continue?"
+        "delete-confirm": "Record {name} will be deleted. Would you like to continue?",
+        "delete-contract": "Are you sure you want to delete this contract?"
       }
     }
   }

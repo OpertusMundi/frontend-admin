@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Localization
-import { injectIntl, IntlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 
 // Styles
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -10,20 +10,18 @@ import { Theme, withStyles } from '@material-ui/core/styles';
 // Material UI
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import IconButton from '@material-ui/core/IconButton';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import ArrowDownWardIcon from '@material-ui/icons/ArrowDownward';
 
-// DnD support
-import {
-  DropTarget,
-  DropTargetMonitor,
-  DropTargetConnector,
-  ConnectDropTarget,
-} from 'react-dnd'
 
 // Custom components
 import SectionComponent from 'components/contract/form/section';
+import { Section } from 'model/section';
 
-// Model
-import { ContractItemTypes } from 'model/contract';
+import { EditFieldEnum } from 'components/contract/form/edit-area';
 
 // Styles
 const styles = (theme: Theme) => createStyles({
@@ -32,20 +30,32 @@ const styles = (theme: Theme) => createStyles({
     overflow: 'auto',
     flexDirection: 'column',
     borderRadius: 0,
-    margin: theme.spacing(2),
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
     minHeight: '70vh',
-    width: '40vw',
+    width: '34.2vw',
   },
+  controls: {
+    height: '20px',
+    marginTop: '50px',
+  },
+  btn: {
+  }
 });
 
 interface PageComponentProps extends WithStyles<typeof styles> {
   intl: IntlShape;
-  sections: number;
+  documentTitle: string;
+  documentSubtitle?: string;
+  sectionList: Section[];
+  deleteSubtitle: () => void;
   addSection: (item: any) => void;
-  // DnD collected properties
-  isOver: boolean
-  canDrop: boolean
-  connectDropTarget: ConnectDropTarget
+  removeSection: (item: any) => void;
+  editSection: (item: any) => void;
+  openEdit: (editField: EditFieldEnum, section?: Section) => void;
+  editTitle: (item: any) => void;
+  moveSectionUp: (item: any) => void;
+  moveSectionDown: (item: any) => void;
 }
 
 interface PageComponentState {
@@ -53,21 +63,96 @@ interface PageComponentState {
 
 class PageComponent extends React.Component<PageComponentProps, PageComponentState> {
 
-  render() {
-    const { classes, connectDropTarget, sections: total } = this.props;
 
-    const sections = [];
-    for (let i = 0; i < total; i++) {
-      sections.push(
-        <Grid container item xs={12} key={`section-${i}`}>
-          <SectionComponent index={i} />
-        </Grid>
-      );
+  deleteSection(id: number): void {
+    this.setState({
+      //sections: this.props.sections - 1,
+      //sectionList : Section[];
+    });
+  }
+
+  render() {
+    const { classes } = this.props;
+    let subtitle;
+    if (this.props.documentSubtitle) {
+      subtitle = <div >
+        <FormattedMessage id="document.subtitle" defaultMessage={this.props.documentSubtitle} />
+        <IconButton style={{ width: 20, height: 20, float: "right" }}
+          onClick={() =>
+            this.props.deleteSubtitle()
+          }
+        >
+          <DeleteIcon />
+        </IconButton>
+        <IconButton className="controls" style={{ width: 20, height: 20, float: "right" }}
+          onClick={() =>
+            this.props.openEdit(EditFieldEnum.Subtitle)
+          }
+        >
+          <EditIcon />
+        </IconButton>
+      </div>
     }
-    return connectDropTarget(
+    const sections = this.props.sectionList.map(section =>
+      <Grid style={{ paddingLeft: section.indent, marginTop: '30px' }} key={section.id} container item xs={12} >
+        <Grid container item xs={10} key={`section-${section.id}`}>
+          <SectionComponent {...section} editSection={this.props.editSection.bind(this)} />
+        </Grid>
+        <div className={classes.controls}>
+          <IconButton style={{ height: 20 }}
+            onClick={() =>
+              this.props.moveSectionUp(section)
+            }
+          >
+            <ArrowUpwardIcon />
+          </IconButton>
+          <IconButton className={classes.btn}
+            onClick={() =>
+              this.props.removeSection(section.id)
+            }
+          >
+            <DeleteIcon />
+          </IconButton>
+          <div>
+
+            <IconButton className={classes.btn}
+              onClick={() =>
+                this.props.moveSectionDown(section)
+              }
+            >
+              <ArrowDownWardIcon />
+            </IconButton>
+            <IconButton className={classes.btn}
+              onClick={() =>
+                this.props.openEdit(EditFieldEnum.Section, section)
+              }
+            >
+              <EditIcon />
+            </IconButton>
+          </div>
+        </div>
+
+      </Grid>
+
+    )
+
+
+    return (
       <div>
         <Grid container item xs={12}>
           <Paper className={classes.paper}>
+            <div>
+              <FormattedMessage id="document.title" defaultMessage={this.props.documentTitle} />
+
+              <IconButton className="controls" style={{ width: 20, height: 20, float: "right" }}
+                onClick={() =>
+                  this.props.openEdit(EditFieldEnum.Title)
+                }
+              >
+                <EditIcon />
+              </IconButton>
+            </div>
+            {subtitle}
             <Grid container item xs={12}>
               {sections}
             </Grid>
@@ -85,20 +170,4 @@ const styledComponent = withStyles(styles)(PageComponent);
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);
 
-// Export localized component
-const dropTargetComponent = DropTarget(
-  [ContractItemTypes.Section],
-  {
-    canDrop: (props: PageComponentProps) => true,
-    drop: (props: PageComponentProps, monitor: DropTargetMonitor, component: PageComponent) => props.addSection(monitor.getItem()),
-  },
-  (connect: DropTargetConnector, monitor: DropTargetMonitor) => {
-    return {
-      connectDropTarget: connect.dropTarget(),
-      isOver: !!monitor.isOver(),
-      canDrop: !!monitor.canDrop(),
-    }
-  },
-)(localizedComponent);
-
-export default dropTargetComponent;
+export default localizedComponent;

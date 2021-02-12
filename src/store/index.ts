@@ -14,12 +14,14 @@ import { mapViewerReducer } from './map/reducer';
 import { messageReducer } from './i18n/reducer';
 import { securityReducer } from './security/reducer';
 import { viewportReducer } from './viewport/reducer';
+import { contractReducer } from './contract/reducer';
 
 // Combine reducers
 export const rootReducer = Redux.combineReducers({
   account: Redux.combineReducers({
     explorer: accountReducer,
   }),
+  contract:  contractReducer,
   config: configurationReducer,
   draft: draftReducer,
   i18n: messageReducer,

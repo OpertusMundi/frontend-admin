@@ -68,6 +68,8 @@ import Breadcrumb from './breadcrumb';
 import DashboardComponent from 'components/dashboard';
 import AssetDraftManager from 'components/draft/draft-grid';
 import ContractForm from 'components/contract/contract-form';
+import ContractReviewForm from 'components/contract/contract-review-form';
+import ContractList from 'components/contract/contract-list';
 import MapViewerComponent from 'components/map-viewer';
 import MapViewerConfigComponent from 'components/map-viewer-config';
 import PlaceHolder from 'components/placeholder';
@@ -483,7 +485,7 @@ class Home extends React.Component<HomeProps, HomeState> {
           <Grid container direction="column" className={classes.userContainer}>
             <Grid container item justify="center">
               <Link to={StaticRoutes.Profile}>
-                <Avatar alt={this.userName} src={this.avatar} variant="circle" className={classes.avatar} />
+                <Avatar alt={this.userName} src={this.avatar} variant="circular" className={classes.avatar} />
               </Link>
             </Grid>
             {open[EnumSection.Drawer] &&
@@ -505,6 +507,13 @@ class Home extends React.Component<HomeProps, HomeState> {
                 <ListItemText primary={_t({ id: 'links.dashboard' })} />
               </ListItem>
 
+              <ListItem button
+                onClick={(e) => this.onNavigate(e, StaticRoutes.ContractManager)}>
+                <ListItemIcon>
+                  <Icon path={mdiSignatureFreehand} size="1.5rem" />
+                </ListItemIcon>
+                <ListItemText primary={_t({ id: 'links.contract.master.title' })} />
+              </ListItem>
               <ListItem button
                 onClick={(e) => this.onNavigate(e, StaticRoutes.ProviderManager)}>
                 <ListItemIcon>
@@ -543,14 +552,6 @@ class Home extends React.Component<HomeProps, HomeState> {
                   <Icon path={mdiForumOutline} size="1.5rem" />
                 </ListItemIcon>
                 <ListItemText primary={_t({ id: 'links.message-manager' })} />
-              </ListItem>
-
-              <ListItem button
-                onClick={(e) => this.onNavigate(e, StaticRoutes.ContractMaster)}>
-                <ListItemIcon>
-                  <Icon path={mdiSignatureFreehand} size="1.5rem" />
-                </ListItemIcon>
-                <ListItemText primary={_t({ id: 'links.contract.master.title' })} />
               </ListItem>
 
               <ListItem button
@@ -602,9 +603,11 @@ class Home extends React.Component<HomeProps, HomeState> {
               {/* Dynamic */}
               <Route path={DynamicRoutes.AccountUpdate} component={AccountForm} />
               <Route path={DynamicRoutes.AccountCreate} component={AccountForm} />
+              <Route path={DynamicRoutes.ContractCreate} component={ContractForm} />
+              <Route path={DynamicRoutes.ContractReview} component={ContractReviewForm} />
               {/* Static */}
               <Route path={StaticRoutes.Dashboard} component={DashboardComponent} />
-              <Route path={StaticRoutes.ContractMaster} component={ContractForm} />
+              <Route path={StaticRoutes.ContractManager} component={ContractList} />
               <Route path={StaticRoutes.DraftManager} component={AssetDraftManager} />
               <Route path={StaticRoutes.Map} component={MapViewerComponent} />
               <Route path={StaticRoutes.Profile} component={Profile} />

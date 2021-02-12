@@ -32,6 +32,9 @@
     "@types/redux-logger": "^3.0.8",
     "@types/semver": "^7.3.3",
     "@types/urijs": "^1.19.12",
+    "@types/react-draft-wysiwyg": "^1.13.0",
+    "@types/draft-js": "^0.10.44",
+    "@types/draftjs-to-html": "^0.8.0",
     "axios": "^0.20.0",
     "connected-react-router": "^6.8.0",
     "echarts": "^4.9.0",
@@ -66,7 +69,9 @@
     "semver": "^7.3.2",
     "typescript": "^3.9.7",
     "urijs": "^1.19.2",
-    "zxcvbn": "^4.4.2"
+    "zxcvbn": "^4.4.2",
+    "draft-js": "^0.11.7",
+    "react-draft-wysiwyg": "^1.14.5"
   },
   "scripts": {
     "start": "react-scripts start",

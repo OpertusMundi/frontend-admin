@@ -55,7 +55,8 @@ export const Pages = {
 
 const Dashboard = '/dashboard';
 const ConsumerManager = '/consumers';
-const ContractMaster = '/contract/master';
+//const ContractMaster = '/contract/master';
+const ContractManager = '/contract/list';
 const Map = '/map';
 const MessageManager = '/messages';
 const OrderManager = '/orders';
@@ -68,7 +69,8 @@ const DraftManager = '/drafts';
 export const StaticRoutes = {
   Dashboard,
   ConsumerManager,
-  ContractMaster,
+  //ContractMaster,
+  ContractManager,
   Map,
   MessageManager,
   OrderManager,
@@ -85,10 +87,14 @@ export const StaticRoutes = {
 
 const AccountCreate = '/admin/users/record/create';
 const AccountUpdate = '/admin/users/record/update/:id';
+const ContractCreate = '/contract/create';
+const ContractReview = '/contract/review';
 
 export const DynamicRoutes = {
   AccountCreate,
   AccountUpdate,
+  ContractCreate,
+  ContractReview
 };
 
 /**
@@ -114,6 +120,7 @@ const defaultLinks = [Dashboard];
 
 interface Route {
   breadcrumb?: boolean;
+  progressBar?: boolean
   description: string;
   icon?: iconFunc;
   title?: string;
@@ -151,13 +158,14 @@ const routes: RouteRegistry = {
     defaultTitle: 'Consumers',
     links: defaultLinks
   },
-  [ContractMaster]: {
+  [ContractManager]: {
     icon: (className?: string) => (<Icon path={mdiSignatureFreehand} size="1.5rem" className={className} />),
-    description: 'Master contract editor',
-    title: 'links.contract.master.title',
-    defaultTitle: 'Master Contract',
-    links: []
+    description: 'Master contract list',
+    title: 'links.contract.list.title',
+    defaultTitle: 'Master Contract List',
+    links: defaultLinks
   },
+
   [Map]: {
     icon: (className?: string) => (<Icon path={mdiMapOutline} size="1.5rem" className={className} />),
     description: 'Map',
@@ -229,6 +237,22 @@ const routes: RouteRegistry = {
     defaultTitle: 'Update Account',
     roles: [EnumRole.ADMIN],
     links: defaultLinks,
+  },
+  [ContractCreate]: {
+    description: 'Create or update a contract',
+    title: 'links.contract.create',
+    defaultTitle: 'Create master contract',
+    roles: [EnumRole.ADMIN],
+    links: defaultLinks,
+    progressBar: true,
+  },
+  [ContractReview]: {
+    description: 'Review a contract',
+    title: 'links.contract.review',
+    defaultTitle: 'Review master contract',
+    roles: [EnumRole.ADMIN],
+    links: defaultLinks,
+    progressBar: true,
   },
   // Error Pages
   [Unauthorized]: {
