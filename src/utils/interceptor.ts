@@ -109,8 +109,8 @@ export function securityErrorInterceptor(error: AxiosError<any>): Promise<AxiosE
     // we are refreshing the page. We also check for the route URL to prevent infinite redirection
     // loop due to this interceptor. The /api/configuration call that returns 401 for unauthorized users.
 
-    if (window.location.pathname !== '/workbench/login') {
-      window.location.href = '/workbench/login';
+    if (window.location.pathname !== '/helpdesk/login') {
+      window.location.href = '/helpdesk/login';
     }
   }
 
