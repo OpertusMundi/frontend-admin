@@ -2,7 +2,6 @@ import {
   SET_CSRF_TOKEN,
   LOGIN_INIT,
   LOGIN_COMPLETE,
-  LOGOUT_INIT,
   LOGOUT_COMPLETE,
   PROFILE_LOAD_COMPLETE,
   SecurityTypes,
@@ -39,14 +38,9 @@ export function securityReducer(
         csrfToken: action.csrfToken,
       };
 
-    case LOGOUT_INIT:
-      return {
-        ...initialState,
-      };
-
     case LOGOUT_COMPLETE:
       return {
-        ...state,
+        ...initialState,
         csrfToken: action.csrfToken,
       };
 
