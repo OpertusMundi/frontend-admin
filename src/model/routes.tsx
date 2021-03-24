@@ -19,6 +19,7 @@ import {
   mdiAccountMultiple,
   mdiBadgeAccountOutline,
   mdiCogOutline,
+  mdiCogSyncOutline,
   mdiFaceAgent,
   mdiForumOutline,
   mdiHandshakeOutline,
@@ -65,6 +66,7 @@ const ProviderManager = '/providers'
 const Settings = '/settings';
 const AccountManager = '/users';
 const DraftManager = '/drafts';
+const WorkflowManager = '/workflows';
 
 export const StaticRoutes = {
   Dashboard,
@@ -79,6 +81,7 @@ export const StaticRoutes = {
   Settings,
   AccountManager,
   DraftManager,
+  WorkflowManager,
 };
 
 /**
@@ -213,6 +216,14 @@ const routes: RouteRegistry = {
     description: 'Manage user accounts',
     title: 'links.account.explorer',
     defaultTitle: 'User Management',
+    roles: [EnumRole.ADMIN],
+    links: [Dashboard],
+  },
+  [WorkflowManager]: {
+    icon: (className?: string) => (<Icon path={mdiCogSyncOutline} size="1.5rem" className={className} />),
+    description: 'Manage BPM Server workflows',
+    title: 'links.workflow.explorer',
+    defaultTitle: 'Workflow Management',
     roles: [EnumRole.ADMIN],
     links: [Dashboard],
   },
