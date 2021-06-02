@@ -3,7 +3,7 @@ import { AxiosRequestConfig } from 'axios';
 import { Api } from 'utils/api';
 import { ObjectResponse, PageRequest, Sorting, AxiosObjectResponse, AxiosPageResponse, PageResult, AxiosSimpleResponse } from 'model/response';
 //import { Section, OrganizationQuery } from 'model/section';\
-import { Section } from 'model/section';
+import { Section, Suboption } from 'model/section';
 
 
 export interface SectionQuery {
@@ -26,6 +26,7 @@ export default class SectionApi extends Api {
       dynamic: false,
       options: [],
       styledOptions: [],
+      suboptions: {},
       summary: [],
       descriptionOfChange: ''
     };

@@ -79,8 +79,12 @@ const styles = (theme: Theme) => createStyles({
     fontSize: '1rem',
     textAlign: 'left',
   },
+  suboption: {
+    paddingLeft: '12px',
+    fontWeight: 400,
+  },
   structure: {
-    background: '#efefef',
+    background: '#efefefc2',
     padding: '40px',
     paddingTop: '10px',
     height: '70vh',
@@ -90,12 +94,17 @@ const styles = (theme: Theme) => createStyles({
     fontWeight: 500,
     marginRight: '5px',
   },
-  save: {
-    fontSize: '16px',
-    marginTop: '115px',
-    marginLeft: '50px',
-    width: '80px',
-    height: '50px'
+  save: {backgroundColor: '#190AFF',
+  color: '#fff',
+  position: 'absolute',
+  right: '13vh',
+  bottom: '16vh',
+  width: '170px',
+  height: '45px',
+  marginTop: '115px',
+  marginLeft: '50px',
+  display: 'inline-block',
+  borderRadius: '25px'
   },
   logoImage: {
     width: '30px',
@@ -176,14 +185,44 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
     });
     const structure = contract.sections.map(section => {
       //console.log('section:',section);
-      let body;
+      let body, renderedOutput:any;
+      
       if (section.dynamic) {
-        body = section.styledOptions.map((option, index) =>
-          <div key={index}> <span className={classes.option} >Option {String.fromCharCode(65 + index)}</span>
-            <img className={classes.logoImage} src={"/icons/" + section.icons![index]} alt="" />
-            <p>{section.summary![index]}</p>
-            <Editor editorState={EditorState.createWithContent(convertFromRaw(JSON.parse(option)))} readOnly={true} onChange={() => { }} />
-          </div>);
+        body = section.styledOptions.map((option, index) => {
+          var suboptionsArray = section.suboptions[index];
+          let suboptionBlock=[];
+          if (suboptionsArray){
+            var length = suboptionsArray.length
+          }
+          else length = 0;
+        if (length > 0) {
+          for (let i = 0; i < length; i++) {
+            var storedSuboptionState = convertFromRaw(JSON.parse(suboptionsArray.find(o => o.id ===i)!.body));
+            var suboptionBody =
+              <div className={classes.option} key={index}> <span>Suboption {String.fromCharCode(65 + i)}</span>
+                <Editor editorState={EditorState.createWithContent(storedSuboptionState)} readOnly={true} onChange={() => { }} />
+              </div>;
+            suboptionBlock.push(suboptionBody);
+          }
+          renderedOutput = suboptionBlock.map((item, index) => {
+            return (
+              <div className={classes.suboption}>
+                {item}
+              </div>
+            )
+          });
+
+        };
+          return (
+            <div key={index}> <span className={classes.option} >Option {String.fromCharCode(65 + index)}</span>
+              <img className={classes.logoImage} src={"/icons/" + section.icons![index]} alt="" />
+              <p>{section.summary![index]}</p>
+              <Editor editorState={EditorState.createWithContent(convertFromRaw(JSON.parse(option)))} readOnly={true} onChange={() => { }} />
+              {renderedOutput}
+            </div>
+          )
+        });
+      
       }
       else {
         let option = EditorState.createWithContent(convertFromRaw(JSON.parse(section.styledOptions[0])));
@@ -250,7 +289,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
           this.saveContract()
         }
       >
-        Save
+        Confirm and Save
         </Button>
     </Grid>);
 

@@ -31,7 +31,7 @@ import { localizeErrorCodes } from 'utils/error';
 
 // Services
 import message from 'service/message';
-import { Section } from 'model/section';
+import { Section, Suboption } from 'model/section';
 import { Contract } from 'model/contract';
 import ContractApi from 'service/contract';
 
@@ -44,6 +44,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { FieldMapperFunc } from 'utils/error';
 
 import { setSelectedContract, setModifiedContract } from 'store/contract/actions';
+//import { lastIndexOf } from 'lodash';
 
 const fieldMapper: FieldMapperFunc = (field: string): string | null => {
   switch (field) {
@@ -112,18 +113,26 @@ const styles = (theme: Theme) => createStyles({
     height: '80vh'
   },
   saveBtn: {
+    backgroundColor: '#190AFF',
+    color: '#fff',
     position: 'absolute',
-    right: '40px',
+    right: '2vh',
     marginTop: '50px',
     display: 'inline-block',
     width: '100px',
+    height: '45px',
+    borderRadius: '25px'
   },
   nextBtn: {
+    backgroundColor: '#190AFF',
+    color: '#fff',
     position: 'absolute',
-    right: '40px',
+    right: '2vh',
     marginTop: '120px',
     display: 'inline-block',
     width: '100px',
+    height: '45px',
+    borderRadius: '25px'
   },
 });
 
@@ -137,6 +146,7 @@ const defaultSection: Section = {
   dynamic: false,
   options: [],
   styledOptions: [],
+  suboptions: {},
   summary: [''],
   icons: [''],
   descriptionOfChange: ''
@@ -195,7 +205,6 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     if (e) {
       e.preventDefault();
     }
-    console.log('contract', contract);
 
     this.props.setModifiedContract(contract);
     this.props.history.push({
@@ -216,12 +225,9 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     var contract = null;
     const contractId = this.props.contractId
     if (contractId) {
-      //id = location!.state.id!
-      console.log('id', contractId);
       this.api.findOne(contractId).then((response: AxiosObjectResponse<Contract>) => {
         if (response.data.success) {
           contract = response.data.result;
-          console.log('contract', contract)
           this.setState({ contract: contract, sectionList: contract.sections, documentTitle: contract.title, documentSubtitle: contract.subtitle })
         } else {
           const messages = localizeErrorCodes(this.props.intl, response.data, false);
@@ -243,10 +249,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   addSection(section: Partial<Section>): void {
 
     var lastSection = this.state.sectionList.slice(-1)[0];
-    console.log('In add section id:', section.id)
     if (lastSection) {
-      //var lastIndex = parseInt(lastSection.index.split('.')[0], 10) + 1;
-      //section.index = '' + lastIndex;
       section.index = this.getCurrentIndex(section.id!, 0);
     }
     else {
@@ -258,34 +261,27 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         summary: [...[""]], ...section, icons: [...[""]], ...section
       },]
     }));
-    console.log('section id ' + section.id)
-    console.log('section list ' + this.state.sectionList)
   }
 
   removeSection(id: number): void {
-    console.log('In remove id', id);
 
     if (!this.state.displayToolbarActions)
       return
 
     var sections = [...this.state.sectionList]
-
+    var index = sections.find(s => s.id === id)!.index;
     sections = sections.filter((section) => {
       return (section.id !== id);
 
-      //sectionList: this.state.sectionList.filter(section => section.index == id)
     });
 
-    sections = this.sortSections(sections);
+    sections = this.sortSections(sections, index);
     this.setState({
       sectionList: sections
     });
-    console.log('length:' + this.state.sectionList.length + ' index:' + id);
-    console.log(this.state.sectionList)
   }
 
-  editSection(section: Partial<Section>, body = "", summary = "", option = 0, raw = "", descriptionOfChange = "", icon = ""): void {
-    console.log('In edit section:', section, summary, option);
+  editSection(section: Partial<Section>, body = "", summary = "", option = 0, raw = "", descriptionOfChange = "", icon = "", suboption=-1): void {
     var sections = [...this.state.sectionList]
     const id = sections.findIndex((s) => s.id === section.id);
     if ('indent' in section) {
@@ -299,27 +295,45 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       }
       else if (section.indent === lastSection.indent) {
         lastIndex = lastSection.index.slice(lastSection.index.lastIndexOf('.') + 1);
-        var currIndex = parseInt(lastIndex, 10) + 1
+        //lastIndex = lastSection.index;
+        var currIndex = parseInt(lastIndex, 10) + 1;
         section.index = lastSection.index.slice(0, -1) + '' + currIndex;
+        //section.index = '' + currIndex;
       }
       else if (section.indent === lastSection.indent - 8) {
-        section.index = this.getCurrentIndex(section.id!, section.indent);
+        //section.index = this.getCurrentIndex(section.id!, section.indent);
+        lastIndex = lastSection.index.substr(0, lastSection.index.lastIndexOf('.')); 
+        currIndex = parseInt(lastIndex, 10) + 1;
+        section.index = lastSection.index.slice(0, -3) + '' + currIndex;
+        //section.index = this.getCurrentIndex(sections.findIndex((s) => s.id === section.id!), section.indent)
+
       }
-      else {
+      else
         return
-      }
-      sections[id].indent = section.indent;
-      sections = this.sortSections(sections);
+      sections[id].indent = section.indent!;
+      sections = this.sortSections(sections, section.index);
     }
     sections[id] = { ...sections[id], ...section };
     if (body) {
-      sections[id].options[option] = body
-      sections[id].styledOptions[option] = raw
+      // change main option
+      if (suboption<0){
+        sections[id].options[option] = body
+        sections[id].styledOptions[option] = raw
+      }
+      // change sub option
+      else{
+        //const suboptionsMap = new Map(Object.entries(sections[id].suboptions));
+        var suboptionArray = sections[id].suboptions[option]
+        for (var i = 0; i < suboptionArray.length; i++) {
+          if (suboptionArray[i].id === suboption-1){
+            suboptionArray[i].body = raw;
+          }
+        }
+      }
     }
     if (summary === ' ')
       sections[id].summary![option] = ''
     else if (summary) {
-      console.log(sections[id].title)
       sections[id].summary![option] = summary
     }
     if (icon === 'empty')
@@ -334,33 +348,40 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   }
 
   getCurrentIndex(id: number, indent: number): string {
-    var index = '1.1';
+    var index = '-1';
     for (let i = id - 1; i >= 0; i--) {
       var section = this.state.sectionList[i]
-      console.log('get index section ' + section.id + ' i ' + i)
       if (section.indent === indent) {
         var lastIndex = section.index.slice(section.index.lastIndexOf('.') + 1);
         var currIndex = parseInt(lastIndex, 10) + 1
         index = section.index.slice(0, -1) + '' + currIndex;
-        console.log('last ' + lastIndex + ' curr ' + currIndex, 'index', index)
+        //index = '' + currIndex;
         break;
       }
       else if (section.indent === indent - 8) {
-        lastIndex = section.index.slice(section.index.lastIndexOf('.') + 1) + '.1';
+        //lastIndex = section.index.slice(section.index.lastIndexOf('.') + 1) + '.1';
+        lastIndex = section.index.slice(section.index.indexOf('.') + 1) + '.1';
         index = '' + lastIndex;
+        //index = section.index + '.1'
         break;
       }
+      else{
+      }
+    }
+    if (index==='-1'){
+      var last = this.state.sectionList[id-1].index
+      lastIndex =last.slice(last.lastIndexOf('.') + 1) + '.1';
+      index = '' + lastIndex;
     }
     return index
   }
 
-  sortSections(sections: Section[]): Section[] {
-    console.log('in sort')
+  sortSections(sections: Section[], index: String): Section[] {
     for (let i = 1; i < sections.length; i++) {
-      var id = sections.findIndex((s) => s.id === i);
-      console.log('sorting section:', sections[i].id, 'i:', i, 'id', id)
+      if (sections[i].index < index)
+        continue
+      //var id = sections.findIndex((s) => s.id === i);
       sections[i].index = this.getCurrentIndex(i, sections[i].indent)
-      console.log('index', sections[i].index)
     }
     return sections;
   }
@@ -410,7 +431,6 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   }
 
   openEdit(editField: EditFieldEnum, section?: Section): void {
-    console.log('In open edit section:', section, editField);
     if (!this.state.displayToolbarActions){
       return
     }
@@ -422,10 +442,14 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     });
   }
 
-  saveContent(id: number, contentState: ContentState, body: string, title: string, option: number, summary: string, descriptionOfChange: string, icon: string, editField: EditFieldEnum): void {
+  saveContent(id: number, contentState: ContentState, body: string, title: string, option: number, suboption: number, 
+      summary: string, descriptionOfChange: string, icon: string, editField: EditFieldEnum): void {
     var raw = JSON.stringify(convertToRaw(contentState));
     if (editField === EditFieldEnum.Section) {
       this.editSection({ id: id, title: title }, body, summary, option, raw, descriptionOfChange, icon);
+    }
+    else if (editField === EditFieldEnum.Suboption){
+      this.editSection({ id: id, title: title }, body, summary, option, raw, descriptionOfChange, icon, suboption );
     }
     else if (editField === EditFieldEnum.Title)
       this.setState({ documentTitle: title });
@@ -438,7 +462,6 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   addOptions(sectionId: number, options: number): void {
     var sections = [...this.state.sectionList]
     const id = sections.findIndex((s) => s.id === sectionId);
-    console.log('In create options: ', sectionId, options, sections)
     var section = sections[id];
     var length = section.styledOptions.length
     if (options < length) {
@@ -454,6 +477,39 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         section.summary!.push('');
         section.icons!.push('');
       }
+    sections[id] = { ...sections[id], ...section };
+    this.setState({
+      sectionList: sections,
+    });
+  }
+
+  addSuboptions(sectionId: number, option: number, suboptions: number): void {
+    var sections = [...this.state.sectionList]
+    const id = sections.findIndex((s) => s.id === sectionId);
+    var section = sections[id];
+    let suboptionsArray = section.suboptions[option];
+    if (suboptionsArray)
+      var length =  suboptionsArray.length;
+    else 
+      length =0;
+    if (length > 0) {
+      for (let i = length; i < suboptions; i++) 
+        suboptionsArray.push({'id': i, 'body': `{"blocks":[{"key":"5u8f1","text":"Additional suboption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`})
+    }
+    else{
+      length = 0
+      suboptionsArray = new Array <Suboption>();
+      suboptionsArray.push({'id': option, 'body': `{"blocks":[{"key":"5u8f1","text":"Additional suboption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`})
+      
+      section.suboptions[option] = suboptionsArray;
+      
+    }
+    
+    if (suboptions < length) {
+      for (let i = length; i > suboptions; i--) {
+        suboptionsArray.pop();
+      }
+    }
     sections[id] = { ...sections[id], ...section };
     this.setState({
       sectionList: sections,
@@ -478,7 +534,6 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       },
     });
     var contract = { ...this.state.contract, sections: this.state.sectionList, title: this.state.documentTitle, subtitle: this.state.documentSubtitle };
-    console.log('contract', contract);
     (id === null || typeof (id) === 'undefined' ? this.api.create(contract) : this.api.update(id!, contract))
       .then((response) => {
         if (response.data.success) {
@@ -500,6 +555,12 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   render() {
 
     const { sectionList } = this.state;
+
+    sectionList.sort((a,b) => {
+      if (a.index! < b.index!) return -1;
+      if (a.index! > b.index!) return 1;
+      return 0;
+    });
     const { classes } = this.props;
     const outline = this.state.sectionList.map(section => {
       let type = '';
@@ -521,7 +582,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       editor = <EditAreaComponent sectionList={this.state.sectionList} section={this.state.currentSection} documentTitle={this.state.documentTitle}
         documentSubtitle={this.state.documentSubtitle} editField={this.state.editField!}
         saveContent={this.saveContent.bind(this)} editSection={this.editSection.bind(this)}
-        addOptions={this.addOptions.bind(this)} />;
+        addOptions={this.addOptions.bind(this)} addSuboptions={this.addSuboptions.bind(this)} />;
     }
     let toolbarActions;
     if (this.state.displayToolbarActions) {
@@ -576,7 +637,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
               sectionList={sectionList}
               deleteSubtitle={this.deleteSubtitle.bind(this)}
               addSection={(item) => {
-                console.log(item);
+                //console.log(item);
               }}
               editTitle={this.editTitle.bind(this)}
               removeSection={this.removeSection.bind(this)}
@@ -617,7 +678,6 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
             Save
         </Button>
           <Button className={classes.nextBtn}
-            style={{ height: 50 }}
             variant="contained"
             onClick={(e) =>
               this.onNavigate(e, DynamicRoutes.ContractReview)

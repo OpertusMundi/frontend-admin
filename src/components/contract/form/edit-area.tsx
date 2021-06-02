@@ -4,8 +4,10 @@ import React from 'react';
 import { injectIntl, IntlShape } from 'react-intl';
 
 // Styles
-import { TextField, createStyles, WithStyles } from '@material-ui/core';
+import { TextField, createStyles, WithStyles, MenuItem } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
+import './editor-styles.scss';
+
 
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
@@ -41,8 +43,10 @@ const styles = (theme: Theme) => createStyles({
   editor: {
     height: '20vh',
     overflowY: 'auto',
-    //borderStyle: 'solid',
-    //borderWidth: '0.5px',
+    width: '100%',
+    borderStyle: 'solid',
+    borderWidth: '0.5px',
+    padding: '10px',
 
   },
   options: {
@@ -80,11 +84,12 @@ const styles = (theme: Theme) => createStyles({
     maxHeight: '35px',
     marginLeft: '20px',
     marginTop: '5px'
-  }
+  },
 });
 
 export enum EditFieldEnum {
   Section = 'section',
+  Suboption = 'suboption',
   Title = 'title',
   Subtitle = 'subtitle',
 };
@@ -94,13 +99,12 @@ interface EditAreaComponentProps extends WithStyles<typeof styles> {
   section?: Section;
   documentTitle?: string;
   documentSubtitle?: string;
-  saveContent: (id: number, contentState: ContentState, body: string, title: string, option: number,
+  saveContent: (id: number, contentState: ContentState, body: string, title: string, option: number, suboption: number,
     summary: string, descriptionOfChange: string, icon: string, editField: EditFieldEnum) => void;
   editSection: (item: any) => void;
   addOptions: (sectionId: number, options: number) => void;
+  addSuboptions: (sectionId: number, option: number, suboptions: number) => void;
   editField: EditFieldEnum;
-  //addIndent: (item: any) => void;
-  //removeIndent: (item: any) => void;
   sectionList?: Section[];
 }
 
@@ -116,6 +120,10 @@ interface EditAreaComponentState {
   optional?: boolean;
   icon: string;
   option: number;
+  suboption: number;
+  editField: EditFieldEnum;
+  // title for editing option or suboption
+  editingOption: boolean;
   openAutoTextSelect: boolean;
   openIconSelect: boolean;
 }
@@ -124,7 +132,6 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
   constructor(props: EditAreaComponentProps) {
     super(props);
-    console.log('PROPS: ', this.props)
     let title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = '';
     // if editing section or titles
     if (this.props.editField === EditFieldEnum.Section) {
@@ -148,20 +155,21 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
         title = this.props.documentSubtitle!;
     }
     this.state = {
-      editorState, title, option: 0, showEditor: show, summary, descriptionOfChange, variable, optional, dynamic, icon, openAutoTextSelect: false, openIconSelect: false
+      editorState, title, option: 0, suboption: 0, editingOption: true, showEditor: show, summary, descriptionOfChange, variable, optional, dynamic, icon, openAutoTextSelect: false, openIconSelect: false,
+      editField: this.props.editField
+      
     };
   }
 
-  //onEditorStateChange(editorState: EditorState): void {
-  //console.log('in on editor state change state:' + editorState.getCurrentContent());
-  //  this.setState({
-  //    editorState,
-  // });
-  //};
+
+  customBlockStyleFn = (contentBlock: ContentBlock) => {
+    return ['public-DraftStyleDefault-block'];
+
+    
+  }
 
   onChangeValue(id: number, event: any) {
     var selection = event.target.value
-    console.log('change value', id, selection);
     if (selection === 'optional') {
       this.props.editSection({ id: id, optional: true, dynamic: false })
       this.setState({ optional: true, dynamic: false });
@@ -172,21 +180,35 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
       this.setState({ optional: false, dynamic: true });
     }
     else {
-      console.log('in number' + selection);
       this.props.addOptions(id, selection);
     }
   }
 
+  onChangeSuboptionValue(id: number, event: any) {
+    var selection = event.target.value;
+    this.props.addSuboptions(id, this.state.option, selection);
+  }
+
   onOptionSelect = (event: any) => {
+    
     var selection = event.target.value
-    console.log('in select', event.target.value);
-    console.log('section ',this.props.section);
-    console.log(this.props.section!.summary![selection])
+    var editingOption = true
     this.setState({
       option: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse((this.props.section!.styledOptions[selection])))),
-      summary: this.props.section!.summary![selection], icon: this.props.section!.icons![selection]
+      summary: this.props.section!.summary![selection], icon: this.props.section!.icons![selection], editField: EditFieldEnum.Section, editingOption
     });
   }
+
+  onSuboptionSelect = (event: any) => {
+    var selection = event.target.value
+    var editingOption = false;
+    var body =this.props.section!.suboptions[this.state.option].find(o => o.id ===this.state.suboption)?.body;
+    this.setState({
+      suboption: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(body!))),
+      summary: this.props.section!.summary![selection], icon: this.props.section!.icons![selection], editField: EditFieldEnum.Suboption ,editingOption, 
+    });
+  }
+
 
   onSummarySet = (event: any) => {
     var summary = event.target.value
@@ -230,7 +252,6 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   }
 
   insertPlaceholder(label: string, meta: any): EditorState {
-    console.log('label meta: ', label, meta);
     const editorState = this.state.editorState;
     const currentContent = this.state.editorState.getCurrentContent();
     const selection = this.state.editorState.getSelection();
@@ -263,14 +284,12 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
 
   onEditorStateChange(editorState: EditorState): void {
-    //console.log('in on editor state change state:' + editorState.getCurrentContent());
     this.setState({
       editorState,
     });
   };
 
   Replacements = () => {
-    console.log('in replacement')
     //var open = false;
 
     const setOpen = (): void => {
@@ -306,37 +325,44 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
   finishEdit = (editorState: EditorState): void =>{
     this.props.saveContent(this.props.section?.id!, editorState.getCurrentContent(), editorState.getCurrentContent().getPlainText(),
-          this.state.title, this.state.option, this.state.summary, this.state.descriptionOfChange, this.state.icon, this.props.editField)
+          this.state.title, this.state.option, this.state.suboption, this.state.summary, this.state.descriptionOfChange, this.state.icon, this.state.editField)
   }
 
   render() {
     const { editorState } = this.state;
     const { classes } = this.props;
-    let editor, iconSelector, type_buttons, options, editOption, summary, descriptionOfChange;
+    let editor, iconSelector, type_buttons, options, suboptions, editOption, editSuboption, summary, descriptionOfChange, editingOptionTitle='', suboptionsSize=0;
+    
+    if (this.state.dynamic){
+      var type='Option ', currentOption =this.state.option ;
+      if (!this.state.editingOption){
+        type='Suboption ';
+        currentOption = this.state.suboption;
+      }
+      editingOptionTitle = '(' + type + String.fromCharCode(65 + parseInt('' +currentOption)) + ')';
+    }
+
     if (this.state.showEditor) {
       editor = <div >
 
-        <InputLabel className={classes.title}>Text</InputLabel>
+        <InputLabel className={classes.title}>Text {editingOptionTitle}</InputLabel>
         <Editor
           toolbar={{
-            options: ['inline', 'blockType', 'fontSize', 'list', 'textAlign', 'link'],
-            inline: { inDropdown: true },
+            options: ['inline', 'list'],
+            inline: { inDropdown: false, options: ['bold', 'italic', 'underline'], },
             list: { inDropdown: true },
             textAlign: { inDropdown: true },
-            link: { inDropdown: true },
           }}
           toolbarCustomButtons={[this.Replacements()]}
-          //onChange={this.onContentChange(this.)}
-          //onChange={this._handleChange}
           editorState={editorState}
           wrapperClassName={classes.wrapper}
           editorClassName={classes.editor}
-          //placeholder={this.props.section!.text}
           onEditorStateChange={this.onEditorStateChange.bind(this)}
+          customBlockRenderFunc={this.customBlockStyleFn}
         />
       </div>;
       descriptionOfChange = <div className={classes.control}> <InputLabel className={classes.title}>Description of change (Optional)</InputLabel>
-        <TextField className={classes.title} id="filled-label" variant="standard" value={this.state.descriptionOfChange}
+        <TextField className={classes.title} id="filled-label" variant="standard" value={this.state.descriptionOfChange || ''} 
           suppressContentEditableWarning={true} contentEditable={true}
           onChange={(e) => this.onDescriptionSet(e)} />
 
@@ -352,31 +378,76 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
       </div>;
 
       if (this.state.dynamic) {
+        
         let optionAlphanumeric = [];
         for (let i = 0; i < this.props.section!.styledOptions.length; i++) {
           optionAlphanumeric.push(String.fromCharCode(65 + i));
         }
-        options = <input className={classes.options} type="number" defaultValue="2"></input>;
-        editOption = <div style={{ 'marginLeft': '80px' }} > <InputLabel htmlFor="age-native-simple">Select option</InputLabel>
+        options = <input className={classes.options} type="number" min="1" defaultValue={this.props.section!.options.length}></input>;
+        editOption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel >Option</InputLabel>
           <Select
-            native
-            //value={state.age}
             onChange={this.onOptionSelect}
           >
+             <MenuItem disabled>Option</MenuItem>
             {optionAlphanumeric.map((option, index) =>
-              <option key={index} value={index}>{option}</option>)};
+              <MenuItem  value={index}>{option}</MenuItem>)};
           </Select>
         </div>;
+        var suboptionsArray = this.props.section!.suboptions[this.state.option];
+        if (typeof(suboptionsArray)!=='undefined')
+          suboptionsSize = suboptionsArray.length;
+        else 
+          suboptionsSize = 0
+          console.log('suboptionsArray - option', suboptionsArray, this.state.option, suboptionsSize);
+          suboptions = 
+          <div  style={{'marginTop': '2vh' }} onChange={(e) => this.onChangeSuboptionValue(this.props.section!.id!, e)}>
+            <label>Suboptions</label>
+            <input className={classes.options} type="number" value={suboptionsSize}></input>
+          </div>
+          let suboptionAlphanumeric = [];
+          for (let i = 0; i < suboptionsSize; i++) {
+            suboptionAlphanumeric.push(String.fromCharCode(65 + i));
+          }
+        if (suboptionAlphanumeric.length>0)
+
+          editSuboption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel>Suboption</InputLabel>
+            <Select
+
+              onChange={this.onSuboptionSelect}
+            >
+
+              <MenuItem disabled>Suboption</MenuItem>
+              {suboptionAlphanumeric.map((option, index) =>
+                <MenuItem value={index}>{option}</MenuItem>)};
+        </Select>
+            {suboptions}
+          </div>;
+        else
+          editSuboption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel>Suboption</InputLabel>
+            <Select
+
+              onChange={this.onSuboptionSelect}
+            >
+
+              <MenuItem disabled>Suboption</MenuItem>
+        </Select>
+            {suboptions}
+          </div>;
+        
+
+        
       }
 
       type_buttons =
+      <div>
         <div onChange={(e) => this.onChangeValue(this.props.section!.id!, e)}>
           <label className={classes.radio}><input type="radio" value="optional" name="type" defaultChecked={this.state.optional} /> Optional Section</label>
           <label className={classes.radio}><input type="radio" value="dynamic" name="type" defaultChecked={this.state.dynamic} /> Dynamic Section
                         {options}
           </label>
-
+          </div>
         </div>;
+
 
       const openIconSelector = (): void => {
         this.setState({
@@ -422,6 +493,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
       <Grid container>
         {type_buttons}
         {editOption}
+        {editSuboption}
         <TextField className={classes.title} id="filled-title" variant="standard" value={this.state.title} suppressContentEditableWarning={true} contentEditable={true} label='Title'
           onChange={(e) => this.setState({ title: e.target.value })}
         />

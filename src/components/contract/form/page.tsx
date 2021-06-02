@@ -35,9 +35,19 @@ const styles = (theme: Theme) => createStyles({
     minHeight: '70vh',
     width: '34.2vw',
   },
+  title:{
+    padding: '10px',
+    background: '#d3d3d369',
+    border: '0.5px',
+    borderStyle: 'dashed',
+    marginBottom: '8px'
+  },
   controls: {
     height: '20px',
     marginTop: '50px',
+  },
+  contract: {
+    maxWidth: '80%',
   },
   btn: {
   }
@@ -75,7 +85,7 @@ class PageComponent extends React.Component<PageComponentProps, PageComponentSta
     const { classes } = this.props;
     let subtitle;
     if (this.props.documentSubtitle) {
-      subtitle = <div >
+      subtitle = <div  className={classes.title} >
         <FormattedMessage id="document.subtitle" defaultMessage={this.props.documentSubtitle} />
         <IconButton style={{ width: 20, height: 20, float: "right" }}
           onClick={() =>
@@ -93,9 +103,10 @@ class PageComponent extends React.Component<PageComponentProps, PageComponentSta
         </IconButton>
       </div>
     }
+    console.log('Sections:',this.props.sectionList );
     const sections = this.props.sectionList.map(section =>
       <Grid style={{ paddingLeft: section.indent, marginTop: '30px' }} key={section.id} container item xs={12} >
-        <Grid container item xs={10} key={`section-${section.id}`}>
+        <Grid className={classes.contract} container item xs={10} key={`section-${section.id}`}>
           <SectionComponent {...section} editSection={this.props.editSection.bind(this)} />
         </Grid>
         <div className={classes.controls}>
@@ -141,8 +152,8 @@ class PageComponent extends React.Component<PageComponentProps, PageComponentSta
       <div>
         <Grid container item xs={12}>
           <Paper className={classes.paper}>
-            <div>
-              <FormattedMessage id="document.title" defaultMessage={this.props.documentTitle} />
+            <div  className={classes.title}>
+              <FormattedMessage id="document.title"  defaultMessage={this.props.documentTitle} />
 
               <IconButton className="controls" style={{ width: 20, height: 20, float: "right" }}
                 onClick={() =>

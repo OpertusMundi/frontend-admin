@@ -37,6 +37,11 @@ const styles = (theme: Theme) => createStyles({
     borderWidth: '0.5px',
     borderStyle: 'dashed',
     padding: '8px'
+  },
+  suboption: {
+    //borderWidth: '0.5px',
+    //borderStyle: 'dashed',
+    padding: '12px',
   }
 });
 
@@ -56,10 +61,10 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
 
   constructor(props: SectionComponentProps) {
     super(props);
-    console.log('props: ' + this.props);
     this.state = {
       id: this.props.id, index: this.props.index, indent: this.props.indent, title: this.props.title,
-      summary: this.props.summary, options: this.props.options, styledOptions: this.props.styledOptions, variable: this.props.variable,
+      summary: this.props.summary, options: this.props.options, styledOptions: this.props.styledOptions, 
+      suboptions: this.props.suboptions, variable: this.props.variable,
       optional: this.props.optional, dynamic: this.props.dynamic, descriptionOfChange: this.props.descriptionOfChange
     };
   }
@@ -70,7 +75,7 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
     const { classes } = this.props;
 
     // eslint-disable-next-line
-    const { id, index, indent, title, optional, dynamic, options, styledOptions } = this.props;
+    const { id, index, indent, title, optional, dynamic, options, styledOptions, suboptions } = this.props;
     let increaseIndent, decreaseIndent;
     if (id! > 0) {
       increaseIndent = <IconButton onClick={() =>
@@ -90,17 +95,50 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
       type = 'Sub-section ';
     }
     let body, truncated = styledOptions[0];
-    //console.log('truncated', truncated)
     const defaultState = convertFromRaw(JSON.parse(truncated));
     if (dynamic) {
+      console.log('SUBOPTIONS', this.state.suboptions)
       body = styledOptions.map((option, index) => {
         const storedState =  convertFromRaw(JSON.parse(option));
         /*if (storedState.getPlainText.length > 150)
           truncated = option.substring(0, 150) + '...';
         else
           truncated = option;*/
-        return <div className={classes.option} key={index}> <span>Option {String.fromCharCode(65 + index)}</span>
+        var suboptionsArray = this.state.suboptions[index];
+        let suboptionBlock=[];
+        if (suboptionsArray){
+          var length = suboptionsArray.length
+        }
+        else 
+          length = 0;
+        console.log('index - array', index, this.state.suboptions, length);
+        if (length > 0) {
+          for (let i = 0; i < length; i++) {
+            console.log('i  suboptionsArray', i, suboptionsArray);
+            var storedSuboptionState = convertFromRaw(JSON.parse(suboptionsArray.find(o => o.id ===index)!.body));
+            var suboptionBody =
+              <div className={classes.option} key={index}> <span>Suboption {String.fromCharCode(65 + i)}</span>
+                <Editor editorState={EditorState.createWithContent(storedSuboptionState)} readOnly={true} onChange={() => { }} />
+              </div>;
+            suboptionBlock.push(suboptionBody);
+          }
+          var renderedOutput = suboptionBlock.map((item, index) => {
+            return (
+              <div className={classes.suboption}>
+                {item}
+              </div>
+            )
+          });
+        }
+        else {
+          renderedOutput = [];
+        }
+
+          
+        return <div><div className={classes.option} key={index}> <span>Option {String.fromCharCode(65 + index)}</span>
         <Editor editorState= {EditorState.createWithContent(storedState)} readOnly={true} onChange={() => {}}/> 
+        </div>
+        {renderedOutput}
         </div>;
       });
     }

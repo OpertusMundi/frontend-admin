@@ -86,7 +86,9 @@ const styles = (theme: Theme) => createStyles({
     float: 'right',
     marginRight: '20px',
     marginTop: '20px',
+    fontSize: '1.2rem',
     fontWeight: 500,
+    color: '#3f51b5',
   },
   date: {
     display: 'inline-block',

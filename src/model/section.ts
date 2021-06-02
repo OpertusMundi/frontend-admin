@@ -9,7 +9,13 @@ export interface Section {
     dynamic: boolean;
     options: string[];
     styledOptions: string[];
+    suboptions: { [key:number ]: Suboption[] }
     summary?: string[];
     icons?: string[];
     descriptionOfChange: string;
+  }
+
+  export interface Suboption {
+    id: number;
+    body: string;
   }
