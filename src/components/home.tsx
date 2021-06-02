@@ -38,9 +38,8 @@ import {
   mdiAccountPlusOutline,
   mdiBadgeAccountOutline,
   mdiLayers,
-  mdiBell,
   mdiCogOutline,
-  mdiEmail,
+  mdiCogSyncOutline,
   mdiFaceAgent,
   mdiForumOutline,
   mdiHandshakeOutline,
@@ -64,6 +63,7 @@ import { Account } from 'model/account';
 // Components
 import AccountForm from 'components/account/account-form';
 import AccountManager from 'components/account/account-grid';
+import WorkflowManager from 'components/workflow/workflow-manager';
 import Breadcrumb from './breadcrumb';
 import DashboardComponent from 'components/dashboard';
 import AssetDraftManager from 'components/draft/draft-grid';
@@ -80,6 +80,7 @@ import SecureRoute from 'components/secure-route';
 // Store
 import { RootState } from 'store';
 import { logout } from 'store/security/thunks';
+import { countIncidents } from 'store/workflow/thunks';
 
 enum EnumSection {
   Resource = 'Resource',
@@ -222,6 +223,8 @@ class Home extends React.Component<HomeProps, HomeState> {
 
   private drawerRef: React.RefObject<HTMLDivElement> | null;;
 
+  private countIncidentsInterval: number | null = null;
+
   constructor(props: HomeProps) {
     super(props);
 
@@ -273,6 +276,14 @@ class Home extends React.Component<HomeProps, HomeState> {
           drawerInTransition: false,
         });
       }, false);
+    }
+    this.props.countIncidents();
+    this.countIncidentsInterval = window.setInterval(() => { this.props.countIncidents(); }, 5 * 60 * 1000);
+  }
+
+  componentWillUnmount() {
+    if (this.countIncidentsInterval != null) {
+      clearInterval(this.countIncidentsInterval);
     }
   }
 
@@ -405,7 +416,7 @@ class Home extends React.Component<HomeProps, HomeState> {
 
   render() {
     const { open } = this.state;
-    const { classes } = this.props;
+    const { classes, workflow: { countIncidents } } = this.props;
 
     const _t = this.props.intl.formatMessage;
 
@@ -423,16 +434,13 @@ class Home extends React.Component<HomeProps, HomeState> {
               <MenuIcon />
             </IconButton>
             <Breadcrumb />
-            <IconButton title="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <Icon path={mdiEmail} size="1.5rem" />
-              </Badge>
-            </IconButton>
-            <IconButton title="show 17 new notifications" color="inherit">
-              <Badge badgeContent={17} color="secondary">
-                <Icon path={mdiBell} size="1.5rem" />
-              </Badge>
-            </IconButton>
+            {countIncidents > 0 &&
+              <IconButton title="BPM Server Incidents" color="inherit" onClick={() => this.props.history.push('/workflows')}>
+                <Badge badgeContent={countIncidents} color="secondary">
+                  <Icon path={mdiCogSyncOutline} size="1.5rem" />
+                </Badge>
+              </IconButton>
+            }
             {this.props.location.pathname === StaticRoutes.Map &&
               <IconButton
                 color="inherit"
@@ -460,7 +468,7 @@ class Home extends React.Component<HomeProps, HomeState> {
             </IconButton>
           </Toolbar>
         </AppBar>
-        {this.renderMenu()}
+        { this.renderMenu()}
         <Drawer
           ref={this.drawerRef}
           variant="permanent"
@@ -578,6 +586,17 @@ class Home extends React.Component<HomeProps, HomeState> {
                       <SecureContent roles={[EnumRole.ADMIN]}>
                         <ListItem button
                           className={open[EnumSection.Drawer] ? classes.nested : ''}
+                          onClick={(e) => this.onNavigate(e, StaticRoutes.WorkflowManager)}>
+                          <ListItemIcon>
+                            <Icon path={mdiCogSyncOutline} size="1.5rem" />
+                          </ListItemIcon>
+                          <ListItemText primary={_t({ id: 'links.workflow.explorer' })} />
+                        </ListItem>
+                      </SecureContent>
+
+                      <SecureContent roles={[EnumRole.ADMIN]}>
+                        <ListItem button
+                          className={open[EnumSection.Drawer] ? classes.nested : ''}
                           onClick={(e) => this.onNavigate(e, StaticRoutes.AccountManager)}>
                           <ListItemIcon>
                             <Icon path={mdiAccountMultiple} size="1.5rem" />
@@ -614,6 +633,7 @@ class Home extends React.Component<HomeProps, HomeState> {
               <Route path={StaticRoutes.Settings} component={PlaceHolder} />
               {/* Secured paths */}
               <SecureRoute path={StaticRoutes.AccountManager} component={AccountManager} roles={[EnumRole.ADMIN]} />
+              <SecureRoute path={StaticRoutes.WorkflowManager} component={WorkflowManager} roles={[EnumRole.ADMIN]} />
               {/* Default */}
               <Redirect push={true} to={ErrorPages.NotFound} />
             </Switch>
@@ -636,10 +656,12 @@ class Home extends React.Component<HomeProps, HomeState> {
 
 const mapState = (state: RootState) => ({
   profile: state.security.profile,
+  workflow: state.workflow,
 });
 
 const mapDispatch = {
   logout: () => logout(),
+  countIncidents: () => countIncidents(),
 };
 
 const connector = connect(

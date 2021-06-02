@@ -1,5 +1,12 @@
 import React from 'react';
 
+// Configure localization
+import '@formatjs/intl-pluralrules/polyfill';
+import '@formatjs/intl-pluralrules/locale-data/el';
+
+import '@formatjs/intl-relativetimeformat/polyfill';
+import '@formatjs/intl-relativetimeformat/locale-data/el';
+
 import * as ReactIntl from 'react-intl';
 
 import { Route } from 'react-router-dom';
@@ -26,13 +33,6 @@ const theme = createMuiTheme({
     },
   }
 });
-
-// Configure localization
-require('@formatjs/intl-pluralrules/polyfill');
-require('@formatjs/intl-pluralrules/locale-data/el');
-
-require('@formatjs/intl-relativetimeformat/polyfill');
-require('@formatjs/intl-relativetimeformat/locale-data/el');
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 

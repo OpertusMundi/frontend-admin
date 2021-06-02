@@ -9,25 +9,27 @@ import { history } from 'routing';
 
 import { accountReducer } from './account/reducer';
 import { configurationReducer } from './config/reducer';
+import { contractReducer } from './contract/reducer';
 import { draftReducer } from './draft/reducer';
 import { mapViewerReducer } from './map/reducer';
 import { messageReducer } from './i18n/reducer';
 import { securityReducer } from './security/reducer';
 import { viewportReducer } from './viewport/reducer';
-import { contractReducer } from './contract/reducer';
+import { workflowReducer } from './workflow/reducer';
 
 // Combine reducers
 export const rootReducer = Redux.combineReducers({
   account: Redux.combineReducers({
     explorer: accountReducer,
   }),
-  contract:  contractReducer,
   config: configurationReducer,
+  contract: contractReducer,
   draft: draftReducer,
   i18n: messageReducer,
   map: mapViewerReducer,
   security: securityReducer,
   viewport: viewportReducer,
+  workflow: workflowReducer,
   // Syncs history and store
   router: connectRouter(history),
   // Syncs loading bar and store
@@ -45,7 +47,7 @@ const middleware = [
   routerMiddleware(history),
 ];
 
-if (process.env.REACT_APP_ENABLE_LOGGER === 'true') {
+if ((process as any).env.REACT_APP_ENABLE_LOGGER === 'true') {
   // The logger middleware should always be last
   middleware.push(ReduxLogger.createLogger({ colors: {} }));
 }

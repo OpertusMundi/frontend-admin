@@ -75,10 +75,10 @@
       }
     },
     "message": {
-      "accept-success":"Draft has been accepted",
-      "accept-failure":"Operation has failed",
-      "reject-success":"Draft has been rejected",
-      "reject-failure":"Operation has failed",
+      "accept-success": "Draft has been accepted",
+      "accept-failure": "Operation has failed",
+      "reject-success": "Draft has been rejected",
+      "reject-failure": "Operation has failed",
       "review-draft": "Accept draft {title} with version {version}. Would you like to continue?"
     }
   },
@@ -147,7 +147,7 @@
       "master": {
         "title": "Master Contract"
       },
-      "list":{
+      "list": {
         "title": "Master Contract List "
       }
     },
@@ -158,7 +158,10 @@
     "order-manager": "Orders",
     "profile": "Profile",
     "provider-manager": "Manage Providers",
-    "settings": "Settings"
+    "settings": "Settings",
+    "workflow": {
+      "explorer": "Workflows"
+    }
   },
   "locales": {
     "en": "English",
