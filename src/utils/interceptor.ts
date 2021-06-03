@@ -10,6 +10,8 @@ import store from 'store';
 import { EnumMessageLevel } from 'model/message';
 import { SimpleResponse } from 'model/response';
 
+import { history } from 'routing';
+
 const iso8601 = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/;
 
 function isIso8601(value: any): boolean {
@@ -110,7 +112,7 @@ export function securityErrorInterceptor(error: AxiosError<any>): Promise<AxiosE
     // loop due to this interceptor. The /api/configuration call that returns 401 for unauthorized users.
 
     if (window.location.pathname !== '/sign-in') {
-      window.location.href = '/sign-in';
+      history.push('/sign-in');
     }
   }
 
