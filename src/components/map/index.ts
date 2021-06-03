@@ -17,7 +17,7 @@ import WmsLayer from './layers/wms-layer';
 
 export { default as Map } from './map';
 
-export default {
+const defaults = {
   Map,
   Layers,
   Layer: {
@@ -39,3 +39,5 @@ export default {
   Overlay,
   GeoLocation,
 };
+
+export default defaults;

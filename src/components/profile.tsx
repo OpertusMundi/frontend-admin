@@ -45,10 +45,6 @@ import { SimpleResponse } from 'model/response';
 
 const MB = 1024 * 1024;
 
-export type DeepPartial<T, V> =
-  T extends Array<infer R> ? V :
-  T extends object ? { [P in keyof T]?: DeepPartial<T[P], V>; } : V;
-
 const fieldMapper: FieldMapperFunc = (field: string): string | null => {
   switch (field) {
     case 'password':
@@ -130,11 +126,11 @@ interface ProfileFormProps extends PropsFromRedux, WithStyles<typeof styles> {
 }
 
 /*
- * Notes: 
+ * Notes:
  *
  * For password autocomplete feature see:
  * https://stackoverflow.com/questions/15738259/disabling-chrome-autofill
- * 
+ *
  */
 
 const accountToProfileCommand = (a: Account | null): ProfileCommand => {

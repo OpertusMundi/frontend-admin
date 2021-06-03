@@ -55,10 +55,6 @@ import { AxiosObjectResponse, SimpleResponse } from 'model/response';
 import { AccountFormData, AccountCommand } from 'model/account';
 import { KeyValuePair } from 'model/key-value-pair';
 
-export type DeepPartial<T, V> =
-  T extends Array<infer R> ? V :
-  T extends object ? { [P in keyof T]?: DeepPartial<T[P], V>; } : V;
-
 const fieldMapper: FieldMapperFunc = (field: string): string | null => {
   switch (field) {
     case 'email':
@@ -79,8 +75,6 @@ const fieldMapper: FieldMapperFunc = (field: string): string | null => {
 
   return null;
 };
-
-type SetFieldValue = (field: string, value: any, shouldValidate?: boolean) => void;
 
 const styles = (theme: Theme) => createStyles({
   container: {
@@ -155,11 +149,11 @@ interface AccountFormProps extends PropsFromRedux, WithStyles<typeof styles>, Ro
 }
 
 /*
- * Notes: 
+ * Notes:
  *
  * For password autocomplete feature see:
  * https://stackoverflow.com/questions/15738259/disabling-chrome-autofill
- * 
+ *
  */
 
 class AccountForm extends React.Component<AccountFormProps, AccountState> {
