@@ -92,10 +92,10 @@ export function identityResponseInterceptor(value: AxiosResponse<any>): AxiosRes
  * Executed whenever a error occurs. If a 401 status code is returned, the
  * user agent is redirected to the login page. API methods will return 401
  * when the user session is expired.
- * 
+ *
  * On all cases, the error response data is converted to a SimpleResponse
  * object.
- * 
+ *
  * @param error Axios error object
  */
 export function securityErrorInterceptor(error: AxiosError<any>): Promise<AxiosError<SimpleResponse>> {
@@ -109,8 +109,8 @@ export function securityErrorInterceptor(error: AxiosError<any>): Promise<AxiosE
     // we are refreshing the page. We also check for the route URL to prevent infinite redirection
     // loop due to this interceptor. The /api/configuration call that returns 401 for unauthorized users.
 
-    if (window.location.pathname !== '/helpdesk/login') {
-      window.location.href = '/helpdesk/login';
+    if (window.location.pathname !== '/sign-in') {
+      window.location.href = '/sign-in';
     }
   }
 

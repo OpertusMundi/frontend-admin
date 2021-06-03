@@ -42,7 +42,7 @@ import { iconFunc } from './types';
 /**
  * Routes for utility pages
  */
-const Login = '/login';
+const Login = '/sign-in';
 const ResetPassword = '/reset-password';
 
 export const Pages = {
