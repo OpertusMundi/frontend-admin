@@ -202,7 +202,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   onSuboptionSelect = (event: any) => {
     var selection = event.target.value
     var editingOption = false;
-    var body =this.props.section!.suboptions[this.state.option].find(o => o.id ===this.state.suboption)?.body;
+    var body =this.props.section!.suboptions[this.state.option][selection].body;
     this.setState({
       suboption: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(body!))),
       summary: this.props.section!.summary![selection], icon: this.props.section!.icons![selection], editField: EditFieldEnum.Suboption ,editingOption, 

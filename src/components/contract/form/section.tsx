@@ -115,7 +115,7 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
         if (length > 0) {
           for (let i = 0; i < length; i++) {
             console.log('i  suboptionsArray', i, suboptionsArray);
-            var storedSuboptionState = convertFromRaw(JSON.parse(suboptionsArray.find(o => o.id ===index)!.body));
+            var storedSuboptionState = convertFromRaw(JSON.parse(suboptionsArray[i].body));
             var suboptionBody =
               <div className={classes.option} key={index}> <span>Suboption {String.fromCharCode(65 + i)}</span>
                 <Editor editorState={EditorState.createWithContent(storedSuboptionState)} readOnly={true} onChange={() => { }} />
