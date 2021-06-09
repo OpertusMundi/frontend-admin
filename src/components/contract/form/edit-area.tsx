@@ -398,7 +398,6 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
           suboptionsSize = suboptionsArray.length;
         else 
           suboptionsSize = 0
-          console.log('suboptionsArray - option', suboptionsArray, this.state.option, suboptionsSize);
           suboptions = 
           <div  style={{'marginTop': '2vh' }} onChange={(e) => this.onChangeSuboptionValue(this.props.section!.id!, e)}>
             <label>Suboptions</label>

@@ -97,7 +97,6 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
     let body, truncated = styledOptions[0];
     const defaultState = convertFromRaw(JSON.parse(truncated));
     if (dynamic) {
-      console.log('SUBOPTIONS', this.state.suboptions)
       body = styledOptions.map((option, index) => {
         const storedState =  convertFromRaw(JSON.parse(option));
         /*if (storedState.getPlainText.length > 150)
@@ -111,10 +110,9 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
         }
         else 
           length = 0;
-        console.log('index - array', index, this.state.suboptions, length);
         if (length > 0) {
           for (let i = 0; i < length; i++) {
-            console.log('i  suboptionsArray', i, suboptionsArray);
+            
             var storedSuboptionState = convertFromRaw(JSON.parse(suboptionsArray[i].body));
             var suboptionBody =
               <div className={classes.option} key={index}> <span>Suboption {String.fromCharCode(65 + i)}</span>
