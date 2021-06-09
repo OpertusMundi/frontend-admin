@@ -281,7 +281,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     });
   }
 
-  editSection(section: Partial<Section>, body = "", summary = "", option = 0, raw = "", descriptionOfChange = "", icon = "", suboption=-1): void {
+  editSection(section: Partial<Section>, body="" , summary = "", option = 0, raw ="", descriptionOfChange = "", icon = "", suboption=-1): void {
     var sections = [...this.state.sectionList]
     const id = sections.findIndex((s) => s.id === section.id);
     if ('indent' in section) {
@@ -301,36 +301,42 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         //section.index = '' + currIndex;
       }
       else if (section.indent === lastSection.indent - 8) {
-        //section.index = this.getCurrentIndex(section.id!, section.indent);
-        lastIndex = lastSection.index.substr(0, lastSection.index.lastIndexOf('.')); 
-        currIndex = parseInt(lastIndex, 10) + 1;
-        section.index = lastSection.index.slice(0, -3) + '' + currIndex;
-        //section.index = this.getCurrentIndex(sections.findIndex((s) => s.id === section.id!), section.indent)
+        var firstPart = lastSection.index.substr(0,lastSection.index.lastIndexOf('.'))
+        var lastPart = parseInt(firstPart.substr(firstPart.lastIndexOf('.')+1), 10) + 1; 
+        section.index = firstPart.substr(0,firstPart.lastIndexOf('.')+1) + lastPart
 
+      }
+      else if (section.indent === lastSection.indent - 16 || section.indent === lastSection.indent - 24){
+        section.index = this.getCurrentIndex(id, section.indent!);
       }
       else
         return
       sections[id].indent = section.indent!;
       sections = this.sortSections(sections, section.index);
+      sections[id] = { ...sections[id], ...section };
+      this.setState({
+        sectionList: sections,
+      });
+      return
     }
     sections[id] = { ...sections[id], ...section };
-    if (body) {
-      // change main option
-      if (suboption<0){
+    if (raw) {
+      if (suboption < 0) {
         sections[id].options[option] = body
         sections[id].styledOptions[option] = raw
       }
       // change sub option
-      else{
+      else {
         //const suboptionsMap = new Map(Object.entries(sections[id].suboptions));
         var suboptionArray = sections[id].suboptions[option]
         for (var i = 0; i < suboptionArray.length; i++) {
-          if (suboptionArray[i].id === suboption-1){
+          if (suboptionArray[i].id === suboption) {
             suboptionArray[i].body = raw;
           }
         }
       }
     }
+
     if (summary === ' ')
       sections[id].summary![option] = ''
     else if (summary) {
@@ -350,19 +356,15 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   getCurrentIndex(id: number, indent: number): string {
     var index = '-1';
     for (let i = id - 1; i >= 0; i--) {
-      var section = this.state.sectionList[i]
+      var section = this.state.sectionList[i];
       if (section.indent === indent) {
         var lastIndex = section.index.slice(section.index.lastIndexOf('.') + 1);
         var currIndex = parseInt(lastIndex, 10) + 1
         index = section.index.slice(0, -1) + '' + currIndex;
-        //index = '' + currIndex;
         break;
       }
       else if (section.indent === indent - 8) {
-        //lastIndex = section.index.slice(section.index.lastIndexOf('.') + 1) + '.1';
-        lastIndex = section.index.slice(section.index.indexOf('.') + 1) + '.1';
-        index = '' + lastIndex;
-        //index = section.index + '.1'
+        index = section.index + '.1'
         break;
       }
       else{
@@ -378,10 +380,9 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
 
   sortSections(sections: Section[], index: String): Section[] {
     for (let i = 1; i < sections.length; i++) {
-      if (sections[i].index < index)
-        continue
-      //var id = sections.findIndex((s) => s.id === i);
-      sections[i].index = this.getCurrentIndex(i, sections[i].indent)
+      //if (sections[i].index < index)
+      //  continue
+      sections[i].index = this.getCurrentIndex(i, sections[i].indent);
     }
     return sections;
   }
@@ -499,7 +500,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     else{
       length = 0
       suboptionsArray = new Array <Suboption>();
-      suboptionsArray.push({'id': option, 'body': `{"blocks":[{"key":"5u8f1","text":"Additional suboption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`})
+      suboptionsArray.push({'id': 0, 'body': `{"blocks":[{"key":"5u8f1","text":"Additional suboption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`})
       
       section.suboptions[option] = suboptionsArray;
       
