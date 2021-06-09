@@ -85,6 +85,19 @@ const styles = (theme: Theme) => createStyles({
     marginLeft: '20px',
     marginTop: '5px'
   },
+  doneBtn: {
+    backgroundColor: '#000',
+    color: '#fff',
+    //position: 'absolute',
+    //right: '2vh',
+    //marginTop: '50px',
+    display: 'inline-block',
+    width: '100px',
+    height: '40px',
+    borderRadius: '25px',
+    borderColor: '#000',
+    marginLeft: '50px',
+  },
 });
 
 export enum EditFieldEnum {
@@ -507,11 +520,11 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
         {descriptionOfChange}
 
-        <button style={{ height: 30, marginLeft: 50 }}
+        <button className={classes.doneBtn}
           onClick={() => this.finishEdit(editorState)
             
           }>
-          Done
+          DONE
                 </button>
       </Grid >
     );
