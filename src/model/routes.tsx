@@ -18,6 +18,7 @@ import Icon from '@mdi/react';
 import {
   mdiAccountMultiple,
   mdiBadgeAccountOutline,
+  mdiBellAlertOutline,
   mdiCogOutline,
   mdiCogSyncOutline,
   mdiFaceAgent,
@@ -66,7 +67,8 @@ const ProviderManager = '/providers'
 const Settings = '/settings';
 const AccountManager = '/users';
 const DraftManager = '/drafts';
-const WorkflowManager = '/workflows';
+const ProcessInstanceManager = '/workflows/process-instances';
+const IncidentManager = '/workflow/incidents'
 
 export const StaticRoutes = {
   Dashboard,
@@ -81,7 +83,8 @@ export const StaticRoutes = {
   Settings,
   AccountManager,
   DraftManager,
-  WorkflowManager,
+  ProcessInstanceManager,
+  IncidentManager,
 };
 
 /**
@@ -219,13 +222,21 @@ const routes: RouteRegistry = {
     roles: [EnumRole.ADMIN],
     links: [Dashboard],
   },
-  [WorkflowManager]: {
+  [ProcessInstanceManager]: {
     icon: (className?: string) => (<Icon path={mdiCogSyncOutline} size="1.5rem" className={className} />),
     description: 'Manage BPM Server workflows',
-    title: 'links.workflow.explorer',
-    defaultTitle: 'Workflow Management',
+    title: 'links.workflow.process-instance.manager',
+    defaultTitle: 'Process Instance Management',
     roles: [EnumRole.ADMIN],
-    links: [Dashboard],
+    links: [Dashboard, IncidentManager],
+  },
+  [IncidentManager]: {
+    icon: (className?: string) => (<Icon path={mdiBellAlertOutline} size="1.5rem" className={className} />),
+    description: 'View BPM Server incidents',
+    title: 'links.workflow.incident.manager',
+    defaultTitle: 'Incident Management',
+    roles: [EnumRole.ADMIN],
+    links: [Dashboard, ProcessInstanceManager],
   },
   [DraftManager]: {
     icon: (className?: string) => (<Icon path={mdiTextBoxCheckOutline} size="1.5rem" className={className} />),

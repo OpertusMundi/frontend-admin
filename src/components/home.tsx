@@ -37,6 +37,7 @@ import {
   mdiAccountMultiple,
   mdiAccountPlusOutline,
   mdiBadgeAccountOutline,
+  mdiBellAlertOutline,
   mdiLayers,
   mdiCogOutline,
   mdiCogSyncOutline,
@@ -63,7 +64,8 @@ import { Account } from 'model/account';
 // Components
 import AccountForm from 'components/account/account-form';
 import AccountManager from 'components/account/account-grid';
-import WorkflowManager from 'components/workflow/workflow-manager';
+import ProcessInstanceManager from 'components/workflow/process-instance-manager';
+import IncidentManager from 'components/workflow/incident-manager';
 import Breadcrumb from './breadcrumb';
 import DashboardComponent from 'components/dashboard';
 import AssetDraftManager from 'components/draft/draft-grid';
@@ -80,7 +82,7 @@ import SecureRoute from 'components/secure-route';
 // Store
 import { RootState } from 'store';
 import { logout } from 'store/security/thunks';
-import { countIncidents } from 'store/workflow/thunks';
+import { countIncidents } from 'store/incident/thunks';
 
 enum EnumSection {
   Resource = 'Resource',
@@ -416,7 +418,7 @@ class Home extends React.Component<HomeProps, HomeState> {
 
   render() {
     const { open } = this.state;
-    const { classes, workflow: { countIncidents } } = this.props;
+    const { classes, workflow: { incidents: { incidentCounter } } } = this.props;
 
     const _t = this.props.intl.formatMessage;
 
@@ -434,9 +436,9 @@ class Home extends React.Component<HomeProps, HomeState> {
               <MenuIcon />
             </IconButton>
             <Breadcrumb />
-            {countIncidents > 0 &&
-              <IconButton title="BPM Server Incidents" color="inherit" onClick={() => this.props.history.push('/workflows')}>
-                <Badge badgeContent={countIncidents} color="secondary">
+            {incidentCounter != null && incidentCounter > 0 &&
+              <IconButton title="BPM Server Incidents" color="inherit" onClick={() => this.props.history.push(StaticRoutes.IncidentManager)}>
+                <Badge badgeContent={incidentCounter} color="secondary">
                   <Icon path={mdiCogSyncOutline} size="1.5rem" />
                 </Badge>
               </IconButton>
@@ -586,11 +588,22 @@ class Home extends React.Component<HomeProps, HomeState> {
                       <SecureContent roles={[EnumRole.ADMIN]}>
                         <ListItem button
                           className={open[EnumSection.Drawer] ? classes.nested : ''}
-                          onClick={(e) => this.onNavigate(e, StaticRoutes.WorkflowManager)}>
+                          onClick={(e) => this.onNavigate(e, StaticRoutes.ProcessInstanceManager)}>
                           <ListItemIcon>
                             <Icon path={mdiCogSyncOutline} size="1.5rem" />
                           </ListItemIcon>
-                          <ListItemText primary={_t({ id: 'links.workflow.explorer' })} />
+                          <ListItemText primary={_t({ id: 'links.workflow.process-instance.manager' })} />
+                        </ListItem>
+                      </SecureContent>
+
+                      <SecureContent roles={[EnumRole.ADMIN]}>
+                        <ListItem button
+                          className={open[EnumSection.Drawer] ? classes.nested : ''}
+                          onClick={(e) => this.onNavigate(e, StaticRoutes.IncidentManager)}>
+                          <ListItemIcon>
+                            <Icon path={mdiBellAlertOutline} size="1.5rem" />
+                          </ListItemIcon>
+                          <ListItemText primary={_t({ id: 'links.workflow.incident.manager' })} />
                         </ListItem>
                       </SecureContent>
 
@@ -633,7 +646,8 @@ class Home extends React.Component<HomeProps, HomeState> {
               <Route path={StaticRoutes.Settings} component={PlaceHolder} />
               {/* Secured paths */}
               <SecureRoute path={StaticRoutes.AccountManager} component={AccountManager} roles={[EnumRole.ADMIN]} />
-              <SecureRoute path={StaticRoutes.WorkflowManager} component={WorkflowManager} roles={[EnumRole.ADMIN]} />
+              <SecureRoute path={StaticRoutes.ProcessInstanceManager} component={ProcessInstanceManager} roles={[EnumRole.ADMIN]} />
+              <SecureRoute path={StaticRoutes.IncidentManager} component={IncidentManager} roles={[EnumRole.ADMIN]} />
               {/* Default */}
               <Redirect push={true} to={ErrorPages.NotFound} />
             </Switch>

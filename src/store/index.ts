@@ -11,11 +11,12 @@ import { accountReducer } from './account/reducer';
 import { configurationReducer } from './config/reducer';
 import { contractReducer } from './contract/reducer';
 import { draftReducer } from './draft/reducer';
+import { incidentReducer } from './incident/reducer';
 import { mapViewerReducer } from './map/reducer';
 import { messageReducer } from './i18n/reducer';
+import { processInstanceReducer } from './process-instance/reducer';
 import { securityReducer } from './security/reducer';
 import { viewportReducer } from './viewport/reducer';
-import { workflowReducer } from './workflow/reducer';
 
 // Combine reducers
 export const rootReducer = Redux.combineReducers({
@@ -29,7 +30,10 @@ export const rootReducer = Redux.combineReducers({
   map: mapViewerReducer,
   security: securityReducer,
   viewport: viewportReducer,
-  workflow: workflowReducer,
+  workflow: Redux.combineReducers({
+    instances: processInstanceReducer,
+    incidents: incidentReducer,
+  }),
   // Syncs history and store
   router: connectRouter(history),
   // Syncs loading bar and store

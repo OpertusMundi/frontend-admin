@@ -128,7 +128,7 @@ const success = (text: string, icon?: iconFunc, autoClose: number = 5000) => {
   }
 };
 
-export default {
+const service = {
   error,
   errorHtml,
   info,
@@ -137,3 +137,5 @@ export default {
   warn,
   warnHtml,
 };
+
+export default service;

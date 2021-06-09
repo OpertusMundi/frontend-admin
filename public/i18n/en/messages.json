@@ -160,7 +160,12 @@
     "provider-manager": "Manage Providers",
     "settings": "Settings",
     "workflow": {
-      "explorer": "Workflows"
+      "incident": {
+        "manager": "Incidents"
+      },
+      "process-instance": {
+        "manager": "Process Instances"
+      }
     }
   },
   "locales": {
@@ -232,6 +237,41 @@
         "cancel-confirm": "All changes will be discarded. Would you like to continue?",
         "delete-confirm": "Record {name} will be deleted. Would you like to continue?",
         "delete-contract": "Are you sure you want to delete this contract?"
+      }
+    }
+  },
+  "workflow": {
+    "header": {
+      "instance": {
+        "actions": "Actions",
+        "process-definition-name": "Process",
+        "process-definition-version": "Version",
+        "process-definition-deployed-on": "Deployed On",
+        "incident-count": "Incidents",
+        "business-key": "Business Key",
+        "started-on": "Started On"
+      },
+      "incident": {
+        "actions": "Actions",
+        "error-message": "Error",
+        "process-definition-name": "Process",
+        "process-definition-version": "Version",
+        "process-definition-deployed-on": "Deployed On",
+        "incident-count": "Incidents",
+        "business-key": "Business Key",
+        "reported-on": "Created On",
+        "task-name": "Task",
+        "task-worker": "Worker"
+      }
+    },
+    "last-update": "Last updated: ",
+    "tooltip": {
+      "instance": {
+        "view": "View details"
+      },
+      "incident": {
+        "error-details": "View error details",
+        "process-instance": "View process instance"
       }
     }
   }
