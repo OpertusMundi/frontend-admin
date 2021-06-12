@@ -7,12 +7,13 @@ import { loadingBarReducer } from 'react-redux-loading-bar';
 
 import { history } from 'routing';
 
-import { accountReducer } from './account/reducer';
 import { configurationReducer } from './config/reducer';
 import { contractReducer } from './contract/reducer';
 import { draftReducer } from './draft/reducer';
+import { helpdeskAccountReducer } from './account/reducer';
 import { incidentReducer } from './incident/reducer';
 import { mapViewerReducer } from './map/reducer';
+import { marketplaceAccountReducer } from './account-marketplace/reducer';
 import { messageReducer } from './i18n/reducer';
 import { processInstanceReducer } from './process-instance/reducer';
 import { securityReducer } from './security/reducer';
@@ -21,7 +22,8 @@ import { viewportReducer } from './viewport/reducer';
 // Combine reducers
 export const rootReducer = Redux.combineReducers({
   account: Redux.combineReducers({
-    explorer: accountReducer,
+    helpdesk: helpdeskAccountReducer,
+    marketplace: marketplaceAccountReducer,
   }),
   config: configurationReducer,
   contract: contractReducer,

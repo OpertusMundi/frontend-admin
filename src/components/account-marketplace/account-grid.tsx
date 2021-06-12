@@ -1,5 +1,4 @@
 import React from 'react';
-import { AxiosError } from 'axios';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
@@ -20,20 +19,16 @@ import { mdiCommentAlertOutline, mdiTrashCan, mdiUndoVariant } from '@mdi/js';
 
 // Services
 import message from 'service/message';
-import HelpdeskAccountApi from 'service/account';
+import MarketplaceAccountApi from 'service/account-marketplace';
 
 // Store
 import { RootState } from 'store';
-import { addToSelection, removeFromSelection, resetFilter, resetSelection, setFilter, setPager, setSorting } from 'store/account/actions';
-import { find } from 'store/account/thunks';
-
-// Utilities
-import { localizeErrorCodes } from 'utils/error';
+import { addToSelection, removeFromSelection, resetFilter, resetSelection, setFilter, setPager, setSorting } from 'store/account-marketplace/actions';
+import { find } from 'store/account-marketplace/thunks';
 
 // Model
-import { DynamicRoutes, buildPath } from 'model/routes';
 import { PageRequest, Sorting, SimpleResponse } from 'model/response';
-import { HelpdeskAccount, EnumHelpdeskAccountSortField } from 'model/account';
+import { MarketplaceAccount, EnumMarketplaceAccountSortField } from 'model/account';
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
@@ -67,7 +62,7 @@ const styles = (theme: Theme) => createStyles({
 
 interface AccountManagerState {
   confirm: boolean;
-  record: HelpdeskAccount | null
+  record: MarketplaceAccount | null
 }
 
 interface AccountManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
@@ -76,14 +71,12 @@ interface AccountManagerProps extends PropsFromRedux, WithStyles<typeof styles>,
 
 class AccountManager extends React.Component<AccountManagerProps, AccountManagerState> {
 
-  private api: HelpdeskAccountApi;
+  private api: MarketplaceAccountApi;
 
   constructor(props: AccountManagerProps) {
     super(props);
 
-    this.api = new HelpdeskAccountApi();
-
-    this.deleteRow = this.deleteRow.bind(this);
+    this.api = new MarketplaceAccountApi();
   }
 
   state: AccountManagerState = {
@@ -91,7 +84,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
     record: null,
   }
 
-  showConfirmDialog(record: HelpdeskAccount): void {
+  showConfirmDialog(record: MarketplaceAccount): void {
     this.setState({
       confirm: true,
       record,
@@ -107,28 +100,9 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
 
   confirmDialogHandler(action: DialogAction): void {
     switch (action.key) {
-      case EnumDialogAction.Yes: {
-        const { record } = this.state;
-
-        if (record && record.id) {
-          this.api.remove(record.id)
-            .then((response) => {
-              if (response.data.success) {
-                this.find();
-
-                message.info('error.delete-success');
-              } else {
-                const messages = localizeErrorCodes(this.props.intl, response.data);
-                message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
-              }
-            })
-            .catch((err: AxiosError<SimpleResponse>) => {
-              const messages = localizeErrorCodes(this.props.intl, err.response?.data);
-              message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
-            });
-        }
+      case EnumDialogAction.Yes:
         break;
-      }
+
     }
 
     this.hideConfirmDialog();
@@ -146,27 +120,11 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
     });
   }
 
-  createRow(): void {
-    this.props.history.push(DynamicRoutes.AccountCreate);
+  updateRow(key: string): void {
+
   }
 
-  updateRow(id: number): void {
-    const path = buildPath(DynamicRoutes.AccountUpdate, [id.toString()]);
-
-    this.props.history.push(path);
-  }
-
-  deleteRow(id: number): void {
-    const { explorer: { result } } = this.props;
-
-    const record = result?.items.find(o => o.id === id);
-
-    if (record) {
-      this.showConfirmDialog(record);
-    }
-  }
-
-  setSorting(sorting: Sorting<EnumHelpdeskAccountSortField>[]): void {
+  setSorting(sorting: Sorting<EnumMarketplaceAccountSortField>[]): void {
     this.props.setSorting(sorting);
     this.find();
   }
@@ -192,14 +150,13 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
               setFilter={setFilter}
               resetFilter={resetFilter}
               find={find}
-              create={() => this.createRow()}
               disabled={loading}
             />
             {lastUpdated &&
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Typography variant="caption" display="block" gutterBottom className={classes.caption}>
-                    <FormattedMessage id="account.helpdesk.last-update" />
+                    <FormattedMessage id="account.marketplace.last-update" />
                     <FormattedTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
                   </Typography>
                 </Grid>
@@ -209,19 +166,18 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
 
           <Paper className={classes.paperTable}>
             <AccountTable
-              deleteRow={this.deleteRow}
               find={this.props.find}
               query={query}
               result={result}
               pagination={pagination}
               selected={selected}
               setPager={setPager}
-              setSorting={(sorting: Sorting<EnumHelpdeskAccountSortField>[]) => this.setSorting(sorting)}
+              setSorting={(sorting: Sorting<EnumMarketplaceAccountSortField>[]) => this.setSorting(sorting)}
               addToSelection={addToSelection}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
               sorting={sorting}
-              updateRow={(id: number) => this.updateRow(id)}
+              updateRow={(key: string) => this.updateRow(key)}
               loading={loading}
             />
           </Paper>
@@ -272,12 +228,12 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
 
 const mapState = (state: RootState) => ({
   config: state.config,
-  explorer: state.account.helpdesk,
+  explorer: state.account.marketplace,
 });
 
 const mapDispatch = {
   addToSelection,
-  find: (pageRequest?: PageRequest, sorting?: Sorting<EnumHelpdeskAccountSortField>[]) => find(pageRequest, sorting),
+  find: (pageRequest?: PageRequest, sorting?: Sorting<EnumMarketplaceAccountSortField>[]) => find(pageRequest, sorting),
   removeFromSelection,
   resetFilter,
   resetSelection,

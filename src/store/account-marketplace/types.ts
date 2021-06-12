@@ -2,18 +2,18 @@ import { Moment } from 'moment';
 
 import { LogoutInitAction } from 'store/security/types';
 import { PageResult, PageRequest, Sorting, ObjectResponse } from 'model/response';
-import { EnumHelpdeskAccountSortField, HelpdeskAccount, HelpdeskAccountQuery } from 'model/account';
+import { EnumMarketplaceAccountSortField, MarketplaceAccount, MarketplaceAccountQuery } from 'model/account';
 
 // State
-export interface HelpdeskAccountManagerState {
+export interface MarketplaceAccountManagerState {
   loading: boolean;
   lastUpdated: Moment | null;
   pagination: PageRequest;
-  query: HelpdeskAccountQuery;
-  result: PageResult<HelpdeskAccount> | null;
-  selected: HelpdeskAccount[];
-  sorting: Sorting<EnumHelpdeskAccountSortField>[];
-  response: ObjectResponse<HelpdeskAccount> | null;
+  query: MarketplaceAccountQuery;
+  result: PageResult<MarketplaceAccount> | null;
+  selected: MarketplaceAccount[];
+  sorting: Sorting<EnumMarketplaceAccountSortField>[];
+  response: ObjectResponse<MarketplaceAccount> | null;
 }
 
 // Actions
@@ -28,9 +28,6 @@ export const RESET_FILTER = 'account/manager/RESET_FILTER';
 export const SEARCH_INIT = 'account/manager/SEARCH_INIT';
 export const SEARCH_FAILURE = 'account/manager/SEARCH_FAILURE';
 export const SEARCH_COMPLETE = 'account/manager/SEARCH_COMPLETE';
-
-export const SAVE_INIT = 'account/manager/SAVE_INIT';
-export const SAVE_COMPLETE = 'account/manager/SAVE_COMPLETE';
 
 export const ADD_SELECTED = 'account/manager/ADD_SELECTED';
 export const REMOVE_SELECTED = 'account/manager/REMOVE_SELECTED';
@@ -49,12 +46,12 @@ export interface ResetPagerAction {
 
 export interface SetSortingAction {
   type: typeof SET_SORTING;
-  sorting: Sorting<EnumHelpdeskAccountSortField>[];
+  sorting: Sorting<EnumMarketplaceAccountSortField>[];
 }
 
 export interface SetFilterAction {
   type: typeof SET_FILTER;
-  query: Partial<HelpdeskAccountQuery>;
+  query: Partial<MarketplaceAccountQuery>;
 }
 
 export interface ResetFilterAction {
@@ -71,26 +68,17 @@ export interface SearchFailureAction {
 
 export interface SearchCompleteAction {
   type: typeof SEARCH_COMPLETE;
-  result: PageResult<HelpdeskAccount>;
-}
-
-export interface SaveInitAction {
-  type: typeof SAVE_INIT;
-}
-
-export interface SaveCompleteAction {
-  type: typeof SAVE_COMPLETE;
-  response: ObjectResponse<HelpdeskAccount>;
+  result: PageResult<MarketplaceAccount>;
 }
 
 export interface SetSelectedAction {
   type: typeof ADD_SELECTED;
-  selected: HelpdeskAccount[];
+  selected: MarketplaceAccount[];
 }
 
 export interface RemoveFromSelectionAction {
   type: typeof REMOVE_SELECTED;
-  removed: HelpdeskAccount[];
+  removed: MarketplaceAccount[];
 }
 
 export interface ResetSelectionAction {
@@ -110,6 +98,4 @@ export type AccountActions =
   | SetSelectedAction
   | RemoveFromSelectionAction
   | ResetSelectionAction
-  | SaveInitAction
-  | SaveCompleteAction
   ;

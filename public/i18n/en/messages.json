@@ -17,7 +17,7 @@
         "passwordMatch": "Verify password"
       }
     },
-    "manager": {
+    "helpdesk": {
       "filter": {
         "name": "Username"
       },
@@ -25,12 +25,34 @@
         "actions": "Actions",
         "email": "Username",
         "firstName": "First name",
-        "lastName": "Last name"
+        "lastName": "Last name",
+        "roles": "Roles",
+        "modified-on": "Updated On"
       },
       "last-update": "Last updated: ",
       "tooltip": {
         "delete": "Delete",
         "edit": "Edit"
+      }
+    },
+    "marketplace": {
+      "filter": {
+        "name": "Username"
+      },
+      "header": {
+        "actions": " ",
+        "email": "Username",
+        "consumer": "Consumer Status",
+        "provider": "Provider Status",
+        "registered-on": "Registered On"
+      },
+      "last-update": "Last updated: ",
+      "tooltip": {
+        "send-message": "Send message",
+        "view-assets": "View purchased assets and service subscriptions",
+        "view-details": "View details",
+        "view-finance": "View finance",
+        "view-orders": "View orders"
       }
     }
   },
@@ -137,8 +159,9 @@
   },
   "links": {
     "account": {
-      "explorer": "Users",
       "create": "Create",
+      "helpdesk": "Helpdesk Users",
+      "marketplace": "Marketplace Users",
       "update": "Edit"
     },
     "admin": "Admin",

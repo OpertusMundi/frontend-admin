@@ -17,7 +17,7 @@ import { mdiCommentAlertOutline } from '@mdi/js';
 
 // Model
 import { PageRequest, PageResult, Sorting } from 'model/response';
-import { EnumSortField, Account, AccountQuery } from 'model/account';
+import { EnumHelpdeskAccountSortField, HelpdeskAccount, HelpdeskAccountQuery } from 'model/account';
 
 // Services
 import message from 'service/message';
@@ -44,12 +44,12 @@ const styles = (theme: Theme) => createStyles({
 
 interface AccountFiltersProps extends WithStyles<typeof styles> {
   intl: IntlShape,
-  query: AccountQuery,
-  setFilter: (query: Partial<AccountQuery>) => void,
+  query: HelpdeskAccountQuery,
+  setFilter: (query: Partial<HelpdeskAccountQuery>) => void,
   resetFilter: () => void,
   find: (
-    pageRequest?: PageRequest, sorting?: Sorting<EnumSortField>[]
-  ) => Promise<PageResult<Account> | null>,
+    pageRequest?: PageRequest, sorting?: Sorting<EnumHelpdeskAccountSortField>[]
+  ) => Promise<PageResult<HelpdeskAccount> | null>,
   create: () => void,
   disabled: boolean,
 }
@@ -97,7 +97,7 @@ class AccountFilters extends React.Component<AccountFiltersProps> {
           <Grid item sm={4} xs={12}>
             <TextField
               id="name"
-              label={_t({ id: 'account.manager.filter.name' })}
+              label={_t({ id: 'account.helpdesk.filter.name' })}
               variant="standard"
               margin="normal"
               className={classes.textField}

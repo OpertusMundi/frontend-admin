@@ -10,6 +10,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 import Icon from '@mdi/react';
 import {
+  mdiContentCopy,
   mdiDatabaseCogOutline,
 } from '@mdi/js';
 
@@ -18,7 +19,10 @@ import MaterialTable, { cellActionHandler, Column } from 'components/material-ta
 import { EnumProcessInstanceSortField, ProcessInstance, ProcessInstanceQuery } from 'model/workflow';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
+const COPY = 'copy';
+
 enum EnumAction {
+  CopyBusinessKey = 'copy-business-key',
   View = 'view',
 };
 
@@ -40,7 +44,7 @@ function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
               onClick={() => handleAction ? handleAction(EnumAction.View, rowIndex, column, row) : null}
             >
               <Badge color="secondary" variant="dot" invisible={row.incidentCount === 0}>
-                <Icon path={mdiDatabaseCogOutline} className={classes.classes.rowIcon} />
+                <Icon path={mdiDatabaseCogOutline} className={classes.classes.rowIconAction} />
               </Badge>
             </i>
           </Tooltip>
@@ -80,6 +84,21 @@ function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
       accessor: 'businessKey',
       sortable: true,
       sortColumn: EnumProcessInstanceSortField.BUSINESS_KEY,
+      cell: (
+        rowIndex: number,
+        column: Column<ProcessInstance, EnumProcessInstanceSortField>,
+        row: ProcessInstance,
+        handleAction?: cellActionHandler<ProcessInstance, EnumProcessInstanceSortField>
+      ): React.ReactNode => (
+        <div className={classes.classes.compositeLabel}>
+          <div>{row.businessKey}</div>
+          <i
+            onClick={() => handleAction ? handleAction(EnumAction.CopyBusinessKey, rowIndex, column, row) : null}
+          >
+            <Icon path={mdiContentCopy} className={classes.classes.rowIconAction} />
+          </i>
+        </div>
+      ),
     }, {
       header: intl.formatMessage({ id: 'workflow.header.instance.started-on' }),
       id: 'startedOn',
@@ -101,18 +120,21 @@ const styles = (theme: Theme) => createStyles({
     display: 'flex',
     padding: 0,
   },
-  avatarIcon: {
-    width: 16,
-    color: '#ffffff',
+  compositeLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   rowIcon: {
     width: 18,
     marginRight: 8,
     cursor: 'pointer',
   },
-  link: {
-    color: 'inherit',
-  }
+  rowIconAction: {
+    width: 18,
+    marginRight: 8,
+    cursor: 'pointer',
+  },
 });
 
 interface FieldTableProps extends WithStyles<typeof styles> {
@@ -144,8 +166,17 @@ class ProcessInstanceTable extends React.Component<FieldTableProps> {
 
   handleAction(action: string, index: number, column: Column<ProcessInstance, EnumProcessInstanceSortField>, row: ProcessInstance): void {
     switch (action) {
-      case EnumAction.View:
-        this.props.viewRow(row.processInstanceId);
+      case EnumAction.CopyBusinessKey:
+        const element: HTMLInputElement = document.getElementById('copy-to-clipboard') as HTMLInputElement;
+
+        if (element && document.queryCommandSupported(COPY)) {
+          console.log(COPY);
+          element.focus();
+          element.value = row.businessKey;
+          element.select();
+          document.execCommand(COPY);
+        }
+        break;
         break;
       default:
         // No action
@@ -157,32 +188,35 @@ class ProcessInstanceTable extends React.Component<FieldTableProps> {
     const { intl, classes, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
 
     return (
-      <MaterialTable<ProcessInstance, EnumProcessInstanceSortField>
-        intl={intl}
-        columns={workflowColumns(intl, { classes })}
-        rows={result ? result.items : []}
-        pagination={{
-          rowsPerPageOptions: [10, 20, 50],
-          count: result ? result.count : 0,
-          size: result ? result.pageRequest.size : 20,
-          page: result ? result.pageRequest.page : 0,
-        }}
-        handleAction={this.handleAction}
-        handleChangePage={(index: number) => {
-          setPager(index, pagination.size);
+      <>
+        <MaterialTable<ProcessInstance, EnumProcessInstanceSortField>
+          intl={intl}
+          columns={workflowColumns(intl, { classes })}
+          rows={result ? result.items : []}
+          pagination={{
+            rowsPerPageOptions: [10, 20, 50],
+            count: result ? result.count : 0,
+            size: result ? result.pageRequest.size : 20,
+            page: result ? result.pageRequest.page : 0,
+          }}
+          handleAction={this.handleAction}
+          handleChangePage={(index: number) => {
+            setPager(index, pagination.size);
 
-          find();
-        }}
-        handleChangeRowsPerPage={(size: number) => {
-          setPager(0, size);
+            find();
+          }}
+          handleChangeRowsPerPage={(size: number) => {
+            setPager(0, size);
 
-          this.props.find();
-        }}
-        selected={selected}
-        sorting={sorting}
-        setSorting={setSorting}
-        loading={loading}
-      />
+            this.props.find();
+          }}
+          selected={selected}
+          sorting={sorting}
+          setSorting={setSorting}
+          loading={loading}
+        />
+        <input type="text" id="copy-to-clipboard" defaultValue="" style={{ position: 'absolute', left: -1000 }} />
+      </>
     );
   }
 }

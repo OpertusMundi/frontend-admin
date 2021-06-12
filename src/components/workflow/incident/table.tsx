@@ -10,6 +10,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Icon from '@mdi/react';
 import {
   mdiBugOutline,
+  mdiContentCopy,
   mdiDatabaseCogOutline,
 } from '@mdi/js';
 
@@ -18,9 +19,12 @@ import MaterialTable, { cellActionHandler, Column } from 'components/material-ta
 import { EnumIncidentSortField, Incident, IncidentQuery } from 'model/workflow';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
+const COPY = 'copy';
+
 enum EnumAction {
   ProcessInstance = 'process-instance',
   ErrorDetails = 'error-details',
+  CopyBusinessKey = 'copy-business-key',
 };
 
 function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<Incident, EnumIncidentSortField>[] {
@@ -40,14 +44,14 @@ function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
             <i
               onClick={() => handleAction ? handleAction(EnumAction.ProcessInstance, rowIndex, column, row) : null}
             >
-              <Icon path={mdiDatabaseCogOutline} className={classes.classes.rowIcon} />
+              <Icon path={mdiDatabaseCogOutline} className={classes.classes.rowIconAction} />
             </i>
           </Tooltip>
           <Tooltip title={intl.formatMessage({ id: 'workflow.tooltip.incident.error-details' })}>
             <i
               onClick={() => handleAction ? handleAction(EnumAction.ErrorDetails, rowIndex, column, row) : null}
             >
-              <Icon path={mdiBugOutline} className={classes.classes.rowIcon} />
+              <Icon path={mdiBugOutline} className={classes.classes.rowIconAction} />
             </i>
           </Tooltip>
         </div>
@@ -76,11 +80,26 @@ function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
         <FormattedTime value={row.incidentDateTime.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
     }, {
-      header: intl.formatMessage({ id: 'workflow.header.incident.task-worker' }),
-      id: 'taskWorker',
-      accessor: 'taskWorker',
+      header: intl.formatMessage({ id: 'workflow.header.incident.business-key' }),
+      id: 'businessKey',
+      accessor: 'businessKey',
       sortable: true,
-      sortColumn: EnumIncidentSortField.TASK_WORKER,
+      sortColumn: EnumIncidentSortField.BUSINESS_KEY,
+      cell: (
+        rowIndex: number,
+        column: Column<Incident, EnumIncidentSortField>,
+        row: Incident,
+        handleAction?: cellActionHandler<Incident, EnumIncidentSortField>
+      ): React.ReactNode => (
+        <div className={classes.classes.compositeLabel}>
+          <div>{row.businessKey}</div>
+          <i
+            onClick={() => handleAction ? handleAction(EnumAction.CopyBusinessKey, rowIndex, column, row) : null}
+          >
+            <Icon path={mdiContentCopy} className={classes.classes.rowIconAction} />
+          </i>
+        </div>
+      ),
     }, {
       header: intl.formatMessage({ id: 'workflow.header.incident.task-name' }),
       id: 'taskName',
@@ -100,18 +119,21 @@ const styles = (theme: Theme) => createStyles({
     display: 'flex',
     padding: 0,
   },
-  avatarIcon: {
-    width: 16,
-    color: '#ffffff',
+  compositeLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   rowIcon: {
     width: 18,
     marginRight: 8,
     cursor: 'pointer',
   },
-  link: {
-    color: 'inherit',
-  }
+  rowIconAction: {
+    width: 18,
+    marginRight: 8,
+    cursor: 'pointer',
+  },
 });
 
 interface FieldTableProps extends WithStyles<typeof styles> {
@@ -143,10 +165,16 @@ class IncidentTable extends React.Component<FieldTableProps> {
 
   handleAction(action: string, index: number, column: Column<Incident, EnumIncidentSortField>, row: Incident): void {
     switch (action) {
-      case EnumAction.ProcessInstance:
-        this.props.viewRow(row.processInstanceId);
-        break;
-      case EnumAction.ErrorDetails:
+      case EnumAction.CopyBusinessKey:
+        const element: HTMLInputElement = document.getElementById('copy-to-clipboard') as HTMLInputElement;
+
+        if (element && document.queryCommandSupported(COPY)) {
+          console.log(COPY);
+          element.focus();
+          element.value = row.businessKey;
+          element.select();
+          document.execCommand(COPY);
+        }
         break;
       default:
         // No action
@@ -158,32 +186,35 @@ class IncidentTable extends React.Component<FieldTableProps> {
     const { intl, classes, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
 
     return (
-      <MaterialTable<Incident, EnumIncidentSortField>
-        intl={intl}
-        columns={workflowColumns(intl, { classes })}
-        rows={result ? result.items : []}
-        pagination={{
-          rowsPerPageOptions: [10, 20, 50],
-          count: result ? result.count : 0,
-          size: result ? result.pageRequest.size : 20,
-          page: result ? result.pageRequest.page : 0,
-        }}
-        handleAction={this.handleAction}
-        handleChangePage={(index: number) => {
-          setPager(index, pagination.size);
+      <>
+        <MaterialTable<Incident, EnumIncidentSortField>
+          intl={intl}
+          columns={workflowColumns(intl, { classes })}
+          rows={result ? result.items : []}
+          pagination={{
+            rowsPerPageOptions: [10, 20, 50],
+            count: result ? result.count : 0,
+            size: result ? result.pageRequest.size : 20,
+            page: result ? result.pageRequest.page : 0,
+          }}
+          handleAction={this.handleAction}
+          handleChangePage={(index: number) => {
+            setPager(index, pagination.size);
 
-          find();
-        }}
-        handleChangeRowsPerPage={(size: number) => {
-          setPager(0, size);
+            find();
+          }}
+          handleChangeRowsPerPage={(size: number) => {
+            setPager(0, size);
 
-          this.props.find();
-        }}
-        selected={selected}
-        sorting={sorting}
-        setSorting={setSorting}
-        loading={loading}
-      />
+            this.props.find();
+          }}
+          selected={selected}
+          sorting={sorting}
+          setSorting={setSorting}
+          loading={loading}
+        />
+        <input type="text" id="copy-to-clipboard" defaultValue="" style={{ position: 'absolute', left: -1000 }} />
+      </>
     );
   }
 }

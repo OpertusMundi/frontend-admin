@@ -32,7 +32,7 @@ export enum EnumIncidentSortField {
 }
 
 export interface IncidentQuery {
-  processInstanceId: string;
+  businessKey: string;
 }
 
 export interface Incident {

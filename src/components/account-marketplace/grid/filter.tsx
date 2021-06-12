@@ -17,7 +17,7 @@ import { mdiCommentAlertOutline } from '@mdi/js';
 
 // Model
 import { PageRequest, PageResult, Sorting } from 'model/response';
-import { EnumIncidentSortField, Incident, IncidentQuery } from 'model/workflow';
+import { EnumMarketplaceAccountSortField, MarketplaceAccount, MarketplaceAccountQuery } from 'model/account';
 
 // Services
 import message from 'service/message';
@@ -42,20 +42,20 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-interface IncidentFiltersProps extends WithStyles<typeof styles> {
+interface AccountFiltersProps extends WithStyles<typeof styles> {
   intl: IntlShape,
-  query: IncidentQuery,
-  setFilter: (query: Partial<IncidentQuery>) => void,
+  query: MarketplaceAccountQuery,
+  setFilter: (query: Partial<MarketplaceAccountQuery>) => void,
   resetFilter: () => void,
   find: (
-    pageRequest?: PageRequest, sorting?: Sorting<EnumIncidentSortField>[]
-  ) => Promise<PageResult<Incident> | null>,
+    pageRequest?: PageRequest, sorting?: Sorting<EnumMarketplaceAccountSortField>[]
+  ) => Promise<PageResult<MarketplaceAccount> | null>,
   disabled: boolean,
 }
 
-class IncidentFilters extends React.Component<IncidentFiltersProps> {
+class AccountFilters extends React.Component<AccountFiltersProps> {
 
-  constructor(props: IncidentFiltersProps) {
+  constructor(props: AccountFiltersProps) {
     super(props);
 
     this.clear = this.clear.bind(this);
@@ -83,21 +83,24 @@ class IncidentFilters extends React.Component<IncidentFiltersProps> {
 
   render() {
     const { classes, disabled, query, setFilter } = this.props;
+    const _t = this.props.intl.formatMessage;
 
     return (
       <form onSubmit={this.search} noValidate autoComplete="off">
         <Grid container spacing={3} justify={'space-between'}>
-          <Grid item sm={8} xs={12}>
+          <Grid item sm={4} xs={12}>
             <TextField
-              id="outlined-multiline-static"
-              label="Business Key"
-              value={query.businessKey}
-              onChange={
-                (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => setFilter({ businessKey: event.target.value })
-              }
+              id="name"
+              label={_t({ id: 'account.marketplace.filter.name' })}
+              variant="standard"
+              margin="normal"
+              className={classes.textField}
+              value={query.name || ''}
+              onChange={e => setFilter({ name: e.target.value })}
             />
           </Grid>
-          <Grid container item sm={4} xs={12} justify={'flex-end'}>
+
+          <Grid container item sm={8} xs={12} justify={'flex-end'}>
             <Button
               type="submit"
               variant="contained"
@@ -115,7 +118,7 @@ class IncidentFilters extends React.Component<IncidentFiltersProps> {
 }
 
 // Apply styles
-const styledComponent = withStyles(styles)(IncidentFilters);
+const styledComponent = withStyles(styles)(AccountFilters);
 
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);

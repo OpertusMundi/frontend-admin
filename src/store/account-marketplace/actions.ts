@@ -1,5 +1,5 @@
-import { PageResult, Sorting, ObjectResponse } from 'model/response';
-import { EnumHelpdeskAccountSortField, HelpdeskAccount, HelpdeskAccountQuery } from 'model/account';
+import { PageResult, Sorting } from 'model/response';
+import { EnumMarketplaceAccountSortField, MarketplaceAccount, MarketplaceAccountQuery } from 'model/account';
 
 import {
   AccountActions,
@@ -14,8 +14,6 @@ import {
   REMOVE_SELECTED,
   SET_SORTING,
   RESET_SELECTED,
-  SAVE_INIT,
-  SAVE_COMPLETE,
 } from './types';
 
 
@@ -34,7 +32,7 @@ export function resetPager(): AccountActions {
   };
 }
 
-export function setFilter(query: Partial<HelpdeskAccountQuery>): AccountActions {
+export function setFilter(query: Partial<MarketplaceAccountQuery>): AccountActions {
   return {
     type: SET_FILTER,
     query,
@@ -47,7 +45,7 @@ export function resetFilter(): AccountActions {
   };
 }
 
-export function setSorting(sorting: Sorting<EnumHelpdeskAccountSortField>[]): AccountActions {
+export function setSorting(sorting: Sorting<EnumMarketplaceAccountSortField>[]): AccountActions {
   return {
     type: SET_SORTING,
     sorting,
@@ -66,34 +64,21 @@ export function searchFailure(): AccountActions {
   };
 }
 
-export function searchComplete(result: PageResult<HelpdeskAccount>): AccountActions {
+export function searchComplete(result: PageResult<MarketplaceAccount>): AccountActions {
   return {
     type: SEARCH_COMPLETE,
     result,
   };
 }
 
-export function saveInit(): AccountActions {
-  return {
-    type: SAVE_INIT,
-  };
-}
-
-export function saveComplete(response: ObjectResponse<HelpdeskAccount>): AccountActions {
-  return {
-    type: SAVE_COMPLETE,
-    response,
-  };
-}
-
-export function addToSelection(selected: HelpdeskAccount[]): AccountActions {
+export function addToSelection(selected: MarketplaceAccount[]): AccountActions {
   return {
     type: ADD_SELECTED,
     selected,
   };
 }
 
-export function removeFromSelection(removed: HelpdeskAccount[]): AccountActions {
+export function removeFromSelection(removed: MarketplaceAccount[]): AccountActions {
   return {
     type: REMOVE_SELECTED,
     removed,

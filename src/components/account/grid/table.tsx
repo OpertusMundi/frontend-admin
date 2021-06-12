@@ -2,11 +2,12 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 
-import { injectIntl, IntlShape } from 'react-intl';
+import { injectIntl, IntlShape, FormattedMessage, FormattedTime } from 'react-intl';
 
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
+import Avatar from '@material-ui/core/Avatar';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import Icon from '@mdi/react';
@@ -15,7 +16,7 @@ import { mdiPencilOutline, mdiTrashCanOutline } from '@mdi/js';
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
 import { buildPath, DynamicRoutes } from 'model/routes';
-import { EnumSortField, Account, AccountQuery } from 'model/account';
+import { EnumHelpdeskAccountSortField, HelpdeskAccount, HelpdeskAccountQuery } from 'model/account';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 enum EnumAction {
@@ -23,57 +24,99 @@ enum EnumAction {
   Edit = 'edit',
 };
 
-function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<Account, EnumSortField>[] {
+function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<HelpdeskAccount, EnumHelpdeskAccountSortField>[] {
   return (
     [{
-      header: intl.formatMessage({ id: 'account.manager.header.actions' }),
+      header: intl.formatMessage({ id: 'account.helpdesk.header.actions' }),
       id: 'actions',
       width: 80,
       cell: (
-        rowIndex: number, column: Column<Account, EnumSortField>, row: Account, handleAction?: cellActionHandler<Account, EnumSortField>
+        rowIndex: number, column: Column<HelpdeskAccount, EnumHelpdeskAccountSortField>, row: HelpdeskAccount, handleAction?: cellActionHandler<HelpdeskAccount, EnumHelpdeskAccountSortField>
       ): React.ReactNode => (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Tooltip title={intl.formatMessage({ id: 'account.manager.tooltip.edit' })}>
-              <i
-                onClick={() => handleAction ? handleAction(EnumAction.Edit, rowIndex, column, row) : null}
-              >
-                <Icon path={mdiPencilOutline} className={classes.classes.rowIcon} />
-              </i>
-            </Tooltip>
-            <Tooltip title={intl.formatMessage({ id: 'account.manager.tooltip.delete' })}>
-              <i
-                onClick={() => handleAction ? handleAction(EnumAction.Delete, rowIndex, column, row) : null}
-              >
-                <Icon path={mdiTrashCanOutline} className={classes.classes.rowIcon} />
-              </i>
-            </Tooltip>
-          </div>
-        ),
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Tooltip title={intl.formatMessage({ id: 'account.helpdesk.tooltip.edit' })}>
+            <i
+              onClick={() => handleAction ? handleAction(EnumAction.Edit, rowIndex, column, row) : null}
+            >
+              <Icon path={mdiPencilOutline} className={classes.classes.rowIcon} />
+            </i>
+          </Tooltip>
+          <Tooltip title={intl.formatMessage({ id: 'account.helpdesk.tooltip.delete' })}>
+            <i
+              onClick={() => handleAction ? handleAction(EnumAction.Delete, rowIndex, column, row) : null}
+            >
+              <Icon path={mdiTrashCanOutline} className={classes.classes.rowIcon} />
+            </i>
+          </Tooltip>
+        </div>
+      ),
     }, {
-      header: intl.formatMessage({ id: 'account.manager.header.email' }),
+      header: '',
+      id: 'avatar',
+      width: 60,
+      cell: (
+        rowIndex: number, column: Column<HelpdeskAccount, EnumHelpdeskAccountSortField>, row: HelpdeskAccount, handleAction?: cellActionHandler<HelpdeskAccount, EnumHelpdeskAccountSortField>
+      ): React.ReactNode => {
+        if (row?.image && row?.imageMimeType) {
+          const url = `data:${row.imageMimeType};base64,${row.image}`;
+          return (
+            <Avatar alt={row.email} src={url || undefined} variant="circular" className={classes.classes.avatar} />
+          );
+        }
+        return null;
+      },
+    }, {
+      header: intl.formatMessage({ id: 'account.helpdesk.header.email' }),
       id: 'email',
       width: 250,
       sortable: true,
-      sortColumn: EnumSortField.EMAIL,
+      sortColumn: EnumHelpdeskAccountSortField.EMAIL,
       cell: (
-        rowIndex: number, column: Column<Account, EnumSortField>, row: Account, handleAction?: cellActionHandler<Account, EnumSortField>
+        rowIndex: number, column: Column<HelpdeskAccount, EnumHelpdeskAccountSortField>, row: HelpdeskAccount, handleAction?: cellActionHandler<HelpdeskAccount, EnumHelpdeskAccountSortField>
       ): React.ReactNode => (
-          <Link to={buildPath(DynamicRoutes.AccountUpdate, [row.id + ''])} className={classes.classes.link}>
-            {row.email}
-          </Link>
-        ),
+        <Link to={buildPath(DynamicRoutes.AccountUpdate, [row.id + ''])} className={classes.classes.link}>
+          {row.email}
+        </Link>
+      ),
     }, {
-      header: intl.formatMessage({ id: 'account.manager.header.firstName' }),
+      header: intl.formatMessage({ id: 'account.helpdesk.header.firstName' }),
       id: 'firstName',
+      width: 150,
       accessor: 'firstName',
       sortable: true,
-      sortColumn: EnumSortField.FIRST_NAME,
+      sortColumn: EnumHelpdeskAccountSortField.FIRST_NAME,
     }, {
-      header: intl.formatMessage({ id: 'account.manager.header.lastName' }),
+      header: intl.formatMessage({ id: 'account.helpdesk.header.lastName' }),
       id: 'lastName',
+      width: 150,
       accessor: 'lastName',
       sortable: true,
-      sortColumn: EnumSortField.LAST_NAME,
+      sortColumn: EnumHelpdeskAccountSortField.LAST_NAME,
+    }, {
+      header: intl.formatMessage({ id: 'account.helpdesk.header.roles' }),
+      id: 'roles',
+      sortable: false,
+      cell: (
+        rowIndex: number, column: Column<HelpdeskAccount, EnumHelpdeskAccountSortField>, row: HelpdeskAccount, handleAction?: cellActionHandler<HelpdeskAccount, EnumHelpdeskAccountSortField>
+      ): React.ReactNode => (
+        <div className={classes.classes.roles}>
+          {row && row.roles && row.roles.map((r) => (
+            <div key={r} className={classes.classes.role}>
+              <FormattedMessage id={`enum.role.${r}`} />
+            </div>
+          ))}
+        </div>
+      ),
+    }, {
+      header: intl.formatMessage({ id: 'account.helpdesk.header.modified-on' }),
+      id: 'modifiedOn',
+      width: 180,
+      sortable: false,
+      cell: (
+        rowIndex: number, column: Column<HelpdeskAccount, EnumHelpdeskAccountSortField>, row: HelpdeskAccount, handleAction?: cellActionHandler<HelpdeskAccount, EnumHelpdeskAccountSortField>
+      ): React.ReactNode => (
+        <FormattedTime value={row?.modifiedOn?.toDate()} day='numeric' month='numeric' year='numeric' />
+      ),
     }]);
 }
 
@@ -82,6 +125,10 @@ const styles = (theme: Theme) => createStyles({
     display: 'flex',
     padding: 0,
   },
+  avatar: {
+    width: theme.spacing(4),
+    height: theme.spacing(4),
+  },
   rowIcon: {
     width: 18,
     marginRight: 8,
@@ -89,6 +136,17 @@ const styles = (theme: Theme) => createStyles({
   },
   link: {
     color: 'inherit',
+  },
+  roles: {
+    display: 'flex',
+  },
+  role: {
+    display: 'flex',
+    marginRight: theme.spacing(1),
+    background: '#0277BD',
+    color: '#ffffff',
+    padding: theme.spacing(1),
+    borderRadius: theme.spacing(0.5),
   }
 });
 
@@ -96,18 +154,18 @@ interface FieldTableProps extends WithStyles<typeof styles> {
   intl: IntlShape,
   deleteRow: (id: number) => void,
   find: (
-    pageRequest?: PageRequest, sorting?: Sorting<EnumSortField>[]
-  ) => Promise<PageResult<Account> | null>,
-  query: AccountQuery,
-  result: PageResult<Account> | null,
+    pageRequest?: PageRequest, sorting?: Sorting<EnumHelpdeskAccountSortField>[]
+  ) => Promise<PageResult<HelpdeskAccount> | null>,
+  query: HelpdeskAccountQuery,
+  result: PageResult<HelpdeskAccount> | null,
   pagination: PageRequest,
-  selected: Account[],
+  selected: HelpdeskAccount[],
   setPager: (page: number, size: number) => void,
-  setSorting: (sorting: Sorting<EnumSortField>[]) => void,
-  addToSelection: (rows: Account[]) => void,
-  removeFromSelection: (rows: Account[]) => void,
+  setSorting: (sorting: Sorting<EnumHelpdeskAccountSortField>[]) => void,
+  addToSelection: (rows: HelpdeskAccount[]) => void,
+  removeFromSelection: (rows: HelpdeskAccount[]) => void,
   resetSelection: () => void;
-  sorting: Sorting<EnumSortField>[];
+  sorting: Sorting<EnumHelpdeskAccountSortField>[];
   updateRow: (id: number) => void;
   loading?: boolean;
 }
@@ -120,7 +178,7 @@ class AccountTable extends React.Component<FieldTableProps> {
     this.handleAction = this.handleAction.bind(this);
   }
 
-  handleAction(action: string, index: number, column: Column<Account, EnumSortField>, row: Account): void {
+  handleAction(action: string, index: number, column: Column<HelpdeskAccount, EnumHelpdeskAccountSortField>, row: HelpdeskAccount): void {
     if (row.id) {
       switch (action) {
         case EnumAction.Delete:
@@ -140,7 +198,7 @@ class AccountTable extends React.Component<FieldTableProps> {
     const { intl, classes, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
 
     return (
-      <MaterialTable<Account, EnumSortField>
+      <MaterialTable<HelpdeskAccount, EnumHelpdeskAccountSortField>
         intl={intl}
         columns={accountColumns(intl, { classes })}
         rows={result ? result.items : []}

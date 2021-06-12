@@ -40,7 +40,7 @@ import { setPassword, setProfile } from 'store/security/thunks';
 
 // Model
 import { FieldMapperFunc, localizeErrorCodes } from 'utils/error';
-import { Account, SetPasswordCommand, ProfileCommand } from 'model/account';
+import { HelpdeskAccount, SetPasswordCommand, ProfileCommand } from 'model/account';
 import { SimpleResponse } from 'model/response';
 
 const MB = 1024 * 1024;
@@ -133,7 +133,7 @@ interface ProfileFormProps extends PropsFromRedux, WithStyles<typeof styles> {
  *
  */
 
-const accountToProfileCommand = (a: Account | null): ProfileCommand => {
+const accountToProfileCommand = (a: HelpdeskAccount | null): ProfileCommand => {
 
   return {
     firstName: a!.firstName,
@@ -169,7 +169,7 @@ class Profile extends React.Component<ProfileFormProps, ProfileFormState> {
   }
 
   get userName(): string {
-    const { email, firstName, lastName } = this.props.profile as Account;
+    const { email, firstName, lastName } = this.props.profile as HelpdeskAccount;
 
     if (firstName || lastName) {
       return `${firstName} ${lastName}`;
@@ -484,8 +484,8 @@ class Profile extends React.Component<ProfileFormProps, ProfileFormState> {
 
 const mapState = (state: RootState) => ({
   config: state.config,
-  loading: state.account.explorer.loading,
-  lastUpdated: state.account.explorer.lastUpdated,
+  loading: state.account.helpdesk.loading,
+  lastUpdated: state.account.helpdesk.lastUpdated,
   profile: state.security.profile,
 });
 

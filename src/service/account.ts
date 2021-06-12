@@ -2,15 +2,15 @@ import { AxiosRequestConfig } from 'axios';
 
 import { Api } from 'utils/api';
 import { ObjectResponse, PageRequest, Sorting, AxiosObjectResponse, AxiosPageResponse, PageResult, AxiosSimpleResponse } from 'model/response';
-import { EnumSortField, Account, AccountQuery, AccountFormData, AccountCommand, SetPasswordCommand, ProfileCommand } from 'model/account';
+import { EnumHelpdeskAccountSortField, HelpdeskAccount, HelpdeskAccountQuery, HelpdeskAccountFormData, HelpdeskAccountCommand, SetPasswordCommand, ProfileCommand } from 'model/account';
 
-export default class AccountApi extends Api {
+export default class HelpdeskAccountApi extends Api {
 
   constructor(config: AxiosRequestConfig = {}) {
     super(config);
   }
 
-  public createNew(): AccountCommand {
+  public createNew(): HelpdeskAccountCommand {
     return {
       active: true,
       blocked: false,
@@ -28,64 +28,64 @@ export default class AccountApi extends Api {
     };
   }
 
-  public async find(query: Partial<AccountQuery>, pageRequest: PageRequest, sorting: Sorting<EnumSortField>[]): Promise<AxiosPageResponse<Account>> {
+  public async find(query: Partial<HelpdeskAccountQuery>, pageRequest: PageRequest, sorting: Sorting<EnumHelpdeskAccountSortField>[]): Promise<AxiosPageResponse<HelpdeskAccount>> {
     const { page, size } = pageRequest;
     const { id: field, order } = sorting[0];
 
-    const queryString = (Object.keys(query) as Array<keyof AccountQuery>)
-      .reduce((result: string[], key: keyof AccountQuery) => {
+    const queryString = (Object.keys(query) as Array<keyof HelpdeskAccountQuery>)
+      .reduce((result: string[], key: keyof HelpdeskAccountQuery) => {
         return query[key] !== null ? [...result, `${key}=${query[key]}`] : result;
       }, []);
 
-    const url = `/action/admin/accounts?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
+    const url = `/action/helpdesk/accounts?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
 
-    return this.get<ObjectResponse<PageResult<Account>>>(url);
+    return this.get<ObjectResponse<PageResult<HelpdeskAccount>>>(url);
   }
 
-  public async findOne(id: number): Promise<AxiosObjectResponse<AccountFormData>> {
-    const url = `/action/admin/accounts/${id}`;
+  public async findOne(id: number): Promise<AxiosObjectResponse<HelpdeskAccountFormData>> {
+    const url = `/action/helpdesk/accounts/${id}`;
 
 
-    return this.get<ObjectResponse<AccountFormData>>(url);
+    return this.get<ObjectResponse<HelpdeskAccountFormData>>(url);
   }
 
-  public async create(command: AccountCommand): Promise<AxiosObjectResponse<Account>> {
-    const url = `/action/admin/accounts/`;
+  public async create(command: HelpdeskAccountCommand): Promise<AxiosObjectResponse<HelpdeskAccount>> {
+    const url = `/action/helpdesk/accounts/`;
 
-    return this.post<AccountCommand, ObjectResponse<Account>>(url, command);
+    return this.post<HelpdeskAccountCommand, ObjectResponse<HelpdeskAccount>>(url, command);
   }
 
-  public async update(id: number, command: AccountCommand): Promise<AxiosObjectResponse<Account>> {
-    const url = `/action/admin/accounts/${id}`;
+  public async update(id: number, command: HelpdeskAccountCommand): Promise<AxiosObjectResponse<HelpdeskAccount>> {
+    const url = `/action/helpdesk/accounts/${id}`;
 
-    return this.post<AccountCommand, ObjectResponse<Account>>(url, command);
+    return this.post<HelpdeskAccountCommand, ObjectResponse<HelpdeskAccount>>(url, command);
   }
 
   public async remove(id: number): Promise<AxiosSimpleResponse> {
-    const url = `/action/admin/accounts/${id}`;
+    const url = `/action/helpdesk/accounts/${id}`;
 
     return this.delete(url);
   }
 
-  public async setPassword(command: SetPasswordCommand): Promise<AxiosObjectResponse<Account>> {
+  public async setPassword(command: SetPasswordCommand): Promise<AxiosObjectResponse<HelpdeskAccount>> {
     const url = `/action/user/password`;
 
-    return this.post<SetPasswordCommand, ObjectResponse<Account>>(url, command);
+    return this.post<SetPasswordCommand, ObjectResponse<HelpdeskAccount>>(url, command);
   }
 
-  public async getProfile(): Promise<AxiosObjectResponse<Account>> {
+  public async getProfile(): Promise<AxiosObjectResponse<HelpdeskAccount>> {
     const url = `/action/user/profile`;
 
-    return this.get<ObjectResponse<Account>>(url);
+    return this.get<ObjectResponse<HelpdeskAccount>>(url);
   }
 
-  public async setProfile(command: ProfileCommand): Promise<AxiosObjectResponse<Account>> {
+  public async setProfile(command: ProfileCommand): Promise<AxiosObjectResponse<HelpdeskAccount>> {
     const url = `/action/user/profile`;
 
-    return this.post<ProfileCommand, ObjectResponse<Account>>(url, command);
+    return this.post<ProfileCommand, ObjectResponse<HelpdeskAccount>>(url, command);
   }
 
-  public accountToCommand(account: Account): AccountCommand {
+  public accountToCommand(account: HelpdeskAccount): HelpdeskAccountCommand {
     const {
       createdOn,
       emailVerified,
@@ -95,7 +95,7 @@ export default class AccountApi extends Api {
       ...rest
     } = account;
 
-    const command: AccountCommand = {
+    const command: HelpdeskAccountCommand = {
       ...rest,
       password: '',
       passwordMatch: '',

@@ -35,7 +35,7 @@ import { accountValidator as validator } from 'validation/account';
 
 // Services
 import message from 'service/message';
-import AccountApi from 'service/account';
+import HelpdeskAccountApi from 'service/account';
 
 // Store
 import { RootState } from 'store';
@@ -52,7 +52,7 @@ import { FieldMapperFunc } from 'utils/error';
 import { StaticRoutes } from 'model/routes';
 import { EnumRole } from 'model/role';
 import { AxiosObjectResponse, SimpleResponse } from 'model/response';
-import { AccountFormData, AccountCommand } from 'model/account';
+import { HelpdeskAccountFormData, HelpdeskAccountCommand } from 'model/account';
 import { KeyValuePair } from 'model/key-value-pair';
 
 const fieldMapper: FieldMapperFunc = (field: string): string | null => {
@@ -137,7 +137,7 @@ const styles = (theme: Theme) => createStyles({
 interface AccountState {
   confirm: boolean;
   confirmOnNavigate: boolean;
-  account: AccountCommand | null;
+  account: HelpdeskAccountCommand | null;
 }
 
 interface RouteParams {
@@ -158,16 +158,16 @@ interface AccountFormProps extends PropsFromRedux, WithStyles<typeof styles>, Ro
 
 class AccountForm extends React.Component<AccountFormProps, AccountState> {
 
-  private api: AccountApi;
+  private api: HelpdeskAccountApi;
 
   private roles: KeyValuePair<string, string>[];
 
-  private formRef: React.RefObject<FormikProps<AccountCommand>>;
+  private formRef: React.RefObject<FormikProps<HelpdeskAccountCommand>>;
 
   constructor(props: AccountFormProps) {
     super(props);
 
-    this.api = new AccountApi();
+    this.api = new HelpdeskAccountApi();
 
     const _t = this.props.intl.formatMessage;
 
@@ -198,7 +198,7 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
   discardChanges(): void {
     this.setState({
       confirmOnNavigate: false,
-    }, () => this.props.history.push(StaticRoutes.AccountManager));
+    }, () => this.props.history.push(StaticRoutes.HelpdeskAccountManager));
   }
 
   showConfirmDialog(): void {
@@ -224,11 +224,11 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
     }
   }
 
-  async loadData(): Promise<AccountCommand | null> {
+  async loadData(): Promise<HelpdeskAccountCommand | null> {
     const id = this.id;
 
     if (id) {
-      return this.api.findOne(id).then((response: AxiosObjectResponse<AccountFormData>) => {
+      return this.api.findOne(id).then((response: AxiosObjectResponse<HelpdeskAccountFormData>) => {
         if (response.data.success) {
           const { account } = response.data.result;
 
@@ -239,7 +239,7 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
           const messages = localizeErrorCodes(this.props.intl, response.data, false);
           message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
 
-          this.props.history.push(StaticRoutes.AccountManager);
+          this.props.history.push(StaticRoutes.HelpdeskAccountManager);
         }
         return null;
       });
@@ -265,7 +265,7 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
     const { id: currId } = this.props.match.params;
 
     if (prevId !== currId) {
-      this.loadData().then((account: AccountCommand | null) => {
+      this.loadData().then((account: HelpdeskAccountCommand | null) => {
         if (account != null) {
           this.formRef.current?.setValues(account);
         }
@@ -554,8 +554,8 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
 
 const mapState = (state: RootState) => ({
   config: state.config,
-  loading: state.account.explorer.loading,
-  lastUpdated: state.account.explorer.lastUpdated,
+  loading: state.account.helpdesk.loading,
+  lastUpdated: state.account.helpdesk.lastUpdated,
 });
 
 const mapDispatch = {

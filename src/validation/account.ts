@@ -2,16 +2,16 @@ import { IntlShape } from 'react-intl';
 
 import { FormikErrors } from 'formik';
 
-import { AccountCommand, SetPasswordCommand } from 'model/account';
+import { HelpdeskAccountCommand, SetPasswordCommand } from 'model/account';
 
 
 //type DeepPartial<T> = T extends Array<infer R> ? string : T extends Function ? T : (T extends object ? { [P in keyof T]?: DeepPartial<T[P]>; } : T extends number ? string : T);
 
-export type AccountErrors = FormikErrors<AccountCommand>;
+export type AccountErrors = FormikErrors<HelpdeskAccountCommand>;
 
 export type PasswordErrors = FormikErrors<SetPasswordCommand>;
 
-export function accountValidator(intl: IntlShape, values: AccountCommand): AccountErrors {
+export function accountValidator(intl: IntlShape, values: HelpdeskAccountCommand): AccountErrors {
   const _t = intl.formatMessage;
 
   const errors: AccountErrors = {};

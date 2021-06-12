@@ -3,7 +3,7 @@ import _ from 'lodash';
 import moment from 'utils/moment-localized';
 
 import { Order } from 'model/response';
-import { EnumSortField } from 'model/account';
+import { EnumHelpdeskAccountSortField } from 'model/account';
 
 import {
   LOGOUT_INIT,
@@ -21,13 +21,13 @@ import {
   RESET_SELECTED,
   SET_SORTING,
   AccountActions,
-  AccountManagerState,
+  HelpdeskAccountManagerState,
   SAVE_COMPLETE,
   SAVE_INIT,
   SEARCH_FAILURE,
 } from 'store/account/types';
 
-const initialState: AccountManagerState = {
+const initialState: HelpdeskAccountManagerState = {
   loading: false,
   query: {
     name: '',
@@ -37,7 +37,7 @@ const initialState: AccountManagerState = {
     size: 10,
   },
   sorting: [{
-    id: EnumSortField.EMAIL,
+    id: EnumHelpdeskAccountSortField.EMAIL,
     order: Order.ASC,
   }],
   result: null,
@@ -46,10 +46,10 @@ const initialState: AccountManagerState = {
   response: null,
 };
 
-export function accountReducer(
+export function helpdeskAccountReducer(
   state = initialState,
   action: AccountActions
-): AccountManagerState {
+): HelpdeskAccountManagerState {
 
   switch (action.type) {
     case LOGOUT_INIT:

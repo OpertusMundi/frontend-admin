@@ -59,11 +59,12 @@ import clsx from 'clsx';
 // Model
 import { EnumRole } from 'model/role';
 import { DynamicRoutes, ErrorPages, getRoute, StaticRoutes, buildPath } from 'model/routes';
-import { Account } from 'model/account';
+import { HelpdeskAccount } from 'model/account';
 
 // Components
 import AccountForm from 'components/account/account-form';
-import AccountManager from 'components/account/account-grid';
+import HelpdeskAccountManager from 'components/account/account-grid';
+import MarketplaceAccountManager from 'components/account-marketplace/account-grid';
 import ProcessInstanceManager from 'components/workflow/process-instance-manager';
 import IncidentManager from 'components/workflow/incident-manager';
 import Breadcrumb from './breadcrumb';
@@ -246,7 +247,7 @@ class Home extends React.Component<HomeProps, HomeState> {
   }
 
   get userName(): string {
-    const { email, firstName, lastName } = this.props.profile as Account;
+    const { email, firstName, lastName } = this.props.profile as HelpdeskAccount;
 
     if (firstName || lastName) {
       return `${firstName} ${lastName}`;
@@ -610,11 +611,22 @@ class Home extends React.Component<HomeProps, HomeState> {
                       <SecureContent roles={[EnumRole.ADMIN]}>
                         <ListItem button
                           className={open[EnumSection.Drawer] ? classes.nested : ''}
-                          onClick={(e) => this.onNavigate(e, StaticRoutes.AccountManager)}>
+                          onClick={(e) => this.onNavigate(e, StaticRoutes.HelpdeskAccountManager)}>
+                          <ListItemIcon>
+                            <Icon path={mdiFaceAgent} size="1.5rem" />
+                          </ListItemIcon>
+                          <ListItemText primary={_t({ id: 'links.account.helpdesk' })} />
+                        </ListItem>
+                      </SecureContent>
+
+                      <SecureContent roles={[EnumRole.ADMIN]}>
+                        <ListItem button
+                          className={open[EnumSection.Drawer] ? classes.nested : ''}
+                          onClick={(e) => this.onNavigate(e, StaticRoutes.MarketplaceAccountManager)}>
                           <ListItemIcon>
                             <Icon path={mdiAccountMultiple} size="1.5rem" />
                           </ListItemIcon>
-                          <ListItemText primary={_t({ id: 'links.account.explorer' })} />
+                          <ListItemText primary={_t({ id: 'links.account.marketplace' })} />
                         </ListItem>
                       </SecureContent>
 
@@ -645,7 +657,8 @@ class Home extends React.Component<HomeProps, HomeState> {
               <Route path={StaticRoutes.Profile} component={Profile} />
               <Route path={StaticRoutes.Settings} component={PlaceHolder} />
               {/* Secured paths */}
-              <SecureRoute path={StaticRoutes.AccountManager} component={AccountManager} roles={[EnumRole.ADMIN]} />
+              <SecureRoute path={StaticRoutes.HelpdeskAccountManager} component={HelpdeskAccountManager} roles={[EnumRole.ADMIN]} />
+              <SecureRoute path={StaticRoutes.MarketplaceAccountManager} component={MarketplaceAccountManager} roles={[EnumRole.ADMIN]} />
               <SecureRoute path={StaticRoutes.ProcessInstanceManager} component={ProcessInstanceManager} roles={[EnumRole.ADMIN]} />
               <SecureRoute path={StaticRoutes.IncidentManager} component={IncidentManager} roles={[EnumRole.ADMIN]} />
               {/* Default */}

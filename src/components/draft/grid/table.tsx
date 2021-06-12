@@ -74,7 +74,7 @@ function statusToChip(value: EnumDraftStatus, classes: WithStyles<typeof styles>
 function draftColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<AssetDraft, EnumSortField>[] {
   return (
     [{
-      header: intl.formatMessage({ id: 'account.manager.header.actions' }),
+      header: intl.formatMessage({ id: 'draft.manager.header.actions' }),
       id: 'actions',
       width: 80,
       cell: (

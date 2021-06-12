@@ -65,7 +65,8 @@ const OrderManager = '/orders';
 const Profile = '/profile';
 const ProviderManager = '/providers'
 const Settings = '/settings';
-const AccountManager = '/users';
+const HelpdeskAccountManager = '/helpdesk/users';
+const MarketplaceAccountManager = '/marketplace/users'
 const DraftManager = '/drafts';
 const ProcessInstanceManager = '/workflows/process-instances';
 const IncidentManager = '/workflow/incidents'
@@ -81,7 +82,8 @@ export const StaticRoutes = {
   Profile,
   ProviderManager,
   Settings,
-  AccountManager,
+  HelpdeskAccountManager,
+  MarketplaceAccountManager,
   DraftManager,
   ProcessInstanceManager,
   IncidentManager,
@@ -214,11 +216,19 @@ const routes: RouteRegistry = {
     defaultTitle: 'Settings',
     links: defaultLinks
   },
-  [AccountManager]: {
+  [HelpdeskAccountManager]: {
+    icon: (className?: string) => (<Icon path={mdiFaceAgent} size="1.5rem" className={className} />),
+    description: 'Manage helpdesk accounts',
+    title: 'links.account.helpdesk',
+    defaultTitle: 'Helpdesk Account Management',
+    roles: [EnumRole.ADMIN],
+    links: [Dashboard],
+  },
+  [MarketplaceAccountManager]: {
     icon: (className?: string) => (<Icon path={mdiAccountMultiple} size="1.5rem" className={className} />),
-    description: 'Manage user accounts',
-    title: 'links.account.explorer',
-    defaultTitle: 'User Management',
+    description: 'Manage marketplace accounts',
+    title: 'links.account.marketplace',
+    defaultTitle: 'Marketplace Account Management',
     roles: [EnumRole.ADMIN],
     links: [Dashboard],
   },

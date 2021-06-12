@@ -2,84 +2,58 @@ import _ from 'lodash';
 
 import moment from 'utils/moment-localized';
 
+import { Order } from 'model/response';
+import { EnumMarketplaceAccountSortField } from 'model/account';
+
 import {
   LOGOUT_INIT,
 } from 'store/security/types';
 
 import {
-  COUNT_INCIDENT_COMPLETE,
-  COUNT_INCIDENT_FAILURE,
-  COUNT_INCIDENT_INIT,
   SET_PAGER,
   RESET_PAGER,
   SET_FILTER,
   RESET_FILTER,
   SEARCH_INIT,
-  SEARCH_FAILURE,
   SEARCH_COMPLETE,
   ADD_SELECTED,
   REMOVE_SELECTED,
-  SET_SORTING,
   RESET_SELECTED,
-  IncidentActions,
-  IncidentManagerState,
-} from 'store/incident/types';
+  SET_SORTING,
+  SEARCH_FAILURE,
+  AccountActions,
+  MarketplaceAccountManagerState,
+} from 'store/account-marketplace/types';
 
-import { Order } from 'model/response';
-import { EnumIncidentSortField } from 'model/workflow';
-
-const initialState: IncidentManagerState = {
+const initialState: MarketplaceAccountManagerState = {
   loading: false,
-  lastUpdated: null,
+  query: {
+    name: '',
+  },
   pagination: {
     page: 0,
     size: 10,
   },
-  query: {
-    businessKey: '',
-  },
   sorting: [{
-    id: EnumIncidentSortField.REPORTED_ON,
-    order: Order.DESC,
+    id: EnumMarketplaceAccountSortField.EMAIL,
+    order: Order.ASC,
   }],
   result: null,
   selected: [],
-  incidentCounter: 0,
+  lastUpdated: null,
+  response: null,
 };
 
-export function incidentReducer(
+export function marketplaceAccountReducer(
   state = initialState,
-  action: IncidentActions
-): IncidentManagerState {
+  action: AccountActions
+): MarketplaceAccountManagerState {
 
   switch (action.type) {
     case LOGOUT_INIT:
       return {
         ...initialState
       };
-
-    case COUNT_INCIDENT_INIT:
-      return {
-        ...state,
-        loading: true,
-      };
-
-    case COUNT_INCIDENT_FAILURE:
-      return {
-        ...state,
-        incidentCounter: null,
-        lastUpdated: moment(),
-        loading: false,
-      };
-
-    case COUNT_INCIDENT_COMPLETE:
-      return {
-        ...state,
-        incidentCounter: action.incidentCounter,
-        lastUpdated: moment(),
-        loading: false,
-      };
-
 
     case SET_PAGER:
       return {
@@ -113,7 +87,7 @@ export function incidentReducer(
       return {
         ...state,
         query: {
-          ...initialState.query,
+          ...initialState.query
         },
         selected: [],
       };
@@ -128,6 +102,7 @@ export function incidentReducer(
       return {
         ...state,
         selected: [],
+        response: null,
         loading: true,
       };
 
@@ -164,7 +139,7 @@ export function incidentReducer(
     case REMOVE_SELECTED:
       return {
         ...state,
-        selected: state.selected.filter(s => !action.removed.some(r => r.processInstanceId === s.processInstanceId)),
+        selected: state.selected.filter(s => !action.removed.some(r => r.key === s.key)),
       };
 
     case RESET_SELECTED:

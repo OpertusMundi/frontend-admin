@@ -2,13 +2,13 @@ import { Moment } from 'moment';
 
 import { EnumRole } from 'model/role';
 
-export enum EnumSortField {
+export enum EnumHelpdeskAccountSortField {
   EMAIL = 'EMAIL',
   FIRST_NAME = 'FIRST_NAME',
   LAST_NAME = 'LAST_NAME',
 }
 
-interface AccountBase {
+interface HelpdeskAccountBase {
   active: boolean;
   blocked: boolean;
   email: string;
@@ -22,13 +22,13 @@ interface AccountBase {
   roles: EnumRole[];
 }
 
-export interface AccountCommand extends AccountBase {
+export interface HelpdeskAccountCommand extends HelpdeskAccountBase {
   id?: number;
   password: string | null;
   passwordMatch: string | null;
 }
 
-export interface Account extends AccountBase {
+export interface HelpdeskAccount extends HelpdeskAccountBase {
   createdOn: Moment | null;
   emailVerified: boolean;
   emailVerifiedOn: Moment | null;
@@ -37,11 +37,11 @@ export interface Account extends AccountBase {
   modifiedOn: Moment | null;
 }
 
-export interface AccountFormData {
-  account: Account;
+export interface HelpdeskAccountFormData {
+  account: HelpdeskAccount;
 }
 
-export interface AccountQuery {
+export interface HelpdeskAccountQuery {
   name: string;
 }
 
@@ -58,4 +58,43 @@ export interface ProfileCommand {
 export interface SetPasswordCommand {
   password: string | null;
   passwordMatch: string | null;
+}
+
+export enum EnumMarketplaceAccountSortField {
+  EMAIL = 'EMAIL',
+}
+
+export interface MarketplaceAccountQuery {
+  name: string;
+}
+
+export enum EnumActivationStatus {
+  PENDING = 'PENDING',
+  COMPLETED = 'COMPLETED',
+}
+
+export enum EnumKycLevel {
+  LIGHT = 'LIGHT',
+  REGULAR = 'REGULAR',
+}
+
+export interface MarketplaceAccount {
+  accountStatus: EnumActivationStatus;
+  activatedAt: Moment;
+  consumer: boolean
+  consumerKycLevel: EnumKycLevel;
+  consumerName: string;
+  consumerUpdatePending: boolean;
+  email: string;
+  emailVerified: boolean;
+  image: string;
+  imageMimeType: string;
+  key: string;
+  locale: string;
+  provider: boolean;
+  providerKycLevel: EnumKycLevel;
+  providerName: string;
+  providerUpdatePending: boolean;
+  registeredOn: Moment;
+  userName: string;
 }

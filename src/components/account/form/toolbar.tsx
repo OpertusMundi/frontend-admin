@@ -15,7 +15,7 @@ import Icon from '@mdi/react';
 import { mdiCheck, mdiUndoVariant } from '@mdi/js';
 
 // Model
-import { Account, AccountCommand } from 'model/account';
+import { HelpdeskAccount, HelpdeskAccountCommand } from 'model/account';
 
 export interface ToolbarProps extends PropsFromRedux {
   intl: IntlShape;
@@ -42,7 +42,7 @@ const mapState = (state: RootState) => ({
 });
 
 const mapDispatch = {
-  update: (id: number | null, command: AccountCommand) => update(id, command),
+  update: (id: number | null, command: HelpdeskAccountCommand) => update(id, command),
 };
 
 const connector = connect(

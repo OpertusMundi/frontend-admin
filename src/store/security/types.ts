@@ -1,9 +1,9 @@
-import { Account } from 'model/account';
+import { HelpdeskAccount } from 'model/account';
 
 // State
 export interface SecurityState {
   csrfToken: string | null;
-  profile: Account | null;
+  profile: HelpdeskAccount | null;
 }
 
 // Actions
@@ -54,7 +54,7 @@ interface LoadProfileInitAction {
 
 interface LoadProfileCompleteAction {
   type: typeof PROFILE_LOAD_COMPLETE,
-  profile: Account,
+  profile: HelpdeskAccount,
 }
 
 interface UpdateProfileInitAction {
@@ -63,7 +63,7 @@ interface UpdateProfileInitAction {
 
 interface UpdateProfileCompleteAction {
   type: typeof PROFILE_UPDATE_COMPLETE,
-  profile: Account,
+  profile: HelpdeskAccount,
 }
 
 interface SetPasswordInitPassword {

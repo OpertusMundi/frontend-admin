@@ -13,7 +13,7 @@ import {
   PROFILE_UPDATE_COMPLETE
 } from './types';
 
-import { Account } from 'model/account';
+import { HelpdeskAccount } from 'model/account';
 
 // Action Creators
 export function setCsrfToken(csrfToken: string | null): SecurityTypes {
@@ -56,7 +56,7 @@ export function loadProfileInit(): SecurityTypes {
   };
 }
 
-export function loadProfileComplete(profile: Account): SecurityTypes {
+export function loadProfileComplete(profile: HelpdeskAccount): SecurityTypes {
   return {
     type: PROFILE_LOAD_COMPLETE,
     profile,
@@ -69,7 +69,7 @@ export function updateProfileInit(): SecurityTypes {
   };
 }
 
-export function updateProfileComplete(profile: Account): SecurityTypes {
+export function updateProfileComplete(profile: HelpdeskAccount): SecurityTypes {
   return {
     type: PROFILE_UPDATE_COMPLETE,
     profile,

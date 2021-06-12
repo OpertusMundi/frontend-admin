@@ -6,26 +6,26 @@ import { AccountActions } from './types';
 import { searchInit, searchComplete, searchFailure, setSorting, setPager, saveInit, saveComplete } from './actions';
 
 // Services
-import AccountApi from 'service/account';
+import HelpdeskAccountApi from 'service/account';
 
 // Model
 import { PageRequest, Sorting, PageResult, ObjectResponse } from 'model/response';
-import { EnumSortField, Account, AccountCommand } from 'model/account';
+import { EnumHelpdeskAccountSortField, HelpdeskAccount, HelpdeskAccountCommand } from 'model/account';
 
 // Helper thunk result type
 type ThunkResult<R> = ThunkAction<Promise<R>, RootState, unknown, AccountActions>;
 
 export const find = (
-  pageRequest?: PageRequest, sorting?: Sorting<EnumSortField>[]
-): ThunkResult<PageResult<Account> | null> => async (dispatch, getState) => {
+  pageRequest?: PageRequest, sorting?: Sorting<EnumHelpdeskAccountSortField>[]
+): ThunkResult<PageResult<HelpdeskAccount> | null> => async (dispatch, getState) => {
   // Get query form state (filters are always set synchronously)
-  const query = getState().account.explorer.query;
+  const query = getState().account.helpdesk.query;
 
   // Update sorting or use the existing value
   if (sorting) {
     dispatch(setSorting(sorting));
   } else {
-    sorting = getState().account.explorer.sorting;
+    sorting = getState().account.helpdesk.sorting;
   }
 
   // Update page or user the existing value (i.e. data page refresh)
@@ -34,14 +34,14 @@ export const find = (
 
     dispatch(setPager(page, size));
   } else {
-    pageRequest = getState().account.explorer.pagination
+    pageRequest = getState().account.helpdesk.pagination
   }
 
   // Initialize search
   dispatch(searchInit());
 
   // Get response
-  const api = new AccountApi();
+  const api = new HelpdeskAccountApi();
 
   const response = await api.find(query, pageRequest, sorting);
 
@@ -56,12 +56,12 @@ export const find = (
 }
 
 export const update = (
-  id: number | null, command: AccountCommand
-): ThunkResult<ObjectResponse<Account>> => async (dispatch, getState) => {
+  id: number | null, command: HelpdeskAccountCommand
+): ThunkResult<ObjectResponse<HelpdeskAccount>> => async (dispatch, getState) => {
   dispatch(saveInit());
 
   // Get response
-  const api = new AccountApi();
+  const api = new HelpdeskAccountApi();
 
   const response = id ? await api.update(id, command) : await api.create(command);
 

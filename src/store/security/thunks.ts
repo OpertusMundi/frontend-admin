@@ -3,12 +3,12 @@ import { ThunkAction } from 'redux-thunk'
 
 import { RootState } from 'store';
 import { SecurityTypes } from './types';
-import { Account, ProfileCommand, SetPasswordCommand } from 'model/account';
+import { HelpdeskAccount, ProfileCommand, SetPasswordCommand } from 'model/account';
 import { loginInit, loginComplete, logoutInit, logoutComplete, loadProfileComplete, loadProfileInit, updateProfileInit, updateProfileComplete, setPasswordInit, setPasswordComplete } from './actions';
 import { SecurityApi } from 'service/security';
 import { CsrfResult } from 'model/security';
 import { ObjectResponse } from 'model/response';
-import AccountApi from 'service/account';
+import HelpdeskAccountApi from 'service/account';
 
 type ThunkResult<R> = ThunkAction<R, RootState, unknown, SecurityTypes>;
 
@@ -36,10 +36,10 @@ export const logout = (): ThunkResult<Promise<ObjectResponse<CsrfResult>>> => as
   return response.data;
 }
 
-export const refreshProfile = (): ThunkResult<Promise<Account>> => async (dispatch) => {
+export const refreshProfile = (): ThunkResult<Promise<HelpdeskAccount>> => async (dispatch) => {
   dispatch(loadProfileInit());
 
-  const api = new AccountApi();
+  const api = new HelpdeskAccountApi();
 
   const response = await api.getProfile();
 
@@ -48,10 +48,10 @@ export const refreshProfile = (): ThunkResult<Promise<Account>> => async (dispat
   return response.data.result;
 };
 
-export const setProfile = (command: ProfileCommand): ThunkResult<Promise<ObjectResponse<Account>>> => async (dispatch) => {
+export const setProfile = (command: ProfileCommand): ThunkResult<Promise<ObjectResponse<HelpdeskAccount>>> => async (dispatch) => {
   dispatch(updateProfileInit());
 
-  const api = new AccountApi();
+  const api = new HelpdeskAccountApi();
 
   const response = await api.setProfile(command);
 
@@ -62,10 +62,10 @@ export const setProfile = (command: ProfileCommand): ThunkResult<Promise<ObjectR
   return response.data;
 };
 
-export const setPassword = (command: SetPasswordCommand): ThunkResult<Promise<ObjectResponse<Account>>> => async (dispatch) => {
+export const setPassword = (command: SetPasswordCommand): ThunkResult<Promise<ObjectResponse<HelpdeskAccount>>> => async (dispatch) => {
   dispatch(setPasswordInit());
 
-  const api = new AccountApi();
+  const api = new HelpdeskAccountApi();
 
   const response = await api.setPassword(command);
 
