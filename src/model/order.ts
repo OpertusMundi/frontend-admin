@@ -1,5 +1,5 @@
 import { Moment } from 'moment';
-import { EnumPaymentMethod } from 'model/enum';
+import { EnumPaymentMethod, EnumDeliveryMethod } from 'model/enum';
 import { BankAccount, CustomerIndividual, CustomerProfessional } from 'model/customer';
 import { EffectivePricingModel } from 'model/pricing-model';
 
@@ -314,13 +314,6 @@ export enum EnumOrderSortField {
   MODIFIED_ON = 'MODIFIED_ON',
   STATUS = 'STATUS',
   REFERENCE_NUMBER = 'REFERENCE_NUMBER',
-}
-
-export enum EnumDeliveryMethod {
-  NONE = 'NONE',
-  DIGITAL_PLATFORM = 'DIGITAL_PLATFORM',
-  DIGITAL_PROVIDER = 'DIGITAL_PROVIDER',
-  PHYSICAL_PROVIDER = 'PHYSICAL_PROVIDER',
 }
 
 export interface OrderQuery {

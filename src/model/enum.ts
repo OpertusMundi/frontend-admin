@@ -34,3 +34,10 @@ export enum EnumPaymentMethod {
    */
   BANKWIRE = 'BANKWIRE',
 }
+
+export enum EnumDeliveryMethod {
+  NONE = 'NONE',
+  DIGITAL_PLATFORM = 'DIGITAL_PLATFORM',
+  DIGITAL_PROVIDER = 'DIGITAL_PROVIDER',
+  PHYSICAL_PROVIDER = 'PHYSICAL_PROVIDER',
+}
