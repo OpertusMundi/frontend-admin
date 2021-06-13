@@ -14,5 +14,6 @@ interface MapConfiguration {
 export interface ApplicationConfiguration {
   bingMaps?: BingMapsConfiguration;
   map?: MapConfiguration;
+  marketplaceUrl: string;
   osm?: OsmConfiguration;
 }

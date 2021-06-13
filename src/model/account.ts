@@ -1,6 +1,7 @@
 import { Moment } from 'moment';
 
 import { EnumRole } from 'model/role';
+import { EnumKycLevel } from 'model/customer';
 
 export enum EnumHelpdeskAccountSortField {
   EMAIL = 'EMAIL',
@@ -71,11 +72,6 @@ export interface MarketplaceAccountQuery {
 export enum EnumActivationStatus {
   PENDING = 'PENDING',
   COMPLETED = 'COMPLETED',
-}
-
-export enum EnumKycLevel {
-  LIGHT = 'LIGHT',
-  REGULAR = 'REGULAR',
 }
 
 export interface MarketplaceAccount {

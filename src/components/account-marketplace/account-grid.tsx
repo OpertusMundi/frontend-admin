@@ -27,7 +27,7 @@ import { addToSelection, removeFromSelection, resetFilter, resetSelection, setFi
 import { find } from 'store/account-marketplace/thunks';
 
 // Model
-import { PageRequest, Sorting, SimpleResponse } from 'model/response';
+import { PageRequest, Sorting } from 'model/response';
 import { MarketplaceAccount, EnumMarketplaceAccountSortField } from 'model/account';
 
 // Components
