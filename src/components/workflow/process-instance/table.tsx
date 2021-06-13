@@ -170,13 +170,11 @@ class ProcessInstanceTable extends React.Component<FieldTableProps> {
         const element: HTMLInputElement = document.getElementById('copy-to-clipboard') as HTMLInputElement;
 
         if (element && document.queryCommandSupported(COPY)) {
-          console.log(COPY);
           element.focus();
           element.value = row.businessKey;
           element.select();
           document.execCommand(COPY);
         }
-        break;
         break;
       default:
         // No action

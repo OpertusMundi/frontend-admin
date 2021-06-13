@@ -96,7 +96,6 @@ export function draftReducer(
       };
 
     case SET_SORTING:
-      console.log(action);
       return {
         ...state,
         sorting: action.sorting,
