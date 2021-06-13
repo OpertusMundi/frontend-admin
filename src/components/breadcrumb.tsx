@@ -38,7 +38,7 @@ interface BreadcrumbProps extends PropsFromRedux, RouteComponentProps, WithStyle
 
 class Breadcrumb extends React.Component<BreadcrumbProps> {
 
-  private getComponent(): (() => React.ReactNode) | null {
+  private getToolbarComponent(): (() => React.ReactNode) | null {
     const match = matchRoute(this.props.location.pathname);
     if ((match) && (match.properties.toolbarComponent)) {
       return match.properties.toolbarComponent;
@@ -83,7 +83,7 @@ class Breadcrumb extends React.Component<BreadcrumbProps> {
   render() {
     const { classes, location, profile, state } = this.props;
 
-    const toolbarFactory = this.getComponent();
+    const toolbarComponentFunc = this.getToolbarComponent();
 
     const roles = profile ? profile.roles : [];
 
@@ -99,26 +99,28 @@ class Breadcrumb extends React.Component<BreadcrumbProps> {
 
     return (
       <>
-        <Breadcrumbs separator="›" className={classes.breadcrumb}>
-          {paths.map((path) => {
-            const active = location.pathname === path;
-            const match = matchRoute(path);
-            if (!match) {
-              return null;
-            }
-            if (match.properties?.breadcrumb === false) {
-              return null;
-            }
+        {toolbarComponentFunc && toolbarComponentFunc()}
+        {!toolbarComponentFunc &&
+          <Breadcrumbs separator="›" className={classes.breadcrumb}>
+            {paths.map((path) => {
+              const active = location.pathname === path;
+              const match = matchRoute(path);
+              if (!match) {
+                return null;
+              }
+              if (match.properties?.breadcrumb === false) {
+                return null;
+              }
 
-            const title = (
-              <FormattedMessage id={match.properties.title} defaultMessage={match.properties.defaultTitle} />
-            );
-            const icon = match.properties.icon;
-            const locked = !this.checkRoles(match.properties.roles || null, roles, state);
-            return this.renderItem(path, active, title, locked, icon);
-          })}
-        </Breadcrumbs>
-        {toolbarFactory && toolbarFactory()}
+              const title = (
+                <FormattedMessage id={match.properties.title} defaultMessage={match.properties.defaultTitle} />
+              );
+              const icon = match.properties.icon;
+              const locked = !this.checkRoles(match.properties.roles || null, roles, state);
+              return this.renderItem(path, active, title, locked, icon);
+            })}
+          </Breadcrumbs>
+        }
       </>
     );
   }
@@ -149,7 +151,7 @@ const styledComponent = withStyles(styles)(Breadcrumb);
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);
 
-// Inject routing 
+// Inject routing
 const routedComponent = withRouter(localizedComponent);
 
 // Inject state
