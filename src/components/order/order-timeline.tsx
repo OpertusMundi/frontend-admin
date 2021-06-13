@@ -79,7 +79,6 @@ const styles = (theme: Theme) => createStyles({
   avatar: {
     backgroundColor: red[500],
   },
-
   listItem: {
     padding: theme.spacing(1, 0),
   },
@@ -191,13 +190,11 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
 
   renderCardPaymentDetails(order: Order): React.ReactNode {
     return (
-      <>
-        <Grid item xs={12}>
-          <Typography gutterBottom>
-            <FormattedMessage id={`billing.order.timeline.payment-method.${order.paymentMethod}`} />
-          </Typography>
-        </Grid>
-      </>
+      <Grid item xs={12}>
+        <Typography gutterBottom>
+          <FormattedMessage id={`billing.order.timeline.payment-method.${order.paymentMethod}`} />
+        </Typography>
+      </Grid>
     )
   }
 
@@ -282,7 +279,7 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
   buildTimeline(order: Order) {
     const { classes } = this.props;
     const { statusHistory: history = [] } = order;
-    console.log(this.props);
+
     if (history.length === 0) {
       return null;
     }
@@ -294,7 +291,6 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
             <FormattedTime value={h.statusUpdatedOn.toDate()} day='numeric' month='numeric' year='numeric' />
           </Typography>
         </TimelineOppositeContent>
-
         <TimelineSeparator>
           <TimelineDot style={{ background: this.mapStatusToColor(order, h.status) }}>
             {this.mapStatusToIcon(order, h.status)}
@@ -317,7 +313,6 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
     ));
 
     const h = history[0];
-    console.log(h);
 
     return (
       <Timeline align="alternate">
@@ -350,9 +345,9 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
               <FormattedMessage id={'billing.order.timeline.order-summary'} />
             </Typography>
             <List disablePadding>
-              {order.items.map((item) => (
-                <a className={classes.link} href={`${config.marketplaceUrl}/catalogue/${item.item}`} target="_blank" rel="noreferrer">
-                  <ListItem className={classes.listItem} key={item.index}>
+              {order.items.map((item, index) => (
+                <a key={`order-item-${index}`} className={classes.link} href={`${config.marketplaceUrl}/catalogue/${item.item}`} target="_blank" rel="noreferrer">
+                  <ListItem className={classes.listItem}>
                     <ListItemText secondary={item.description} />
                     <Typography variant="body2">
                       <FormattedNumber value={item.totalPrice} style={'currency'} currency={order.currency} />
