@@ -180,6 +180,27 @@
     }
   },
   "enum": {
+    "category-topic": {
+      "BIOTA": "Biota",
+      "BOUNDARIES": "Boundaries",
+      "CLIMA": "Clima",
+      "ECONOMY": "Economy",
+      "ELEVATION": "Elevation",
+      "ENVIRONMENT": "Environment",
+      "FARMING": "Farming",
+      "GEO_SCIENTIFIC": "Geo Scientific",
+      "HEALTH": "Health",
+      "IMAGERY": "Imagery",
+      "INLAND_WATERS": "Inland Waters",
+      "INTELLIGENCE_MILITARY": "Intelligence & Military",
+      "LOCATION": "Location",
+      "OCEANS": "Oceans",
+      "PLANNING_CADASTRE": "Planning & Cadaster",
+      "SOCIETY": "Society",
+      "STRUCTURE": "Structure",
+      "TRANSPORTATION": "Transportation",
+      "UTILITIES_COMMUNICATION": "Utilities & Communication"
+    },
     "delivery-method": {
       "NONE": " ",
       "DIGITAL_PLATFORM": "Platform Digital",
