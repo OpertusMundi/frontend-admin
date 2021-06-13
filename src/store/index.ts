@@ -15,6 +15,8 @@ import { incidentReducer } from './incident/reducer';
 import { mapViewerReducer } from './map/reducer';
 import { marketplaceAccountReducer } from './account-marketplace/reducer';
 import { messageReducer } from './i18n/reducer';
+import { orderReducer } from './order/reducer';
+import { payInReducer } from './payin/reducer';
 import { processInstanceReducer } from './process-instance/reducer';
 import { securityReducer } from './security/reducer';
 import { viewportReducer } from './viewport/reducer';
@@ -24,6 +26,10 @@ export const rootReducer = Redux.combineReducers({
   account: Redux.combineReducers({
     helpdesk: helpdeskAccountReducer,
     marketplace: marketplaceAccountReducer,
+  }),
+  billing: Redux.combineReducers({
+    order: orderReducer,
+    payin: payInReducer,
   }),
   config: configurationReducer,
   contract: contractReducer,

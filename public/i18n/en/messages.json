@@ -56,6 +56,81 @@
       }
     }
   },
+  "billing": {
+    "order": {
+      "filter": {
+        "reference-number": "Reference Number",
+        "status": "Status"
+      },
+      "header": {
+        "actions": " ",
+        "consumer": "Consumer",
+        "delivery-method": "Delivery Method",
+        "modified-on": "Modified On",
+        "payment-method": "Payment",
+        "reference-number": "Reference Number",
+        "status": "Status"
+      },
+      "last-update": "Last updated: ",
+      "tooltip": {
+        "send-message": "Send message",
+        "view-process-instance": "View order fulfillment process instance",
+        "view-timeline": "View order timeline"
+      },
+      "timeline": {
+        "billing-address": "Billing Address",
+        "delivery-details": "Delivery",
+        "order-summary": "Order Details",
+        "payment-details": "Payment details",
+        "order-details-header": "Reference Number {referenceNumber}",
+        "timeline-header": "Timeline",
+        "status": {
+          "CREATED": "Order has been placed",
+          "CHARGED": "PayIn has been created",
+          "PENDING": "PayIn was successful. Order fulfillment process instance has been started",
+          "CANCELLED": "Order has been cancelled",
+          "REFUNDED": "Order has been  refunded",
+          "SUCCEEDED": "Order has been completed"
+        },
+        "payment": {
+          "BANKWIRE": {
+            "CREATED": "Waiting for bank transfer to be accepted ...",
+            "FAILED": "Bank transfer has been refused",
+            "SUCCEEDED": "Bank transfer has been accepted"
+          },
+          "CARD_DIRECT": {
+            "CREATED": "Waiting for transaction to be completed ...",
+            "FAILED": "Card transaction has been declined",
+            "SUCCEEDED": "Card has been successfully debited"
+          }
+        },
+        "payment-method": {
+          "BANKWIRE": "Bank transfer",
+          "CARD_DIRECT": "Credit Card"
+        }
+      }
+    },
+    "payin": {
+      "filter": {
+        "email": "User",
+        "reference-number": "Reference Number",
+        "status": "Status"
+      },
+      "header": {
+        "actions": " ",
+        "consumer": "Consumer",
+        "modified-on": "Modified On",
+        "reference-number": "Reference Number",
+        "status": "Status",
+        "total-price": "Total",
+        "type": "Type"
+      },
+      "last-update": "Last updated: ",
+      "tooltip": {
+        "view-details": "View PayIn"
+      }
+    }
+  },
   "company": {
     "title": "OpertusMundi",
     "website": "https://www.opertusmundi.eu/"
@@ -105,10 +180,37 @@
     }
   },
   "enum": {
+    "delivery-method": {
+      "NONE": " ",
+      "DIGITAL_PLATFORM": "Platform Digital",
+      "DIGITAL_PROVIDER": "Provider Digital",
+      "PHYSICAL_PROVIDER": "Provider Physical"
+    },
+    "order-status": {
+      "CREATED": "New",
+      "CHARGED": "Charged",
+      "PENDING": "Pending",
+      "CANCELLED": "Cancelled",
+      "REFUNDED": "Refunded",
+      "SUCCEEDED": "Completed"
+    },
+    "payin-item-type": {
+      "ORDER": "Order",
+      "SUBSCRIPTION_BILLING": "Subscription billing"
+    },
+    "payment-method": {
+      "CARD_DIRECT": "Card",
+      "BANKWIRE": "Bank Transfer"
+    },
     "role": {
       "ADMIN": "Administrator",
       "DEVELOPER": "Developer",
       "USER": "User"
+    },
+    "transaction-status": {
+      "CREATED": "New",
+      "FAILED": "Failed",
+      "SUCCEEDED": "Succeeded"
     }
   },
   "error": {
@@ -165,6 +267,11 @@
       "update": "Edit"
     },
     "admin": "Admin",
+    "billing": {
+      "order": {
+        "timeline": "Order Timeline"
+      }
+    },
     "consumer-manager": "Manage Consumers",
     "contract": {
       "master": {
@@ -179,6 +286,9 @@
     "map": "Map",
     "message-manager": "Messages",
     "order-manager": "Orders",
+    "orders-billing": "Orders and Billing",
+    "payin-manager": "Billing",
+    "payout-manager": "Platform Payments",
     "profile": "Profile",
     "provider-manager": "Manage Providers",
     "settings": "Settings",
