@@ -212,6 +212,9 @@ const styles = (theme: Theme) => createStyles({
   fixedHeight: {
     height: 240,
   },
+  collapse: {
+    background: '#ECEFF1',
+  },
   childMenu: {
     borderRight: '3px solid #3f51b5',
   }
@@ -576,10 +579,11 @@ class Home extends React.Component<HomeProps, HomeState> {
                 {open[EnumSection.Billing] ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
 
-              <Collapse in={open[EnumSection.Billing]} timeout="auto" unmountOnExit>
+              <Collapse in={open[EnumSection.Billing]} timeout="auto" unmountOnExit className={classes.collapse}>
                 <List component="div" disablePadding className={open[EnumSection.Drawer] ? '' : classes.childMenu}>
 
                   <ListItem button
+                    className={open[EnumSection.Drawer] ? classes.nested : ''}
                     onClick={(e) => this.onNavigate(e, StaticRoutes.OrderManager)}>
                     <ListItemIcon>
                       <Icon path={mdiPackageVariantClosed} size="1.5rem" />
@@ -588,6 +592,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                   </ListItem>
 
                   <ListItem button
+                    className={open[EnumSection.Drawer] ? classes.nested : ''}
                     onClick={(e) => this.onNavigate(e, StaticRoutes.PayInManager)}>
                     <ListItemIcon>
                       <Icon path={mdiBankTransferIn} size="1.5rem" />
@@ -596,6 +601,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                   </ListItem>
 
                   <ListItem button
+                    className={open[EnumSection.Drawer] ? classes.nested : ''}
                     onClick={(e) => this.onNavigate(e, StaticRoutes.PayOutManager)}>
                     <ListItemIcon>
                       <Icon path={mdiBankTransferOut} size="1.5rem" />
@@ -632,7 +638,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                     {open[EnumSection.Admin] ? <ExpandLess /> : <ExpandMore />}
                   </ListItem>
 
-                  <Collapse in={open[EnumSection.Admin]} timeout="auto" unmountOnExit>
+                  <Collapse in={open[EnumSection.Admin]} timeout="auto" unmountOnExit className={classes.collapse}>
                     <List component="div" disablePadding className={open[EnumSection.Drawer] ? '' : classes.childMenu}>
 
                       <SecureContent roles={[EnumRole.ADMIN]}>
