@@ -288,6 +288,7 @@
       "update": "Edit"
     },
     "admin": "Admin",
+    "analytics": "Analytics",
     "billing": {
       "order": {
         "timeline": "Order Timeline"

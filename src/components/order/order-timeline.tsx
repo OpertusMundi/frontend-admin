@@ -89,7 +89,8 @@ const styles = (theme: Theme) => createStyles({
     marginTop: theme.spacing(2),
   },
   link: {
-    textDecoration: 'none'
+    textDecoration: 'none',
+    color: 'inherit',
   }
 });
 
