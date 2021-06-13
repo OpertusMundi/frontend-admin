@@ -8,6 +8,7 @@ import * as pathToRegexp from 'path-to-regexp';
 /**
  * Components
  */
+import OrderTimelineToolbar from 'components/order/toolbar/order-timeline';
 
 /**
  * Icons
@@ -61,7 +62,9 @@ const ConsumerManager = '/consumers';
 const ContractManager = '/contract/list';
 const Map = '/map';
 const MessageManager = '/messages';
-const OrderManager = '/orders';
+const OrderManager = '/billing/orders';
+const PayInManager = '/billing/payins';
+const PayOutManager = '/billing/payouts';
 const Profile = '/profile';
 const ProviderManager = '/providers'
 const Settings = '/settings';
@@ -79,6 +82,8 @@ export const StaticRoutes = {
   Map,
   MessageManager,
   OrderManager,
+  PayInManager,
+  PayOutManager,
   Profile,
   ProviderManager,
   Settings,
@@ -97,12 +102,18 @@ const AccountCreate = '/admin/users/record/create';
 const AccountUpdate = '/admin/users/record/update/:id';
 const ContractCreate = '/contract/create';
 const ContractReview = '/contract/review';
+const OrderTimeline = '/billing/order/:key/timeline';
+const OrderView = '/billing/order/:key';
+const PayInView = '/billing/payin/:key';
 
 export const DynamicRoutes = {
   AccountCreate,
   AccountUpdate,
   ContractCreate,
-  ContractReview
+  ContractReview,
+  OrderTimeline,
+  OrderView,
+  PayInView,
 };
 
 /**
@@ -135,7 +146,7 @@ interface Route {
   defaultTitle?: string;
   links?: string[];
   roles?: ((roles: EnumRole[], state: RootState) => boolean) | EnumRole[];
-  toolbarComponent?: () => React.ReactChild;
+  toolbarComponent?: () => React.ReactNode;
   params?: string[];
 }
 
@@ -285,6 +296,23 @@ const routes: RouteRegistry = {
     roles: [EnumRole.ADMIN],
     links: defaultLinks,
     progressBar: true,
+  },
+  [OrderTimeline]: {
+    description: 'Order Timeline',
+    title: 'links.billing.order.timeline',
+    defaultTitle: 'Order Timeline',
+    links: defaultLinks,
+    toolbarComponent: (): React.ReactNode => {
+      return (
+        <OrderTimelineToolbar />
+      );
+    }
+  },
+  [PayInView]: {
+    description: 'PayIn',
+    title: 'links.billing.payin.record',
+    defaultTitle: 'PayIn',
+    links: defaultLinks
   },
   // Error Pages
   [Unauthorized]: {

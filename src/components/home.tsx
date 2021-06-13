@@ -51,6 +51,9 @@ import {
   mdiTextBoxCheckOutline,
   mdiTools,
   mdiViewDashboardOutline,
+  mdiBankTransferIn,
+  mdiBankTransferOut,
+  mdiFinance,
 } from '@mdi/js';
 
 // Utilities
@@ -75,6 +78,9 @@ import ContractReviewForm from 'components/contract/contract-review-form';
 import ContractList from 'components/contract/contract-list';
 import MapViewerComponent from 'components/map-viewer';
 import MapViewerConfigComponent from 'components/map-viewer-config';
+import OrderManager from 'components/order/order-grid';
+import OrderTimeline from 'components/order/order-timeline';
+import PayInManager from 'components/payin/payin-grid';
 import PlaceHolder from 'components/placeholder';
 import Profile from 'components/profile';
 import SecureContent from 'components/secure-content';
@@ -88,6 +94,7 @@ import { countIncidents } from 'store/incident/thunks';
 enum EnumSection {
   Resource = 'Resource',
   Admin = 'Admin',
+  Billing = 'Billing',
   Drawer = 'Drawer',
   MapDrawer = 'MapDrawer'
 };
@@ -124,6 +131,12 @@ const styles = (theme: Theme) => createStyles({
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
+  },
+  toolbarContent: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
   },
   toolbarIcon: {
     display: 'flex',
@@ -207,6 +220,7 @@ const styles = (theme: Theme) => createStyles({
 interface HomeState {
   open: {
     [EnumSection.Admin]: boolean;
+    [EnumSection.Billing]: boolean;
     [EnumSection.Drawer]: boolean;
     [EnumSection.Resource]: boolean;
     [EnumSection.MapDrawer]: boolean;
@@ -237,6 +251,7 @@ class Home extends React.Component<HomeProps, HomeState> {
   state: HomeState = {
     open: {
       [EnumSection.Admin]: false,
+      [EnumSection.Billing]: false,
       [EnumSection.Drawer]: true,
       [EnumSection.Resource]: false,
       [EnumSection.MapDrawer]: false,
@@ -436,39 +451,43 @@ class Home extends React.Component<HomeProps, HomeState> {
             >
               <MenuIcon />
             </IconButton>
-            <Breadcrumb />
-            {incidentCounter != null && incidentCounter > 0 &&
-              <IconButton title="BPM Server Incidents" color="inherit" onClick={() => this.props.history.push(StaticRoutes.IncidentManager)}>
-                <Badge badgeContent={incidentCounter} color="secondary">
-                  <Icon path={mdiCogSyncOutline} size="1.5rem" />
-                </Badge>
-              </IconButton>
-            }
-            {this.props.location.pathname === StaticRoutes.Map &&
-              <IconButton
-                color="inherit"
-                onClick={() => this.onDrawerOpen(EnumSection.MapDrawer)}
-              >
-                <Icon path={mdiLayers} size="1.5rem" />
-              </IconButton>
-            }
-            {this.props.profile?.roles.includes(EnumRole.ADMIN) &&
-              <IconButton
-                color="inherit"
-                onClick={() => this.createAccount()}
-              >
-                <Icon path={mdiAccountPlusOutline} size="1.5rem" />
-              </IconButton>
-            }
-            <IconButton
-              edge="end"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={(e) => this.onMenuOpen(e)}
-              color="inherit"
-            >
-              <Icon path={mdiTools} size="1.5rem" />
-            </IconButton>
+            <div className={classes.toolbarContent}>
+              <Breadcrumb />
+              <div>
+                {incidentCounter != null && incidentCounter > 0 &&
+                  <IconButton title="BPM Server Incidents" color="inherit" onClick={() => this.props.history.push(StaticRoutes.IncidentManager)}>
+                    <Badge badgeContent={incidentCounter} color="secondary">
+                      <Icon path={mdiCogSyncOutline} size="1.5rem" />
+                    </Badge>
+                  </IconButton>
+                }
+                {this.props.location.pathname === StaticRoutes.Map &&
+                  <IconButton
+                    color="inherit"
+                    onClick={() => this.onDrawerOpen(EnumSection.MapDrawer)}
+                  >
+                    <Icon path={mdiLayers} size="1.5rem" />
+                  </IconButton>
+                }
+                {this.props.profile?.roles.includes(EnumRole.ADMIN) &&
+                  <IconButton
+                    color="inherit"
+                    onClick={() => this.createAccount()}
+                  >
+                    <Icon path={mdiAccountPlusOutline} size="1.5rem" />
+                  </IconButton>
+                }
+                <IconButton
+                  edge="end"
+                  aria-controls={menuId}
+                  aria-haspopup="true"
+                  onClick={(e) => this.onMenuOpen(e)}
+                  color="inherit"
+                >
+                  <Icon path={mdiTools} size="1.5rem" />
+                </IconButton>
+              </div>
+            </div>
           </Toolbar>
         </AppBar>
         { this.renderMenu()}
@@ -549,13 +568,43 @@ class Home extends React.Component<HomeProps, HomeState> {
                 <ListItemText primary={_t({ id: 'links.consumer-manager' })} />
               </ListItem>
 
-              <ListItem button
-                onClick={(e) => this.onNavigate(e, StaticRoutes.OrderManager)}>
+              <ListItem button onClick={() => this.onSectionToggle(EnumSection.Billing)}>
                 <ListItemIcon>
-                  <Icon path={mdiPackageVariantClosed} size="1.5rem" />
+                  <Icon path={mdiFinance} size="1.5rem" />
                 </ListItemIcon>
-                <ListItemText primary={_t({ id: 'links.order-manager' })} />
+                <ListItemText primary={_t({ id: 'links.orders-billing' })} />
+                {open[EnumSection.Billing] ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
+
+              <Collapse in={open[EnumSection.Billing]} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding className={open[EnumSection.Drawer] ? '' : classes.childMenu}>
+
+                  <ListItem button
+                    onClick={(e) => this.onNavigate(e, StaticRoutes.OrderManager)}>
+                    <ListItemIcon>
+                      <Icon path={mdiPackageVariantClosed} size="1.5rem" />
+                    </ListItemIcon>
+                    <ListItemText primary={_t({ id: 'links.order-manager' })} />
+                  </ListItem>
+
+                  <ListItem button
+                    onClick={(e) => this.onNavigate(e, StaticRoutes.PayInManager)}>
+                    <ListItemIcon>
+                      <Icon path={mdiBankTransferIn} size="1.5rem" />
+                    </ListItemIcon>
+                    <ListItemText primary={_t({ id: 'links.payin-manager' })} />
+                  </ListItem>
+
+                  <ListItem button
+                    onClick={(e) => this.onNavigate(e, StaticRoutes.PayOutManager)}>
+                    <ListItemIcon>
+                      <Icon path={mdiBankTransferOut} size="1.5rem" />
+                    </ListItemIcon>
+                    <ListItemText primary={_t({ id: 'links.payout-manager' })} />
+                  </ListItem>
+
+                </List>
+              </Collapse>
 
               <ListItem button
                 onClick={(e) => this.onNavigate(e, StaticRoutes.MessageManager)}>
@@ -632,7 +681,6 @@ class Home extends React.Component<HomeProps, HomeState> {
 
                     </List>
                   </Collapse>
-
                 </>
               </SecureContent>
 
@@ -649,18 +697,21 @@ class Home extends React.Component<HomeProps, HomeState> {
               <Route path={DynamicRoutes.AccountCreate} component={AccountForm} />
               <Route path={DynamicRoutes.ContractCreate} component={ContractForm} />
               <Route path={DynamicRoutes.ContractReview} component={ContractReviewForm} />
+              <Route path={DynamicRoutes.OrderTimeline} component={OrderTimeline} />
               {/* Static */}
               <Route path={StaticRoutes.Dashboard} component={DashboardComponent} />
               <Route path={StaticRoutes.ContractManager} component={ContractList} />
               <Route path={StaticRoutes.DraftManager} component={AssetDraftManager} />
+              <Route path={StaticRoutes.OrderManager} component={OrderManager} />
+              <Route path={StaticRoutes.PayInManager} component={PayInManager} />
               <Route path={StaticRoutes.Map} component={MapViewerComponent} />
               <Route path={StaticRoutes.Profile} component={Profile} />
               <Route path={StaticRoutes.Settings} component={PlaceHolder} />
               {/* Secured paths */}
               <SecureRoute path={StaticRoutes.HelpdeskAccountManager} component={HelpdeskAccountManager} roles={[EnumRole.ADMIN]} />
+              <SecureRoute path={StaticRoutes.IncidentManager} component={IncidentManager} roles={[EnumRole.ADMIN]} />
               <SecureRoute path={StaticRoutes.MarketplaceAccountManager} component={MarketplaceAccountManager} roles={[EnumRole.ADMIN]} />
               <SecureRoute path={StaticRoutes.ProcessInstanceManager} component={ProcessInstanceManager} roles={[EnumRole.ADMIN]} />
-              <SecureRoute path={StaticRoutes.IncidentManager} component={IncidentManager} roles={[EnumRole.ADMIN]} />
               {/* Default */}
               <Redirect push={true} to={ErrorPages.NotFound} />
             </Switch>
