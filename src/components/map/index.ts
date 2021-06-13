@@ -2,6 +2,7 @@ import BingMapsLayer from './layers/bing-maps-layer';
 import Draw from './interactions/draw';
 import GeoJsonLayer from './layers/geojson-layer';
 import GeoLocation from './geolocation';
+import HeatMapLayer from './layers/heatmap-layer';
 import Interactions from './interactions/interactions';
 import Layers from './layers/layers';
 import Map from './map';
@@ -23,6 +24,7 @@ const defaults = {
   Layer: {
     BingMaps: BingMapsLayer,
     GeoJSON: GeoJsonLayer,
+    HeatMap: HeatMapLayer,
     OSM: OsmLayer,
     VectorTileLayer: VectorTileLayer,
     WFS: WfsLayer,

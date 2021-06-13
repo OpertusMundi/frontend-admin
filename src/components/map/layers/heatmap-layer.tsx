@@ -2,48 +2,50 @@ import * as React from 'react';
 
 import OpenLayersMap from 'ol/Map';
 
-import { StyleLike } from 'ol/style/Style';
-import VectorSource from 'ol/source/Vector';
-import GeoJSON from 'ol/format/GeoJSON';
-import Feature from 'ol/Feature';
 import Collection from 'ol/Collection';
-import VectorLayer from 'ol/layer/Vector';
+import Feature from 'ol/Feature';
+import GeoJSON from 'ol/format/GeoJSON';
+import VectorSource from 'ol/source/Vector';
+
+import { Heatmap as HeatmapLayer } from 'ol/layer';
 
 import { FeatureCollection } from 'geojson';
 
 type FeatureLike = null | string | FeatureCollection | Feature | Feature[] | Collection<Feature>;
 
-interface GeoJsonLayerProps {
+interface HeatMapLayerProps {
+  blur?: number;
+  radius?: number;
   features: FeatureLike;
-  fitToExtent?: boolean;
   index?: number;
   map?: OpenLayersMap;
-  style?: StyleLike
 }
 
 /**
- * Vector layer from GeoJSON data
+ * Heatmap layer
  *
- * @class GeoJsonLayer
+ * @class HeatMapLayer
  * @extends {React.Component}
  */
-class GeoJsonLayer extends React.Component<GeoJsonLayerProps> {
+class HeatMapLayer extends React.Component<HeatMapLayerProps> {
 
-  private _layer: VectorLayer | undefined;
+  private _layer: HeatmapLayer | undefined;
 
   static defaultProps = {
-    fitToExtent: false,
+    blur: 15,
+    radius: 5,
   }
+
 
   get map(): OpenLayersMap | undefined {
     return this.props.map;
   }
 
-  get layer(): VectorLayer | undefined {
+  get layer(): HeatmapLayer | undefined {
     return this._layer;
   }
 
-  parseFeatures(features: FeatureLike, fitToExtent: boolean = false) {
+  parseFeatures(features: FeatureLike) {
     if (!this._layer) {
       return;
     }
@@ -71,33 +73,35 @@ class GeoJsonLayer extends React.Component<GeoJsonLayerProps> {
         featureProjection: 'EPSG:3857',
       }));
     }
-
-    if ((fitToExtent) && (source.getFeatures().length > 0)) {
-      this.props.map?.getView().fit(source.getExtent());
-    }
   }
 
   componentDidMount() {
-    const { index = 0, map = null, features, fitToExtent = false, style } = this.props;
+    const { index = 0, map = null, features, blur = 15, radius = 5 } = this.props;
 
     if (map) {
       const source = new VectorSource();
 
-      this._layer = new VectorLayer({
+      this._layer = new HeatmapLayer({
         source,
-        style,
+        blur,
+        radius,
+        weight: function (feature) {
+          const value = feature.get('value');
+
+          return value;
+        },
       });
 
-      this.parseFeatures(features, fitToExtent);
+      this.parseFeatures(features);
 
       map.getLayers().insertAt(index, this._layer);
     }
   }
 
-  componentDidUpdate(prevProps: GeoJsonLayerProps) {
+  componentDidUpdate(prevProps: HeatMapLayerProps) {
     const currProps = this.props;
     if (currProps.features !== prevProps.features) {
-      this.parseFeatures(currProps.features, currProps.fitToExtent);
+      this.parseFeatures(currProps.features);
     }
   }
 
@@ -115,4 +119,4 @@ class GeoJsonLayer extends React.Component<GeoJsonLayerProps> {
 
 }
 
-export default GeoJsonLayer;
+export default HeatMapLayer;
