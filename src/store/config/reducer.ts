@@ -9,6 +9,7 @@ import {
 } from 'store/config/types';
 
 const initialState: ConfigurationState = {
+  marketplaceUrl: '',
 };
 
 export function configurationReducer(
