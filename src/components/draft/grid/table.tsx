@@ -17,7 +17,7 @@ import {
   mdiTrayFull,
   mdiCloseOctagon,
   mdiLeadPencil,
-  mdiMagnify,
+  mdiLink,
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
@@ -85,7 +85,7 @@ function draftColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.View, rowIndex, column, row) : null}
               >
-                <Icon path={mdiMagnify} className={classes.classes.rowIcon} />
+                <Icon path={mdiLink} className={classes.classes.rowIcon} />
               </i>
             </Tooltip>
             {row.status === EnumDraftStatus.PENDING_HELPDESK_REVIEW &&
