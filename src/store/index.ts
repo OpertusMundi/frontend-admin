@@ -7,6 +7,7 @@ import { loadingBarReducer } from 'react-redux-loading-bar';
 
 import { history } from 'routing';
 
+import { analyticsReducer } from './analytics/reducer';
 import { configurationReducer } from './config/reducer';
 import { contractReducer } from './contract/reducer';
 import { draftReducer } from './draft/reducer';
@@ -27,6 +28,7 @@ export const rootReducer = Redux.combineReducers({
     helpdesk: helpdeskAccountReducer,
     marketplace: marketplaceAccountReducer,
   }),
+  analytics: analyticsReducer,
   billing: Redux.combineReducers({
     order: orderReducer,
     payin: payInReducer,

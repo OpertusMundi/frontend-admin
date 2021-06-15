@@ -19,6 +19,7 @@ import Icon from '@mdi/react';
 import {
   mdiAccountMultiple,
   mdiBadgeAccountOutline,
+  mdiBankTransfer,
   mdiBellAlertOutline,
   mdiCogOutline,
   mdiCogSyncOutline,
@@ -56,6 +57,7 @@ export const Pages = {
  * Static routes
  */
 
+const Analytics = '/analytics/query-editor';
 const Dashboard = '/dashboard';
 const ConsumerManager = '/consumers';
 //const ContractMaster = '/contract/master';
@@ -75,6 +77,7 @@ const ProcessInstanceManager = '/workflows/process-instances';
 const IncidentManager = '/workflow/incidents'
 
 export const StaticRoutes = {
+  Analytics,
   Dashboard,
   ConsumerManager,
   //ContractMaster,
@@ -204,6 +207,13 @@ const routes: RouteRegistry = {
     description: 'Orders',
     title: 'links.order-manager',
     defaultTitle: 'Orders',
+    links: defaultLinks
+  },
+  [PayInManager]: {
+    icon: (className?: string) => (<Icon path={mdiBankTransfer} size="1.5rem" className={className} />),
+    description: 'Billing',
+    title: 'links.payin-manager',
+    defaultTitle: 'Billing',
     links: defaultLinks
   },
   [Profile]: {
