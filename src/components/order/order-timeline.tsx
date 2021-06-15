@@ -49,8 +49,9 @@ import { findOne } from 'store/order/thunks';
 
 // Model
 import { EnumPaymentMethod } from 'model/enum';
+import { EnumPricingModel, FixedPricingModelCommand } from 'model/pricing-model';
 import { EnumMangopayUserType, Address, CustomerIndividual, CustomerProfessional } from 'model/customer';
-import { EnumOrderStatus, Order, BankwirePayIn, EnumTransactionStatus } from 'model/order';
+import { EnumOrderStatus, Order, OrderItem, BankwirePayIn, EnumTransactionStatus } from 'model/order';
 
 // Service
 import OrderApi from 'service/order';
@@ -199,6 +200,57 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
     )
   }
 
+  renderPricingModel(item: OrderItem): React.ReactNode {
+    const model = item.pricingModel.model;
+    const parameters = item.pricingModel.parameters;
+
+    switch (model.type) {
+      case EnumPricingModel.FREE:
+        return (
+          <FormattedMessage id={`enum.effective-pricing-model.${model.type}`} />
+        );
+
+      case EnumPricingModel.FIXED: {
+        const typedModel = model as FixedPricingModelCommand;
+
+        return (
+          <FormattedMessage
+            id={`enum.effective-pricing-model.${model.type}`}
+            values={{ years: typedModel.yearsOfUpdates }}
+          />
+        );
+      }
+
+      case EnumPricingModel.FIXED_PER_ROWS: {
+        return (
+          <FormattedMessage
+            id={`enum.effective-pricing-model.${model.type}`}
+            values={{ years: parameters?.systemParams?.rows }}
+          />
+        );
+      }
+
+      case EnumPricingModel.FIXED_FOR_POPULATION: {
+        return (
+          <FormattedMessage
+            id={`enum.effective-pricing-model.${model.type}`}
+            values={{ population: parameters?.systemParams?.populationPercent }}
+          />
+        );
+      }
+
+      case EnumPricingModel.PER_CALL_WITH_PREPAID:
+        break;
+      case EnumPricingModel.PER_CALL_WITH_BLOCK_RATE:
+        break;
+      case EnumPricingModel.PER_ROW_WITH_PREPAID:
+        break;
+      case EnumPricingModel.PER_ROW_WITH_BLOCK_RATE:
+        break;
+    }
+    return null;
+  }
+
   renderDeliveryDetails(order: Order): React.ReactNode {
     return (
       <>
@@ -313,8 +365,6 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
       </TimelineItem>
     ));
 
-    const h = history[0];
-
     return (
       <Timeline align="alternate">
         {steps}
@@ -347,14 +397,21 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
             </Typography>
             <List disablePadding>
               {order.items.map((item, index) => (
-                <a key={`order-item-${index}`} className={classes.link} href={`${config.marketplaceUrl}/catalogue/${item.item}`} target="_blank" rel="noreferrer">
+                <div key={`order-item-${index}`}>
+                  <a className={classes.link} href={`${config.marketplaceUrl}/catalogue/${item.item}`} target="_blank" rel="noreferrer">
+                    <ListItem className={classes.listItem}>
+                      <ListItemText secondary={item.description} />
+                      <Typography variant="body2">
+                        <FormattedNumber value={item.totalPrice} style={'currency'} currency={order.currency} />
+                      </Typography>
+                    </ListItem>
+                  </a>
                   <ListItem className={classes.listItem}>
-                    <ListItemText secondary={item.description} />
-                    <Typography variant="body2">
-                      <FormattedNumber value={item.totalPrice} style={'currency'} currency={order.currency} />
+                    <Typography variant="caption">
+                      {this.renderPricingModel(item)}
                     </Typography>
                   </ListItem>
-                </a>
+                </div>
               ))}
               <ListItem className={classes.listItem}>
                 <ListItemText primary="Total" />

@@ -207,6 +207,12 @@
       "DIGITAL_PROVIDER": "Provider Digital",
       "PHYSICAL_PROVIDER": "Provider Physical"
     },
+    "effective-pricing-model": {
+      "FREE": "Free",
+      "FIXED": "Fixed price. {years} years of updates included.",
+      "FIXED_PER_ROWS": "{rows} rows included.",
+      "FIXED_FOR_POPULATION": "{population}% of the population is covered."
+    },
     "order-status": {
       "CREATED": "New",
       "CHARGED": "Charged",
