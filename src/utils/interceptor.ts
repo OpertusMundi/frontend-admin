@@ -112,7 +112,7 @@ export function securityErrorInterceptor(error: AxiosError<any>): Promise<AxiosE
     // loop due to this interceptor. The /api/configuration call that returns 401 for unauthorized users.
 
     if (window.location.pathname !== '/sign-in') {
-      history.push('/sign-in');
+      window.location.href = '/sign-in';
     }
   }
 
