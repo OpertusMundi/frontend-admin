@@ -138,6 +138,7 @@ class DashboardComponent extends React.Component<DashboardComponentProps, Dashbo
     this.analyticsApi.executeSalesQuery(segmentQuery)
       .then((response) => {
         if (response.success) {
+          response.result.points.reverse();
           this.setState({
             segments: response.result,
           });
@@ -207,7 +208,7 @@ class DashboardComponent extends React.Component<DashboardComponentProps, Dashbo
   }
   render() {
     const { classes, config } = this.props;
-    const { features, segments } = this.state;
+    const { features } = this.state;
 
     const options = this.getOptions();
 
