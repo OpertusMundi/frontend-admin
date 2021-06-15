@@ -4,6 +4,9 @@ import { ThunkAction } from 'redux-thunk'
 import { RootState } from 'store';
 import { ProcessInstanceActions } from './types';
 import {
+  countProcessInstancesComplete,
+  countProcessInstancesFailure,
+  countProcessInstancesInit,
   searchInit,
   searchComplete,
   searchFailure,
@@ -49,7 +52,7 @@ export const find = (
   // Get response
   const api = new WorkflowApi();
 
-  const response = await api.getInstances(query, pageRequest, sorting);
+  const response = await api.getProcessInstances(query, pageRequest, sorting);
 
   // Update state
   if (response.data.success) {
@@ -58,5 +61,23 @@ export const find = (
   }
 
   dispatch(searchFailure());
+  return null;
+}
+
+export const countProcessInstances = (): ThunkResult<number | null> => async (dispatch, getState) => {
+  dispatch(countProcessInstancesInit());
+  // Get response
+  const api = new WorkflowApi();
+
+  const response = await api.countProcessInstances();
+
+  // Update state
+  if (response.data.success) {
+
+    dispatch(countProcessInstancesComplete(response.data.result));
+    return response.data.result;
+  }
+
+  dispatch(countProcessInstancesFailure());
   return null;
 }

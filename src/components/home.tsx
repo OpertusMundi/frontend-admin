@@ -54,6 +54,7 @@ import {
   mdiBankTransferIn,
   mdiBankTransferOut,
   mdiFinance,
+  mdiChartBarStacked,
 } from '@mdi/js';
 
 // Utilities
@@ -83,6 +84,7 @@ import OrderTimeline from 'components/order/order-timeline';
 import PayInManager from 'components/payin/payin-grid';
 import PlaceHolder from 'components/placeholder';
 import Profile from 'components/profile';
+import QueryEditor from './analytics/query-editor';
 import SecureContent from 'components/secure-content';
 import SecureRoute from 'components/secure-route';
 
@@ -90,6 +92,7 @@ import SecureRoute from 'components/secure-route';
 import { RootState } from 'store';
 import { logout } from 'store/security/thunks';
 import { countIncidents } from 'store/incident/thunks';
+import { countProcessInstances } from 'store/process-instance/thunks';
 
 enum EnumSection {
   Resource = 'Resource',
@@ -243,7 +246,7 @@ class Home extends React.Component<HomeProps, HomeState> {
 
   private drawerRef: React.RefObject<HTMLDivElement> | null;;
 
-  private countIncidentsInterval: number | null = null;
+  private refreshCountersInterval: number | null = null;
 
   constructor(props: HomeProps) {
     super(props);
@@ -298,13 +301,19 @@ class Home extends React.Component<HomeProps, HomeState> {
         });
       }, false);
     }
+
     this.props.countIncidents();
-    this.countIncidentsInterval = window.setInterval(() => { this.props.countIncidents(); }, 5 * 60 * 1000);
+    this.props.countProcessInstances();
+
+    this.refreshCountersInterval = window.setInterval(() => {
+      this.props.countIncidents();
+      this.props.countProcessInstances();
+    }, 5 * 60 * 1000);
   }
 
   componentWillUnmount() {
-    if (this.countIncidentsInterval != null) {
-      clearInterval(this.countIncidentsInterval);
+    if (this.refreshCountersInterval != null) {
+      clearInterval(this.refreshCountersInterval);
     }
   }
 
@@ -541,6 +550,14 @@ class Home extends React.Component<HomeProps, HomeState> {
               </ListItem>
 
               <ListItem button
+                onClick={(e) => this.onNavigate(e, StaticRoutes.Analytics)}>
+                <ListItemIcon>
+                  <Icon path={mdiChartBarStacked} size="1.5rem" />
+                </ListItemIcon>
+                <ListItemText primary={_t({ id: 'links.analytics' })} />
+              </ListItem>
+
+              <ListItem button
                 onClick={(e) => this.onNavigate(e, StaticRoutes.ContractManager)}>
                 <ListItemIcon>
                   <Icon path={mdiSignatureFreehand} size="1.5rem" />
@@ -705,6 +722,7 @@ class Home extends React.Component<HomeProps, HomeState> {
               <Route path={DynamicRoutes.ContractReview} component={ContractReviewForm} />
               <Route path={DynamicRoutes.OrderTimeline} component={OrderTimeline} />
               {/* Static */}
+              <Route path={StaticRoutes.Analytics} component={QueryEditor} />
               <Route path={StaticRoutes.Dashboard} component={DashboardComponent} />
               <Route path={StaticRoutes.ContractManager} component={ContractList} />
               <Route path={StaticRoutes.DraftManager} component={AssetDraftManager} />
@@ -746,6 +764,7 @@ const mapState = (state: RootState) => ({
 const mapDispatch = {
   logout: () => logout(),
   countIncidents: () => countIncidents(),
+  countProcessInstances: () => countProcessInstances(),
 };
 
 const connector = connect(

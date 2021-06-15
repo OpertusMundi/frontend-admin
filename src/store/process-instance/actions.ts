@@ -3,6 +3,9 @@ import { EnumProcessInstanceSortField, ProcessInstanceQuery, ProcessInstance } f
 
 import {
   ProcessInstanceActions,
+  COUNT_PROCESS_INSTANCE_INIT,
+  COUNT_PROCESS_INSTANCE_FAILURE,
+  COUNT_PROCESS_INSTANCE_COMPLETE,
   SET_PAGER,
   RESET_PAGER,
   SET_FILTER,
@@ -18,6 +21,25 @@ import {
 
 
 // Action Creators
+export function countProcessInstancesInit(): ProcessInstanceActions {
+  return {
+    type: COUNT_PROCESS_INSTANCE_INIT,
+  };
+}
+
+export function countProcessInstancesFailure(): ProcessInstanceActions {
+  return {
+    type: COUNT_PROCESS_INSTANCE_FAILURE,
+  };
+}
+
+export function countProcessInstancesComplete(processInstanceCounter: number): ProcessInstanceActions {
+  return {
+    type: COUNT_PROCESS_INSTANCE_COMPLETE,
+    processInstanceCounter,
+  };
+}
+
 export function setPager(page: number, size: number): ProcessInstanceActions {
   return {
     type: SET_PAGER,

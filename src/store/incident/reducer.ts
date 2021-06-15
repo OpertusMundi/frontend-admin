@@ -80,7 +80,6 @@ export function incidentReducer(
         loading: false,
       };
 
-
     case SET_PAGER:
       return {
         ...state,

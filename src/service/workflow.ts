@@ -26,7 +26,13 @@ export default class WorkflowApi extends Api {
     super(config);
   }
 
-  public async getInstances(
+  public async countProcessInstances(): Promise<AxiosObjectResponse<number>> {
+    const url = `/action/workflows/process-instances/count`;
+
+    return this.get<ObjectResponse<number>>(url);
+  }
+
+  public async getProcessInstances(
     query: Partial<ProcessInstanceQuery>, pageRequest: PageRequest, sorting: Sorting<EnumProcessInstanceSortField>[]
   ): Promise<AxiosPageResponse<ProcessInstance>> {
     const { page, size } = pageRequest;
@@ -37,7 +43,7 @@ export default class WorkflowApi extends Api {
         return query[key] !== null ? [...result, `${key}=${query[key]}`] : result;
       }, []);
 
-    const url = `/action/workflows/instances?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
+    const url = `/action/workflows/process-instances?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
 
     return this.get<ObjectResponse<PageResult<ProcessInstance>>>(url);
   }

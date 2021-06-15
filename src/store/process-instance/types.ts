@@ -22,10 +22,13 @@ export interface ProcessInstanceState {
   result: PageResult<ProcessInstance> | null;
   selected: ProcessInstance[];
   sorting: Sorting<EnumProcessInstanceSortField>[];
+  processInstanceCounter: number | null,
 }
 
 // Actions
-export const COUNT_INCIDENT_COMPLETE = 'workflow/manager/COUNT_INCIDENT_COMPLETE';
+export const COUNT_PROCESS_INSTANCE_INIT = 'workflow/process-instance/COUNT_PROCESS_INSTANCE_INIT';
+export const COUNT_PROCESS_INSTANCE_FAILURE = 'workflow/process-instance/COUNT_PROCESS_INSTANCE_FAILURE';
+export const COUNT_PROCESS_INSTANCE_COMPLETE = 'workflow/process-instance/COUNT_PROCESS_INSTANCE_COMPLETE';
 
 export const SET_PAGER = 'workflow/process-instance/SET_PAGER';
 export const RESET_PAGER = 'workflow/process-instance/RESET_PAGER';
@@ -38,6 +41,19 @@ export const ADD_SELECTED = 'workflow/process-instance/ADD_SELECTED';
 export const REMOVE_SELECTED = 'workflow/process-instance/REMOVE_SELECTED';
 export const SET_SORTING = 'workflow/process-instance/SET_SORTING';
 export const RESET_SELECTED = 'workflow/process-instance/RESET_SELECTED';
+
+export interface CountProcessInstanceInitAction {
+  type: typeof COUNT_PROCESS_INSTANCE_INIT;
+}
+
+export interface CountProcessInstanceFailureAction {
+  type: typeof COUNT_PROCESS_INSTANCE_FAILURE;
+}
+
+export interface CountProcessInstanceCompleteAction {
+  type: typeof COUNT_PROCESS_INSTANCE_COMPLETE;
+  processInstanceCounter: number | null;
+}
 
 export interface SetPagerAction {
   type: typeof SET_PAGER;
@@ -92,6 +108,9 @@ export interface ResetSelectionAction {
 
 export type ProcessInstanceActions =
   | LogoutInitAction
+  | CountProcessInstanceInitAction
+  | CountProcessInstanceFailureAction
+  | CountProcessInstanceCompleteAction
   | SetPagerAction
   | ResetPagerAction
   | SetSortingAction

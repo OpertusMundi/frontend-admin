@@ -7,6 +7,9 @@ import {
 } from 'store/security/types';
 
 import {
+  COUNT_PROCESS_INSTANCE_COMPLETE,
+  COUNT_PROCESS_INSTANCE_FAILURE,
+  COUNT_PROCESS_INSTANCE_INIT,
   SET_PAGER,
   RESET_PAGER,
   SET_FILTER,
@@ -41,6 +44,7 @@ const initialState: ProcessInstanceState = {
   }],
   result: null,
   selected: [],
+  processInstanceCounter: 0,
 };
 
 export function processInstanceReducer(
@@ -54,6 +58,27 @@ export function processInstanceReducer(
         ...initialState
       };
 
+    case COUNT_PROCESS_INSTANCE_INIT:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case COUNT_PROCESS_INSTANCE_FAILURE:
+      return {
+        ...state,
+        processInstanceCounter: null,
+        lastUpdated: moment(),
+        loading: false,
+      };
+
+    case COUNT_PROCESS_INSTANCE_COMPLETE:
+      return {
+        ...state,
+        processInstanceCounter: action.processInstanceCounter,
+        lastUpdated: moment(),
+        loading: false,
+      };
 
     case SET_PAGER:
       return {
