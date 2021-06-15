@@ -55,13 +55,13 @@ const styles = (theme: Theme) => createStyles({
   columnTitle: {
     marginTop: '3vh',
     marginBottom: '2vh',
-    fontSize: '1.4rem',
+    fontSize: '1.5rem',
     fontWeight: 'bold',
     //textAlign: 'center'
   },
   columnSubtitle: {
     color: '#6C6C6C',
-    fontSize: '0.8rem',
+    fontSize: '1rem',
     fontWeight: 'normal',
   },
   contractSubtitle: {
@@ -149,7 +149,6 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
 
   saveContract(): void {
     const contract = this.state.contract;
-    console.log('in save');
     (contract.id === null || typeof (contract.id) === 'undefined' ? this.api.create(contract) : this.api.update(contract.id!, contract))
       .then((response) => {
         if (response.data.success) {
@@ -171,21 +170,23 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
     const contract = this.state.contract;
     const { classes } = this.props;
     const outline = contract.sections.map(section => {
-      //console.log('section:',section);
       let type = '';
       if (section.optional) {
-        type = 'Opt. '
+        type = '(Opt.)'
       }
       else if (section.dynamic) {
-        type = 'Dyn. '
+        type = '(Dyn.)'
       }
-      return (<div key={section.id} className={classes.section}>
-        <FormattedMessage id={section.id! + 1} defaultMessage={type + 'Section ' + section.index + ' - ' + section.title} />
+      if (section.title)
+        var sectionTitle = 'Section ' + section.index + ' - ' + section.title + ' ' + type
+      else 
+        sectionTitle = 'Section ' + section.index + ' ' + type  
+      return (<div key={section.id} className={classes.section} style={{ paddingLeft: section.indent}}>
+        <FormattedMessage id={section.id! + 1} defaultMessage={sectionTitle} />
       </div>)
     });
     const structure = contract.sections.map(section => {
-      //console.log('section:',section);
-      let body, renderedOutput:any;
+      let body, renderedOutput:any, icon:any;
       
       if (section.dynamic) {
         body = section.styledOptions.map((option, index) => {
@@ -213,9 +214,13 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
           });
 
         };
+          if (section.icons![index])
+            icon = <img className={classes.logoImage} src={"/icons/" + section.icons![index]} alt="" />
+
           return (
             <div key={index}> <span className={classes.option} >Option {String.fromCharCode(65 + index)}</span>
-              <img className={classes.logoImage} src={"/icons/" + section.icons![index]} alt="" />
+
+              {icon}
               <p>{section.summary![index]}</p>
               <Editor editorState={EditorState.createWithContent(convertFromRaw(JSON.parse(option)))} readOnly={true} onChange={() => { }} />
               {renderedOutput}
@@ -225,11 +230,18 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
       
       }
       else {
-        let option = EditorState.createWithContent(convertFromRaw(JSON.parse(section.styledOptions[0])));
-        body = <div>
-          <img className={classes.logoImage} src={"/icons/" + section.icons![0]} alt="" />
-          <p>{section.summary![0]}</p>
-          <Editor editorState={option} readOnly={true} onChange={() => { }} /> </div>;
+        //for empty section body dont use Editor
+        if (section.options[0] === "") 
+          body = '';
+        else {
+          let option = EditorState.createWithContent(convertFromRaw(JSON.parse(section.styledOptions[0])));
+          if (section.icons![0])
+            icon = <img className={classes.logoImage} src={"/icons/" + section.icons![0]} alt="" />
+          body = <div>
+            {icon}
+            <p>{section.summary![0]}</p>
+            <Editor editorState={option} readOnly={true} onChange={() => { }} /> </div>;
+        }
       }
       return (<div>
         <div key={section.id} className={classes.section && classes.columnTitle}>

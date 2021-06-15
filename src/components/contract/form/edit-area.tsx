@@ -47,7 +47,7 @@ const styles = (theme: Theme) => createStyles({
     borderStyle: 'solid',
     borderWidth: '0.5px',
     padding: '10px',
-
+    fontSize: '18px'
   },
   options: {
     borderStyle: 'solid',
@@ -346,7 +346,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     const { classes } = this.props;
     let editor, iconSelector, type_buttons, options, suboptions, editOption, editSuboption, summary, descriptionOfChange, editingOptionTitle='', suboptionsSize=0;
     
-    if (this.state.dynamic){
+    if (this.state.variable){
       var type='Option ', currentOption =this.state.option ;
       if (!this.state.editingOption){
         type='Suboption ';
@@ -406,49 +406,46 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
               <MenuItem  value={index}>{option}</MenuItem>)};
           </Select>
         </div>;
-        var suboptionsArray = this.props.section!.suboptions[this.state.option];
-        if (typeof(suboptionsArray)!=='undefined')
-          suboptionsSize = suboptionsArray.length;
-        else 
-          suboptionsSize = 0
-          suboptions = 
-          <div  style={{'marginTop': '2vh' }} onChange={(e) => this.onChangeSuboptionValue(this.props.section!.id!, e)}>
-            <label>Suboptions</label>
-            <input className={classes.options} type="number" value={suboptionsSize}></input>
-          </div>
-          let suboptionAlphanumeric = [];
-          for (let i = 0; i < suboptionsSize; i++) {
-            suboptionAlphanumeric.push(String.fromCharCode(65 + i));
-          }
-        if (suboptionAlphanumeric.length>0)
-
-          editSuboption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel>Suboption</InputLabel>
-            <Select
-
-              onChange={this.onSuboptionSelect}
-            >
-
-              <MenuItem disabled>Suboption</MenuItem>
-              {suboptionAlphanumeric.map((option, index) =>
-                <MenuItem value={index}>{option}</MenuItem>)};
-        </Select>
-            {suboptions}
-          </div>;
-        else
-          editSuboption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel>Suboption</InputLabel>
-            <Select
-
-              onChange={this.onSuboptionSelect}
-            >
-
-              <MenuItem disabled>Suboption</MenuItem>
-        </Select>
-            {suboptions}
-          </div>;
-        
-
-        
       }
+      var suboptionsArray = this.props.section!.suboptions[this.state.option];
+      if (typeof (suboptionsArray) !== 'undefined')
+        suboptionsSize = suboptionsArray.length;
+      else
+        suboptionsSize = 0
+      suboptions =
+        <div style={{ 'marginTop': '2vh' }} onChange={(e) => this.onChangeSuboptionValue(this.props.section!.id!, e)}>
+          <label>Suboptions</label>
+          <input className={classes.options} type="number" value={suboptionsSize}></input>
+        </div>
+      let suboptionAlphanumeric = [];
+      for (let i = 0; i < suboptionsSize; i++) {
+        suboptionAlphanumeric.push(String.fromCharCode(65 + i));
+      }
+      if (suboptionAlphanumeric.length > 0)
+
+        editSuboption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel>Suboption</InputLabel>
+          <Select
+
+            onChange={this.onSuboptionSelect}
+          >
+
+            <MenuItem disabled>Suboption</MenuItem>
+            {suboptionAlphanumeric.map((option, index) =>
+              <MenuItem value={index}>{option}</MenuItem>)};
+      </Select>
+          {suboptions}
+        </div>;
+      else
+        editSuboption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel>Suboption</InputLabel>
+          <Select
+
+            onChange={this.onSuboptionSelect}
+          >
+
+            <MenuItem disabled>Suboption</MenuItem>
+          </Select>
+          {suboptions}
+        </div>;
 
       type_buttons =
       <div>

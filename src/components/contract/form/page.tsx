@@ -38,8 +38,7 @@ const styles = (theme: Theme) => createStyles({
   title:{
     padding: '10px',
     background: '#d3d3d369',
-    border: '0.5px',
-    borderStyle: 'dashed',
+    border: '1px dashed #6C6C6C',
     marginBottom: '8px'
   },
   controls: {

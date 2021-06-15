@@ -100,12 +100,12 @@ const styles = (theme: Theme) => createStyles({
   columnTitle: {
     marginTop: '3vh',
     marginBottom: '2vh',
-    fontSize: '1.4rem',
+    fontSize: '1.5rem',
     fontWeight: 'bold',
   },
   columnSubtitle: {
     color: '#6C6C6C',
-    fontSize: '0.8rem',
+    fontSize: '1.1rem',
     fontWeight: 'normal',
   },
   contractGrid: {
@@ -134,6 +134,10 @@ const styles = (theme: Theme) => createStyles({
     height: '45px',
     borderRadius: '25px'
   },
+  addBtn:{
+    height: '50px',
+    border: '1px dashed #6C6C6C',
+  }
 });
 
 const defaultSection: Section = {
@@ -250,7 +254,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
 
     var lastSection = this.state.sectionList.slice(-1)[0];
     if (lastSection) {
-      section.index = this.getCurrentIndex(section.id!, 0);
+      section.index = this.getCurrentIndex(this.state.sectionList.length, 0);
     }
     else {
       section.index = '1';
@@ -566,16 +570,20 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     const outline = this.state.sectionList.map(section => {
       let type = '';
       if (section.optional) {
-        type = 'Opt. '
+        type = '(Opt.)'
       }
       else if (section.dynamic) {
-        type = 'Dyn. '
+        type = '(Dyn.)'
       }
       else if (section.variable) {
-        type = 'Var. '
+        type = '(Var.)'
       }
-      return (<div key={section.id} className={classes.section}>
-        <FormattedMessage id={section.id! + 1} defaultMessage={type + 'Section ' + section.index + ' - ' + section.title} />
+      if (section.title)
+        var sectionTitle = 'Section ' + section.index + ' - ' + section.title + ' ' + type
+      else
+        sectionTitle = 'Section ' + section.index + ' ' + type
+      return (<div key={section.id} className={classes.section} style={{ paddingLeft: section.indent}}> 
+        <FormattedMessage id={section.id! + 1} defaultMessage={sectionTitle} />
       </div>)
     });
     let editor;
@@ -587,16 +595,21 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     }
     let toolbarActions;
     if (this.state.displayToolbarActions) {
-      toolbarActions = <Grid container item xs={12} className={classes.toolbox}><button style={{ height: 50, marginRight: 20 }}
+      if (this.state.sectionList.length>0){
+        var newId = this.state.sectionList.slice(-1)[0].id! + 1
+      }
+      else
+        newId = 0;
+      toolbarActions = <Grid container item xs={12} className={classes.toolbox}><button className= {classes.addBtn}  style={{marginRight: 20 }}
         onClick={() =>
-          this.addSection({ variable: false, id: this.state.sectionList.length })
+          this.addSection({ variable: false, id: newId })
         }
       >
         Add Section
     </button>
-        <button style={{ height: 50 }}
+        <button className= {classes.addBtn} 
           onClick={() =>
-            this.addSection({ variable: true, id: this.state.sectionList.length })
+            this.addSection({ variable: true, id: newId  })
           }
         >
           Add Variable Section
