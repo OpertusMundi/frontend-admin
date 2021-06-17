@@ -306,7 +306,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       }
       else if (section.indent === lastSection.indent - 8) {
         var firstPart = lastSection.index.substr(0,lastSection.index.lastIndexOf('.'))
-        var lastPart = parseInt(firstPart.substr(firstPart.lastIndexOf('.')+1), 10) + 1; 
+        var lastPart = parseInt(firstPart.substr(firstPart.lastIndexOf('.')+1), 10) + 1;
         section.index = firstPart.substr(0,firstPart.lastIndexOf('.')+1) + lastPart
 
       }
@@ -447,7 +447,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     });
   }
 
-  saveContent(id: number, contentState: ContentState, body: string, title: string, option: number, suboption: number, 
+  saveContent(id: number, contentState: ContentState, body: string, title: string, option: number, suboption: number,
       summary: string, descriptionOfChange: string, icon: string, editField: EditFieldEnum): void {
     var raw = JSON.stringify(convertToRaw(contentState));
     if (editField === EditFieldEnum.Section) {
@@ -495,21 +495,21 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     let suboptionsArray = section.suboptions[option];
     if (suboptionsArray)
       var length =  suboptionsArray.length;
-    else 
+    else
       length =0;
     if (length > 0) {
-      for (let i = length; i < suboptions; i++) 
+      for (let i = length; i < suboptions; i++)
         suboptionsArray.push({'id': i, 'body': `{"blocks":[{"key":"5u8f1","text":"Additional suboption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`})
     }
     else{
       length = 0
       suboptionsArray = new Array <Suboption>();
       suboptionsArray.push({'id': 0, 'body': `{"blocks":[{"key":"5u8f1","text":"Additional suboption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`})
-      
+
       section.suboptions[option] = suboptionsArray;
-      
+
     }
-    
+
     if (suboptions < length) {
       for (let i = length; i > suboptions; i--) {
         suboptionsArray.pop();
@@ -562,8 +562,8 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     const { sectionList } = this.state;
 
     sectionList.sort((a,b) => {
-      if (a.index! < b.index!) return -1;
-      if (a.index! > b.index!) return 1;
+      if (a.index < b.index) return -1;
+      if (a.index > b.index) return 1;
       return 0;
     });
     const { classes } = this.props;
@@ -582,7 +582,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         var sectionTitle = 'Section ' + section.index + ' - ' + section.title + ' ' + type
       else
         sectionTitle = 'Section ' + section.index + ' ' + type
-      return (<div key={section.id} className={classes.section} style={{ paddingLeft: section.indent}}> 
+      return (<div key={section.id} className={classes.section} style={{ paddingLeft: section.indent}}>
         <FormattedMessage id={section.id! + 1} defaultMessage={sectionTitle} />
       </div>)
     });
@@ -607,7 +607,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       >
         Add Section
     </button>
-        <button className= {classes.addBtn} 
+        <button className= {classes.addBtn}
           onClick={() =>
             this.addSection({ variable: true, id: newId  })
           }

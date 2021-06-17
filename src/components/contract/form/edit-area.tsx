@@ -170,7 +170,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     this.state = {
       editorState, title, option: 0, suboption: 0, editingOption: true, showEditor: show, summary, descriptionOfChange, variable, optional, dynamic, icon, openAutoTextSelect: false, openIconSelect: false,
       editField: this.props.editField
-      
+
     };
   }
 
@@ -178,7 +178,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   customBlockStyleFn = (contentBlock: ContentBlock) => {
     return ['public-DraftStyleDefault-block'];
 
-    
+
   }
 
   onChangeValue(id: number, event: any) {
@@ -203,7 +203,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   }
 
   onOptionSelect = (event: any) => {
-    
+
     var selection = event.target.value
     var editingOption = true
     this.setState({
@@ -218,7 +218,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     var body =this.props.section!.suboptions[this.state.option][selection].body;
     this.setState({
       suboption: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(body!))),
-      summary: this.props.section!.summary![selection], icon: this.props.section!.icons![selection], editField: EditFieldEnum.Suboption ,editingOption, 
+      summary: this.props.section!.summary![selection], icon: this.props.section!.icons![selection], editField: EditFieldEnum.Suboption ,editingOption,
     });
   }
 
@@ -345,7 +345,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     const { editorState } = this.state;
     const { classes } = this.props;
     let editor, iconSelector, type_buttons, options, suboptions, editOption, editSuboption, summary, descriptionOfChange, editingOptionTitle='', suboptionsSize=0;
-    
+
     if (this.state.variable){
       var type='Option ', currentOption =this.state.option ;
       if (!this.state.editingOption){
@@ -375,7 +375,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
         />
       </div>;
       descriptionOfChange = <div className={classes.control}> <InputLabel className={classes.title}>Description of change (Optional)</InputLabel>
-        <TextField className={classes.title} id="filled-label" variant="standard" value={this.state.descriptionOfChange || ''} 
+        <TextField className={classes.title} id="filled-label" variant="standard" value={this.state.descriptionOfChange || ''}
           suppressContentEditableWarning={true} contentEditable={true}
           onChange={(e) => this.onDescriptionSet(e)} />
 
@@ -391,7 +391,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
       </div>;
 
       if (this.state.dynamic) {
-        
+
         let optionAlphanumeric = [];
         for (let i = 0; i < this.props.section!.styledOptions.length; i++) {
           optionAlphanumeric.push(String.fromCharCode(65 + i));
@@ -519,7 +519,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
         <button className={classes.doneBtn}
           onClick={() => this.finishEdit(editorState)
-            
+
           }>
           DONE
                 </button>
@@ -549,11 +549,6 @@ const newStyle = {
   }
 }
 
-type ReplacementsProps = {
-  onChange?: (editorState: EditorState) => void,
-  editorState: EditorState,
-}
-
 const placeholderOptions = [
   { key: "sellerID", value: "sellerID" },
   { key: "clientID", value: "clientID" },
@@ -570,7 +565,7 @@ const placeholderOptions = [
   { key: "SellerLegalRep", value: "SellerLegalRep" },
   { key: "MTCID", value: "MTCID" },
   { key: "ContractID", value: "ContractID" },
-  
+
 ]
 
 const iconOptions = [
