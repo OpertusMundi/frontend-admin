@@ -284,6 +284,10 @@
         "description": "An error has occurred. Please try again later.",
         "button": "Back"
       }
+    },
+    "incident": {
+      "retry-success": "Operation has been scheduled for retry successfully",
+      "retry-failure": "Retry operation has failed"
     }
   },
   "links": {
@@ -325,7 +329,8 @@
         "manager": "Incidents"
       },
       "process-instance": {
-        "manager": "Process Instances"
+        "manager": "Process Instances",
+        "instance": "Process Instance"
       }
     }
   },
@@ -402,6 +407,31 @@
     }
   },
   "workflow": {
+    "instance": {
+      "activity": {
+        "started": "Workflow instance has started at {timestamp}",
+        "completed": "Workflow instance has been completed at {timestamp}",
+        "userTask": {
+          "completed": "User task {activity} has been completed at {timestamp}",
+          "running": "User task {activity} is pending",
+          "error": "User task {activity} has failed at {timestamp}"
+        },
+        "serviceTask": {
+          "completed": "Service task {activity} has been completed at {timestamp}",
+          "running": "Service task {activity} is running",
+          "error": "Service task {activity} has failed at {timestamp}"
+        },
+        "intermediateMessageCatch": {
+          "completed": "Received intermediate message at {timestamp}",
+          "running": "Waiting for intermediate message",
+          "error": "Failed to process intermediate message at {timestamp}"
+        },
+        "duration": "Duration {duration}"
+      },
+      "variables": {
+        "title": "Variables"
+      }
+    },
     "header": {
       "instance": {
         "actions": "Actions",
@@ -414,7 +444,8 @@
       },
       "incident": {
         "actions": "Actions",
-        "error-message": "Error",
+        "error-details": "Error Details",
+        "error-message": "Message",
         "process-definition-name": "Process",
         "process-definition-version": "Version",
         "process-definition-deployed-on": "Deployed On",
@@ -426,13 +457,17 @@
       }
     },
     "last-update": "Last updated: ",
+    "message": {
+      "retry": "Would you like to increase the retry counter for process instance of type [{type}] with business key [{businessKey}]?"
+    },
     "tooltip": {
       "instance": {
         "view": "View details"
       },
       "incident": {
         "error-details": "View error details",
-        "process-instance": "View process instance"
+        "process-instance": "View process instance",
+        "retry": "Retry task"
       }
     }
   }
