@@ -7,6 +7,9 @@ import {
   countProcessInstancesComplete,
   countProcessInstancesFailure,
   countProcessInstancesInit,
+  loadInit,
+  loadSuccess,
+  loadFailure,
   searchInit,
   searchComplete,
   searchFailure,
@@ -15,14 +18,32 @@ import {
 } from './actions';
 
 // Services
-import WorkflowApi from 'service/workflow';
+import ProcessInstanceApi from 'service/bpm-process-instance';
 
 // Model
-import { EnumProcessInstanceSortField, ProcessInstance } from 'model/workflow';
+import { EnumProcessInstanceSortField, ProcessInstance, ProcessInstanceDetails } from 'model/bpm-process-instance';
 import { PageRequest, Sorting, PageResult } from 'model/response';
 
 // Helper thunk result type
 type ThunkResult<R> = ThunkAction<Promise<R>, RootState, unknown, ProcessInstanceActions>;
+
+export const countProcessInstances = (): ThunkResult<number | null> => async (dispatch, getState) => {
+  dispatch(countProcessInstancesInit());
+  // Get response
+  const api = new ProcessInstanceApi();
+
+  const response = await api.count();
+
+  // Update state
+  if (response.data.success) {
+
+    dispatch(countProcessInstancesComplete(response.data.result));
+    return response.data.result;
+  }
+
+  dispatch(countProcessInstancesFailure());
+  return null;
+}
 
 export const find = (
   pageRequest?: PageRequest, sorting?: Sorting<EnumProcessInstanceSortField>[]
@@ -50,9 +71,9 @@ export const find = (
   dispatch(searchInit());
 
   // Get response
-  const api = new WorkflowApi();
+  const api = new ProcessInstanceApi();
 
-  const response = await api.getProcessInstances(query, pageRequest, sorting);
+  const response = await api.find(query, pageRequest, sorting);
 
   // Update state
   if (response.data.success) {
@@ -64,20 +85,19 @@ export const find = (
   return null;
 }
 
-export const countProcessInstances = (): ThunkResult<number | null> => async (dispatch, getState) => {
-  dispatch(countProcessInstancesInit());
+export const findOne = (processInstance: string): ThunkResult<ProcessInstanceDetails | null> => async (dispatch, getState) => {
+  dispatch(loadInit(processInstance));
   // Get response
-  const api = new WorkflowApi();
+  const api = new ProcessInstanceApi();
 
-  const response = await api.countProcessInstances();
+  const response = await api.findOne(processInstance);
 
   // Update state
   if (response.data.success) {
-
-    dispatch(countProcessInstancesComplete(response.data.result));
+    dispatch(loadSuccess(response.data.result));
     return response.data.result;
   }
 
-  dispatch(countProcessInstancesFailure());
+  dispatch(loadFailure());
   return null;
 }

@@ -10,19 +10,22 @@ import {
   EnumProcessInstanceSortField,
   ProcessInstanceQuery,
   ProcessInstance,
-} from 'model/workflow';
+  ProcessInstanceDetails,
+} from 'model/bpm-process-instance';
 
 
 // State
 export interface ProcessInstanceState {
-  loading: boolean;
   lastUpdated: Moment | null;
+  loading: boolean;
+  loadingProcessInstance: boolean,
   pagination: PageRequest;
+  processInstance: ProcessInstanceDetails | null,
+  processInstanceCounter: number | null,
   query: ProcessInstanceQuery;
   result: PageResult<ProcessInstance> | null;
   selected: ProcessInstance[];
   sorting: Sorting<EnumProcessInstanceSortField>[];
-  processInstanceCounter: number | null,
 }
 
 // Actions
@@ -41,6 +44,10 @@ export const ADD_SELECTED = 'workflow/process-instance/ADD_SELECTED';
 export const REMOVE_SELECTED = 'workflow/process-instance/REMOVE_SELECTED';
 export const SET_SORTING = 'workflow/process-instance/SET_SORTING';
 export const RESET_SELECTED = 'workflow/process-instance/RESET_SELECTED';
+
+export const LOAD_INIT = 'workflow/process-instance/LOAD_INIT';
+export const LOAD_SUCCESS = 'workflow/process-instance/LOAD_SUCCESS';
+export const LOAD_FAILURE = 'workflow/process-instance/LOAD_FAILURE';
 
 export interface CountProcessInstanceInitAction {
   type: typeof COUNT_PROCESS_INSTANCE_INIT;
@@ -106,6 +113,20 @@ export interface ResetSelectionAction {
   type: typeof RESET_SELECTED;
 }
 
+export interface LoadInitAction {
+  type: typeof LOAD_INIT;
+  processInstance: string,
+}
+
+export interface LoadSuccessAction {
+  type: typeof LOAD_SUCCESS;
+  processInstance: ProcessInstanceDetails,
+}
+
+export interface LoadFailureAction {
+  type: typeof LOAD_FAILURE;
+}
+
 export type ProcessInstanceActions =
   | LogoutInitAction
   | CountProcessInstanceInitAction
@@ -122,4 +143,7 @@ export type ProcessInstanceActions =
   | AddSelectedAction
   | RemoveSelectedAction
   | ResetSelectionAction
+  | LoadInitAction
+  | LoadSuccessAction
+  | LoadFailureAction
   ;

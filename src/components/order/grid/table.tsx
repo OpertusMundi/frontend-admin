@@ -23,7 +23,7 @@ import {
 
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
-import { EnumKycLevel, EnumMangopayUserType, CustomerIndividual, CustomerProfessional } from 'model/customer';
+import { EnumKycLevel, EnumMangopayUserType, CustomerIndividual, CustomerProfessional } from 'model/account-marketplace';
 import { EnumOrderSortField, EnumOrderStatus, Order, OrderQuery } from 'model/order';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
@@ -72,7 +72,7 @@ function orderColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
               <Icon path={mdiTimelineClockOutline} className={classes.classes.rowIconAction} style={{ marginTop: 2 }} />
             </i>
           </Tooltip>
-          {row?.status === EnumOrderStatus.PENDING &&
+          {row?.status === EnumOrderStatus.PENDING && row.payIn?.processInstance &&
             <Tooltip title={intl.formatMessage({ id: 'billing.order.tooltip.view-process-instance' })}>
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.ViewProcessInstance, rowIndex, column, row) : null}
@@ -141,7 +141,7 @@ function orderColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
                 <div
                   className={row?.customer.kycLevel === EnumKycLevel.LIGHT ? classes.classes.statusLabelWarning : classes.classes.statusLabel}
                 >
-                  <div className={classes.classes.statusLabelText}>{row.customer.kycLevel}</div>
+                  <div>{row.customer.kycLevel}</div>
                 </div>
                 <div className={classes.classes.marginRight}>{getCustomerName(row)}</div>
               </div>
@@ -289,9 +289,6 @@ const styles = (theme: Theme) => createStyles({
     minWidth: 100,
     justifyContent: 'center'
   },
-  statusLabelText: {
-    marginRight: theme.spacing(1),
-  },
   marginLeft: {
     marginLeft: theme.spacing(1),
   },
@@ -328,6 +325,7 @@ interface FieldTableProps extends WithStyles<typeof styles> {
   resetSelection: () => void;
   sorting: Sorting<EnumOrderSortField>[];
   viewOrderTimeline: (key: string) => void;
+  viewProcessInstance: (processInstance: string) => void;
   loading?: boolean;
 }
 
@@ -357,6 +355,13 @@ class AccountTable extends React.Component<FieldTableProps> {
 
           this.props.viewOrderTimeline(row.key);
           break;
+
+        case EnumAction.ViewProcessInstance:
+          if (row.payIn?.processInstance) {
+            this.props.viewProcessInstance(row.payIn?.processInstance);
+          }
+          break;
+
         default:
           // No action
           break;

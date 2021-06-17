@@ -1,3 +1,10 @@
+export enum EnumAuthProvider {
+  Forms = 'Forms',
+  Google = 'Google',
+  GitHub = 'GitHub',
+  OpertusMundi = 'OpertusMundi',
+}
+
 export enum EnumContinent {
   AFRICA = 'AFRICA',
   NORTH_AMERICA = 'NORTH_AMERICA',

@@ -1,6 +1,6 @@
 import { Moment } from 'moment';
 import { EnumPaymentMethod, EnumDeliveryMethod } from 'model/enum';
-import { BankAccount, CustomerIndividual, CustomerProfessional } from 'model/customer';
+import { BankAccount, CustomerIndividual, CustomerProfessional } from 'model/account-marketplace';
 import { EffectivePricingModel } from 'model/pricing-model';
 
 export enum EnumCardType {
@@ -191,6 +191,10 @@ export interface PayIn {
    * Customer (consumer)
    */
   customer?: CustomerIndividual | CustomerProfessional;
+  /**
+   * Process instance
+   */
+  processInstance?: string;
   /**
    * Provider PayIn identifier
    */

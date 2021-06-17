@@ -21,30 +21,35 @@ import {
   REMOVE_SELECTED,
   SET_SORTING,
   RESET_SELECTED,
+  LOAD_INIT,
+  LOAD_SUCCESS,
+  LOAD_FAILURE,
   ProcessInstanceActions,
   ProcessInstanceState,
 } from 'store/process-instance/types';
 
 import { Order } from 'model/response';
-import { EnumProcessInstanceSortField } from 'model/workflow';
+import { EnumProcessInstanceSortField } from 'model/bpm-process-instance';
 
 const initialState: ProcessInstanceState = {
-  loading: false,
   lastUpdated: null,
+  loading: false,
+  loadingProcessInstance: false,
   pagination: {
     page: 0,
     size: 10,
   },
+  processInstance: null,
+  processInstanceCounter: 0,
   query: {
     businessKey: '',
   },
+  result: null,
+  selected: [],
   sorting: [{
     id: EnumProcessInstanceSortField.STARTED_ON,
     order: Order.DESC,
   }],
-  result: null,
-  selected: [],
-  processInstanceCounter: 0,
 };
 
 export function processInstanceReducer(
@@ -170,6 +175,25 @@ export function processInstanceReducer(
       return {
         ...state,
         selected: [],
+      };
+
+    case LOAD_INIT:
+      return {
+        ...state,
+        loadingProcessInstance: true,
+      };
+
+    case LOAD_SUCCESS:
+      return {
+        ...state,
+        loadingProcessInstance: false,
+        processInstance: action.processInstance,
+      };
+
+    case LOAD_FAILURE:
+      return {
+        ...state,
+        loadingProcessInstance: false,
       };
 
     default:

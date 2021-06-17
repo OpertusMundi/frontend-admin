@@ -12,14 +12,17 @@ import {
   searchFailure,
   setSorting,
   setPager,
+  retryInit,
+  retryFailure,
+  retrySuccess,
 } from './actions';
 
 // Services
-import WorkflowApi from 'service/workflow';
+import IncidentApi from 'service/bpm-incident';
 
 // Model
-import { EnumIncidentSortField, Incident } from 'model/workflow';
-import { PageRequest, Sorting, PageResult } from 'model/response';
+import { EnumIncidentSortField, Incident } from 'model/bpm-incident';
+import { PageRequest, Sorting, PageResult, SimpleResponse } from 'model/response';
 
 // Helper thunk result type
 type ThunkResult<R> = ThunkAction<Promise<R>, RootState, unknown, IncidentActions>;
@@ -50,9 +53,9 @@ export const find = (
   dispatch(searchInit());
 
   // Get response
-  const api = new WorkflowApi();
+  const api = new IncidentApi();
 
-  const response = await api.getIncidents(query, pageRequest, sorting);
+  const response = await api.find(query, pageRequest, sorting);
 
   // Update state
   if (response.data.success) {
@@ -68,9 +71,9 @@ export const countIncidents = (): ThunkResult<number | null> => async (dispatch,
   dispatch(countIncidentsInit());
 
   // Get response
-  const api = new WorkflowApi();
+  const api = new IncidentApi();
 
-  const response = await api.countIncidents();
+  const response = await api.count();
 
   // Update state
   if (response.data.success) {
@@ -80,4 +83,24 @@ export const countIncidents = (): ThunkResult<number | null> => async (dispatch,
 
   dispatch(countIncidentsFailure());
   return null;
+}
+
+export const retryExternalTask = (
+  processInstanceId: string, externalTaskId: string
+): ThunkResult<SimpleResponse> => async (dispatch, getState) => {
+  dispatch(retryInit(processInstanceId, externalTaskId));
+
+  // Get response
+  const api = new IncidentApi();
+
+  const response = await api.retryExternalTask(processInstanceId, externalTaskId);
+
+  // Update state
+  if (response.data.success) {
+    dispatch(retrySuccess());
+    return response.data;
+  }
+
+  dispatch(retryFailure());
+  return response.data;
 }

@@ -9,6 +9,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 import Icon from '@mdi/react';
 import {
+  mdiAutorenew,
   mdiBugOutline,
   mdiContentCopy,
   mdiDatabaseCogOutline,
@@ -16,15 +17,16 @@ import {
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
-import { EnumIncidentSortField, Incident, IncidentQuery } from 'model/workflow';
+import { EnumIncidentSortField, Incident, IncidentQuery } from 'model/bpm-incident';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 const COPY = 'copy';
 
 enum EnumAction {
-  ProcessInstance = 'process-instance',
-  ErrorDetails = 'error-details',
   CopyBusinessKey = 'copy-business-key',
+  ViewErrorDetails = 'error-details',
+  ViewProcessInstance = 'process-instance',
+  RetryExternalTask = 'retry,'
 };
 
 function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<Incident, EnumIncidentSortField>[] {
@@ -32,28 +34,37 @@ function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
     [{
       header: intl.formatMessage({ id: 'workflow.header.incident.actions' }),
       id: 'actions',
-      width: 80,
+      width: 100,
       cell: (
         rowIndex: number,
         column: Column<Incident, EnumIncidentSortField>,
         row: Incident,
         handleAction?: cellActionHandler<Incident, EnumIncidentSortField>
       ): React.ReactNode => (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'start' }}>
+          <Tooltip title={intl.formatMessage({ id: 'workflow.tooltip.incident.retry' })}>
+            <i
+              onClick={() => handleAction ? handleAction(EnumAction.RetryExternalTask, rowIndex, column, row) : null}
+            >
+              <Icon path={mdiAutorenew} className={classes.classes.rowIconAction} />
+            </i>
+          </Tooltip>
           <Tooltip title={intl.formatMessage({ id: 'workflow.tooltip.incident.process-instance' })}>
             <i
-              onClick={() => handleAction ? handleAction(EnumAction.ProcessInstance, rowIndex, column, row) : null}
+              onClick={() => handleAction ? handleAction(EnumAction.ViewProcessInstance, rowIndex, column, row) : null}
             >
               <Icon path={mdiDatabaseCogOutline} className={classes.classes.rowIconAction} />
             </i>
           </Tooltip>
-          <Tooltip title={intl.formatMessage({ id: 'workflow.tooltip.incident.error-details' })}>
-            <i
-              onClick={() => handleAction ? handleAction(EnumAction.ErrorDetails, rowIndex, column, row) : null}
-            >
-              <Icon path={mdiBugOutline} className={classes.classes.rowIconAction} />
-            </i>
-          </Tooltip>
+          {row.taskErrorDetails &&
+            <Tooltip title={intl.formatMessage({ id: 'workflow.tooltip.incident.error-details' })}>
+              <i
+                onClick={() => handleAction ? handleAction(EnumAction.ViewErrorDetails, rowIndex, column, row) : null}
+              >
+                <Icon path={mdiBugOutline} className={classes.classes.rowIconAction} />
+              </i>
+            </Tooltip>
+          }
         </div>
       ),
     }, {
@@ -136,11 +147,13 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-interface FieldTableProps extends WithStyles<typeof styles> {
+interface IncidentTableProps extends WithStyles<typeof styles> {
   intl: IntlShape,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumIncidentSortField>[]
   ) => Promise<PageResult<Incident> | null>,
+  retryExternalTask: (incident: Incident) => void,
+  viewErrorDetails: (incident: Incident | null) => void,
   query: IncidentQuery,
   result: PageResult<Incident> | null,
   pagination: PageRequest,
@@ -151,13 +164,14 @@ interface FieldTableProps extends WithStyles<typeof styles> {
   removeFromSelection: (rows: Incident[]) => void,
   resetSelection: () => void;
   sorting: Sorting<EnumIncidentSortField>[];
-  viewRow: (processInstanceId: string) => void;
+  viewIncident: (key: string) => void;
+  viewProcessInstance: (processInstance: string) => void;
   loading?: boolean;
 }
 
-class IncidentTable extends React.Component<FieldTableProps> {
+class IncidentTable extends React.Component<IncidentTableProps> {
 
-  constructor(props: FieldTableProps) {
+  constructor(props: IncidentTableProps) {
     super(props);
 
     this.handleAction = this.handleAction.bind(this);
@@ -175,6 +189,19 @@ class IncidentTable extends React.Component<FieldTableProps> {
           document.execCommand(COPY);
         }
         break;
+
+      case EnumAction.ViewErrorDetails:
+        this.props.viewErrorDetails(row);
+        break;
+
+      case EnumAction.ViewProcessInstance:
+        this.props.viewProcessInstance(row.processInstanceId);
+        break;
+
+      case EnumAction.RetryExternalTask:
+        this.props.retryExternalTask(row);
+        break;
+
       default:
         // No action
         break;

@@ -17,7 +17,7 @@ import { mdiCommentAlertOutline } from '@mdi/js';
 
 // Model
 import { PageRequest, PageResult, Sorting } from 'model/response';
-import { EnumIncidentSortField, Incident, IncidentQuery } from 'model/workflow';
+import { EnumIncidentSortField, Incident, IncidentQuery } from 'model/bpm-incident';
 
 // Services
 import message from 'service/message';

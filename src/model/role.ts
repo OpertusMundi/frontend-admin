@@ -1,5 +1,13 @@
-export enum EnumRole {
+export enum EnumHelpdeskRole {
   ADMIN = 'ADMIN',
   USER = 'USER',
   DEVELOPER = 'DEVELOPER',
+}
+
+export enum EnumMarketplaceRole {
+  ROLE_ADMIN = 'ROLE_ADMIN',
+  ROLE_USER = 'ROLE_USER',
+  ROLE_DEVELOPER = 'ROLE_DEVELOPER',
+  ROLE_CONSUMER = 'ROLE_CONSUMER',
+  ROLE_PROVIDER = 'ROLE_PROVIDER',
 }

@@ -10,7 +10,7 @@ import {
   EnumIncidentSortField,
   Incident,
   IncidentQuery,
-} from 'model/workflow';
+} from 'model/bpm-incident';
 
 
 // State
@@ -41,6 +41,10 @@ export const ADD_SELECTED = 'workflow/incident/ADD_SELECTED';
 export const REMOVE_SELECTED = 'workflow/incident/REMOVE_SELECTED';
 export const SET_SORTING = 'workflow/incident/SET_SORTING';
 export const RESET_SELECTED = 'workflow/incident/RESET_SELECTED';
+
+export const RETRY_INIT = 'workflow/incident/RETRY_INIT';
+export const RETRY_FAILURE = 'workflow/incident/RETRY_FAILURE';
+export const RETRY_SUCCESS = 'workflow/incident/RETRY_SUCCESS';
 
 export interface CountIncidentInitAction {
   type: typeof COUNT_INCIDENT_INIT;
@@ -106,6 +110,20 @@ export interface ResetSelectionAction {
   type: typeof RESET_SELECTED;
 }
 
+export interface RetryInit {
+  type: typeof RETRY_INIT,
+  processInstanceId: string;
+  externalTaskId: string;
+}
+
+export interface RetryFailure {
+  type: typeof RETRY_FAILURE,
+}
+
+export interface RetrySuccess {
+  type: typeof RETRY_SUCCESS,
+}
+
 export type IncidentActions =
   | LogoutInitAction
   | CountIncidentInitAction
@@ -122,4 +140,7 @@ export type IncidentActions =
   | AddSelectedAction
   | RemoveSelectedAction
   | ResetSelectionAction
+  | RetryInit
+  | RetryFailure
+  | RetrySuccess
   ;

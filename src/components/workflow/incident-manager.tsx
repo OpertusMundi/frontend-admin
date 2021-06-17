@@ -9,6 +9,7 @@ import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-in
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
+import Drawer from '@material-ui/core/Drawer';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -19,7 +20,7 @@ import { mdiCheckOutline, mdiCommentAlertOutline, mdiUndoVariant } from '@mdi/js
 
 // Services
 import message from 'service/message';
-import WorkflowApi from 'service/workflow';
+import IncidentApi from 'service/bpm-incident';
 
 // Store
 import { RootState } from 'store';
@@ -32,17 +33,19 @@ import {
   setPager,
   setSorting,
 } from 'store/incident/actions';
-import { find } from 'store/incident/thunks';
+import { find, retryExternalTask } from 'store/incident/thunks';
 
 // Model
-import { PageRequest, Sorting } from 'model/response';
-import { EnumIncidentSortField, Incident } from 'model/workflow';
+import { buildPath, DynamicRoutes } from 'model/routes';
+import { PageRequest, SimpleResponse, Sorting } from 'model/response';
+import { EnumIncidentSortField, Incident } from 'model/bpm-incident';
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
 
 import IncidentFilters from './incident/filter';
 import IncidentTable from './incident/table';
+import { AxiosError } from 'axios';
 
 const styles = (theme: Theme) => createStyles({
   container: {
@@ -65,32 +68,44 @@ const styles = (theme: Theme) => createStyles({
   caption: {
     paddingLeft: 0,
     fontSize: '0.7rem',
+  },
+  title: {
+    marginTop: theme.spacing(2),
+  },
+  drawer: {
+    padding: theme.spacing(1),
+    minHeight: 200,
   }
 });
 
-interface WorkflowManagerState {
+interface IncidentManagerState {
   retry: boolean;
+  errorDetails: boolean,
   incident: Incident | null,
 }
 
-interface WorkflowManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
+interface IncidentManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
   intl: IntlShape,
 }
 
-class IncidentManager extends React.Component<WorkflowManagerProps, WorkflowManagerState> {
+class IncidentManager extends React.Component<IncidentManagerProps, IncidentManagerState> {
 
-  private api: WorkflowApi;
+  private api: IncidentApi;
 
-  constructor(props: WorkflowManagerProps) {
+  constructor(props: IncidentManagerProps) {
     super(props);
 
-    this.api = new WorkflowApi();
+    this.api = new IncidentApi();
 
     this.viewIncident = this.viewIncident.bind(this);
+    this.retryExternalTask = this.retryExternalTask.bind(this);
+    this.viewErrorDetails = this.viewErrorDetails.bind(this);
+    this.viewProcessInstance = this.viewProcessInstance.bind(this);
   }
 
-  state: WorkflowManagerState = {
+  state: IncidentManagerState = {
     retry: false,
+    errorDetails: false,
     incident: null,
   }
 
@@ -114,30 +129,33 @@ class IncidentManager extends React.Component<WorkflowManagerProps, WorkflowMana
     switch (action.key) {
       case EnumDialogAction.Accept: {
         if (incident) {
-          // this.api.accept(workflow.publisher.id, workflow.key)
-          //   .then((response) => {
-          //     if (response.data.success) {
-          //       this.find();
-
-          //       message.info('workflow.message.accept-success');
-
-          //       this.hideRetryDialog();
-          //     } else {
-          //       const messages = localizeErrorCodes(this.props.intl, response.data);
-          //       message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
-          //     }
-          //   })
-          //   .catch((err: AxiosError<SimpleResponse>) => {
-          //     const messages = localizeErrorCodes(this.props.intl, err.response?.data);
-          //     message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
-          //   });
+          this.props.retryExternalTask(incident.processInstanceId, incident.activityId)
+            .then((response) => {
+              if (response.success) {
+                message.info('error.incident.retry-success');
+                this.find();
+              } else {
+                message.error('error.incident.retry-failure', () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+              }
+            })
+            .catch((err: AxiosError<SimpleResponse>) => {
+              message.error('error.incident.retry-failure', () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+            });
         }
         break;
       }
       case EnumDialogAction.Cancel:
-        this.hideRetryDialog();
         break;
     }
+
+    this.hideRetryDialog();
+  }
+
+  viewErrorDetails(incident: Incident | null = null, errorDetails: boolean = true): void {
+    this.setState({
+      errorDetails,
+      incident,
+    });
   }
 
   componentDidMount() {
@@ -162,12 +180,20 @@ class IncidentManager extends React.Component<WorkflowManagerProps, WorkflowMana
     }
   }
 
+  retryExternalTask(incident: Incident): void {
+    this.setState({
+      retry: true,
+      incident,
+    })
+  }
+
   setSorting(sorting: Sorting<EnumIncidentSortField>[]): void {
     this.props.setSorting(sorting);
     this.find();
   }
 
   render() {
+    const { errorDetails, incident } = this.state;
     const {
       addToSelection,
       classes,
@@ -214,18 +240,29 @@ class IncidentManager extends React.Component<WorkflowManagerProps, WorkflowMana
               addToSelection={addToSelection}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
-              viewRow={(key: string) => this.viewIncident(key)}
+              retryExternalTask={this.retryExternalTask}
+              viewErrorDetails={this.viewErrorDetails}
+              viewIncident={this.viewIncident}
+              viewProcessInstance={(processInstance: string) => this.viewProcessInstance(processInstance)}
               sorting={sorting}
               loading={loading}
             />
           </Paper>
         </div >
-        {this.renderReviewDialog()}
+        {this.renderRetryTaskDialog()}
+        <Drawer anchor={'top'} open={errorDetails} onClose={() => this.viewErrorDetails(null, false)}>
+          {this.renderErrorDetails()}
+        </Drawer>
       </>
     );
   }
 
-  renderReviewDialog() {
+  viewProcessInstance(processInstance: string): void {
+    const path = buildPath(DynamicRoutes.ProcessInstanceView, [processInstance]);
+    this.props.history.push(path);
+  }
+
+  renderRetryTaskDialog() {
     const _t = this.props.intl.formatMessage;
 
     const { retry, incident: record } = this.state;
@@ -261,8 +298,8 @@ class IncidentManager extends React.Component<WorkflowManagerProps, WorkflowMana
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <FormattedMessage
-              id="workflow.message.review-workflow"
-              values={{ title: record.processDefinitionName, version: record.processDefinitionVersion }}
+              id="workflow.message.retry"
+              values={{ type: record.processDefinitionName, businessKey: record.businessKey }}
             />
           </Grid>
         </Grid>
@@ -270,6 +307,41 @@ class IncidentManager extends React.Component<WorkflowManagerProps, WorkflowMana
     );
   }
 
+  renderErrorDetails() {
+    const { incident } = this.state;
+    const { classes } = this.props;
+
+    return (
+      <div className={classes.drawer}>
+        <Grid container spacing={2} className={classes.drawer}>
+          <Grid item xs={12} sm={2}>
+            <Typography variant="subtitle2" gutterBottom className={classes.title}>
+              <FormattedMessage id={'workflow.header.incident.process-definition-name'} />
+            </Typography>
+            <Typography gutterBottom>{incident?.processDefinitionName}</Typography>
+            <Typography variant="subtitle2" gutterBottom className={classes.title}>
+              <FormattedMessage id={'workflow.header.incident.task-worker'} />
+            </Typography>
+            <Typography gutterBottom>{incident?.taskWorker}</Typography>
+          </Grid>
+          <Grid item container direction="column" xs={12} sm={10}>
+            <Typography variant="subtitle2" gutterBottom className={classes.title}>
+              <FormattedMessage id={'workflow.header.incident.error-message'} />
+            </Typography>
+            <Typography variant="body2" gutterBottom className={classes.title}>
+              {incident?.taskErrorMessage}
+            </Typography>
+            <Typography variant="subtitle2" gutterBottom className={classes.title}>
+              <FormattedMessage id={'workflow.header.incident.error-details'} />
+            </Typography>
+            <Typography variant="body2" gutterBottom className={classes.title}>
+              {incident?.taskErrorDetails}
+            </Typography>
+          </Grid>
+        </Grid>
+      </div>
+    );
+  }
 }
 
 const mapState = (state: RootState) => ({
@@ -283,6 +355,7 @@ const mapDispatch = {
   removeFromSelection,
   resetFilter,
   resetSelection,
+  retryExternalTask: (processInstanceId: string, externalTaskId: string) => retryExternalTask(processInstanceId, externalTaskId),
   setFilter,
   setPager,
   setSorting,

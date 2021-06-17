@@ -19,7 +19,7 @@ import { mdiCheckOutline, mdiCommentAlertOutline, mdiUndoVariant } from '@mdi/js
 
 // Services
 import message from 'service/message';
-import WorkflowApi from 'service/workflow';
+import ProcessInstanceApi from 'service/bpm-process-instance';
 
 // Store
 import { RootState } from 'store';
@@ -35,8 +35,9 @@ import {
 import { find } from 'store/process-instance/thunks';
 
 // Model
+import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
-import { EnumProcessInstanceSortField, ProcessInstance } from 'model/workflow';
+import { EnumProcessInstanceSortField, ProcessInstance } from 'model/bpm-process-instance';
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
@@ -79,14 +80,14 @@ interface WorkflowManagerProps extends PropsFromRedux, WithStyles<typeof styles>
 
 class ProcessInstanceManager extends React.Component<WorkflowManagerProps, WorkflowManagerState> {
 
-  private api: WorkflowApi;
+  private api: ProcessInstanceApi;
 
   constructor(props: WorkflowManagerProps) {
     super(props);
 
-    this.api = new WorkflowApi();
+    this.api = new ProcessInstanceApi();
 
-    this.viewInstance = this.viewInstance.bind(this);
+    this.viewProcessInstance = this.viewProcessInstance.bind(this);
   }
 
   state: WorkflowManagerState = {
@@ -152,14 +153,9 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
     });
   }
 
-  viewInstance(key: string): void {
-    const { workflow: { instances: { result } } } = this.props;
-
-    const record = result?.items.find(i => i.processInstanceId === key);
-
-    if (record) {
-      this.showRetryDialog(record);
-    }
+  viewProcessInstance(processInstance: string): void {
+    const path = buildPath(DynamicRoutes.ProcessInstanceView, [processInstance]);
+    this.props.history.push(path);
   }
 
   setSorting(sorting: Sorting<EnumProcessInstanceSortField>[]): void {
@@ -214,7 +210,7 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
               addToSelection={addToSelection}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
-              viewRow={(key: string) => this.viewInstance(key)}
+              viewProcessInstance={(processInstance: string) => this.viewProcessInstance(processInstance)}
               sorting={sorting}
               loading={loading}
             />

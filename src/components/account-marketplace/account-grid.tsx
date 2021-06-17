@@ -28,7 +28,7 @@ import { find } from 'store/account-marketplace/thunks';
 
 // Model
 import { PageRequest, Sorting } from 'model/response';
-import { MarketplaceAccount, EnumMarketplaceAccountSortField } from 'model/account';
+import { EnumMarketplaceAccountSortField, MarketplaceAccount } from 'model/account-marketplace';
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';

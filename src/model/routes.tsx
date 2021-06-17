@@ -9,6 +9,7 @@ import * as pathToRegexp from 'path-to-regexp';
  * Components
  */
 import OrderTimelineToolbar from 'components/order/toolbar/order-timeline';
+import ProcessInstanceToolbar from 'components/workflow/toolbar/process-instance';
 
 /**
  * Icons
@@ -38,7 +39,7 @@ import {
  */
 import { RootState } from 'store';
 
-import { EnumRole } from './role';
+import { EnumHelpdeskRole as EnumRole } from './role';
 import { iconFunc } from './types';
 
 
@@ -108,6 +109,7 @@ const ContractReview = '/contract/review';
 const OrderTimeline = '/billing/order/:key/timeline';
 const OrderView = '/billing/order/:key';
 const PayInView = '/billing/payin/:key';
+const ProcessInstanceView = '/workflows/process-instances/:processInstance';
 
 export const DynamicRoutes = {
   AccountCreate,
@@ -117,6 +119,7 @@ export const DynamicRoutes = {
   OrderTimeline,
   OrderView,
   PayInView,
+  ProcessInstanceView,
 };
 
 /**
@@ -323,6 +326,17 @@ const routes: RouteRegistry = {
     title: 'links.billing.payin.record',
     defaultTitle: 'PayIn',
     links: defaultLinks
+  },
+  [ProcessInstanceView]: {
+    description: 'Process Instance',
+    title: 'links.workflow.process-instance.instance',
+    defaultTitle: 'Process Instance',
+    links: defaultLinks,
+    toolbarComponent: (): React.ReactNode => {
+      return (
+        <ProcessInstanceToolbar />
+      );
+    }
   },
   // Error Pages
   [Unauthorized]: {

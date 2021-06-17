@@ -10,8 +10,6 @@ import store from 'store';
 import { EnumMessageLevel } from 'model/message';
 import { SimpleResponse } from 'model/response';
 
-import { history } from 'routing';
-
 const iso8601 = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/;
 
 function isIso8601(value: any): boolean {

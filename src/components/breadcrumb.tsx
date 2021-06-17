@@ -19,7 +19,7 @@ import { RootState } from 'store';
 // Model
 import { matchRoute } from 'model/routes';
 import { iconFunc } from 'model/types';
-import { EnumRole } from 'model/role';
+import { EnumHelpdeskRole as EnumRole } from 'model/role';
 
 const MAX_LENGTH = 10; // maximum number of parts for a breadcrumb
 

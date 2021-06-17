@@ -3,7 +3,7 @@ import _ from 'lodash';
 import moment from 'utils/moment-localized';
 
 import { Order } from 'model/response';
-import { EnumMarketplaceAccountSortField } from 'model/account';
+import { EnumMarketplaceAccountSortField } from 'model/account-marketplace';
 
 import {
   LOGOUT_INIT,
@@ -21,26 +21,33 @@ import {
   RESET_SELECTED,
   SET_SORTING,
   SEARCH_FAILURE,
+  LOAD_ACCOUNT_INIT,
+  LOAD_ACCOUNT_FAILURE,
+  LOAD_ACCOUNT_SUCCESS,
+  REVIEW_ACCOUNT_INIT,
+  REVIEW_ACCOUNT_FAILURE,
+  REVIEW_ACCOUNT_SUCCESS,
   AccountActions,
   MarketplaceAccountManagerState,
 } from 'store/account-marketplace/types';
 
 const initialState: MarketplaceAccountManagerState = {
+  account: null,
+  lastUpdated: null,
   loading: false,
-  query: {
-    name: '',
-  },
   pagination: {
     page: 0,
     size: 10,
   },
+  query: {
+    name: '',
+  },
+  selected: [],
+  result: null,
   sorting: [{
     id: EnumMarketplaceAccountSortField.EMAIL,
     order: Order.ASC,
   }],
-  result: null,
-  selected: [],
-  lastUpdated: null,
   response: null,
 };
 
@@ -146,6 +153,45 @@ export function marketplaceAccountReducer(
       return {
         ...state,
         selected: [],
+      };
+
+    case LOAD_ACCOUNT_INIT:
+      return {
+        ...state,
+        loading: true,
+        account: null,
+      };
+
+    case LOAD_ACCOUNT_FAILURE:
+      return {
+        ...state,
+        loading: false,
+      };
+
+    case LOAD_ACCOUNT_SUCCESS:
+      return {
+        ...state,
+        loading: true,
+        account: action.account,
+      };
+
+    case REVIEW_ACCOUNT_INIT:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case REVIEW_ACCOUNT_FAILURE:
+      return {
+        ...state,
+        loading: false,
+      };
+
+    case REVIEW_ACCOUNT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        account: action.account,
       };
 
     default:

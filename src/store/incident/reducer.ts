@@ -21,12 +21,15 @@ import {
   REMOVE_SELECTED,
   SET_SORTING,
   RESET_SELECTED,
+  RETRY_INIT,
+  RETRY_FAILURE,
+  RETRY_SUCCESS,
   IncidentActions,
   IncidentManagerState,
 } from 'store/incident/types';
 
 import { Order } from 'model/response';
-import { EnumIncidentSortField } from 'model/workflow';
+import { EnumIncidentSortField } from 'model/bpm-incident';
 
 const initialState: IncidentManagerState = {
   loading: false,
@@ -170,6 +173,17 @@ export function incidentReducer(
       return {
         ...state,
         selected: [],
+      };
+
+    case RETRY_INIT:
+      return {
+        ...state,
+      };
+
+    case RETRY_FAILURE:
+    case RETRY_SUCCESS:
+      return {
+        ...state,
       };
 
     default:

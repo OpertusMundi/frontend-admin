@@ -61,29 +61,30 @@ import {
 import clsx from 'clsx';
 
 // Model
-import { EnumRole } from 'model/role';
+import { EnumHelpdeskRole as EnumRole } from 'model/role';
 import { DynamicRoutes, ErrorPages, getRoute, StaticRoutes, buildPath } from 'model/routes';
 import { HelpdeskAccount } from 'model/account';
 
 // Components
 import AccountForm from 'components/account/account-form';
-import HelpdeskAccountManager from 'components/account/account-grid';
-import MarketplaceAccountManager from 'components/account-marketplace/account-grid';
-import ProcessInstanceManager from 'components/workflow/process-instance-manager';
-import IncidentManager from 'components/workflow/incident-manager';
-import Breadcrumb from './breadcrumb';
-import DashboardComponent from 'components/dashboard';
 import AssetDraftManager from 'components/draft/draft-grid';
+import Breadcrumb from './breadcrumb';
 import ContractForm from 'components/contract/contract-form';
-import ContractReviewForm from 'components/contract/contract-review-form';
 import ContractList from 'components/contract/contract-list';
+import ContractReviewForm from 'components/contract/contract-review-form';
+import DashboardComponent from 'components/dashboard';
+import HelpdeskAccountManager from 'components/account/account-grid';
+import IncidentManager from 'components/workflow/incident-manager';
 import MapViewerComponent from 'components/map-viewer';
 import MapViewerConfigComponent from 'components/map-viewer-config';
-import OrderManager from 'components/order/order-grid';
-import OrderTimeline from 'components/order/order-timeline';
+import MarketplaceAccountManager from 'components/account-marketplace/account-grid';
 import PayInManager from 'components/payin/payin-grid';
 import PlaceHolder from 'components/placeholder';
+import ProcessInstanceForm from 'components/workflow/process-instance-form';
+import ProcessInstanceManager from 'components/workflow/process-instance-manager';
 import Profile from 'components/profile';
+import OrderManager from 'components/order/order-manager';
+import OrderTimeline from 'components/order/order-timeline';
 import QueryEditor from './analytics/query-editor';
 import SecureContent from 'components/secure-content';
 import SecureRoute from 'components/secure-route';
@@ -502,7 +503,7 @@ class Home extends React.Component<HomeProps, HomeState> {
             </div>
           </Toolbar>
         </AppBar>
-        { this.renderMenu()}
+        {this.renderMenu()}
         <Drawer
           ref={this.drawerRef}
           variant="permanent"
@@ -721,6 +722,7 @@ class Home extends React.Component<HomeProps, HomeState> {
               <Route path={DynamicRoutes.ContractCreate} component={ContractForm} />
               <Route path={DynamicRoutes.ContractReview} component={ContractReviewForm} />
               <Route path={DynamicRoutes.OrderTimeline} component={OrderTimeline} />
+              <Route path={DynamicRoutes.ProcessInstanceView} component={ProcessInstanceForm} />
               {/* Static */}
               <Route path={StaticRoutes.Analytics} component={QueryEditor} />
               <Route path={StaticRoutes.Dashboard} component={DashboardComponent} />

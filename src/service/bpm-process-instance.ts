@@ -12,13 +12,11 @@ import {
 } from 'model/response';
 
 import {
-  EnumIncidentSortField,
   EnumProcessInstanceSortField,
   ProcessInstance,
+  ProcessInstanceDetails,
   ProcessInstanceQuery,
-  Incident,
-  IncidentQuery
-} from 'model/workflow';
+} from 'model/bpm-process-instance';
 
 export default class WorkflowApi extends Api {
 
@@ -26,13 +24,13 @@ export default class WorkflowApi extends Api {
     super(config);
   }
 
-  public async countProcessInstances(): Promise<AxiosObjectResponse<number>> {
+  public async count(): Promise<AxiosObjectResponse<number>> {
     const url = `/action/workflows/process-instances/count`;
 
     return this.get<ObjectResponse<number>>(url);
   }
 
-  public async getProcessInstances(
+  public async find(
     query: Partial<ProcessInstanceQuery>, pageRequest: PageRequest, sorting: Sorting<EnumProcessInstanceSortField>[]
   ): Promise<AxiosPageResponse<ProcessInstance>> {
     const { page, size } = pageRequest;
@@ -48,26 +46,10 @@ export default class WorkflowApi extends Api {
     return this.get<ObjectResponse<PageResult<ProcessInstance>>>(url);
   }
 
-  public async countIncidents(): Promise<AxiosObjectResponse<number>> {
-    const url = `/action/workflows/incidents/count`;
+  public async findOne(processInstanceId: string): Promise<AxiosObjectResponse<ProcessInstanceDetails>> {
+    const url = `/action/workflows/process-instances/${processInstanceId}`;
 
-    return this.get<ObjectResponse<number>>(url);
-  }
-
-  public async getIncidents(
-    query: Partial<IncidentQuery>, pageRequest: PageRequest, sorting: Sorting<EnumIncidentSortField>[]
-  ): Promise<AxiosPageResponse<Incident>> {
-    const { page, size } = pageRequest;
-    const { id: field, order } = sorting[0];
-
-    const queryString = (Object.keys(query) as Array<keyof IncidentQuery>)
-      .reduce((result: string[], key: keyof IncidentQuery) => {
-        return query[key] !== null ? [...result, `${key}=${query[key]}`] : result;
-      }, []);
-
-    const url = `/action/workflows/incidents?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
-
-    return this.get<ObjectResponse<PageResult<Incident>>>(url);
+    return this.get<ObjectResponse<ProcessInstanceDetails>>(url);
   }
 
 }

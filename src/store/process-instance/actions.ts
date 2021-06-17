@@ -1,5 +1,10 @@
 import { PageResult, Sorting } from 'model/response';
-import { EnumProcessInstanceSortField, ProcessInstanceQuery, ProcessInstance } from 'model/workflow';
+import {
+  EnumProcessInstanceSortField,
+  ProcessInstanceQuery,
+  ProcessInstance,
+  ProcessInstanceDetails,
+} from 'model/bpm-process-instance';
 
 import {
   ProcessInstanceActions,
@@ -17,6 +22,9 @@ import {
   REMOVE_SELECTED,
   SET_SORTING,
   RESET_SELECTED,
+  LOAD_INIT,
+  LOAD_SUCCESS,
+  LOAD_FAILURE,
 } from './types';
 
 
@@ -110,5 +118,25 @@ export function removeFromSelection(removed: ProcessInstance[]): ProcessInstance
 export function resetSelection(): ProcessInstanceActions {
   return {
     type: RESET_SELECTED,
+  };
+}
+
+export function loadInit(processInstance: string): ProcessInstanceActions {
+  return {
+    type: LOAD_INIT,
+    processInstance,
+  };
+}
+
+export function loadSuccess(processInstance: ProcessInstanceDetails): ProcessInstanceActions {
+  return {
+    type: LOAD_SUCCESS,
+    processInstance,
+  };
+}
+
+export function loadFailure(): ProcessInstanceActions {
+  return {
+    type: LOAD_FAILURE,
   };
 }

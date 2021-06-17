@@ -58,11 +58,17 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
-interface AccountManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
+interface OrderManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
   intl: IntlShape,
 }
 
-class AccountManager extends React.Component<AccountManagerProps> {
+class OrderManager extends React.Component<OrderManagerProps> {
+
+  constructor(props: OrderManagerProps) {
+    super(props);
+
+    this.viewProcessInstance = this.viewProcessInstance.bind(this);
+  }
 
   componentDidMount() {
     this.find();
@@ -78,6 +84,11 @@ class AccountManager extends React.Component<AccountManagerProps> {
 
   viewOrderTimeline(key: string): void {
     const path = buildPath(DynamicRoutes.OrderTimeline, [key]);
+    this.props.history.push(path);
+  }
+
+  viewProcessInstance(processInstance: string): void {
+    const path = buildPath(DynamicRoutes.ProcessInstanceView, [processInstance]);
     this.props.history.push(path);
   }
 
@@ -136,6 +147,7 @@ class AccountManager extends React.Component<AccountManagerProps> {
               result={result}
               sorting={sorting}
               viewOrderTimeline={(key: string) => this.viewOrderTimeline(key)}
+              viewProcessInstance={(processInstance: string) => this.viewProcessInstance(processInstance)}
             />
           </Paper>
         </div >
@@ -169,7 +181,7 @@ const connector = connect(
 type PropsFromRedux = ConnectedProps<typeof connector>
 
 // Apply styles
-const styledComponent = withStyles(styles)(AccountManager);
+const styledComponent = withStyles(styles)(OrderManager);
 
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);

@@ -1,5 +1,10 @@
 import { PageResult, Sorting } from 'model/response';
-import { EnumMarketplaceAccountSortField, MarketplaceAccount, MarketplaceAccountQuery } from 'model/account';
+import {
+  EnumMarketplaceAccountSortField,
+  MarketplaceAccount,
+  MarketplaceAccountQuery,
+  MarketplaceAccountDetails,
+} from 'model/account-marketplace';
 
 import {
   AccountActions,
@@ -14,6 +19,12 @@ import {
   REMOVE_SELECTED,
   SET_SORTING,
   RESET_SELECTED,
+  LOAD_ACCOUNT_INIT,
+  LOAD_ACCOUNT_FAILURE,
+  LOAD_ACCOUNT_SUCCESS,
+  REVIEW_ACCOUNT_INIT,
+  REVIEW_ACCOUNT_FAILURE,
+  REVIEW_ACCOUNT_SUCCESS,
 } from './types';
 
 
@@ -88,5 +99,46 @@ export function removeFromSelection(removed: MarketplaceAccount[]): AccountActio
 export function resetSelection(): AccountActions {
   return {
     type: RESET_SELECTED,
+  };
+}
+
+export function loadAccountInit(key: string): AccountActions {
+  return {
+    type: LOAD_ACCOUNT_INIT,
+    key,
+  };
+}
+
+export function loadAccountFailure(): AccountActions {
+  return {
+    type: LOAD_ACCOUNT_FAILURE,
+  };
+}
+
+export function loadAccountSuccess(account: MarketplaceAccountDetails): AccountActions {
+  return {
+    type: LOAD_ACCOUNT_SUCCESS,
+    account,
+  };
+}
+
+export function reviewAccountInit(key: string, acceptChanges: boolean, rejectReason?: string): AccountActions {
+  return {
+    type: REVIEW_ACCOUNT_INIT,
+    acceptChanges,
+    rejectReason,
+  };
+}
+
+export function reviewAccountFailure(): AccountActions {
+  return {
+    type: REVIEW_ACCOUNT_FAILURE,
+  };
+}
+
+export function reviewAccountSuccess(account: MarketplaceAccountDetails): AccountActions {
+  return {
+    type: REVIEW_ACCOUNT_SUCCESS,
+    account,
   };
 }

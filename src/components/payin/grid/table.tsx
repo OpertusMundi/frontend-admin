@@ -27,7 +27,7 @@ import {
 
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
-import { EnumKycLevel, EnumMangopayUserType, CustomerIndividual, CustomerProfessional } from 'model/customer';
+import { EnumKycLevel, EnumMangopayUserType, CustomerIndividual, CustomerProfessional } from 'model/account-marketplace';
 import { EnumPayInItemType, EnumPayInSortField, EnumTransactionStatus, PayIn, PayInQuery } from 'model/order';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 import { EnumPaymentMethod } from 'model/enum';

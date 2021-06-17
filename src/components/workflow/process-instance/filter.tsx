@@ -17,7 +17,7 @@ import { mdiCommentAlertOutline } from '@mdi/js';
 
 // Model
 import { PageRequest, PageResult, Sorting } from 'model/response';
-import { EnumProcessInstanceSortField, ProcessInstance, ProcessInstanceQuery } from 'model/workflow';
+import { EnumProcessInstanceSortField, ProcessInstance, ProcessInstanceQuery } from 'model/bpm-process-instance';
 
 // Services
 import message from 'service/message';

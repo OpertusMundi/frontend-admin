@@ -1,4 +1,4 @@
-import { EnumRole } from 'model/role';
+import { EnumHelpdeskRole as EnumRole } from 'model/role';
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from 'store';

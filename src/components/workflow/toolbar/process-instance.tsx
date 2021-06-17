@@ -12,7 +12,7 @@ import Typography from '@material-ui/core/Typography';
 
 //cons
 import Icon from '@mdi/react';
-import { mdiPackageVariantClosed } from '@mdi/js';
+import { mdiDatabaseCogOutline } from '@mdi/js';
 
 // Store
 import { RootState } from 'store';
@@ -34,17 +34,17 @@ interface ToolbarProps extends PropsFromRedux, WithStyles<typeof styles> {
 class Toolbar extends React.Component<ToolbarProps> {
 
   render() {
-    const { classes, timeline } = this.props;
-    if (!timeline?.order) {
+    const { classes, processInstance = null } = this.props;
+    if (!processInstance) {
       return (
         <div></div>
       );
     }
     return (
       <div className={classes.container}>
-        <Icon path={mdiPackageVariantClosed} size="1.5rem" className={classes.icon} />
+        <Icon path={mdiDatabaseCogOutline} size="1.5rem" className={classes.icon} />
         <Typography component="h6" variant="h6" color="inherit" noWrap>
-          Order {timeline.order.referenceNumber}
+          Process Instance
         </Typography>
       </div>
     );
@@ -53,7 +53,7 @@ class Toolbar extends React.Component<ToolbarProps> {
 }
 
 const mapState = (state: RootState) => ({
-  timeline: state.billing.order.timeline,
+  processInstance: state.workflow.instances.processInstance
 });
 
 const mapDispatch = {

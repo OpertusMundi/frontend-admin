@@ -50,7 +50,7 @@ import { findOne } from 'store/order/thunks';
 // Model
 import { EnumPaymentMethod } from 'model/enum';
 import { EnumPricingModel, FixedPricingModelCommand } from 'model/pricing-model';
-import { EnumMangopayUserType, Address, CustomerIndividual, CustomerProfessional } from 'model/customer';
+import { EnumMangopayUserType, Address, CustomerIndividual, CustomerProfessional } from 'model/account-marketplace';
 import { EnumOrderStatus, Order, OrderItem, BankwirePayIn, EnumTransactionStatus } from 'model/order';
 
 // Service

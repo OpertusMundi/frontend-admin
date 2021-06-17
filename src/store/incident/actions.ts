@@ -1,5 +1,5 @@
 import { PageResult, Sorting } from 'model/response';
-import { EnumIncidentSortField, IncidentQuery, Incident } from 'model/workflow';
+import { EnumIncidentSortField, IncidentQuery, Incident } from 'model/bpm-incident';
 
 import {
   IncidentActions,
@@ -17,6 +17,9 @@ import {
   REMOVE_SELECTED,
   SET_SORTING,
   RESET_SELECTED,
+  RETRY_INIT,
+  RETRY_FAILURE,
+  RETRY_SUCCESS,
 } from './types';
 
 
@@ -110,5 +113,25 @@ export function removeFromSelection(removed: Incident[]): IncidentActions {
 export function resetSelection(): IncidentActions {
   return {
     type: RESET_SELECTED,
+  };
+}
+
+export function retryInit(processInstanceId: string, externalTaskId: string): IncidentActions {
+  return {
+    type: RETRY_INIT,
+    processInstanceId,
+    externalTaskId,
+  };
+}
+
+export function retryFailure(): IncidentActions {
+  return {
+    type: RETRY_FAILURE,
+  };
+}
+
+export function retrySuccess(): IncidentActions {
+  return {
+    type: RETRY_SUCCESS,
   };
 }

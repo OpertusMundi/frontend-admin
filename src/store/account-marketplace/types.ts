@@ -2,18 +2,24 @@ import { Moment } from 'moment';
 
 import { LogoutInitAction } from 'store/security/types';
 import { PageResult, PageRequest, Sorting, ObjectResponse } from 'model/response';
-import { EnumMarketplaceAccountSortField, MarketplaceAccount, MarketplaceAccountQuery } from 'model/account';
+import {
+  EnumMarketplaceAccountSortField,
+  MarketplaceAccountQuery,
+  MarketplaceAccount,
+  MarketplaceAccountDetails,
+} from 'model/account-marketplace';
 
 // State
 export interface MarketplaceAccountManagerState {
-  loading: boolean;
+  account: MarketplaceAccountDetails | null;
   lastUpdated: Moment | null;
+  loading: boolean;
   pagination: PageRequest;
   query: MarketplaceAccountQuery;
+  response: ObjectResponse<MarketplaceAccount> | null;
   result: PageResult<MarketplaceAccount> | null;
   selected: MarketplaceAccount[];
   sorting: Sorting<EnumMarketplaceAccountSortField>[];
-  response: ObjectResponse<MarketplaceAccount> | null;
 }
 
 // Actions
@@ -32,6 +38,14 @@ export const SEARCH_COMPLETE = 'account/manager/SEARCH_COMPLETE';
 export const ADD_SELECTED = 'account/manager/ADD_SELECTED';
 export const REMOVE_SELECTED = 'account/manager/REMOVE_SELECTED';
 export const RESET_SELECTED = 'account/manager/RESET_SELECTED';
+
+export const LOAD_ACCOUNT_INIT = 'account/manager/LOAD_ACCOUNT_INIT';
+export const LOAD_ACCOUNT_FAILURE = 'account/manager/LOAD_ACCOUNT_FAILURE';
+export const LOAD_ACCOUNT_SUCCESS = 'account/manager/LOAD_ACCOUNT_SUCCESS';
+
+export const REVIEW_ACCOUNT_INIT = 'account/manager/REVIEW_ACCOUNT_INIT';
+export const REVIEW_ACCOUNT_FAILURE = 'account/manager/REVIEW_ACCOUNT_FAILURE';
+export const REVIEW_ACCOUNT_SUCCESS = 'account/manager/REVIEW_ACCOUNT_SUCCESS';
 
 
 export interface SetPagerAction {
@@ -85,6 +99,35 @@ export interface ResetSelectionAction {
   type: typeof RESET_SELECTED;
 }
 
+export interface LoadAccountInitAction {
+  type: typeof LOAD_ACCOUNT_INIT,
+  key: string;
+}
+
+export interface LoadAccountCompleteAction {
+  type: typeof LOAD_ACCOUNT_SUCCESS,
+  account: MarketplaceAccountDetails;
+}
+
+export interface LoadAccountFailureAction {
+  type: typeof LOAD_ACCOUNT_FAILURE,
+}
+
+export interface AccountReviewInitAction {
+  type: typeof REVIEW_ACCOUNT_INIT,
+  acceptChanges: boolean;
+  rejectReason?: string;
+}
+
+export interface AccountReviewSuccessAction {
+  type: typeof REVIEW_ACCOUNT_SUCCESS,
+  account: MarketplaceAccountDetails;
+}
+
+export interface ActionReviewFailureAction {
+  type: typeof REVIEW_ACCOUNT_FAILURE,
+}
+
 export type AccountActions =
   | LogoutInitAction
   | SetPagerAction
@@ -98,4 +141,10 @@ export type AccountActions =
   | SetSelectedAction
   | RemoveFromSelectionAction
   | ResetSelectionAction
+  | LoadAccountInitAction
+  | LoadAccountCompleteAction
+  | LoadAccountFailureAction
+  | AccountReviewInitAction
+  | AccountReviewSuccessAction
+  | ActionReviewFailureAction
   ;

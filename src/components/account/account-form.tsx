@@ -50,7 +50,7 @@ import RouteGuard from 'components/route-guard';
 // Model
 import { FieldMapperFunc } from 'utils/error';
 import { StaticRoutes } from 'model/routes';
-import { EnumRole } from 'model/role';
+import { EnumHelpdeskRole as EnumRole } from 'model/role';
 import { AxiosObjectResponse, SimpleResponse } from 'model/response';
 import { HelpdeskAccountFormData, HelpdeskAccountCommand } from 'model/account';
 import { KeyValuePair } from 'model/key-value-pair';
@@ -504,7 +504,7 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
             )}
           </Formik>
         </Grid>
-        { this.renderConfirm()}
+        {this.renderConfirm()}
         <RouteGuard
           when={confirmOnNavigate}
           navigate={(location: string): void => this.props.history.push(location)}

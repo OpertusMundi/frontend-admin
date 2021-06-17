@@ -24,8 +24,7 @@ import {
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
 import { buildPath, DynamicRoutes } from 'model/routes';
-import { EnumKycLevel } from 'model/customer';
-import { EnumMarketplaceAccountSortField, MarketplaceAccount, MarketplaceAccountQuery } from 'model/account';
+import { EnumMarketplaceAccountSortField, EnumKycLevel, MarketplaceAccount, MarketplaceAccountQuery } from 'model/account-marketplace';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 // Utilities

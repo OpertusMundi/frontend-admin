@@ -16,7 +16,7 @@ import {
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
-import { EnumProcessInstanceSortField, ProcessInstance, ProcessInstanceQuery } from 'model/workflow';
+import { EnumProcessInstanceSortField, ProcessInstance, ProcessInstanceQuery } from 'model/bpm-process-instance';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 const COPY = 'copy';
@@ -152,7 +152,7 @@ interface FieldTableProps extends WithStyles<typeof styles> {
   removeFromSelection: (rows: ProcessInstance[]) => void,
   resetSelection: () => void;
   sorting: Sorting<EnumProcessInstanceSortField>[];
-  viewRow: (processInstanceId: string) => void;
+  viewProcessInstance: (processInstance: string) => void;
   loading?: boolean;
 }
 
@@ -176,6 +176,11 @@ class ProcessInstanceTable extends React.Component<FieldTableProps> {
           document.execCommand(COPY);
         }
         break;
+
+      case EnumAction.View:
+        this.props.viewProcessInstance(row.processInstanceId);
+        break;
+
       default:
         // No action
         break;
