@@ -44,7 +44,7 @@ class Toolbar extends React.Component<ToolbarProps> {
       <div className={classes.container}>
         <Icon path={mdiDatabaseCogOutline} size="1.5rem" className={classes.icon} />
         <Typography component="h6" variant="h6" color="inherit" noWrap>
-          Process Instance
+          Process Instance History
         </Typography>
       </div>
     );
@@ -53,7 +53,7 @@ class Toolbar extends React.Component<ToolbarProps> {
 }
 
 const mapState = (state: RootState) => ({
-  processInstance: state.workflow.instances.runtime.processInstance
+  processInstance: state.workflow.instances.history.processInstance,
 });
 
 const mapDispatch = {

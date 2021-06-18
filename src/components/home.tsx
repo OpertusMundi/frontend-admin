@@ -36,6 +36,7 @@ import Icon from '@mdi/react';
 import {
   mdiAccountMultiple,
   mdiAccountPlusOutline,
+  mdiCogClockwise,
   mdiBadgeAccountOutline,
   mdiBellAlertOutline,
   mdiLayers,
@@ -62,7 +63,7 @@ import clsx from 'clsx';
 
 // Model
 import { EnumHelpdeskRole as EnumRole } from 'model/role';
-import { DynamicRoutes, ErrorPages, getRoute, StaticRoutes, buildPath } from 'model/routes';
+import { routes, DynamicRoutes, ErrorPages, getRoute, StaticRoutes, buildPath } from 'model/routes';
 import { HelpdeskAccount } from 'model/account';
 
 // Components
@@ -78,10 +79,13 @@ import IncidentManager from 'components/workflow/incident-manager';
 import MapViewerComponent from 'components/map-viewer';
 import MapViewerConfigComponent from 'components/map-viewer-config';
 import MarketplaceAccountManager from 'components/account-marketplace/account-grid';
+import MarketplaceAccountView from 'components/account-marketplace/account-form';
 import PayInManager from 'components/payin/payin-grid';
 import PlaceHolder from 'components/placeholder';
 import ProcessInstanceForm from 'components/workflow/process-instance-form';
+import ProcessInstanceHistoryForm from 'components/workflow/process-instance-history-form';
 import ProcessInstanceManager from 'components/workflow/process-instance-manager';
+import ProcessInstanceHistoryManager from 'components/workflow/process-instance-history-manager';
 import Profile from 'components/profile';
 import OrderManager from 'components/order/order-manager';
 import OrderTimeline from 'components/order/order-timeline';
@@ -666,7 +670,18 @@ class Home extends React.Component<HomeProps, HomeState> {
                           <ListItemIcon>
                             <Icon path={mdiCogSyncOutline} size="1.5rem" />
                           </ListItemIcon>
-                          <ListItemText primary={_t({ id: 'links.workflow.process-instance.manager' })} />
+                          <ListItemText primary={_t({ id: 'links.workflow.process-instance.manager.runtime' })} />
+                        </ListItem>
+                      </SecureContent>
+
+                      <SecureContent roles={[EnumRole.ADMIN]}>
+                        <ListItem button
+                          className={open[EnumSection.Drawer] ? classes.nested : ''}
+                          onClick={(e) => this.onNavigate(e, StaticRoutes.ProcessInstanceHistoryManager)}>
+                          <ListItemIcon>
+                            <Icon path={mdiCogClockwise} size="1.5rem" />
+                          </ListItemIcon>
+                          <ListItemText primary={_t({ id: 'links.workflow.process-instance.manager.history' })} />
                         </ListItem>
                       </SecureContent>
 
@@ -688,7 +703,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                           <ListItemIcon>
                             <Icon path={mdiFaceAgent} size="1.5rem" />
                           </ListItemIcon>
-                          <ListItemText primary={_t({ id: 'links.account.helpdesk' })} />
+                          <ListItemText primary={_t({ id: routes[StaticRoutes.HelpdeskAccountManager].title })} />
                         </ListItem>
                       </SecureContent>
 
@@ -699,7 +714,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                           <ListItemIcon>
                             <Icon path={mdiAccountMultiple} size="1.5rem" />
                           </ListItemIcon>
-                          <ListItemText primary={_t({ id: 'links.account.marketplace' })} />
+                          <ListItemText primary={_t({ id: routes[StaticRoutes.MarketplaceAccountManager].title })} />
                         </ListItem>
                       </SecureContent>
 
@@ -722,6 +737,8 @@ class Home extends React.Component<HomeProps, HomeState> {
               <Route path={DynamicRoutes.ContractCreate} component={ContractForm} />
               <Route path={DynamicRoutes.ContractReview} component={ContractReviewForm} />
               <Route path={DynamicRoutes.OrderTimeline} component={OrderTimeline} />
+              <Route path={DynamicRoutes.MarketplaceAccountView} component={MarketplaceAccountView} />
+              <Route path={DynamicRoutes.ProcessInstanceHistoryView} component={ProcessInstanceHistoryForm} />
               <Route path={DynamicRoutes.ProcessInstanceView} component={ProcessInstanceForm} />
               {/* Static */}
               <Route path={StaticRoutes.Analytics} component={QueryEditor} />
@@ -738,6 +755,7 @@ class Home extends React.Component<HomeProps, HomeState> {
               <SecureRoute path={StaticRoutes.IncidentManager} component={IncidentManager} roles={[EnumRole.ADMIN]} />
               <SecureRoute path={StaticRoutes.MarketplaceAccountManager} component={MarketplaceAccountManager} roles={[EnumRole.ADMIN]} />
               <SecureRoute path={StaticRoutes.ProcessInstanceManager} component={ProcessInstanceManager} roles={[EnumRole.ADMIN]} />
+              <SecureRoute path={StaticRoutes.ProcessInstanceHistoryManager} component={ProcessInstanceHistoryManager} roles={[EnumRole.ADMIN]} />
               {/* Default */}
               <Redirect push={true} to={ErrorPages.NotFound} />
             </Switch>

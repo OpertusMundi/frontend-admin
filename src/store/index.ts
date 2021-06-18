@@ -19,6 +19,7 @@ import { messageReducer } from './i18n/reducer';
 import { orderReducer } from './order/reducer';
 import { payInReducer } from './payin/reducer';
 import { processInstanceReducer } from './process-instance/reducer';
+import { processInstanceHistoryReducer } from './process-instance-history/reducer';
 import { securityReducer } from './security/reducer';
 import { viewportReducer } from './viewport/reducer';
 
@@ -41,7 +42,10 @@ export const rootReducer = Redux.combineReducers({
   security: securityReducer,
   viewport: viewportReducer,
   workflow: Redux.combineReducers({
-    instances: processInstanceReducer,
+    instances: Redux.combineReducers({
+      runtime: processInstanceReducer,
+      history: processInstanceHistoryReducer,
+    }),
     incidents: incidentReducer,
   }),
   // Syncs history and store

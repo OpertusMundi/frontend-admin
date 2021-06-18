@@ -4,9 +4,6 @@ import { ThunkAction } from 'redux-thunk'
 import { RootState } from 'store';
 import { ProcessInstanceActions } from './types';
 import {
-  countProcessInstancesComplete,
-  countProcessInstancesFailure,
-  countProcessInstancesInit,
   loadInit,
   loadSuccess,
   loadFailure,
@@ -22,44 +19,26 @@ import ProcessInstanceApi from 'service/bpm-process-instance';
 
 // Model
 import {
-  EnumProcessInstanceSortField,
+  EnumProcessInstanceHistorySortField,
   ProcessInstance,
-  ProcessInstanceDetails,
+  HistoryProcessInstanceDetails,
 } from 'model/bpm-process-instance';
 import { PageRequest, Sorting, PageResult } from 'model/response';
 
 // Helper thunk result type
 type ThunkResult<R> = ThunkAction<Promise<R>, RootState, unknown, ProcessInstanceActions>;
 
-export const countProcessInstances = (): ThunkResult<number | null> => async (dispatch, getState) => {
-  dispatch(countProcessInstancesInit());
-  // Get response
-  const api = new ProcessInstanceApi();
-
-  const response = await api.count();
-
-  // Update state
-  if (response.data.success) {
-
-    dispatch(countProcessInstancesComplete(response.data.result));
-    return response.data.result;
-  }
-
-  dispatch(countProcessInstancesFailure());
-  return null;
-}
-
 export const find = (
-  pageRequest?: PageRequest, sorting?: Sorting<EnumProcessInstanceSortField>[]
+  pageRequest?: PageRequest, sorting?: Sorting<EnumProcessInstanceHistorySortField>[]
 ): ThunkResult<PageResult<ProcessInstance> | null> => async (dispatch, getState) => {
   // Get query form state (filters are always set synchronously)
-  const query = getState().workflow.instances.runtime.query;
+  const query = getState().workflow.instances.history.query;
 
   // Update sorting or use the existing value
   if (sorting) {
     dispatch(setSorting(sorting));
   } else {
-    sorting = getState().workflow.instances.runtime.sorting;
+    sorting = getState().workflow.instances.history.sorting;
   }
 
   // Update page or user the existing value (i.e. data page refresh)
@@ -68,7 +47,7 @@ export const find = (
 
     dispatch(setPager(page, size));
   } else {
-    pageRequest = getState().workflow.instances.runtime.pagination
+    pageRequest = getState().workflow.instances.history.pagination
   }
 
   // Initialize search
@@ -77,7 +56,7 @@ export const find = (
   // Get response
   const api = new ProcessInstanceApi();
 
-  const response = await api.find(query, pageRequest, sorting);
+  const response = await api.findHistory(query, pageRequest, sorting);
 
   // Update state
   if (response.data.success) {
@@ -89,12 +68,12 @@ export const find = (
   return null;
 }
 
-export const findOne = (processInstance: string): ThunkResult<ProcessInstanceDetails | null> => async (dispatch, getState) => {
+export const findOne = (processInstance: string): ThunkResult<HistoryProcessInstanceDetails | null> => async (dispatch, getState) => {
   dispatch(loadInit(processInstance));
   // Get response
   const api = new ProcessInstanceApi();
 
-  const response = await api.findOne(processInstance);
+  const response = await api.findOneHistory(processInstance);
 
   // Update state
   if (response.data.success) {

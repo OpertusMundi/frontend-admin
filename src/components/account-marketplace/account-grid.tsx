@@ -120,10 +120,6 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
     });
   }
 
-  updateRow(key: string): void {
-
-  }
-
   setSorting(sorting: Sorting<EnumMarketplaceAccountSortField>[]): void {
     this.props.setSorting(sorting);
     this.find();
@@ -177,7 +173,6 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
               sorting={sorting}
-              updateRow={(key: string) => this.updateRow(key)}
               loading={loading}
             />
           </Paper>

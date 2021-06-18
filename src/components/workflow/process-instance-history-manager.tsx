@@ -31,19 +31,19 @@ import {
   setFilter,
   setPager,
   setSorting,
-} from 'store/process-instance/actions';
-import { find } from 'store/process-instance/thunks';
+} from 'store/process-instance-history/actions';
+import { find } from 'store/process-instance-history/thunks';
 
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
-import { EnumProcessInstanceSortField, ProcessInstance } from 'model/bpm-process-instance';
+import { EnumProcessInstanceHistorySortField, ProcessInstance } from 'model/bpm-process-instance';
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
 
-import ProcessInstanceFilters from './process-instance/filter';
-import ProcessInstanceTable from './process-instance/table';
+import ProcessInstanceFilters from './process-instance-history/filter';
+import ProcessInstanceTable from './process-instance-history/table';
 
 const styles = (theme: Theme) => createStyles({
   container: {
@@ -153,12 +153,15 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
     });
   }
 
-  viewProcessInstance(processInstance: string): void {
-    const path = buildPath(DynamicRoutes.ProcessInstanceView, [processInstance]);
+  viewProcessInstance(processInstance: string, completed: boolean): void {
+    const path = completed ?
+      buildPath(DynamicRoutes.ProcessInstanceHistoryView, [processInstance])
+      :
+      buildPath(DynamicRoutes.ProcessInstanceView, [processInstance]);
     this.props.history.push(path);
   }
 
-  setSorting(sorting: Sorting<EnumProcessInstanceSortField>[]): void {
+  setSorting(sorting: Sorting<EnumProcessInstanceHistorySortField>[]): void {
     this.props.setSorting(sorting);
     this.find();
   }
@@ -167,7 +170,7 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
     const {
       addToSelection,
       classes,
-      workflow: { instances: { runtime: { query, result, pagination, selected, sorting, loading, lastUpdated } } },
+      workflow: { instances: { history: { query, result, pagination, selected, sorting, loading, lastUpdated } } },
       find,
       setPager,
       setFilter,
@@ -206,11 +209,11 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
               pagination={pagination}
               selected={selected}
               setPager={setPager}
-              setSorting={(sorting: Sorting<EnumProcessInstanceSortField>[]) => this.setSorting(sorting)}
+              setSorting={(sorting: Sorting<EnumProcessInstanceHistorySortField>[]) => this.setSorting(sorting)}
               addToSelection={addToSelection}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
-              viewProcessInstance={(processInstance: string) => this.viewProcessInstance(processInstance)}
+              viewProcessInstance={(processInstance: string, completed: boolean) => this.viewProcessInstance(processInstance, completed)}
               sorting={sorting}
               loading={loading}
             />
@@ -275,7 +278,7 @@ const mapState = (state: RootState) => ({
 
 const mapDispatch = {
   addToSelection,
-  find: (pageRequest?: PageRequest, sorting?: Sorting<EnumProcessInstanceSortField>[]) => find(pageRequest, sorting),
+  find: (pageRequest?: PageRequest, sorting?: Sorting<EnumProcessInstanceHistorySortField>[]) => find(pageRequest, sorting),
   removeFromSelection,
   resetFilter,
   resetSelection,

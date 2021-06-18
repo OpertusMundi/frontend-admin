@@ -45,6 +45,7 @@ export const REMOVE_SELECTED = 'workflow/process-instance/REMOVE_SELECTED';
 export const SET_SORTING = 'workflow/process-instance/SET_SORTING';
 export const RESET_SELECTED = 'workflow/process-instance/RESET_SELECTED';
 
+export const RESET_INSTANCE = 'workflow/process-instance/RESET_INSTANCE';
 export const LOAD_INIT = 'workflow/process-instance/LOAD_INIT';
 export const LOAD_SUCCESS = 'workflow/process-instance/LOAD_SUCCESS';
 export const LOAD_FAILURE = 'workflow/process-instance/LOAD_FAILURE';

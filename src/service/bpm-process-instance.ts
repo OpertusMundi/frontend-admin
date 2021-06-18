@@ -13,9 +13,11 @@ import {
 
 import {
   EnumProcessInstanceSortField,
+  EnumProcessInstanceHistorySortField,
   ProcessInstance,
   ProcessInstanceDetails,
   ProcessInstanceQuery,
+  HistoryProcessInstanceDetails,
 } from 'model/bpm-process-instance';
 
 export default class WorkflowApi extends Api {
@@ -52,4 +54,25 @@ export default class WorkflowApi extends Api {
     return this.get<ObjectResponse<ProcessInstanceDetails>>(url);
   }
 
+  public async findHistory(
+    query: Partial<ProcessInstanceQuery>, pageRequest: PageRequest, sorting: Sorting<EnumProcessInstanceHistorySortField>[]
+  ): Promise<AxiosPageResponse<ProcessInstance>> {
+    const { page, size } = pageRequest;
+    const { id: field, order } = sorting[0];
+
+    const queryString = (Object.keys(query) as Array<keyof ProcessInstanceQuery>)
+      .reduce((result: string[], key: keyof ProcessInstanceQuery) => {
+        return query[key] !== null ? [...result, `${key}=${query[key]}`] : result;
+      }, []);
+
+    const url = `/action/workflows/history/process-instances?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
+
+    return this.get<ObjectResponse<PageResult<ProcessInstance>>>(url);
+  }
+
+  public async findOneHistory(processInstanceId: string): Promise<AxiosObjectResponse<HistoryProcessInstanceDetails>> {
+    const url = `/action/workflows/history/process-instances/${processInstanceId}`;
+
+    return this.get<ObjectResponse<HistoryProcessInstanceDetails>>(url);
+  }
 }

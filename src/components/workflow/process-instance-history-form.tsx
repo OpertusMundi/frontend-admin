@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import moment from 'moment';
 import React from 'react';
 import { AxiosError } from 'axios';
@@ -56,10 +57,10 @@ import {
 
 // Store
 import { RootState } from 'store';
-import { findOne } from 'store/process-instance/thunks'
+import { findOne } from 'store/process-instance-history/thunks'
 
 // Model
-import { BpmActivity, ProcessInstanceDetails } from 'model/bpm-process-instance';
+import { BpmActivity, HistoryProcessInstanceDetails } from 'model/bpm-process-instance';
 
 // Service
 import AccountApi from 'service/account-marketplace';
@@ -111,15 +112,15 @@ interface RouteParams {
   processInstance?: string | undefined;
 }
 
-interface ProcessInstanceProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps<RouteParams> {
+interface ProcessInstanceHistoryProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps<RouteParams> {
   intl: IntlShape,
 }
 
-class ProcessInstance extends React.Component<ProcessInstanceProps> {
+class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps> {
 
   api: AccountApi;
 
-  constructor(props: ProcessInstanceProps) {
+  constructor(props: ProcessInstanceHistoryProps) {
     super(props);
 
     this.api = new AccountApi();
@@ -135,6 +136,7 @@ class ProcessInstance extends React.Component<ProcessInstanceProps> {
     if (this.processInstanceId) {
       this.props.findOne(this.processInstanceId)
         .catch((err: AxiosError) => {
+          console.log(err);
           // TODO: Redirect to grid view?
         });
     } else {
@@ -142,7 +144,7 @@ class ProcessInstance extends React.Component<ProcessInstanceProps> {
     }
   }
 
-  mapActivityToMessage(activity: BpmActivity, instance: ProcessInstanceDetails) {
+  mapActivityToMessage(activity: BpmActivity, instance: HistoryProcessInstanceDetails) {
     const _t = this.props.intl.formatTime;
     const { incidents = [], errorDetails } = instance;
 
@@ -166,10 +168,13 @@ class ProcessInstance extends React.Component<ProcessInstanceProps> {
     if (incident) {
       return (
         <>
-          <FormattedMessage id={`workflow.instance.activity.${activity.activityType}.error`} values={{
-            activity: activity.activityName,
-            timestamp: _t(incident.incidentTimestamp.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }),
-          }} />
+          <FormattedMessage
+            id={`workflow.instance.activity.${activity.activityType}.error`}
+            values={{
+              activity: activity.activityName,
+              timestamp: _t(incident.createTime.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }),
+            }}
+          />
           <Divider />
           <Typography variant="subtitle1" >
             {'Message'}
@@ -185,6 +190,22 @@ class ProcessInstance extends React.Component<ProcessInstanceProps> {
               </Typography>
               <Typography variant="caption" >
                 {errorDetails[incident.activityId]}
+              </Typography>
+            </>
+          }
+          {incident.resolved && incident.endTime &&
+            <>
+              <Divider />
+              <Typography variant="subtitle1" >
+                {'Resolved'}
+              </Typography>
+              <Typography variant="caption" >
+                <FormattedMessage
+                  id={`workflow.instance.activity.resolved`}
+                  values={{
+                    timestamp: _t(incident.endTime?.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }),
+                  }}
+                />
               </Typography>
             </>
           }
@@ -224,13 +245,13 @@ class ProcessInstance extends React.Component<ProcessInstanceProps> {
     }
   }
 
-  mapActivityToColor(activity: BpmActivity, instance: ProcessInstanceDetails) {
+  mapActivityToColor(activity: BpmActivity, instance: HistoryProcessInstanceDetails) {
     const { incidents = [] } = instance;
 
     const incident = incidents.find((i) => i.activityId === activity.activityId) || null;
 
     if (incident && ['userTask', 'serviceTask'].includes(activity.activityType)) {
-      return '#f44336';
+      return incident.resolved ? '#757575' : '#f44336';
     }
 
     if (!activity.startTime) {
@@ -304,7 +325,7 @@ class ProcessInstance extends React.Component<ProcessInstanceProps> {
     }
   }
 
-  buildTimeline(processInstance: ProcessInstanceDetails) {
+  buildTimeline(processInstance: HistoryProcessInstanceDetails) {
     const { classes } = this.props;
     const { instance, activities: allActivities } = processInstance;
 
@@ -385,14 +406,12 @@ class ProcessInstance extends React.Component<ProcessInstanceProps> {
         ></CardHeader>
         <CardContent>
           <List disablePadding>
-            {owner &&
-              <ListItem className={classes.listItem}>
-                <ListItemAvatar>
-                  {this.getAccountAvatar(owner || null)}
-                </ListItemAvatar>
-                <ListItemText primary={'Owner'} secondary={owner ? owner.username : 'System'} />
-              </ListItem>
-            }
+            <ListItem className={classes.listItem}>
+              <ListItemAvatar>
+                {this.getAccountAvatar(owner || null)}
+              </ListItemAvatar>
+              <ListItemText primary={'Owner'} secondary={owner ? owner.username : 'System'} />
+            </ListItem>
             <ListItem className={classes.listItem}>
               <ListItemAvatar>
                 <Avatar className={classes.small}>
@@ -429,26 +448,26 @@ class ProcessInstance extends React.Component<ProcessInstanceProps> {
         ></CardHeader>
         <CardContent>
           <List disablePadding>
-            {Object.keys(variables).filter(name => !['startUserKey'].includes(name)).sort().map((name, index) => {
-              const value = variables[name].value;
+            {_.uniqBy(variables, 'name').filter(v => !['startUserKey'].includes(v.name)).sort().map((v) => {
+              const value = v.value;
 
               return (
-                <div key={`variable-${name}`}>
+                <div key={`variable-${v.name}`}>
                   <ListItem className={classes.listItem}>
                     <ListItemAvatar>
                       <Avatar className={classes.small}>
-                        {this.mapVariableTypeToIcon(variables[name].type)}
+                        {this.mapVariableTypeToIcon(v.type)}
                       </Avatar>
                     </ListItemAvatar>
                     {typeof value === 'boolean' &&
-                      <ListItemText primary={name} secondary={value === true ? 'True' : 'False'} />
+                      <ListItemText primary={v.name} secondary={value === true ? 'True' : 'False'} />
                     }
                     {typeof value !== 'boolean' &&
-                      <ListItemText primary={name} secondary={value} />
+                      <ListItemText primary={v.name} secondary={value} />
                     }
-                    {typeof value !== 'boolean' && variables[name].value &&
+                    {typeof value !== 'boolean' && v.value &&
                       <ListItemSecondaryAction>
-                        <IconButton edge="end" aria-label="delete" onClick={() => this.copyValueToClipboard(variables[name].value)}>
+                        <IconButton edge="end" aria-label="delete" onClick={() => this.copyValueToClipboard(v.value)}>
                           <Icon path={mdiContentCopy} size="1.2rem" />
                         </IconButton>
                       </ListItemSecondaryAction>
@@ -464,7 +483,7 @@ class ProcessInstance extends React.Component<ProcessInstanceProps> {
   }
 
   render() {
-    const { classes, config, processInstance = null } = this.props;
+    const { classes, processInstance = null } = this.props;
     const _t = this.props.intl.formatMessage;
 
     if (!processInstance) {
@@ -509,7 +528,7 @@ class ProcessInstance extends React.Component<ProcessInstanceProps> {
 
 const mapState = (state: RootState) => ({
   config: state.config,
-  processInstance: state.workflow.instances.runtime.processInstance,
+  processInstance: state.workflow.instances.history.processInstance,
 });
 
 const mapDispatch = {
@@ -524,7 +543,7 @@ const connector = connect(
 type PropsFromRedux = ConnectedProps<typeof connector>
 
 // Apply styles
-const styledComponent = withStyles(styles)(ProcessInstance);
+const styledComponent = withStyles(styles)(ProcessInstanceHistory);
 
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);

@@ -8,6 +8,13 @@ export enum EnumProcessInstanceSortField {
   STARTED_ON = 'STARTED_ON',
 }
 
+export enum EnumProcessInstanceHistorySortField {
+  BUSINESS_KEY = 'BUSINESS_KEY',
+  COMPLETED_ON = 'COMPLETED_ON',
+  PROCESS_DEFINITION = 'PROCESS_DEFINITION',
+  STARTED_ON = 'STARTED_ON',
+}
+
 export interface ProcessInstanceQuery {
   businessKey: string;
 }
@@ -20,11 +27,12 @@ export interface ProcessInstance {
   processDefinitionDeployedOn: Moment;
   processInstanceId: string
   businessKey: string;
-  incidentCount: number;
+  incidentCount: number | null;
   startedOn: Moment;
+  completedOn: Moment | null;
 }
 
-export type ActivityType = 'startEvent' | 'serviceTask' | 'userTask' | 'endEvent';
+export type ActivityType = 'startEvent' | 'serviceTask' | 'userTask' | 'noneEndEvent';
 
 export interface RetryExternalTaskCommand {
   processInstanceId: string;
@@ -41,7 +49,7 @@ export interface BpmProcessInstance {
   startTime: Moment;
   endTime: Moment,
   removalTime: Moment;
-  durationInMillis: number;
+  durationInMillis: number | null;
   startUserId: string;
   startActivityId: string;
   deleteReason: null,
@@ -56,6 +64,16 @@ export interface BpmProcessInstance {
 export interface BpmVariable {
   type: string;
   value: string | number | boolean | null;
+}
+
+export interface BpmHistoryVariable extends BpmVariable {
+  createTime: Moment;
+  errorMessage: string;
+  name: string;
+  removalTime: Moment | null
+  state: string;
+  taskId: string;
+
 }
 
 export interface BpmIncident {
@@ -73,6 +91,31 @@ export interface BpmIncident {
   incidentMessage: string;
   tenantId: string;
   jobDefinitionId: string;
+}
+
+export interface BpmHistoryIncident {
+  id: string;
+  processDefinitionKey: string;
+  processDefinitionId: string;
+  processInstanceId: string;
+  executionId: string;
+  rootProcessInstanceId: string;
+  createTime: Moment;
+  endTime: Moment | null;
+  removalTime: Moment | null,
+  incidentType: string;
+  activityId: string;
+  failedActivityId: string;
+  causeIncidentId: string;
+  rootCauseIncidentId: string;
+  configuration: string;
+  historyConfiguration: string;
+  incidentMessage: string;
+  tenantId: string;
+  jobDefinitionId: string;
+  open: boolean;
+  deleted: boolean;
+  resolved: boolean;
 }
 
 export interface BpmActivity {
@@ -104,6 +147,15 @@ export interface ProcessInstanceDetails {
   errorDetails: { [activity: string]: string };
   incidents: BpmIncident[];
   instance: BpmProcessInstance;
-  owner: MarketplaceAccountDetails;
+  owner?: MarketplaceAccountDetails;
   variables: { [name: string]: BpmVariable };
+}
+
+export interface HistoryProcessInstanceDetails {
+  activities: BpmActivity[];
+  errorDetails: { [activity: string]: string };
+  incidents: BpmHistoryIncident[];
+  instance: BpmProcessInstance;
+  owner?: MarketplaceAccountDetails;
+  variables: BpmHistoryVariable[];
 }

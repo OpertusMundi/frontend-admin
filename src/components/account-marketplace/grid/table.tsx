@@ -110,7 +110,7 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
         rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
       ): React.ReactNode => (
         <div className={classes.classes.compositeLabel}>
-          <Link to={buildPath(DynamicRoutes.AccountUpdate, [row.key + ''])} className={classes.classes.link}>
+          <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [row.key + ''])} className={classes.classes.link}>
             {row.email}
           </Link>
           {!row.emailVerified &&
@@ -270,7 +270,6 @@ interface FieldTableProps extends WithStyles<typeof styles> {
   removeFromSelection: (rows: MarketplaceAccount[]) => void,
   resetSelection: () => void;
   sorting: Sorting<EnumMarketplaceAccountSortField>[];
-  updateRow: (key: string) => void;
   loading?: boolean;
 }
 

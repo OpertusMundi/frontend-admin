@@ -10,6 +10,7 @@ import * as pathToRegexp from 'path-to-regexp';
  */
 import OrderTimelineToolbar from 'components/order/toolbar/order-timeline';
 import ProcessInstanceToolbar from 'components/workflow/toolbar/process-instance';
+import ProcessInstanceHistoryToolbar from 'components/workflow/toolbar/process-instance-history';
 
 /**
  * Icons
@@ -75,6 +76,7 @@ const HelpdeskAccountManager = '/helpdesk/users';
 const MarketplaceAccountManager = '/marketplace/users'
 const DraftManager = '/drafts';
 const ProcessInstanceManager = '/workflows/process-instances';
+const ProcessInstanceHistoryManager = '/workflows/process-instances-history';
 const IncidentManager = '/workflow/incidents'
 
 export const StaticRoutes = {
@@ -95,6 +97,7 @@ export const StaticRoutes = {
   MarketplaceAccountManager,
   DraftManager,
   ProcessInstanceManager,
+  ProcessInstanceHistoryManager,
   IncidentManager,
 };
 
@@ -102,24 +105,28 @@ export const StaticRoutes = {
  * Dynamic routes
  */
 
-const AccountCreate = '/admin/users/record/create';
-const AccountUpdate = '/admin/users/record/update/:id';
+const AccountCreate = '/helpdesk/users/record/create';
+const AccountUpdate = '/helpdesk/users/record/update/:id';
 const ContractCreate = '/contract/create';
 const ContractReview = '/contract/review';
 const OrderTimeline = '/billing/order/:key/timeline';
 const OrderView = '/billing/order/:key';
+const MarketplaceAccountView = '/marketplace/users/record/:key';
 const PayInView = '/billing/payin/:key';
 const ProcessInstanceView = '/workflows/process-instances/:processInstance';
+const ProcessInstanceHistoryView = '/workflows/process-instances/history/:processInstance';
 
 export const DynamicRoutes = {
   AccountCreate,
   AccountUpdate,
   ContractCreate,
   ContractReview,
+  MarketplaceAccountView,
   OrderTimeline,
   OrderView,
   PayInView,
   ProcessInstanceView,
+  ProcessInstanceHistoryView,
 };
 
 /**
@@ -160,7 +167,7 @@ interface RouteRegistry {
   [route: string]: Route;
 }
 
-const routes: RouteRegistry = {
+export const routes: RouteRegistry = {
   // Pages
   [Login]: {
     description: 'Login to workbench application',
@@ -243,7 +250,7 @@ const routes: RouteRegistry = {
   [HelpdeskAccountManager]: {
     icon: (className?: string) => (<Icon path={mdiFaceAgent} size="1.5rem" className={className} />),
     description: 'Manage helpdesk accounts',
-    title: 'links.account.helpdesk',
+    title: 'links.account.helpdesk.manager',
     defaultTitle: 'Helpdesk Account Management',
     roles: [EnumRole.ADMIN],
     links: [Dashboard],
@@ -251,7 +258,7 @@ const routes: RouteRegistry = {
   [MarketplaceAccountManager]: {
     icon: (className?: string) => (<Icon path={mdiAccountMultiple} size="1.5rem" className={className} />),
     description: 'Manage marketplace accounts',
-    title: 'links.account.marketplace',
+    title: 'links.account.marketplace.manager',
     defaultTitle: 'Marketplace Account Management',
     roles: [EnumRole.ADMIN],
     links: [Dashboard],
@@ -259,10 +266,18 @@ const routes: RouteRegistry = {
   [ProcessInstanceManager]: {
     icon: (className?: string) => (<Icon path={mdiCogSyncOutline} size="1.5rem" className={className} />),
     description: 'Manage BPM Server workflows',
-    title: 'links.workflow.process-instance.manager',
+    title: 'links.workflow.process-instance.manager.runtime',
     defaultTitle: 'Process Instance Management',
     roles: [EnumRole.ADMIN],
-    links: [Dashboard, IncidentManager],
+    links: [Dashboard, ProcessInstanceHistoryManager, IncidentManager],
+  },
+  [ProcessInstanceHistoryManager]: {
+    icon: (className?: string) => (<Icon path={mdiCogSyncOutline} size="1.5rem" className={className} />),
+    description: 'Manage BPM Server workflow history',
+    title: 'links.workflow.process-instance.manager.history',
+    defaultTitle: 'Process Instance Management',
+    roles: [EnumRole.ADMIN],
+    links: [Dashboard, ProcessInstanceManager, IncidentManager],
   },
   [IncidentManager]: {
     icon: (className?: string) => (<Icon path={mdiBellAlertOutline} size="1.5rem" className={className} />),
@@ -282,14 +297,14 @@ const routes: RouteRegistry = {
   // Dynamic
   [AccountCreate]: {
     description: 'Create new account record',
-    title: 'links.account.create',
+    title: 'links.account.helpdesk.create',
     defaultTitle: 'Create Account',
     roles: [EnumRole.ADMIN],
     links: defaultLinks,
   },
   [AccountUpdate]: {
     description: 'Update account record',
-    title: 'links.account.update',
+    title: 'links.account.helpdesk.update',
     defaultTitle: 'Update Account',
     roles: [EnumRole.ADMIN],
     links: defaultLinks,
@@ -309,6 +324,13 @@ const routes: RouteRegistry = {
     roles: [EnumRole.ADMIN],
     links: defaultLinks,
     progressBar: true,
+  },
+  [MarketplaceAccountView]: {
+    description: 'View Marketplace Account',
+    title: 'links.account.marketplace.view',
+    defaultTitle: 'Create Account',
+    roles: [EnumRole.ADMIN],
+    links: defaultLinks,
   },
   [OrderTimeline]: {
     description: 'Order Timeline',
@@ -335,6 +357,17 @@ const routes: RouteRegistry = {
     toolbarComponent: (): React.ReactNode => {
       return (
         <ProcessInstanceToolbar />
+      );
+    }
+  },
+  [ProcessInstanceHistoryView]: {
+    description: 'Process Instance',
+    title: 'links.workflow.process-instance.instance',
+    defaultTitle: 'Process Instance',
+    links: defaultLinks,
+    toolbarComponent: (): React.ReactNode => {
+      return (
+        <ProcessInstanceHistoryToolbar />
       );
     }
   },
