@@ -292,10 +292,15 @@
   },
   "links": {
     "account": {
-      "create": "Create",
-      "helpdesk": "Helpdesk Users",
-      "marketplace": "Marketplace Users",
-      "update": "Edit"
+      "helpdesk": {
+        "manager": "Helpdesk Users",
+        "create": "Create",
+        "update": "Edit"
+      },
+      "marketplace": {
+        "manager": "Marketplace Users",
+        "view": "Review"
+      }
     },
     "admin": "Admin",
     "analytics": "Analytics",
@@ -329,7 +334,10 @@
         "manager": "Incidents"
       },
       "process-instance": {
-        "manager": "Process Instances",
+        "manager": {
+          "runtime": "Active Processes",
+          "history": "Process History"
+        },
         "instance": "Process Instance"
       }
     }
@@ -411,6 +419,7 @@
       "activity": {
         "started": "Workflow instance has started at {timestamp}",
         "completed": "Workflow instance has been completed at {timestamp}",
+        "resolved": "Incident resolved at {timestamp}",
         "userTask": {
           "completed": "User task {activity} has been completed at {timestamp}",
           "running": "User task {activity} is pending",
@@ -440,7 +449,8 @@
         "process-definition-deployed-on": "Deployed On",
         "incident-count": "Incidents",
         "business-key": "Business Key",
-        "started-on": "Started On"
+        "started-on": "Started On",
+        "completed-on": "Completed On"
       },
       "incident": {
         "actions": "Actions",
