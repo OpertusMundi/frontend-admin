@@ -265,11 +265,13 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   }
 
   insertPlaceholder(label: string, meta: any): EditorState {
+    label = '[' + label + ']';
     const editorState = this.state.editorState;
     const currentContent = this.state.editorState.getCurrentContent();
     const selection = this.state.editorState.getSelection();
     const entityKey = Entity.create('TokenSpan', 'IMMUTABLE', { meta });
 
+    //var entityStyle = OrderedSet.of('bgcolor-rgb(192,192,192)')
     var entityStyle = OrderedSet.of('BOLD')
     entityStyle = entityStyle.add('UNDERLINE')
     var textWithEntity = Modifier.insertText(currentContent, selection, label, entityStyle, entityKey);
@@ -315,8 +317,8 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
     return (
       <div onClick={() => setOpen()} className="rdw-block-wrapper" aria-expanded={this.state.openAutoTextSelect} aria-label="rdw-block-control" role="button" tabIndex={0}>
-        <div className="rdw-dropdown-wrapper rdw-block-dropdown" aria-expanded={this.state.openAutoTextSelect} aria-label="rdw-dropdown" style={{ width: 180 }}>
-          <div className="rdw-dropdown-selectedtext">
+        <div className="rdw-dropdown-wrapper rdw-block-dropdown" aria-expanded={this.state.openAutoTextSelect} aria-label="rdw-dropdown" style={{ width: 220 }}>
+          <div className="rdw-dropdown-selectedtext" style={{ width: 220 }}>
             <span>automated text</span>
             <div className={`rdw-dropdown-caretto${this.state.openAutoTextSelect ? 'close' : 'open'}`} />
           </div>
@@ -558,13 +560,32 @@ const placeholderOptions = [
   { key: "clientVAT", value: "clientVAT" },
   { key: "sellerAddress", value: "sellerAddress" },
   { key: "clientAddress", value: "clientAddress" },
-  { key: "AssetId", value: "AssetId" },
-  { key: "AssetName", value: "AssetName" },
+  { key: "sellerEmail", value: "sellerEmail" },
+  { key: "clientEmail", value: "clientEmail" },
+  { key: "sellerContactPerson", value: "sellerContactPerson" },
+  { key: "clientContactPerson", value: "clientContactPerson" },
+  { key: "clientCompanyRegNumber", value: "clientCompanyRegNumber" },
+  { key: "sellerCompanyRegNumber", value: "sellerCompanyRegNumber" },
+  { key: "clientEmail", value: "clientEmail" },
   { key: "AssetPrice", value: "AssetPrice" },
   { key: "CurrentDate", value: "CurrentDate" },
   { key: "SellerLegalRep", value: "SellerLegalRep" },
-  { key: "MTCID", value: "MTCID" },
-  { key: "ContractID", value: "ContractID" },
+  { key: "MTCId", value: "MTCId" },
+  { key: "ContractId", value: "ContractId" },
+  { key: "ContractId", value: "ContractId" },
+  { key: "ProductId", value: "ProductId" },
+  { key: "ProductName", value: "ProductName" },
+  { key: "ProductDescription", value: "ProductDescription" },
+  { key: "PastVersionsIncluded", value: "PastVersionsIncluded" },
+  { key: "UpdatesIncluded", value: "UpdatesIncluded" },
+  { key: "EstimatedDeliveryDate", value: "EstimatedDeliveryDate" },
+  { key: "DeliveryMediaFormat", value: "DeliveryMediaFormat" },
+  { key: "ApplicableFees", value: "ApplicableFees" },
+  { key: "DomainList", value: "DomainList" },
+  { key: "Date", value: "Date" },
+  { key: "Years", value: "Years" },
+  { key: "Period", value: "Period" },
+  { key: "Number", value: "Number" },
 
 ]
 
