@@ -78,6 +78,10 @@ const styles = (theme: Theme) => createStyles({
     paddingLeft: '30px',
     width: '45vh',
   },
+  outerOutline: {
+    height: '80vh',
+    overflowY: 'auto',
+  },
   section: {
     color: '#6C6C6C',
     fontWeight: 'normal',
@@ -298,19 +302,16 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         section.index = '' + lastIndex;
       }
       else if (section.indent === lastSection.indent) {
-        lastIndex = lastSection.index.slice(lastSection.index.lastIndexOf('.') + 1);
-        //lastIndex = lastSection.index;
-        var currIndex = parseInt(lastIndex, 10) + 1;
-        section.index = lastSection.index.slice(0, -1) + '' + currIndex;
-        //section.index = '' + currIndex;
+        section.index = this.getCurrentIndex(id, section.indent!);
       }
       else if (section.indent === lastSection.indent - 8) {
-        var firstPart = lastSection.index.substr(0,lastSection.index.lastIndexOf('.'))
-        var lastPart = parseInt(firstPart.substr(firstPart.lastIndexOf('.')+1), 10) + 1;
-        section.index = firstPart.substr(0,firstPart.lastIndexOf('.')+1) + lastPart
+        section.index = this.getCurrentIndex(id, section.indent!);
+        //var firstPart = lastSection.index.substr(0,lastSection.index.lastIndexOf('.'))
+        //var lastPart = parseInt(firstPart.substr(firstPart.lastIndexOf('.')+1), 10) + 1;
+        //section.index = firstPart.substr(0,firstPart.lastIndexOf('.')+1) + lastPart
 
       }
-      else if (section.indent === lastSection.indent - 16 || section.indent === lastSection.indent - 24){
+      else if ((section.indent!) <= lastSection.indent - 16 ){
         section.index = this.getCurrentIndex(id, section.indent!);
       }
       else
@@ -362,12 +363,19 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     for (let i = id - 1; i >= 0; i--) {
       var section = this.state.sectionList[i];
       if (section.indent === indent) {
-        var lastIndex = section.index.slice(section.index.lastIndexOf('.') + 1);
-        var currIndex = parseInt(lastIndex, 10) + 1
-        index = section.index.slice(0, -1) + '' + currIndex;
+        // increment by 1
+        var lastIndex = section.index;
+        var firstPart = '';
+        if (section.index.includes('.')) {
+          var sectionParts = section.index.split('.')
+          lastIndex = sectionParts.pop()!
+          firstPart = sectionParts.join('.') + '.'
+        }
+        var lastPart = parseInt(lastIndex, 10) + 1
+        index = firstPart + '' + lastPart;
         break;
       }
-      else if (section.indent === indent - 8) {
+      else if (section.indent <=  indent - 8) {
         index = section.index + '.1'
         break;
       }
@@ -561,11 +569,9 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
 
     const { sectionList } = this.state;
 
-    sectionList.sort((a,b) => {
-      if (a.index < b.index) return -1;
-      if (a.index > b.index) return 1;
-      return 0;
-    });
+    var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+    // sort by index
+    sectionList.sort((a,b) =>  collator.compare(a.index, b.index))
     const { classes } = this.props;
     const outline = this.state.sectionList.map(section => {
       let type = '';
@@ -596,7 +602,8 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     let toolbarActions;
     if (this.state.displayToolbarActions) {
       if (this.state.sectionList.length>0){
-        var newId = this.state.sectionList.slice(-1)[0].id! + 1
+        // get max current id
+        var newId = Math.max.apply(Math, this.state.sectionList.map(function(o) { return o.id!; })) + 1
       }
       else
         newId = 0;
@@ -619,7 +626,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
 
     return (
       <Grid container >
-        <Grid container item xs={2}>
+        <Grid container item xs={2} className={classes.outerOutline}>
           <Paper className={classes.paper && classes.outline} >
             <div className={classes.columnTitle} >
               <FormattedMessage id="document.outline" defaultMessage={'Document Outline'} />
