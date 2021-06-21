@@ -32,6 +32,7 @@ import { find } from 'store/draft/thunks';
 import { localizeErrorCodes } from 'utils/error';
 
 // Model
+import { DynamicRoutes, buildPath } from 'model/routes';
 import { PageRequest, Sorting, SimpleResponse } from 'model/response';
 import { EnumSortField, AssetDraft } from 'model/draft';
 
@@ -80,6 +81,7 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
 
     this.reviewDraft = this.reviewDraft.bind(this);
     this.viewDraft = this.viewDraft.bind(this);
+    this.viewProcessInstance = this.viewProcessInstance.bind(this);
   }
 
   state: AccountManagerState = {
@@ -143,7 +145,7 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
               if (response.data.success) {
                 this.find();
 
-                message.info('draft.message.accept-success');
+                message.warn('draft.message.reject-success');
 
                 this.hideConfirmDialog();
               } else {
@@ -189,6 +191,13 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
 
   viewDraft(providerKey: string, assetKey: string): void {
     window.open(`https://api.dev.opertusmundi.eu/provider/${providerKey}/asset/${assetKey}`, "_blank");
+  }
+
+  viewProcessInstance(businessKey: string, completed: boolean): void {
+    const path = buildPath(
+      completed ? DynamicRoutes.ProcessInstanceHistoryView : DynamicRoutes.ProcessInstanceView, null, { businessKey }
+    );
+    this.props.history.push(path);
   }
 
   setSorting(sorting: Sorting<EnumSortField>[]): void {
@@ -243,8 +252,9 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
               addToSelection={addToSelection}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
-              reviewRow={(key: string) => this.reviewDraft(key)}
-              viewRow={(providerKey: string, assetKey: string) => this.viewDraft(providerKey, assetKey)}
+              reviewDraft={this.reviewDraft}
+              viewDraft={this.viewDraft}
+              viewProcessInstance={this.viewProcessInstance}
               sorting={sorting}
               loading={loading}
             />

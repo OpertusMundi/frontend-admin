@@ -18,6 +18,7 @@ import {
   mdiCloseOctagon,
   mdiLeadPencil,
   mdiLink,
+  mdiDatabaseCogOutline,
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
@@ -28,6 +29,7 @@ import { PageRequest, PageResult, Sorting } from 'model/response';
 enum EnumAction {
   Review = 'review',
   View = 'view',
+  ViewProcessInstance = 'view-process-instance',
 };
 
 function statusToChip(value: EnumDraftStatus, classes: WithStyles<typeof styles>, intl: IntlShape): React.ReactElement | undefined {
@@ -80,25 +82,34 @@ function draftColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
       cell: (
         rowIndex: number, column: Column<AssetDraft, EnumSortField>, row: AssetDraft, handleAction?: cellActionHandler<AssetDraft, EnumSortField>
       ): React.ReactNode => (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Tooltip title={intl.formatMessage({ id: 'draft.manager.tooltip.view' })}>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Tooltip title={intl.formatMessage({ id: 'draft.manager.tooltip.view' })}>
+            <i
+              onClick={() => handleAction ? handleAction(EnumAction.View, rowIndex, column, row) : null}
+            >
+              <Icon path={mdiLink} className={classes.classes.rowIcon} />
+            </i>
+          </Tooltip>
+          {row.status === EnumDraftStatus.PENDING_HELPDESK_REVIEW &&
+            <Tooltip title={intl.formatMessage({ id: 'draft.manager.tooltip.review' })}>
               <i
-                onClick={() => handleAction ? handleAction(EnumAction.View, rowIndex, column, row) : null}
+                onClick={() => handleAction ? handleAction(EnumAction.Review, rowIndex, column, row) : null}
               >
-                <Icon path={mdiLink} className={classes.classes.rowIcon} />
+                <Icon path={mdiCommentTextOutline} className={classes.classes.rowIcon} />
               </i>
             </Tooltip>
-            {row.status === EnumDraftStatus.PENDING_HELPDESK_REVIEW &&
-              <Tooltip title={intl.formatMessage({ id: 'draft.manager.tooltip.review' })}>
-                <i
-                  onClick={() => handleAction ? handleAction(EnumAction.Review, rowIndex, column, row) : null}
-                >
-                  <Icon path={mdiCommentTextOutline} className={classes.classes.rowIcon} />
-                </i>
-              </Tooltip>
-            }
-          </div>
-        ),
+          }
+          {row.status !== EnumDraftStatus.DRAFT &&
+            <Tooltip title={intl.formatMessage({ id: 'draft.manager.tooltip.view-process-instance' })}>
+              <i
+                onClick={() => handleAction ? handleAction(EnumAction.ViewProcessInstance, rowIndex, column, row) : null}
+              >
+                <Icon path={mdiDatabaseCogOutline} className={classes.classes.rowIcon} />
+              </i>
+            </Tooltip>
+          }
+        </div>
+      ),
     }, {
       header: intl.formatMessage({ id: 'draft.manager.header.status' }),
       id: 'status',
@@ -135,8 +146,8 @@ function draftColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
       cell: (
         rowIndex: number, column: Column<AssetDraft, EnumSortField>, row: AssetDraft, handleAction?: cellActionHandler<AssetDraft, EnumSortField>
       ): React.ReactNode => (
-          <FormattedTime value={row.modifiedOn.toDate()} day='numeric' month='numeric' year='numeric' />
-        ),
+        <FormattedTime value={row.modifiedOn.toDate()} day='numeric' month='numeric' year='numeric' />
+      ),
     }]);
 }
 
@@ -174,8 +185,9 @@ interface FieldTableProps extends WithStyles<typeof styles> {
   removeFromSelection: (rows: AssetDraft[]) => void,
   resetSelection: () => void;
   sorting: Sorting<EnumSortField>[];
-  reviewRow: (key: string) => void;
-  viewRow: (providerKey: string, assetKey: string) => void;
+  reviewDraft: (key: string) => void;
+  viewDraft: (providerKey: string, assetKey: string) => void;
+  viewProcessInstance: (businessKey: string, completed: boolean) => void;
   loading?: boolean;
 }
 
@@ -191,10 +203,16 @@ class AssetDraftTable extends React.Component<FieldTableProps> {
     if (row.key) {
       switch (action) {
         case EnumAction.Review:
-          this.props.reviewRow(row.key);
+          this.props.reviewDraft(row.key);
           break;
         case EnumAction.View:
-          this.props.viewRow(row.publisher.id, row.key);
+          this.props.viewDraft(row.publisher.id, row.key);
+          break;
+        case EnumAction.ViewProcessInstance:
+          this.props.viewProcessInstance(
+            row.assetDraft,
+            [EnumDraftStatus.PUBLISHED, EnumDraftStatus.HELPDESK_REJECTED, EnumDraftStatus.PROVIDER_REJECTED].includes(row.status)
+          );
           break;
         default:
           // No action
