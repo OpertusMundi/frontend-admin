@@ -125,13 +125,12 @@ class ContractListComponent extends React.Component<ContractListComponentProps, 
   }
 
   componentDidMount() {
-    var contracts = null;
     this.api.findContracts()
       .then((response) => {
         if (response.data.success) {
           //this.discardChanges();
           console.log('Response', response.data);
-          contracts = response.data.result;
+          const contracts = response.data.result!;
           console.log('contracts', contracts);
           this.setState({ contracts: contracts, confirm: false, confirmOnNavigate: true });
         } else {

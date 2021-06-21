@@ -138,7 +138,7 @@ const styles = (theme: Theme) => createStyles({
     height: '45px',
     borderRadius: '25px'
   },
-  addBtn:{
+  addBtn: {
     height: '50px',
     border: '1px dashed #6C6C6C',
   }
@@ -230,12 +230,11 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   }
 
   componentDidMount() {
-    var contract = null;
     const contractId = this.props.contractId
     if (contractId) {
       this.api.findOne(contractId).then((response: AxiosObjectResponse<Contract>) => {
         if (response.data.success) {
-          contract = response.data.result;
+          const contract = response.data.result!;
           this.setState({ contract: contract, sectionList: contract.sections, documentTitle: contract.title, documentSubtitle: contract.subtitle })
         } else {
           const messages = localizeErrorCodes(this.props.intl, response.data, false);
@@ -245,7 +244,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         }
       });
     }
-    return
+    return;
   }
 
   deleteSubtitle(): void {
@@ -289,7 +288,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     });
   }
 
-  editSection(section: Partial<Section>, body="" , summary = "", option = 0, raw ="", descriptionOfChange = "", icon = "", suboption=-1): void {
+  editSection(section: Partial<Section>, body = "", summary = "", option = 0, raw = "", descriptionOfChange = "", icon = "", suboption = -1): void {
     var sections = [...this.state.sectionList]
     const id = sections.findIndex((s) => s.id === section.id);
     if ('indent' in section) {
@@ -311,7 +310,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         //section.index = firstPart.substr(0,firstPart.lastIndexOf('.')+1) + lastPart
 
       }
-      else if ((section.indent!) <= lastSection.indent - 16 ){
+      else if ((section.indent!) <= lastSection.indent - 16) {
         section.index = this.getCurrentIndex(id, section.indent!);
       }
       else
@@ -375,16 +374,16 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         index = firstPart + '' + lastPart;
         break;
       }
-      else if (section.indent <=  indent - 8) {
+      else if (section.indent <= indent - 8) {
         index = section.index + '.1'
         break;
       }
-      else{
+      else {
       }
     }
-    if (index==='-1'){
-      var last = this.state.sectionList[id-1].index
-      lastIndex =last.slice(last.lastIndexOf('.') + 1) + '.1';
+    if (index === '-1') {
+      var last = this.state.sectionList[id - 1].index
+      lastIndex = last.slice(last.lastIndexOf('.') + 1) + '.1';
       index = '' + lastIndex;
     }
     return index
@@ -404,7 +403,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       return
     var sections = [...this.state.sectionList]
     const id = sections.findIndex((s) => s.id === section.id);
-    if (id ===0 ){
+    if (id === 0) {
       return
     }
     var prevSection = this.state.sectionList[id - 1];
@@ -426,7 +425,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       return
     var sections = [...this.state.sectionList]
     const id = sections.findIndex((s) => s.id === section.id);
-    if (id ===this.state.sectionList.length-1 ){
+    if (id === this.state.sectionList.length - 1) {
       return
     }
     var nextSection = this.state.sectionList[id + 1];
@@ -444,7 +443,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   }
 
   openEdit(editField: EditFieldEnum, section?: Section): void {
-    if (!this.state.displayToolbarActions){
+    if (!this.state.displayToolbarActions) {
       return
     }
     this.setState({
@@ -456,13 +455,13 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   }
 
   saveContent(id: number, contentState: ContentState, body: string, title: string, option: number, suboption: number,
-      summary: string, descriptionOfChange: string, icon: string, editField: EditFieldEnum): void {
+    summary: string, descriptionOfChange: string, icon: string, editField: EditFieldEnum): void {
     var raw = JSON.stringify(convertToRaw(contentState));
     if (editField === EditFieldEnum.Section) {
       this.editSection({ id: id, title: title }, body, summary, option, raw, descriptionOfChange, icon);
     }
-    else if (editField === EditFieldEnum.Suboption){
-      this.editSection({ id: id, title: title }, body, summary, option, raw, descriptionOfChange, icon, suboption );
+    else if (editField === EditFieldEnum.Suboption) {
+      this.editSection({ id: id, title: title }, body, summary, option, raw, descriptionOfChange, icon, suboption);
     }
     else if (editField === EditFieldEnum.Title)
       this.setState({ documentTitle: title });
@@ -502,17 +501,17 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     var section = sections[id];
     let suboptionsArray = section.suboptions[option];
     if (suboptionsArray)
-      var length =  suboptionsArray.length;
+      var length = suboptionsArray.length;
     else
-      length =0;
+      length = 0;
     if (length > 0) {
       for (let i = length; i < suboptions; i++)
-        suboptionsArray.push({'id': i, 'body': `{"blocks":[{"key":"5u8f1","text":"Additional suboption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`})
+        suboptionsArray.push({ 'id': i, 'body': `{"blocks":[{"key":"5u8f1","text":"Additional suboption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}` })
     }
-    else{
+    else {
       length = 0
-      suboptionsArray = new Array <Suboption>();
-      suboptionsArray.push({'id': 0, 'body': `{"blocks":[{"key":"5u8f1","text":"Additional suboption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`})
+      suboptionsArray = new Array<Suboption>();
+      suboptionsArray.push({ 'id': 0, 'body': `{"blocks":[{"key":"5u8f1","text":"Additional suboption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}` })
 
       section.suboptions[option] = suboptionsArray;
 
@@ -569,9 +568,9 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
 
     const { sectionList } = this.state;
 
-    var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+    var collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
     // sort by index
-    sectionList.sort((a,b) =>  collator.compare(a.index, b.index))
+    sectionList.sort((a, b) => collator.compare(a.index, b.index))
     const { classes } = this.props;
     const outline = this.state.sectionList.map(section => {
       let type = '';
@@ -588,7 +587,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         var sectionTitle = 'Section ' + section.index + ' - ' + section.title + ' ' + type
       else
         sectionTitle = 'Section ' + section.index + ' ' + type
-      return (<div key={section.id} className={classes.section} style={{ paddingLeft: section.indent}}>
+      return (<div key={section.id} className={classes.section} style={{ paddingLeft: section.indent }}>
         <FormattedMessage id={section.id! + 1} defaultMessage={sectionTitle} />
       </div>)
     });
@@ -601,26 +600,26 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     }
     let toolbarActions;
     if (this.state.displayToolbarActions) {
-      if (this.state.sectionList.length>0){
+      if (this.state.sectionList.length > 0) {
         // get max current id
-        var newId = Math.max.apply(Math, this.state.sectionList.map(function(o) { return o.id!; })) + 1
+        var newId = Math.max.apply(Math, this.state.sectionList.map(function (o) { return o.id!; })) + 1
       }
       else
         newId = 0;
-      toolbarActions = <Grid container item xs={12} className={classes.toolbox}><button className= {classes.addBtn}  style={{marginRight: 20 }}
+      toolbarActions = <Grid container item xs={12} className={classes.toolbox}><button className={classes.addBtn} style={{ marginRight: 20 }}
         onClick={() =>
           this.addSection({ variable: false, id: newId })
         }
       >
         Add Section
-    </button>
-        <button className= {classes.addBtn}
+      </button>
+        <button className={classes.addBtn}
           onClick={() =>
-            this.addSection({ variable: true, id: newId  })
+            this.addSection({ variable: true, id: newId })
           }
         >
           Add Variable Section
-    </button>
+        </button>
       </Grid>;
     }
 
@@ -657,9 +656,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
               documentSubtitle={this.state.documentSubtitle}
               sectionList={sectionList}
               deleteSubtitle={this.deleteSubtitle.bind(this)}
-              addSection={(item) => {
-                //console.log(item);
-              }}
+              addSection={(item) => { }}
               editTitle={this.editTitle.bind(this)}
               removeSection={this.removeSection.bind(this)}
               editSection={this.editSection.bind(this)}
@@ -697,7 +694,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
             }
           >
             Save
-        </Button>
+          </Button>
           <Button className={classes.nextBtn}
             variant="contained"
             onClick={(e) =>
@@ -705,7 +702,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
             }
           >
             Next
-            </Button>
+          </Button>
         </div>
       </Grid >
 
