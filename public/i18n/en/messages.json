@@ -126,8 +126,33 @@
         "type": "Type"
       },
       "last-update": "Last updated: ",
+      "message": {
+        "transfer-success": "Transfer has been completed successfully. {count} record(s) have been created. Total credited funds {creditedFunds}. Total platform fees {fees}.",
+        "transfer-failure": ""
+      },
       "tooltip": {
+        "transfer-funds": "Transfer funds to provider wallet",
         "view-details": "View PayIn"
+      }
+    },
+    "transfer": {
+      "filter": {
+        "reference-number": "Reference Number",
+        "status": "Status"
+      },
+      "header": {
+        "actions": " ",
+        "customer": "Customers",
+        "executed-on": "Executed On",
+        "reference-number": "Reference Number",
+        "status": "Status",
+        "total-price": "Total",
+        "credited-funds": "Credited Funds",
+        "fees": "Platform Fees"
+      },
+      "last-update": "Last updated: ",
+      "tooltip": {
+        "view-details": "View Transfer"
       }
     }
   },
@@ -167,6 +192,7 @@
       },
       "last-update": "Last updated: ",
       "tooltip": {
+        "view-process-instance": "View publish workflow process instance",
         "review": "Review",
         "view": "Preview in Marketplace"
       }
@@ -324,8 +350,9 @@
     "message-manager": "Messages",
     "order-manager": "Orders",
     "orders-billing": "Orders and Billing",
-    "payin-manager": "Billing",
-    "payout-manager": "Platform Payments",
+    "payin-manager": "Pay Ins",
+    "transfer-manager": "Transfers",
+    "payout-manager": "Pay Outs",
     "profile": "Profile",
     "provider-manager": "Manage Providers",
     "settings": "Settings",
@@ -436,6 +463,10 @@
           "error": "Failed to process intermediate message at {timestamp}"
         },
         "duration": "Duration {duration}"
+      },
+      "state": {
+        "EXTERNALLY_TERMINATED": "The process has been externally terminated at {timestamp}",
+        "INTERNALLY_TERMINATED": "The process has been internally terminated by the BPM engine at {timestamp}"
       },
       "variables": {
         "title": "Variables"
