@@ -21,7 +21,7 @@ import Icon from '@mdi/react';
 import {
   mdiAccountMultiple,
   mdiBadgeAccountOutline,
-  mdiBankTransfer,
+  mdiBankTransferIn,
   mdiBellAlertOutline,
   mdiCogOutline,
   mdiCogSyncOutline,
@@ -33,6 +33,7 @@ import {
   mdiSignatureFreehand,
   mdiTextBoxCheckOutline,
   mdiViewDashboardOutline,
+  mdiWalletOutline,
 } from '@mdi/js';
 
 /**
@@ -60,31 +61,31 @@ export const Pages = {
  */
 
 const Analytics = '/analytics/query-editor';
-const Dashboard = '/dashboard';
 const ConsumerManager = '/consumers';
-//const ContractMaster = '/contract/master';
 const ContractManager = '/contract/list';
+const Dashboard = '/dashboard';
+const DraftManager = '/drafts';
+const HelpdeskAccountManager = '/helpdesk/users';
+const IncidentManager = '/workflow/incidents'
 const Map = '/map';
+const MarketplaceAccountManager = '/marketplace/users'
 const MessageManager = '/messages';
 const OrderManager = '/billing/orders';
 const PayInManager = '/billing/payins';
 const PayOutManager = '/billing/payouts';
+const ProcessInstanceManager = '/workflows/process-instances';
+const ProcessInstanceHistoryManager = '/workflows/process-instances-history';
 const Profile = '/profile';
 const ProviderManager = '/providers'
 const Settings = '/settings';
-const HelpdeskAccountManager = '/helpdesk/users';
-const MarketplaceAccountManager = '/marketplace/users'
-const DraftManager = '/drafts';
-const ProcessInstanceManager = '/workflows/process-instances';
-const ProcessInstanceHistoryManager = '/workflows/process-instances-history';
-const IncidentManager = '/workflow/incidents'
+const TransferManager = '/billing/transfers';
 
 export const StaticRoutes = {
   Analytics,
-  Dashboard,
   ConsumerManager,
-  //ContractMaster,
   ContractManager,
+  Dashboard,
+  IncidentManager,
   Map,
   MessageManager,
   OrderManager,
@@ -98,7 +99,7 @@ export const StaticRoutes = {
   DraftManager,
   ProcessInstanceManager,
   ProcessInstanceHistoryManager,
-  IncidentManager,
+  TransferManager,
 };
 
 /**
@@ -113,8 +114,9 @@ const OrderTimeline = '/billing/order/:key/timeline';
 const OrderView = '/billing/order/:key';
 const MarketplaceAccountView = '/marketplace/users/record/:key';
 const PayInView = '/billing/payin/:key';
-const ProcessInstanceView = '/workflows/process-instances/:processInstance';
-const ProcessInstanceHistoryView = '/workflows/process-instances/history/:processInstance';
+const ProcessInstanceView = '/workflows/process-instances/record';
+const ProcessInstanceHistoryView = '/workflows/process-instances-history/record';
+const TransferView = '/billing/transfer/:key';
 
 export const DynamicRoutes = {
   AccountCreate,
@@ -127,6 +129,7 @@ export const DynamicRoutes = {
   PayInView,
   ProcessInstanceView,
   ProcessInstanceHistoryView,
+  TransferView,
 };
 
 /**
@@ -220,9 +223,16 @@ export const routes: RouteRegistry = {
     links: defaultLinks
   },
   [PayInManager]: {
-    icon: (className?: string) => (<Icon path={mdiBankTransfer} size="1.5rem" className={className} />),
+    icon: (className?: string) => (<Icon path={mdiBankTransferIn} size="1.5rem" className={className} />),
     description: 'Billing',
     title: 'links.payin-manager',
+    defaultTitle: 'Billing',
+    links: defaultLinks
+  },
+  [TransferManager]: {
+    icon: (className?: string) => (<Icon path={mdiWalletOutline} size="1.5rem" className={className} />),
+    description: 'Billing',
+    title: 'links.transfer-manager',
     defaultTitle: 'Billing',
     links: defaultLinks
   },
@@ -343,6 +353,12 @@ export const routes: RouteRegistry = {
       );
     }
   },
+  [OrderView]: {
+    description: 'Order',
+    title: 'links.billing.order.record',
+    defaultTitle: 'Order',
+    links: defaultLinks
+  },
   [PayInView]: {
     description: 'PayIn',
     title: 'links.billing.payin.record',
@@ -445,7 +461,7 @@ export function getRoute(path: string): Route | null {
  * @param {string} path - The route name
  * @param {string[]|object} params - Optional parameters to bind
  */
-export function buildPath(path: string, params: string[] | { [key: string]: string }) {
+export function buildPath(path: string, params: string[] | { [key: string]: string } | null, query?: { [key: string]: string | null }) {
   let result = path || '/';
 
   if (params) {
@@ -458,6 +474,12 @@ export function buildPath(path: string, params: string[] | { [key: string]: stri
       let toPath = pathToRegexp.compile(path);
       result = toPath(params);
     }
+  }
+  if (query) {
+    result += '?' + Object.keys(query)
+      .filter(key => query[key] !== null)
+      .map(key => `${key}=${query[key]}`)
+      .join('&');
   }
   return result;
 }

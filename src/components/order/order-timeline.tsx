@@ -131,12 +131,12 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
   }
 
   getCustomerName(order: Order): string {
-    if (order.customer && order.customer.type === EnumMangopayUserType.INDIVIDUAL) {
-      const c = order.customer as CustomerIndividual;
+    if (order.consumer && order.consumer.type === EnumMangopayUserType.INDIVIDUAL) {
+      const c = order?.consumer as CustomerIndividual;
       return [c.firstName, c.lastName].join(' ');
     }
-    if (order.customer && order.customer.type === EnumMangopayUserType.PROFESSIONAL) {
-      const c = order.customer as CustomerProfessional;
+    if (order?.consumer && order?.consumer.type === EnumMangopayUserType.PROFESSIONAL) {
+      const c = order?.consumer as CustomerProfessional;
       return c.name;
     }
     return '';
@@ -145,12 +145,12 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
   renderCustomerAddress(order: Order): React.ReactNode | null {
     let a: Address | null = null;
 
-    if (order.customer!.type === EnumMangopayUserType.INDIVIDUAL) {
-      const c = order.customer as CustomerIndividual;
+    if (order?.consumer!.type === EnumMangopayUserType.INDIVIDUAL) {
+      const c = order?.consumer as CustomerIndividual;
       a = c.address;
     }
-    if (order.customer!.type === EnumMangopayUserType.PROFESSIONAL) {
-      const c = order.customer as CustomerProfessional;
+    if (order?.consumer!.type === EnumMangopayUserType.PROFESSIONAL) {
+      const c = order?.consumer as CustomerProfessional;
       a = c.headquartersAddress;
     }
     if (!a) {

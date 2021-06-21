@@ -193,7 +193,7 @@ class IncidentManager extends React.Component<IncidentManagerProps, IncidentMana
   }
 
   render() {
-    const { errorDetails, incident } = this.state;
+    const { errorDetails } = this.state;
     const {
       addToSelection,
       classes,
@@ -258,7 +258,7 @@ class IncidentManager extends React.Component<IncidentManagerProps, IncidentMana
   }
 
   viewProcessInstance(processInstance: string): void {
-    const path = buildPath(DynamicRoutes.ProcessInstanceView, [processInstance]);
+    const path = buildPath(DynamicRoutes.ProcessInstanceView, null, { processInstance });
     this.props.history.push(path);
   }
 

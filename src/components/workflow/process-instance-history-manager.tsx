@@ -155,9 +155,9 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
 
   viewProcessInstance(processInstance: string, completed: boolean): void {
     const path = completed ?
-      buildPath(DynamicRoutes.ProcessInstanceHistoryView, [processInstance])
+      buildPath(DynamicRoutes.ProcessInstanceHistoryView, null, { processInstance })
       :
-      buildPath(DynamicRoutes.ProcessInstanceView, [processInstance]);
+      buildPath(DynamicRoutes.ProcessInstanceView, null, { processInstance });
     this.props.history.push(path);
   }
 

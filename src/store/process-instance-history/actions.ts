@@ -19,6 +19,7 @@ import {
   REMOVE_SELECTED,
   SET_SORTING,
   RESET_SELECTED,
+  RESET_INSTANCE,
   LOAD_INIT,
   LOAD_SUCCESS,
   LOAD_FAILURE,
@@ -99,9 +100,16 @@ export function resetSelection(): ProcessInstanceActions {
   };
 }
 
-export function loadInit(processInstance: string): ProcessInstanceActions {
+export function resetInstance(): ProcessInstanceActions {
+  return {
+    type: RESET_INSTANCE,
+  };
+}
+
+export function loadInit(businessKey: string | null, processInstance: string | null): ProcessInstanceActions {
   return {
     type: LOAD_INIT,
+    businessKey,
     processInstance,
   };
 }

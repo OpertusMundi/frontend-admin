@@ -37,12 +37,12 @@ enum EnumAction {
 };
 
 const getCustomerName = (order: Order): string => {
-  if (order.customer && order.customer.type === EnumMangopayUserType.INDIVIDUAL) {
-    const c = order.customer as CustomerIndividual;
+  if (order?.consumer && order?.consumer.type === EnumMangopayUserType.INDIVIDUAL) {
+    const c = order?.consumer as CustomerIndividual;
     return [c.firstName, c.lastName].join(' ');
   }
-  if (order.customer && order.customer?.type === EnumMangopayUserType.PROFESSIONAL) {
-    const c = order.customer as CustomerProfessional;
+  if (order?.consumer && order?.consumer?.type === EnumMangopayUserType.PROFESSIONAL) {
+    const c = order?.consumer as CustomerProfessional;
     return c.name;
   }
   return '';
@@ -72,7 +72,7 @@ function orderColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
               <Icon path={mdiTimelineClockOutline} className={classes.classes.rowIconAction} style={{ marginTop: 2 }} />
             </i>
           </Tooltip>
-          {row?.status === EnumOrderStatus.PENDING && row.payIn?.processInstance &&
+          {row.payIn?.processInstance &&
             <Tooltip title={intl.formatMessage({ id: 'billing.order.tooltip.view-process-instance' })}>
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.ViewProcessInstance, rowIndex, column, row) : null}
@@ -93,14 +93,16 @@ function orderColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
         rowIndex: number, column: Column<Order, EnumOrderSortField>, row: Order, handleAction?: cellActionHandler<Order, EnumOrderSortField>
       ): React.ReactNode => (
         <div className={classes.classes.compositeLabelJustified}>
-          <Link to={buildPath(DynamicRoutes.OrderView, [row.key])} className={classes.classes.link}>
+          <Link to={buildPath(DynamicRoutes.OrderTimeline, [row.key])} className={classes.classes.link}>
             {row.referenceNumber}
           </Link>
-          <i
-            onClick={() => handleAction ? handleAction(EnumAction.CopyReferenceNumber, rowIndex, column, row) : null}
-          >
-            <Icon path={mdiContentCopy} className={classes.classes.rowIconAction} />
-          </i>
+          {row.referenceNumber &&
+            <i
+              onClick={() => handleAction ? handleAction(EnumAction.CopyReferenceNumber, rowIndex, column, row) : null}
+            >
+              <Icon path={mdiContentCopy} className={classes.classes.rowIconAction} />
+            </i>
+          }
         </div>
       ),
     }, {
@@ -136,12 +138,12 @@ function orderColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
 
         return (
           <>
-            {row?.customer &&
+            {row?.consumer &&
               <div className={classes.classes.compositeLabel}>
                 <div
-                  className={row?.customer.kycLevel === EnumKycLevel.LIGHT ? classes.classes.statusLabelWarning : classes.classes.statusLabel}
+                  className={row?.consumer?.kycLevel === EnumKycLevel.LIGHT ? classes.classes.statusLabelWarning : classes.classes.statusLabel}
                 >
-                  <div>{row.customer.kycLevel}</div>
+                  <div>{row.consumer?.kycLevel}</div>
                 </div>
                 <div className={classes.classes.marginRight}>{getCustomerName(row)}</div>
               </div>

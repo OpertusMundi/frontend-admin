@@ -47,8 +47,8 @@ export const find = (
 
   // Update state
   if (response.data.success) {
-    dispatch(searchComplete(response.data.result));
-    return response.data.result;
+    dispatch(searchComplete(response.data.result!));
+    return response.data.result!;
   }
 
   dispatch(searchFailure());
@@ -65,8 +65,8 @@ export const findOne = (key: string): ThunkResult<MarketplaceAccountDetails | nu
 
   // Update state
   if (response.data.success) {
-    dispatch(loadAccountSuccess(response.data.result));
-    return response.data.result;
+    dispatch(loadAccountSuccess(response.data.result!));
+    return response.data.result!;
   }
 
   dispatch(loadAccountFailure());
@@ -85,8 +85,8 @@ export const review = (
 
   // Update state
   if (response.data.success) {
-    dispatch(reviewAccountSuccess(response.data.result));
-    return response.data.result;
+    dispatch(reviewAccountSuccess(response.data.result!));
+    return response.data.result!;
   }
 
   dispatch(reviewAccountFailure());

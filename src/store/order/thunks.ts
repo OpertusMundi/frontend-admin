@@ -50,8 +50,8 @@ export const find = (
 
   // Update state
   if (response.data.success) {
-    dispatch(searchComplete(response.data.result));
-    return response.data.result;
+    dispatch(searchComplete(response.data.result!));
+    return response.data.result!;
   }
 
   dispatch(searchFailure());
@@ -68,8 +68,8 @@ export const findOne = (key: string): ThunkResult<Order | null> => async (dispat
 
   // Update state
   if (response.data.success) {
-    dispatch(loadOrderSuccess(response.data.result));
-    return response.data.result;
+    dispatch(loadOrderSuccess(response.data.result!));
+    return response.data.result!;
   }
 
   dispatch(loadOrderFailure());

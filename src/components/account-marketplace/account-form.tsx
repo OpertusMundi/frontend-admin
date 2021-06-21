@@ -15,11 +15,6 @@ import Grid from '@material-ui/core/Grid';
 import { RootState } from 'store';
 import { findOne, review } from 'store/account-marketplace/thunks';
 
-// Model
-import {
-  MarketplaceAccountDetails,
-} from 'model/account-marketplace';
-
 // Service
 import AccountApi from 'service/account-marketplace';
 
@@ -79,8 +74,7 @@ class CustomerReview extends React.Component<CustomerReviewProps> {
   }
 
   render() {
-    const { classes, config, account = null } = this.props;
-    const _t = this.props.intl.formatMessage;
+    const { account = null } = this.props;
 
     if (!account) {
       return null;

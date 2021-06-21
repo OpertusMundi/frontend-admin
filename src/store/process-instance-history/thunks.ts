@@ -60,25 +60,27 @@ export const find = (
 
   // Update state
   if (response.data.success) {
-    dispatch(searchComplete(response.data.result));
-    return response.data.result;
+    dispatch(searchComplete(response.data.result!));
+    return response.data.result!;
   }
 
   dispatch(searchFailure());
   return null;
 }
 
-export const findOne = (processInstance: string): ThunkResult<HistoryProcessInstanceDetails | null> => async (dispatch, getState) => {
-  dispatch(loadInit(processInstance));
+export const findOne = (
+  businessKey: string | null, processInstance: string | null
+): ThunkResult<HistoryProcessInstanceDetails | null> => async (dispatch, getState) => {
+  dispatch(loadInit(businessKey, processInstance));
   // Get response
   const api = new ProcessInstanceApi();
 
-  const response = await api.findOneHistory(processInstance);
+  const response = await api.findOneHistory(businessKey, processInstance);
 
   // Update state
   if (response.data.success) {
-    dispatch(loadSuccess(response.data.result));
-    return response.data.result;
+    dispatch(loadSuccess(response.data.result!));
+    return response.data.result!;
   }
 
   dispatch(loadFailure());

@@ -107,7 +107,7 @@ class DashboardComponent extends React.Component<DashboardComponentProps, Dashbo
     this.analyticsApi.executeSalesQuery(areaQuery)
       .then((response) => {
         if (response.success) {
-          const features = this.analyticsApi.toFeatureCollections(response.result);
+          const features = this.analyticsApi.toFeatureCollections(response.result!);
 
           // Get min/max values
           let min = Number.MAX_SAFE_INTEGER, max = 0;
@@ -138,9 +138,9 @@ class DashboardComponent extends React.Component<DashboardComponentProps, Dashbo
     this.analyticsApi.executeSalesQuery(segmentQuery)
       .then((response) => {
         if (response.success) {
-          response.result.points.reverse();
+          response.result!.points.reverse();
           this.setState({
-            segments: response.result,
+            segments: response.result!,
           });
         }
       });

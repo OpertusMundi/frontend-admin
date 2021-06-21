@@ -26,7 +26,7 @@ import {
   ProcessInstance,
   ProcessInstanceDetails,
 } from 'model/bpm-process-instance';
-import { PageRequest, Sorting, PageResult } from 'model/response';
+import { PageRequest, Sorting, PageResult, ObjectResponse } from 'model/response';
 
 // Helper thunk result type
 type ThunkResult<R> = ThunkAction<Promise<R>, RootState, unknown, ProcessInstanceActions>;
@@ -41,8 +41,8 @@ export const countProcessInstances = (): ThunkResult<number | null> => async (di
   // Update state
   if (response.data.success) {
 
-    dispatch(countProcessInstancesComplete(response.data.result));
-    return response.data.result;
+    dispatch(countProcessInstancesComplete(response.data.result!));
+    return response.data.result!;
   }
 
   dispatch(countProcessInstancesFailure());
@@ -81,27 +81,29 @@ export const find = (
 
   // Update state
   if (response.data.success) {
-    dispatch(searchComplete(response.data.result));
-    return response.data.result;
+    dispatch(searchComplete(response.data.result!));
+    return response.data.result!;
   }
 
   dispatch(searchFailure());
   return null;
 }
 
-export const findOne = (processInstance: string): ThunkResult<ProcessInstanceDetails | null> => async (dispatch, getState) => {
-  dispatch(loadInit(processInstance));
+export const findOne = (
+  businessKey: string | null, processInstance: string | null
+): ThunkResult<ObjectResponse<ProcessInstanceDetails>> => async (dispatch, getState) => {
+  dispatch(loadInit(businessKey, processInstance));
   // Get response
   const api = new ProcessInstanceApi();
 
-  const response = await api.findOne(processInstance);
+  const response = await api.findOne(businessKey, processInstance);
 
   // Update state
   if (response.data.success) {
-    dispatch(loadSuccess(response.data.result));
-    return response.data.result;
+    dispatch(loadSuccess(response.data.result!));
+  } else {
+    dispatch(loadFailure());
   }
 
-  dispatch(loadFailure());
-  return null;
+  return response.data;
 }

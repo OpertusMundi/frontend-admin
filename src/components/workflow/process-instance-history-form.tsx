@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import qs from 'qs';
 import moment from 'moment';
 import React from 'react';
 import { AxiosError } from 'axios';
@@ -36,9 +37,12 @@ import Typography from '@material-ui/core/Typography';
 
 import { red } from '@material-ui/core/colors';
 
+import Spinner from 'components/spinner';
+
 // Icons
 import Icon from '@mdi/react';
 import {
+  mdiCloseOutline,
   mdiCogSyncOutline,
   mdiTimelineClockOutline,
   mdiDatabaseCogOutline,
@@ -60,7 +64,7 @@ import { RootState } from 'store';
 import { findOne } from 'store/process-instance-history/thunks'
 
 // Model
-import { BpmActivity, HistoryProcessInstanceDetails } from 'model/bpm-process-instance';
+import { BpmActivity, HistoryProcessInstanceDetails, EnumBpmProcessInstanceState } from 'model/bpm-process-instance';
 
 // Service
 import AccountApi from 'service/account-marketplace';
@@ -109,36 +113,42 @@ const styles = (theme: Theme) => createStyles({
 });
 
 interface RouteParams {
+  businessKey?: string | undefined;
   processInstance?: string | undefined;
+}
+
+interface ProcessInstanceState {
+  initialized: boolean;
 }
 
 interface ProcessInstanceHistoryProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps<RouteParams> {
   intl: IntlShape,
 }
 
-class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps> {
+class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps, ProcessInstanceState> {
 
   api: AccountApi;
 
   constructor(props: ProcessInstanceHistoryProps) {
     super(props);
 
+    this.state = {
+      initialized: false,
+    };
+
     this.api = new AccountApi();
   }
 
-  get processInstanceId(): string | null {
-    const { processInstance } = this.props.match.params;
-
-    return processInstance || null;
-  }
-
   componentDidMount() {
-    if (this.processInstanceId) {
-      this.props.findOne(this.processInstanceId)
+    const params = qs.parse(this.props.location.search.substr(1));
+
+    if (params['businessKey'] || params['processInstance']) {
+      this.props.findOne(params['businessKey'] as string, params['processInstance'] as string)
         .catch((err: AxiosError) => {
           console.log(err);
           // TODO: Redirect to grid view?
-        });
+        })
+        .finally(() => this.setState({ initialized: true }));
     } else {
       // TODO: Redirect to grid view?
     }
@@ -254,7 +264,7 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
       return incident.resolved ? '#757575' : '#f44336';
     }
 
-    if (!activity.startTime) {
+    if (!activity.startTime || activity.canceled) {
       return '#757575';
     }
     if (!activity.endTime) {
@@ -328,10 +338,14 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
   buildTimeline(processInstance: HistoryProcessInstanceDetails) {
     const { classes } = this.props;
     const { instance, activities: allActivities } = processInstance;
+    const _t = this.props.intl.formatTime;
 
     if (!instance) {
       return null;
     }
+    const terminated =
+      instance.state === EnumBpmProcessInstanceState.EXTERNALLY_TERMINATED ||
+      instance.state === EnumBpmProcessInstanceState.INTERNALLY_TERMINATED;
 
     const activities = allActivities.filter((a) =>
       ['startEvent', 'serviceTask', 'userTask', 'intermediateMessageCatch', 'noneEndEvent'].includes(a.activityType)
@@ -356,7 +370,7 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
           <TimelineDot style={{ background: this.mapActivityToColor(a, processInstance) }}>
             {this.mapActivityToIcon(a)}
           </TimelineDot>
-          {activities.length - 1 !== index &&
+          {(activities.length - 1 !== index || terminated) &&
             <TimelineConnector />
           }
         </TimelineSeparator>
@@ -374,6 +388,35 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
         </TimelineContent>
       </TimelineItem>
     ));
+
+    if (terminated) {
+      items.push(
+        <TimelineItem key={`status-${instance.state}`}>
+          <TimelineOppositeContent>
+            <Typography variant="body2" color="textSecondary">
+              <FormattedTime value={instance.endTime.toDate()} day='numeric' month='numeric' year='numeric' />
+            </Typography>
+          </TimelineOppositeContent>
+          <TimelineSeparator>
+            <TimelineDot style={{ background: '#f44336' }}>
+              <Icon path={mdiCloseOutline} size="1.5rem" />
+            </TimelineDot>
+          </TimelineSeparator>
+          <TimelineContent>
+            <Paper elevation={3} className={classes.paper}>
+              <Typography variant="caption">
+                <FormattedMessage
+                  id={`workflow.instance.state.${instance.state}`}
+                  values={{
+                    timestamp: _t(instance.endTime.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }),
+                  }}
+                />
+              </Typography>
+            </Paper>
+          </TimelineContent>
+        </TimelineItem>
+      );
+    }
 
     return (
       <Timeline align="alternate">
@@ -483,11 +526,12 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
   }
 
   render() {
+    const { initialized } = this.state;
     const { classes, processInstance = null } = this.props;
     const _t = this.props.intl.formatMessage;
 
-    if (!processInstance) {
-      return null;
+    if (!processInstance || !initialized) {
+      return (<Spinner />);
     }
 
     return (
@@ -532,7 +576,7 @@ const mapState = (state: RootState) => ({
 });
 
 const mapDispatch = {
-  findOne: (processInstance: string) => findOne(processInstance),
+  findOne: (businessKey: string | null, processInstance: string | null) => findOne(businessKey, processInstance),
 };
 
 const connector = connect(

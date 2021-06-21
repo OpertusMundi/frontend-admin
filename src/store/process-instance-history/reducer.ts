@@ -18,6 +18,7 @@ import {
   REMOVE_SELECTED,
   SET_SORTING,
   RESET_SELECTED,
+  RESET_INSTANCE,
   LOAD_INIT,
   LOAD_SUCCESS,
   LOAD_FAILURE,
@@ -149,6 +150,12 @@ export function processInstanceHistoryReducer(
       return {
         ...state,
         selected: [],
+      };
+
+    case RESET_INSTANCE:
+      return {
+        ...state,
+        processInstance: null,
       };
 
     case LOAD_INIT:

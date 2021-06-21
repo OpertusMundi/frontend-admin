@@ -39,6 +39,14 @@ export interface RetryExternalTaskCommand {
   externalTaskId: string;
 }
 
+export enum EnumBpmProcessInstanceState {
+  ACTIVE = 'ACTIVE',
+  SUSPENDED = 'SUSPENDED',
+  COMPLETED = 'COMPLETED',
+  EXTERNALLY_TERMINATED = 'EXTERNALLY_TERMINATED',
+  INTERNALLY_TERMINATED = 'INTERNALLY_TERMINATED',
+}
+
 export interface BpmProcessInstance {
   id: string;
   businessKey: string;
@@ -58,7 +66,7 @@ export interface BpmProcessInstance {
   superCaseInstanceId: string;
   caseInstanceId: string;
   tenantId: string;
-  state: string;
+  state: EnumBpmProcessInstanceState;
 }
 
 export interface BpmVariable {

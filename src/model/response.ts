@@ -10,7 +10,7 @@ export interface SimpleResponse {
 export type AxiosSimpleResponse = AxiosResponse<SimpleResponse>;
 
 export interface ObjectResponse<R> extends SimpleResponse {
-  result: R;
+  result?: R;
 }
 
 export type AxiosObjectResponse<R> = AxiosResponse<ObjectResponse<R>>;

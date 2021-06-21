@@ -1,4 +1,5 @@
 import moment from 'moment';
+import qs from 'qs';
 import React from 'react';
 import { AxiosError } from 'axios';
 
@@ -35,6 +36,8 @@ import Typography from '@material-ui/core/Typography';
 
 import { red } from '@material-ui/core/colors';
 
+import Spinner from 'components/spinner';
+
 // Icons
 import Icon from '@mdi/react';
 import {
@@ -52,6 +55,7 @@ import {
   mdiCheckboxMarkedOutline,
   mdiAccountOutline,
   mdiEmailOutline,
+  mdiCloseOutline,
 } from '@mdi/js';
 
 // Store
@@ -59,7 +63,9 @@ import { RootState } from 'store';
 import { findOne } from 'store/process-instance/thunks'
 
 // Model
-import { BpmActivity, ProcessInstanceDetails } from 'model/bpm-process-instance';
+import { BasicMessageCode } from 'model/error-code';
+import { buildPath, DynamicRoutes } from 'model/routes';
+import { BpmActivity, ProcessInstanceDetails, EnumBpmProcessInstanceState } from 'model/bpm-process-instance';
 
 // Service
 import AccountApi from 'service/account-marketplace';
@@ -108,35 +114,50 @@ const styles = (theme: Theme) => createStyles({
 });
 
 interface RouteParams {
+  businessKey?: string | undefined;
   processInstance?: string | undefined;
+}
+
+interface ProcessInstanceState {
+  initialized: boolean;
 }
 
 interface ProcessInstanceProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps<RouteParams> {
   intl: IntlShape,
 }
 
-class ProcessInstance extends React.Component<ProcessInstanceProps> {
+class ProcessInstance extends React.Component<ProcessInstanceProps, ProcessInstanceState> {
 
   api: AccountApi;
 
   constructor(props: ProcessInstanceProps) {
     super(props);
 
+    this.state = {
+      initialized: false,
+    };
+
     this.api = new AccountApi();
   }
 
-  get processInstanceId(): string | null {
-    const { processInstance } = this.props.match.params;
-
-    return processInstance || null;
-  }
-
   componentDidMount() {
-    if (this.processInstanceId) {
-      this.props.findOne(this.processInstanceId)
+    const params = qs.parse(this.props.location.search.substr(1));
+    const businessKey = params['businessKey'] as string || null;
+    const processInstance = params['processInstance'] as string || null;
+
+    if (businessKey || processInstance) {
+      this.props.findOne(businessKey, processInstance)
+        .then((response) => {
+          if (!response.success && response.messages.some(m => m.code === BasicMessageCode.NotFound)) {
+            // Record not found, redirect to history page
+            const path = buildPath(DynamicRoutes.ProcessInstanceHistoryView, null, { businessKey, processInstance });
+            this.props.history.replace(path);
+          }
+        })
         .catch((err: AxiosError) => {
           // TODO: Redirect to grid view?
-        });
+        })
+        .finally(() => this.setState({ initialized: true }));
     } else {
       // TODO: Redirect to grid view?
     }
@@ -233,7 +254,7 @@ class ProcessInstance extends React.Component<ProcessInstanceProps> {
       return '#f44336';
     }
 
-    if (!activity.startTime) {
+    if (!activity.startTime || activity.canceled) {
       return '#757575';
     }
     if (!activity.endTime) {
@@ -307,10 +328,14 @@ class ProcessInstance extends React.Component<ProcessInstanceProps> {
   buildTimeline(processInstance: ProcessInstanceDetails) {
     const { classes } = this.props;
     const { instance, activities: allActivities } = processInstance;
+    const _t = this.props.intl.formatTime;
 
     if (!instance) {
       return null;
     }
+    const terminated =
+      instance.state === EnumBpmProcessInstanceState.EXTERNALLY_TERMINATED ||
+      instance.state === EnumBpmProcessInstanceState.INTERNALLY_TERMINATED;
 
     const activities = allActivities.filter((a) =>
       ['startEvent', 'serviceTask', 'userTask', 'intermediateMessageCatch', 'noneEndEvent'].includes(a.activityType)
@@ -335,7 +360,7 @@ class ProcessInstance extends React.Component<ProcessInstanceProps> {
           <TimelineDot style={{ background: this.mapActivityToColor(a, processInstance) }}>
             {this.mapActivityToIcon(a)}
           </TimelineDot>
-          {activities.length - 1 !== index &&
+          {(activities.length - 1 !== index || terminated) &&
             <TimelineConnector />
           }
         </TimelineSeparator>
@@ -353,6 +378,35 @@ class ProcessInstance extends React.Component<ProcessInstanceProps> {
         </TimelineContent>
       </TimelineItem>
     ));
+
+    if (terminated) {
+      items.push(
+        <TimelineItem key={`status-${instance.state}`}>
+          <TimelineOppositeContent>
+            <Typography variant="body2" color="textSecondary">
+              <FormattedTime value={instance.endTime.toDate()} day='numeric' month='numeric' year='numeric' />
+            </Typography>
+          </TimelineOppositeContent>
+          <TimelineSeparator>
+            <TimelineDot style={{ background: '#f44336' }}>
+              <Icon path={mdiCloseOutline} size="1.5rem" />
+            </TimelineDot>
+          </TimelineSeparator>
+          <TimelineContent>
+            <Paper elevation={3} className={classes.paper}>
+              <Typography variant="caption">
+                <FormattedMessage
+                  id={`workflow.instance.state.${instance.state}`}
+                  values={{
+                    timestamp: _t(instance.endTime.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }),
+                  }}
+                />
+              </Typography>
+            </Paper>
+          </TimelineContent>
+        </TimelineItem>
+      );
+    }
 
     return (
       <Timeline align="alternate">
@@ -464,11 +518,12 @@ class ProcessInstance extends React.Component<ProcessInstanceProps> {
   }
 
   render() {
-    const { classes, config, processInstance = null } = this.props;
+    const { initialized } = this.state;
+    const { classes, processInstance = null } = this.props;
     const _t = this.props.intl.formatMessage;
 
-    if (!processInstance) {
-      return null;
+    if (!processInstance || !initialized) {
+      return (<Spinner />);
     }
 
     return (
@@ -513,7 +568,7 @@ const mapState = (state: RootState) => ({
 });
 
 const mapDispatch = {
-  findOne: (processInstance: string) => findOne(processInstance),
+  findOne: (businessKey: string | null, processInstance: string | null) => findOne(businessKey, processInstance),
 };
 
 const connector = connect(

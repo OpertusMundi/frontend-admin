@@ -16,8 +16,8 @@ export const getConfiguration = (): ThunkResult<Promise<ApplicationConfiguration
 
   const response = await api.getConfiguration();
 
-  dispatch(loadConfigurationComplete(response.data.result));
+  dispatch(loadConfigurationComplete(response.data.result!));
 
-  return response.data.result;
+  return response.data.result!;
 }
 

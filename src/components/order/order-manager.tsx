@@ -88,7 +88,7 @@ class OrderManager extends React.Component<OrderManagerProps> {
   }
 
   viewProcessInstance(processInstance: string): void {
-    const path = buildPath(DynamicRoutes.ProcessInstanceView, [processInstance]);
+    const path = buildPath(DynamicRoutes.ProcessInstanceView, null, { processInstance });
     this.props.history.push(path);
   }
 

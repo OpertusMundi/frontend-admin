@@ -1,6 +1,10 @@
 import { Moment } from 'moment';
 import { EnumPaymentMethod, EnumDeliveryMethod } from 'model/enum';
-import { BankAccount, CustomerIndividual, CustomerProfessional } from 'model/account-marketplace';
+import {
+  BankAccount,
+  Customer,
+  MarketplaceAccountSubscription,
+} from 'model/account-marketplace';
 import { EffectivePricingModel } from 'model/pricing-model';
 
 export enum EnumCardType {
@@ -44,6 +48,10 @@ export enum EnumTransactionStatus {
 
 export interface Transfer {
   /**
+   * Transfer unique key
+   */
+  key: string;
+  /**
    * Funds debited from buyer's wallet and credited to seller's wallet
    */
   creditedFunds: number;
@@ -63,9 +71,21 @@ export interface Transfer {
    * Date of execution in ISO format
    */
   executedOn: Moment;
+  /**
+   * Provider error code
+   */
+  resultCode: string;
+  /**
+   * Provider error message
+   */
+  resultMessage: string;
 }
 
 export interface SubscriptionBilling {
+  /**
+   * Account subscription
+   */
+  subscription?: MarketplaceAccountSubscription;
   /**
    * Service unique PID
    */
@@ -190,7 +210,7 @@ export interface PayIn {
   /**
    * Customer (consumer)
    */
-  customer?: CustomerIndividual | CustomerProfessional;
+  consumer?: Customer;
   /**
    * Process instance
    */
@@ -244,7 +264,7 @@ export interface CardDirectPayIn extends PayIn {
    * Redirect URL if 3-D Secure validation is required. If not empty, the client
    * must initiate the 3-D Secure validation process.
    */
-  secureModeRedirectURL: string;
+  secureModeRedirectURL?: string;
 }
 
 export interface Card {
@@ -345,12 +365,13 @@ export interface OrderItem {
   pricingModel: EffectivePricingModel,
   totalPrice: number;
   totalPriceExcludingTax: number;
+  provider: Customer;
 }
 
 export interface Order {
   createdOn: Moment;
   currency: string;
-  customer?: CustomerIndividual | CustomerProfessional;
+  consumer?: Customer;
   deliveryMethod: EnumDeliveryMethod;
   items: OrderItem[];
   key: string;
@@ -370,4 +391,18 @@ export interface OrderPayInItem extends PayInItem {
    * PayIn order
    */
   order: Order;
+}
+
+export enum EnumTransferSortField {
+  CREATED_ON = 'CREATED_ON',
+  EXECUTED_ON = 'EXECUTED_ON',
+  REFERENCE_NUMBER = 'REFERENCE_NUMBER',
+  STATUS = 'STATUS',
+  FUNDS = 'FUNDS',
+  FEES = 'FEES',
+}
+
+export interface TransferQuery {
+  referenceNumber: string;
+  status: EnumTransactionStatus[];
 }

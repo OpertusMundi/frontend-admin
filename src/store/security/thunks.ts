@@ -19,7 +19,7 @@ export const login = (username: string, password: string): ThunkResult<Promise<O
 
   const response = await api.login(username, password);
 
-  dispatch(loginComplete(response.data.result.csrfToken, username));
+  dispatch(loginComplete(response.data.result!.csrfToken, username));
 
   return response.data;
 }
@@ -31,7 +31,7 @@ export const logout = (): ThunkResult<Promise<ObjectResponse<CsrfResult>>> => as
 
   const response = await api.logout();
 
-  dispatch(logoutComplete(response.data.result.csrfToken));
+  dispatch(logoutComplete(response.data.result!.csrfToken));
 
   return response.data;
 }
@@ -43,9 +43,9 @@ export const refreshProfile = (): ThunkResult<Promise<HelpdeskAccount>> => async
 
   const response = await api.getProfile();
 
-  dispatch(loadProfileComplete(response.data.result));
+  dispatch(loadProfileComplete(response.data.result!));
 
-  return response.data.result;
+  return response.data.result!;
 };
 
 export const setProfile = (command: ProfileCommand): ThunkResult<Promise<ObjectResponse<HelpdeskAccount>>> => async (dispatch) => {
@@ -56,7 +56,7 @@ export const setProfile = (command: ProfileCommand): ThunkResult<Promise<ObjectR
   const response = await api.setProfile(command);
 
   if (response.data.success) {
-    dispatch(updateProfileComplete(response.data.result));
+    dispatch(updateProfileComplete(response.data.result!));
   }
 
   return response.data;

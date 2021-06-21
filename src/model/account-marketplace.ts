@@ -1,4 +1,5 @@
 import { Moment } from 'moment';
+import { EnumTopicCategory } from './catalogue';
 import { EnumAuthProvider } from './enum';
 import { EnumMarketplaceRole as EnumRole } from './role';
 
@@ -263,7 +264,7 @@ export interface CustomerDraftProfessional extends CustomerDraft {
 /**
  * Customer (Consumer/Processional) base interface
  */
-interface Customer {
+export interface Customer {
   /**
    * Contract reference
    */
@@ -546,4 +547,40 @@ export interface MarketplaceAccount {
 export interface MarketplaceAccountReviewCommand {
   acceptChanges: boolean;
   rejectReason?: string;
+}
+
+export enum EnumAssetPurchaseSource {
+  PURCHASE = 'PURCHASE',
+  UPDATE = 'UPDATE',
+}
+
+export interface MarketplaceAccountSubscription {
+  /**
+   * Service PID
+   */
+  service: string;
+  /**
+   * When the subscription was registered to the user account
+   */
+  addedOn: Moment;
+  /**
+   * Date of last update
+   */
+  updatedOn: Moment;
+  /**
+   * Operation that registered the subscription
+   */
+  source: EnumAssetPurchaseSource;
+  /**
+   * First asset topic category if any exist
+   */
+  segment: EnumTopicCategory;
+  /**
+   * Subscription owner
+   */
+  consumer?: Customer;
+  /**
+   * Subscription seller
+   */
+  provider?: Customer;
 }

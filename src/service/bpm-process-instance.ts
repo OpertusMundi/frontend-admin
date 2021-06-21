@@ -48,8 +48,18 @@ export default class WorkflowApi extends Api {
     return this.get<ObjectResponse<PageResult<ProcessInstance>>>(url);
   }
 
-  public async findOne(processInstanceId: string): Promise<AxiosObjectResponse<ProcessInstanceDetails>> {
-    const url = `/action/workflows/process-instances/${processInstanceId}`;
+  public async findOne(businessKey: string | null, processInstanceId: string | null): Promise<AxiosObjectResponse<ProcessInstanceDetails>> {
+    const url = processInstanceId ?
+      `/action/workflows/process-instances/${processInstanceId}`
+      :
+      `/action/workflows/process-instances/business-key/${businessKey}`;;
+
+
+    return this.get<ObjectResponse<ProcessInstanceDetails>>(url);
+  }
+
+  public async findOneByBusinessKey(businessKey: string): Promise<AxiosObjectResponse<ProcessInstanceDetails>> {
+    const url = `/action/workflows/process-instances/business-key/${businessKey}`;
 
     return this.get<ObjectResponse<ProcessInstanceDetails>>(url);
   }
@@ -70,9 +80,16 @@ export default class WorkflowApi extends Api {
     return this.get<ObjectResponse<PageResult<ProcessInstance>>>(url);
   }
 
-  public async findOneHistory(processInstanceId: string): Promise<AxiosObjectResponse<HistoryProcessInstanceDetails>> {
-    const url = `/action/workflows/history/process-instances/${processInstanceId}`;
+  public async findOneHistory(
+    businessKey: string | null, processInstanceId: string | null
+  ): Promise<AxiosObjectResponse<HistoryProcessInstanceDetails>> {
+    const url = processInstanceId ?
+      `/action/workflows/history/process-instances/${processInstanceId}`
+      :
+      `/action/workflows/history/process-instances/business-key/${businessKey}`;
 
     return this.get<ObjectResponse<HistoryProcessInstanceDetails>>(url);
   }
+
+
 }

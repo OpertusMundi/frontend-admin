@@ -59,8 +59,8 @@ export const find = (
 
   // Update state
   if (response.data.success) {
-    dispatch(searchComplete(response.data.result));
-    return response.data.result;
+    dispatch(searchComplete(response.data.result!));
+    return response.data.result!;
   }
 
   dispatch(searchFailure());
@@ -77,8 +77,8 @@ export const countIncidents = (): ThunkResult<number | null> => async (dispatch,
 
   // Update state
   if (response.data.success) {
-    dispatch(countIncidentComplete(response.data.result));
-    return response.data.result;
+    dispatch(countIncidentComplete(response.data.result!));
+    return response.data.result!;
   }
 
   dispatch(countIncidentsFailure());

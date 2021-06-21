@@ -114,9 +114,14 @@ export interface ResetSelectionAction {
   type: typeof RESET_SELECTED;
 }
 
+export interface ResetInstanceAction {
+  type: typeof RESET_INSTANCE,
+}
+
 export interface LoadInitAction {
   type: typeof LOAD_INIT;
-  processInstance: string,
+  businessKey: string | null,
+  processInstance: string | null,
 }
 
 export interface LoadSuccessAction {
@@ -144,6 +149,7 @@ export type ProcessInstanceActions =
   | AddSelectedAction
   | RemoveSelectedAction
   | ResetSelectionAction
+  | ResetInstanceAction
   | LoadInitAction
   | LoadSuccessAction
   | LoadFailureAction

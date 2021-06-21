@@ -230,7 +230,7 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
     if (id) {
       return this.api.findOne(id).then((response: AxiosObjectResponse<HelpdeskAccountFormData>) => {
         if (response.data.success) {
-          const { account } = response.data.result;
+          const { account } = response.data.result!;
 
           this.setState({
             account: this.api.accountToCommand(account),
