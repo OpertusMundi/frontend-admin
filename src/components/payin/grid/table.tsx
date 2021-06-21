@@ -23,6 +23,7 @@ import {
   mdiCreditCardOutline,
   mdiLink,
   mdiPackageVariantClosed,
+  mdiWalletPlusOutline,
 } from '@mdi/js';
 
 // Model
@@ -36,16 +37,17 @@ const COPY = 'copy';
 
 enum EnumAction {
   CopyReferenceNumber = 'copy-reference-number',
+  TransferFunds = 'transfer-funds',
   View = 'view',
 };
 
 const getCustomerName = (payin: PayIn): string => {
-  if (payin.customer && payin.customer?.type === EnumMangopayUserType.INDIVIDUAL) {
-    const c = payin.customer as CustomerIndividual;
+  if (payin?.consumer && payin?.consumer?.type === EnumMangopayUserType.INDIVIDUAL) {
+    const c = payin?.consumer as CustomerIndividual;
     return [c.firstName, c.lastName].join(' ');
   }
-  if (payin.customer && payin.customer?.type === EnumMangopayUserType.PROFESSIONAL) {
-    const c = payin.customer as CustomerProfessional;
+  if (payin?.consumer && payin?.consumer?.type === EnumMangopayUserType.PROFESSIONAL) {
+    const c = payin?.consumer as CustomerProfessional;
     return c.name;
   }
   return '';
@@ -233,6 +235,15 @@ function payinColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
               <Icon path={mdiLink} className={classes.classes.rowIconAction} style={{ marginTop: 2 }} />
             </i>
           </Tooltip>
+          {row.status === EnumTransactionStatus.SUCCEEDED &&
+            <Tooltip title={intl.formatMessage({ id: 'billing.payin.tooltip.transfer-funds' })}>
+              <i
+                onClick={() => handleAction ? handleAction(EnumAction.TransferFunds, rowIndex, column, row) : null}
+              >
+                <Icon path={mdiWalletPlusOutline} className={classes.classes.rowIconAction} style={{ marginTop: 2 }} />
+              </i>
+            </Tooltip>
+          }
         </div>
       ),
     }, {
@@ -305,12 +316,12 @@ function payinColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
 
         return (
           <>
-            {row?.customer &&
+            {row?.consumer &&
               <div className={classes.classes.compositeLabel}>
                 <div
-                  className={row?.customer.kycLevel === EnumKycLevel.LIGHT ? classes.classes.statusLabelWarning : classes.classes.statusLabel}
+                  className={row?.consumer?.kycLevel === EnumKycLevel.LIGHT ? classes.classes.statusLabelWarning : classes.classes.statusLabel}
                 >
-                  <div className={classes.classes.statusLabelText}>{row.customer.kycLevel}</div>
+                  <div className={classes.classes.statusLabelText}>{row.consumer?.kycLevel}</div>
                 </div>
                 <div className={classes.classes.marginRight}>{getCustomerName(row)}</div>
               </div>
@@ -370,6 +381,7 @@ const statusToBackGround = (status: EnumTransactionStatus): string => {
 };
 
 interface FieldTableProps extends WithStyles<typeof styles> {
+  createTransfer: (key: string) => void;
   intl: IntlShape,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumPayInSortField>[]
@@ -413,6 +425,9 @@ class AccountTable extends React.Component<FieldTableProps> {
           this.props.addToSelection([row]);
 
           this.props.viewPayIn(row.key);
+          break;
+        case EnumAction.TransferFunds:
+          this.props.createTransfer(row.key);
           break;
         default:
           // No action

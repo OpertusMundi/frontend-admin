@@ -15,26 +15,24 @@ import Typography from '@material-ui/core/Typography';
 
 // Icons
 import Icon from '@mdi/react';
-import { mdiCommentAlertOutline, mdiWalletOutline } from '@mdi/js';
+import { mdiCommentAlertOutline } from '@mdi/js';
 
 // Services
 import message from 'service/message';
 
 // Store
 import { RootState } from 'store';
-import { addToSelection, removeFromSelection, resetFilter, resetSelection, setFilter, setPager, setSorting } from 'store/payin/actions';
-import { find } from 'store/payin/thunks';
-import { createTransfer } from 'store/transfer/thunks';
-
+import { resetFilter, setFilter, setPager, setSorting } from 'store/transfer/actions';
+import { find } from 'store/transfer/thunks';
 
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
-import { EnumPayInSortField } from 'model/order';
+import { EnumTransferSortField } from 'model/order';
 
 // Components
-import PayInFilters from './grid/filter';
-import PayInTable from './grid/table';
+import TransferFilters from './grid/filter';
+import TransferTable from './grid/table';
 
 const styles = (theme: Theme) => createStyles({
   container: {
@@ -60,17 +58,16 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
-interface PayInManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
+interface TransferManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
   intl: IntlShape,
 }
 
-class PayInManager extends React.Component<PayInManagerProps> {
+class TransferManager extends React.Component<TransferManagerProps> {
 
-  constructor(props: PayInManagerProps) {
+  constructor(props: TransferManagerProps) {
     super(props);
 
-    this.createTransfer = this.createTransfer.bind(this);
-    this.viewPayIn = this.viewPayIn.bind(this);
+    this.viewTransfer = this.viewTransfer.bind(this);
   }
 
   componentDidMount() {
@@ -85,51 +82,23 @@ class PayInManager extends React.Component<PayInManagerProps> {
     });
   }
 
-  viewPayIn(key: string): void {
-    const path = buildPath(DynamicRoutes.PayInView, [key]);
+  viewTransfer(key: string): void {
+    const path = buildPath(DynamicRoutes.TransferView, [key]);
     this.props.history.push(path);
   }
 
-  createTransfer(key: string): void {
-    const _t = this.props.intl.formatNumber;
-
-    this.props.createTransfer(key)
-      .then((response) => {
-        if (response && response!.success) {
-          const creditedFunds = response!.result!.reduce((total, transfer) => total + transfer.creditedFunds, 0);
-          const fees = response!.result!.reduce((total, transfer) => total + transfer.fees, 0);
-          message.infoHtml(
-            <FormattedMessage
-              id={'billing.payin.message.transfer-success'}
-              values={{
-                count: response!.result!.length,
-                creditedFunds: _t(creditedFunds, { currency: 'EUR', style: 'currency', currencyDisplay: 'symbol' }),
-                fees: _t(fees, { currency: 'EUR', style: 'currency', currencyDisplay: 'symbol' }),
-              }}
-            />,
-            () => (<Icon path={mdiWalletOutline} size="3rem" />),
-          );
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  setSorting(sorting: Sorting<EnumPayInSortField>[]): void {
+  setSorting(sorting: Sorting<EnumTransferSortField>[]): void {
     this.props.setSorting(sorting);
     this.find();
   }
 
   render() {
     const {
-      addToSelection,
       classes,
-      explorer: { query, result, pagination, loading, lastUpdated, selected, sorting },
+      explorer: { query, result, pagination, loading, lastUpdated, sorting },
       find,
       setPager,
       setFilter,
-      removeFromSelection,
       resetFilter,
     } = this.props;
 
@@ -137,7 +106,7 @@ class PayInManager extends React.Component<PayInManagerProps> {
       <>
         <div>
           <Paper className={classes.paper}>
-            <PayInFilters
+            <TransferFilters
               query={query}
               setFilter={setFilter}
               resetFilter={resetFilter}
@@ -148,7 +117,7 @@ class PayInManager extends React.Component<PayInManagerProps> {
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Typography variant="caption" display="block" gutterBottom className={classes.caption}>
-                    <FormattedMessage id="billing.payin.last-update" />
+                    <FormattedMessage id="billing.transfer.last-update" />
                     <FormattedTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
                   </Typography>
                 </Grid>
@@ -157,42 +126,32 @@ class PayInManager extends React.Component<PayInManagerProps> {
           </Paper>
 
           <Paper className={classes.paperTable}>
-            <PayInTable
-              addToSelection={addToSelection}
-              createTransfer={this.createTransfer}
+            <TransferTable
               find={this.props.find}
               loading={loading}
               pagination={pagination}
-              removeFromSelection={removeFromSelection}
               query={query}
-              resetSelection={resetSelection}
-              selected={selected}
               setPager={setPager}
-              setSorting={(sorting: Sorting<EnumPayInSortField>[]) => this.setSorting(sorting)}
+              setSorting={(sorting: Sorting<EnumTransferSortField>[]) => this.setSorting(sorting)}
               result={result}
               sorting={sorting}
-              viewPayIn={this.viewPayIn}
+              viewTransfer={this.viewTransfer}
             />
           </Paper>
         </div >
       </>
     );
   }
-
 }
 
 const mapState = (state: RootState) => ({
   config: state.config,
-  explorer: state.billing.payin,
+  explorer: state.billing.transfer,
 });
 
 const mapDispatch = {
-  addToSelection,
-  createTransfer: (key: string) => createTransfer(key),
-  find: (pageRequest?: PageRequest, sorting?: Sorting<EnumPayInSortField>[]) => find(pageRequest, sorting),
-  removeFromSelection,
+  find: (pageRequest?: PageRequest, sorting?: Sorting<EnumTransferSortField>[]) => find(pageRequest, sorting),
   resetFilter,
-  resetSelection,
   setFilter,
   setPager,
   setSorting,
@@ -206,7 +165,7 @@ const connector = connect(
 type PropsFromRedux = ConnectedProps<typeof connector>
 
 // Apply styles
-const styledComponent = withStyles(styles)(PayInManager);
+const styledComponent = withStyles(styles)(TransferManager);
 
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);

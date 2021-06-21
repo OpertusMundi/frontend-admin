@@ -56,6 +56,7 @@ import {
   mdiBankTransferOut,
   mdiFinance,
   mdiChartBarStacked,
+  mdiWalletOutline,
 } from '@mdi/js';
 
 // Utilities
@@ -92,6 +93,7 @@ import OrderTimeline from 'components/order/order-timeline';
 import QueryEditor from './analytics/query-editor';
 import SecureContent from 'components/secure-content';
 import SecureRoute from 'components/secure-route';
+import TransferManager from 'components/transfer/transfer-grid';
 
 // Store
 import { RootState } from 'store';
@@ -100,7 +102,6 @@ import { countIncidents } from 'store/incident/thunks';
 import { countProcessInstances } from 'store/process-instance/thunks';
 
 enum EnumSection {
-  Resource = 'Resource',
   Admin = 'Admin',
   Billing = 'Billing',
   Drawer = 'Drawer',
@@ -233,7 +234,6 @@ interface HomeState {
     [EnumSection.Admin]: boolean;
     [EnumSection.Billing]: boolean;
     [EnumSection.Drawer]: boolean;
-    [EnumSection.Resource]: boolean;
     [EnumSection.MapDrawer]: boolean;
   },
   menuAnchor: HTMLElement | null,
@@ -264,7 +264,6 @@ class Home extends React.Component<HomeProps, HomeState> {
       [EnumSection.Admin]: false,
       [EnumSection.Billing]: false,
       [EnumSection.Drawer]: true,
-      [EnumSection.Resource]: false,
       [EnumSection.MapDrawer]: false,
     },
     menuAnchor: null,
@@ -345,6 +344,8 @@ class Home extends React.Component<HomeProps, HomeState> {
       ...this.state,
       open: {
         ...this.state.open,
+        [EnumSection.Admin]: this.state.open[key] ? this.state.open[EnumSection.Admin] : false,
+        [EnumSection.Billing]: this.state.open[key] ? this.state.open[EnumSection.Billing] : false,
         [key]: !this.state.open[key],
       }
     });
@@ -624,6 +625,15 @@ class Home extends React.Component<HomeProps, HomeState> {
 
                   <ListItem button
                     className={open[EnumSection.Drawer] ? classes.nested : ''}
+                    onClick={(e) => this.onNavigate(e, StaticRoutes.TransferManager)}>
+                    <ListItemIcon>
+                      <Icon path={mdiWalletOutline} size="1.5rem" />
+                    </ListItemIcon>
+                    <ListItemText primary={_t({ id: 'links.transfer-manager' })} />
+                  </ListItem>
+
+                  <ListItem button
+                    className={open[EnumSection.Drawer] ? classes.nested : ''}
                     onClick={(e) => this.onNavigate(e, StaticRoutes.PayOutManager)}>
                     <ListItemIcon>
                       <Icon path={mdiBankTransferOut} size="1.5rem" />
@@ -737,9 +747,11 @@ class Home extends React.Component<HomeProps, HomeState> {
               <Route path={DynamicRoutes.ContractCreate} component={ContractForm} />
               <Route path={DynamicRoutes.ContractReview} component={ContractReviewForm} />
               <Route path={DynamicRoutes.OrderTimeline} component={OrderTimeline} />
+              <Route path={DynamicRoutes.OrderView} component={PlaceHolder} />
               <Route path={DynamicRoutes.MarketplaceAccountView} component={MarketplaceAccountView} />
               <Route path={DynamicRoutes.ProcessInstanceHistoryView} component={ProcessInstanceHistoryForm} />
               <Route path={DynamicRoutes.ProcessInstanceView} component={ProcessInstanceForm} />
+              <Route path={DynamicRoutes.PayInView} component={PlaceHolder} />
               {/* Static */}
               <Route path={StaticRoutes.Analytics} component={QueryEditor} />
               <Route path={StaticRoutes.Dashboard} component={DashboardComponent} />
@@ -747,6 +759,7 @@ class Home extends React.Component<HomeProps, HomeState> {
               <Route path={StaticRoutes.DraftManager} component={AssetDraftManager} />
               <Route path={StaticRoutes.OrderManager} component={OrderManager} />
               <Route path={StaticRoutes.PayInManager} component={PayInManager} />
+              <Route path={StaticRoutes.TransferManager} component={TransferManager} />
               <Route path={StaticRoutes.Map} component={MapViewerComponent} />
               <Route path={StaticRoutes.Profile} component={Profile} />
               <Route path={StaticRoutes.Settings} component={PlaceHolder} />

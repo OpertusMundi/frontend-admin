@@ -21,6 +21,7 @@ import { payInReducer } from './payin/reducer';
 import { processInstanceReducer } from './process-instance/reducer';
 import { processInstanceHistoryReducer } from './process-instance-history/reducer';
 import { securityReducer } from './security/reducer';
+import { transferReducer } from './transfer/reducer';
 import { viewportReducer } from './viewport/reducer';
 
 // Combine reducers
@@ -33,6 +34,7 @@ export const rootReducer = Redux.combineReducers({
   billing: Redux.combineReducers({
     order: orderReducer,
     payin: payInReducer,
+    transfer: transferReducer,
   }),
   config: configurationReducer,
   contract: contractReducer,
