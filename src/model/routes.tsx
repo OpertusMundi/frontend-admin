@@ -22,6 +22,7 @@ import {
   mdiAccountMultiple,
   mdiBadgeAccountOutline,
   mdiBankTransferIn,
+  mdiBankTransferOut,
   mdiBellAlertOutline,
   mdiCogOutline,
   mdiCogSyncOutline,
@@ -114,6 +115,7 @@ const OrderTimeline = '/billing/order/:key/timeline';
 const OrderView = '/billing/order/:key';
 const MarketplaceAccountView = '/marketplace/users/record/:key';
 const PayInView = '/billing/payin/:key';
+const PayOutView = '/billing/payout/:key';
 const ProcessInstanceView = '/workflows/process-instances/record';
 const ProcessInstanceHistoryView = '/workflows/process-instances-history/record';
 const TransferView = '/billing/transfer/:key';
@@ -127,6 +129,7 @@ export const DynamicRoutes = {
   OrderTimeline,
   OrderView,
   PayInView,
+  PayOutView,
   ProcessInstanceView,
   ProcessInstanceHistoryView,
   TransferView,
@@ -226,6 +229,13 @@ export const routes: RouteRegistry = {
     icon: (className?: string) => (<Icon path={mdiBankTransferIn} size="1.5rem" className={className} />),
     description: 'Billing',
     title: 'links.payin-manager',
+    defaultTitle: 'Billing',
+    links: defaultLinks
+  },
+  [PayOutManager]: {
+    icon: (className?: string) => (<Icon path={mdiBankTransferOut} size="1.5rem" className={className} />),
+    description: 'Billing',
+    title: 'links.payout-manager',
     defaultTitle: 'Billing',
     links: defaultLinks
   },
@@ -363,6 +373,12 @@ export const routes: RouteRegistry = {
     description: 'PayIn',
     title: 'links.billing.payin.record',
     defaultTitle: 'PayIn',
+    links: defaultLinks
+  },
+  [PayOutView]: {
+    description: 'PayOut',
+    title: 'links.billing.payout.record',
+    defaultTitle: 'PayOut',
     links: defaultLinks
   },
   [ProcessInstanceView]: {

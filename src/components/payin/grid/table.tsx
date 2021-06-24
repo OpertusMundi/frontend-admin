@@ -380,7 +380,7 @@ const statusToBackGround = (status: EnumTransactionStatus): string => {
   return '#0277BD';
 };
 
-interface FieldTableProps extends WithStyles<typeof styles> {
+interface PayInTableProps extends WithStyles<typeof styles> {
   createTransfer: (key: string) => void;
   intl: IntlShape,
   find: (
@@ -400,9 +400,9 @@ interface FieldTableProps extends WithStyles<typeof styles> {
   loading?: boolean;
 }
 
-class AccountTable extends React.Component<FieldTableProps> {
+class PayInTable extends React.Component<PayInTableProps> {
 
-  constructor(props: FieldTableProps) {
+  constructor(props: PayInTableProps) {
     super(props);
 
     this.handleAction = this.handleAction.bind(this);
@@ -474,7 +474,7 @@ class AccountTable extends React.Component<FieldTableProps> {
 }
 
 // Apply styles
-const styledComponent = withStyles(styles)(AccountTable);
+const styledComponent = withStyles(styles)(PayInTable);
 
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);

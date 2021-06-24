@@ -3,6 +3,7 @@ import { EnumPaymentMethod, EnumDeliveryMethod } from 'model/enum';
 import {
   BankAccount,
   Customer,
+  CustomerProfessional,
   MarketplaceAccountSubscription,
 } from 'model/account-marketplace';
 import { EffectivePricingModel } from 'model/pricing-model';
@@ -33,17 +34,21 @@ export enum EnumPayInItemType {
 
 export enum EnumTransactionStatus {
   /**
-   * New payment, no PayIn has been created yet
+   * Not specified.
+   */
+  NotSpecified = 'NotSpecified',
+  /**
+   * CREATED transaction status.
    */
   CREATED = 'CREATED',
   /**
-   * PayIn failed
-   */
-  FAILED = 'FAILED',
-  /**
-   * PayIn succeeded
+   * SUCCEEDED transaction status.
    */
   SUCCEEDED = 'SUCCEEDED',
+  /**
+   * FAILED transaction status.
+   */
+  FAILED = 'FAILED',
 }
 
 export interface Transfer {
@@ -405,4 +410,82 @@ export enum EnumTransferSortField {
 export interface TransferQuery {
   referenceNumber: string;
   status: EnumTransactionStatus[];
+}
+
+export enum EnumPayOutSortField {
+  CREATED_ON = 'CREATED_ON',
+  EXECUTED_ON = 'EXECUTED_ON',
+  MODIFIED_ON = 'MODIFIED_ON',
+  BANKWIRE_REF = 'BANKWIRE_REF',
+  STATUS = 'STATUS',
+  FUNDS = 'FUNDS',
+  PROVIDER = 'PROVIDER',
+}
+
+export interface PayOutQuery {
+  bankwireRef: string;
+  email: string;
+  status: EnumTransactionStatus[];
+}
+
+export interface PayOutCommand {
+  debitedFunds: number;
+}
+
+export interface PayOut {
+  /**
+   * Payout platform unique key
+   */
+  key: string;
+  /**
+   * Identifier of the workflow definition used for processing this PayIn
+   * record
+   */
+  processDefinition?: string;
+  /**
+   * Identifier of the workflow instance processing this PayIn record
+   */
+  processInstance?: string;
+  /**
+   * Information about the funds that are being debited from seller's wallet
+   */
+  debitedFunds: number;
+  /**
+   * Information about the fees that were taken by the client for this transaction
+   */
+  fees: number;
+  /**
+   * The currency in ISO 4217 format. Only `EUR` is supported
+   */
+  currency: string;
+  /**
+   * Transaction status
+   */
+  status: EnumTransactionStatus;
+  /**
+   * Date of transaction status last update
+   */
+  statusUpdatedOn: Moment;
+  /**
+   * Date of creation
+   */
+  createdOn: Moment | null;
+  /**
+   * Date of execution
+   */
+  executedOn: Moment | null;
+  /**
+   * A custom reference that will appear on the user’s bank statement
+   */
+  bankwireRef: string;
+  provider?: CustomerProfessional;
+  providerPayOut?: string;
+  providerResultCode?: string;
+  providerResultMessage?: string;
+  refund?: string
+  refundCreatedOn?: Moment;
+  refundExecutedOn?: Moment;
+  refundStatus?: EnumTransactionStatus;
+  refundReasonType?: string;
+  refundReasonMessage?: string;
 }

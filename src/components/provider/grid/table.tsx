@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 
-import { injectIntl, IntlShape, FormattedTime } from 'react-intl';
+import { injectIntl, IntlShape, FormattedTime, FormattedNumber } from 'react-intl';
 
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
@@ -12,6 +12,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 import Icon from '@mdi/react';
 import {
+  mdiBankPlus,
   mdiCogSyncOutline,
   mdiEmailAlertOutline,
   mdiFinance,
@@ -31,14 +32,15 @@ import { PageRequest, PageResult, Sorting } from 'model/response';
 import clsx from 'clsx';
 
 enum EnumAction {
-  ViewAssets = 'toggle-favorite',
+  CreatePayOut = 'create-payout',
   SendMessage = 'send-message',
+  ViewAssets = 'toggle-favorite',
   ViewDetails = 'view-details',
   ViewFinance = 'view-finance',
   ViewOrders = 'view-orders',
 };
 
-function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<MarketplaceAccount, EnumMarketplaceAccountSortField>[] {
+function providerColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<MarketplaceAccount, EnumMarketplaceAccountSortField>[] {
   return (
     [{
       header: intl.formatMessage({ id: 'account.marketplace.header.actions' }),
@@ -83,6 +85,15 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
               <Icon path={mdiFinance} className={classes.classes.rowIconAction} />
             </i>
           </Tooltip>
+          {row.providerKycLevel === EnumKycLevel.REGULAR &&
+            <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.create-payout' })}>
+              <i
+                onClick={() => handleAction ? handleAction(EnumAction.CreatePayOut, rowIndex, column, row) : null}
+              >
+                <Icon path={mdiBankPlus} className={classes.classes.rowIconAction} />
+              </i>
+            </Tooltip>
+          }
         </div>
       ),
     }, {
@@ -118,37 +129,6 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
           }
         </div>
       ),
-    }, {
-      header: intl.formatMessage({ id: 'account.marketplace.header.consumer' }),
-      id: 'consumer',
-      sortable: false,
-      cell: (
-        rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
-      ): React.ReactNode => {
-        return (
-          <div className={classes.classes.compositeLabel}>
-            <div className={classes.classes.marginRight}>{row.consumerName}</div>
-            {row.consumer &&
-              <div
-                className={row.consumerKycLevel === EnumKycLevel.LIGHT ? classes.classes.statusLabelWarning : classes.classes.statusLabel}
-              >
-                <div className={classes.classes.statusLabelText}>{row.consumerKycLevel}</div>
-                {row.consumerUpdatePending &&
-                  <Icon path={mdiCogSyncOutline} className={classes.classes.rowIcon} />
-                }
-              </div>
-            }
-            {!row.consumer && row.consumerUpdatePending &&
-              <div
-                className={classes.classes.statusLabelWarning}
-              >
-                <div className={classes.classes.statusLabelText}>{EnumKycLevel.LIGHT}</div>
-                <Icon path={mdiCogSyncOutline} className={classes.classes.rowIcon} />
-              </div>
-            }
-          </div>
-        )
-      },
     }, {
       header: intl.formatMessage({ id: 'account.marketplace.header.provider' }),
       id: 'provider',
@@ -192,6 +172,22 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
       ): React.ReactNode => (
         <FormattedTime value={row?.registeredOn?.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
+    }, {
+      header: intl.formatMessage({ id: 'account.marketplace.header.funds' }),
+      id: 'providerFunds',
+      headerStyle: { textAlign: 'right' },
+      sortable: true,
+      sortColumn: EnumMarketplaceAccountSortField.PROVIDER_FUNDS,
+      className: classes.classes.alightRight,
+      cell: (
+        rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
+      ): React.ReactNode => {
+        return (
+          <b>
+            <FormattedNumber value={row.providerFunds} style={'currency'} currency={'EUR'} />
+          </b>
+        )
+      },
     }]);
 }
 
@@ -245,7 +241,6 @@ const styles = (theme: Theme) => createStyles({
     borderRadius: theme.spacing(0.5),
   },
   statusLabelText: {
-    marginRight: theme.spacing(1),
   },
   marginLeft: {
     marginLeft: theme.spacing(1),
@@ -258,8 +253,9 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
-interface AccountTableProps extends WithStyles<typeof styles> {
+interface ProviderTableProps extends WithStyles<typeof styles> {
   intl: IntlShape,
+  createPayOut: (key: string) => void,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumMarketplaceAccountSortField>[]
   ) => Promise<PageResult<MarketplaceAccount> | null>,
@@ -276,17 +272,22 @@ interface AccountTableProps extends WithStyles<typeof styles> {
   loading?: boolean;
 }
 
-class AccountTable extends React.Component<AccountTableProps> {
+class AccountTable extends React.Component<ProviderTableProps> {
 
-  constructor(props: AccountTableProps) {
+  constructor(props: ProviderTableProps) {
     super(props);
 
     this.handleAction = this.handleAction.bind(this);
   }
 
-  handleAction(action: string, index: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount): void {
+  handleAction(
+    action: string, index: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount
+  ): void {
     if (row.key) {
       switch (action) {
+        case EnumAction.CreatePayOut:
+          this.props.createPayOut(row.key);
+          break;
         default:
           // No action
           break;
@@ -300,7 +301,7 @@ class AccountTable extends React.Component<AccountTableProps> {
     return (
       <MaterialTable<MarketplaceAccount, EnumMarketplaceAccountSortField>
         intl={intl}
-        columns={accountColumns(intl, { classes })}
+        columns={providerColumns(intl, { classes })}
         rows={result ? result.items : []}
         pagination={{
           rowsPerPageOptions: [10, 20, 50],

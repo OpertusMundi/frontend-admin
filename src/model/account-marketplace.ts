@@ -297,6 +297,8 @@ export interface CustomerIndividual extends Customer {
   lastName: string;
   nationality: string;
   occupation: string;
+  walletFunds: number;
+  walletFundsUpdatedOn: Moment | null;
 }
 
 /**
@@ -322,6 +324,8 @@ export interface CustomerProfessional extends Customer {
   rating: number | null;
   representative: CustomerRepresentative;
   siteUrl: string;
+  walletFunds: number;
+  walletFundsUpdatedOn: Moment | null;
 }
 
 /**
@@ -517,6 +521,8 @@ export interface MarketplaceAccountDetails {
 
 export enum EnumMarketplaceAccountSortField {
   EMAIL = 'EMAIL',
+  CONSUMER_FUNDS = 'CONSUMER_FUNDS',
+  PROVIDER_FUNDS = 'PROVIDER_FUNDS',
 }
 
 export interface MarketplaceAccountQuery {
@@ -527,6 +533,7 @@ export interface MarketplaceAccount {
   accountStatus: EnumActivationStatus;
   activatedAt: Moment;
   consumer: boolean
+  consumerFunds: number;
   consumerKycLevel: EnumKycLevel;
   consumerName: string;
   consumerUpdatePending: boolean;
@@ -537,6 +544,7 @@ export interface MarketplaceAccount {
   key: string;
   locale: string;
   provider: boolean;
+  providerFunds: number;
   providerKycLevel: EnumKycLevel;
   providerName: string;
   providerUpdatePending: boolean;

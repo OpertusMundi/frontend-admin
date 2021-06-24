@@ -150,7 +150,7 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
-interface FieldTableProps extends WithStyles<typeof styles> {
+interface AccountTableProps extends WithStyles<typeof styles> {
   intl: IntlShape,
   deleteRow: (id: number) => void,
   find: (
@@ -170,9 +170,9 @@ interface FieldTableProps extends WithStyles<typeof styles> {
   loading?: boolean;
 }
 
-class AccountTable extends React.Component<FieldTableProps> {
+class AccountTable extends React.Component<AccountTableProps> {
 
-  constructor(props: FieldTableProps) {
+  constructor(props: AccountTableProps) {
     super(props);
 
     this.handleAction = this.handleAction.bind(this);

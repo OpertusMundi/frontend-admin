@@ -3,6 +3,9 @@ import React from 'react';
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
+// Utilities
+import clsx from 'clsx';
+
 const styles = (theme: Theme) => createStyles({
   spinner: {
     position: 'relative',
@@ -50,16 +53,17 @@ const styles = (theme: Theme) => createStyles({
 });
 
 interface SpinnerProps extends WithStyles<typeof styles> {
+  className?: string;
 }
 
 
 class Spinner extends React.Component<SpinnerProps> {
 
   render() {
-    const { classes } = this.props;
+    const { classes, className } = this.props;
 
     return (
-      <div className={classes.spinner}>
+      <div className={clsx(classes.spinner, className && className)}>
         <div className="rect1"></div>
         <div className="rect2"></div>
         <div className="rect3"></div>

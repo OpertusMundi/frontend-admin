@@ -15,24 +15,26 @@ import Typography from '@material-ui/core/Typography';
 
 // Icons
 import Icon from '@mdi/react';
-import { mdiCommentAlertOutline } from '@mdi/js';
+import { mdiCommentAlertOutline, mdiWalletOutline } from '@mdi/js';
 
 // Services
 import message from 'service/message';
 
 // Store
 import { RootState } from 'store';
-import { addToSelection, removeFromSelection, resetFilter, resetSelection, setFilter, setPager, setSorting } from 'store/order/actions';
-import { find } from 'store/order/thunks';
+import { addToSelection, removeFromSelection, resetFilter, resetSelection, setFilter, setPager, setSorting } from 'store/payout/actions';
+import { find } from 'store/payout/thunks';
+import { createTransfer } from 'store/transfer/thunks';
+
 
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
-import { EnumOrderSortField } from 'model/order';
+import { EnumPayOutSortField } from 'model/order';
 
 // Components
-import OrderFilters from './grid/filter';
-import OrderTable from './grid/table';
+import PayOutFilters from './grid/filter';
+import PayOutTable from './grid/table';
 
 const styles = (theme: Theme) => createStyles({
   container: {
@@ -58,15 +60,17 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
-interface OrderManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
+interface PayOutManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
   intl: IntlShape,
 }
 
-class OrderManager extends React.Component<OrderManagerProps> {
+class PayOutManager extends React.Component<PayOutManagerProps> {
 
-  constructor(props: OrderManagerProps) {
+  constructor(props: PayOutManagerProps) {
     super(props);
 
+    this.createTransfer = this.createTransfer.bind(this);
+    this.viewPayOut = this.viewPayOut.bind(this);
     this.viewProcessInstance = this.viewProcessInstance.bind(this);
   }
 
@@ -82,8 +86,8 @@ class OrderManager extends React.Component<OrderManagerProps> {
     });
   }
 
-  viewOrderTimeline(key: string): void {
-    const path = buildPath(DynamicRoutes.OrderTimeline, [key]);
+  viewPayOut(key: string): void {
+    const path = buildPath(DynamicRoutes.PayOutView, [key]);
     this.props.history.push(path);
   }
 
@@ -92,7 +96,33 @@ class OrderManager extends React.Component<OrderManagerProps> {
     this.props.history.push(path);
   }
 
-  setSorting(sorting: Sorting<EnumOrderSortField>[]): void {
+  createTransfer(key: string): void {
+    const _t = this.props.intl.formatNumber;
+
+    this.props.createTransfer(key)
+      .then((response) => {
+        if (response && response!.success) {
+          const creditedFunds = response!.result!.reduce((total, transfer) => total + transfer.creditedFunds, 0);
+          const fees = response!.result!.reduce((total, transfer) => total + transfer.fees, 0);
+          message.infoHtml(
+            <FormattedMessage
+              id={'billing.payout.message.transfer-success'}
+              values={{
+                count: response!.result!.length,
+                creditedFunds: _t(creditedFunds, { currency: 'EUR', style: 'currency', currencyDisplay: 'symbol' }),
+                fees: _t(fees, { currency: 'EUR', style: 'currency', currencyDisplay: 'symbol' }),
+              }}
+            />,
+            () => (<Icon path={mdiWalletOutline} size="3rem" />),
+          );
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  setSorting(sorting: Sorting<EnumPayOutSortField>[]): void {
     this.props.setSorting(sorting);
     this.find();
   }
@@ -113,7 +143,7 @@ class OrderManager extends React.Component<OrderManagerProps> {
       <>
         <div>
           <Paper className={classes.paper}>
-            <OrderFilters
+            <PayOutFilters
               query={query}
               setFilter={setFilter}
               resetFilter={resetFilter}
@@ -124,7 +154,7 @@ class OrderManager extends React.Component<OrderManagerProps> {
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Typography variant="caption" display="block" gutterBottom className={classes.caption}>
-                    <FormattedMessage id="billing.order.last-update" />
+                    <FormattedMessage id="billing.payout.last-update" />
                     <FormattedTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
                   </Typography>
                 </Grid>
@@ -133,8 +163,9 @@ class OrderManager extends React.Component<OrderManagerProps> {
           </Paper>
 
           <Paper className={classes.paperTable}>
-            <OrderTable
+            <PayOutTable
               addToSelection={addToSelection}
+              createTransfer={this.createTransfer}
               find={this.props.find}
               loading={loading}
               pagination={pagination}
@@ -143,10 +174,10 @@ class OrderManager extends React.Component<OrderManagerProps> {
               resetSelection={resetSelection}
               selected={selected}
               setPager={setPager}
-              setSorting={(sorting: Sorting<EnumOrderSortField>[]) => this.setSorting(sorting)}
+              setSorting={(sorting: Sorting<EnumPayOutSortField>[]) => this.setSorting(sorting)}
               result={result}
               sorting={sorting}
-              viewOrderTimeline={(key: string) => this.viewOrderTimeline(key)}
+              viewPayOut={this.viewPayOut}
               viewProcessInstance={this.viewProcessInstance}
             />
           </Paper>
@@ -159,12 +190,13 @@ class OrderManager extends React.Component<OrderManagerProps> {
 
 const mapState = (state: RootState) => ({
   config: state.config,
-  explorer: state.billing.order,
+  explorer: state.billing.payout,
 });
 
 const mapDispatch = {
   addToSelection,
-  find: (pageRequest?: PageRequest, sorting?: Sorting<EnumOrderSortField>[]) => find(pageRequest, sorting),
+  createTransfer: (key: string) => createTransfer(key),
+  find: (pageRequest?: PageRequest, sorting?: Sorting<EnumPayOutSortField>[]) => find(pageRequest, sorting),
   removeFromSelection,
   resetFilter,
   resetSelection,
@@ -181,7 +213,7 @@ const connector = connect(
 type PropsFromRedux = ConnectedProps<typeof connector>
 
 // Apply styles
-const styledComponent = withStyles(styles)(OrderManager);
+const styledComponent = withStyles(styles)(PayOutManager);
 
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);

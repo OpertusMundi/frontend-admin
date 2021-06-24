@@ -82,12 +82,14 @@ import MapViewerConfigComponent from 'components/map-viewer-config';
 import MarketplaceAccountManager from 'components/account-marketplace/account-grid';
 import MarketplaceAccountView from 'components/account-marketplace/account-form';
 import PayInManager from 'components/payin/payin-grid';
+import PayOutManager from 'components/payout/payout-manager';
 import PlaceHolder from 'components/placeholder';
 import ProcessInstanceForm from 'components/workflow/process-instance-form';
 import ProcessInstanceHistoryForm from 'components/workflow/process-instance-history-form';
 import ProcessInstanceManager from 'components/workflow/process-instance-manager';
 import ProcessInstanceHistoryManager from 'components/workflow/process-instance-history-manager';
 import Profile from 'components/profile';
+import ProviderManager from 'components/provider/provider-grid';
 import OrderManager from 'components/order/order-manager';
 import OrderTimeline from 'components/order/order-timeline';
 import QueryEditor from './analytics/query-editor';
@@ -752,6 +754,7 @@ class Home extends React.Component<HomeProps, HomeState> {
               <Route path={DynamicRoutes.ProcessInstanceHistoryView} component={ProcessInstanceHistoryForm} />
               <Route path={DynamicRoutes.ProcessInstanceView} component={ProcessInstanceForm} />
               <Route path={DynamicRoutes.PayInView} component={PlaceHolder} />
+              <Route path={DynamicRoutes.PayOutView} component={PlaceHolder} />
               {/* Static */}
               <Route path={StaticRoutes.Analytics} component={QueryEditor} />
               <Route path={StaticRoutes.Dashboard} component={DashboardComponent} />
@@ -759,6 +762,8 @@ class Home extends React.Component<HomeProps, HomeState> {
               <Route path={StaticRoutes.DraftManager} component={AssetDraftManager} />
               <Route path={StaticRoutes.OrderManager} component={OrderManager} />
               <Route path={StaticRoutes.PayInManager} component={PayInManager} />
+              <Route path={StaticRoutes.PayOutManager} component={PayOutManager} />
+              <Route path={StaticRoutes.ProviderManager} component={ProviderManager} />
               <Route path={StaticRoutes.TransferManager} component={TransferManager} />
               <Route path={StaticRoutes.Map} component={MapViewerComponent} />
               <Route path={StaticRoutes.Profile} component={Profile} />

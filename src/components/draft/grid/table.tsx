@@ -170,7 +170,7 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
-interface FieldTableProps extends WithStyles<typeof styles> {
+interface AssetDraftTableProps extends WithStyles<typeof styles> {
   intl: IntlShape,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumSortField>[]
@@ -191,9 +191,9 @@ interface FieldTableProps extends WithStyles<typeof styles> {
   loading?: boolean;
 }
 
-class AssetDraftTable extends React.Component<FieldTableProps> {
+class AssetDraftTable extends React.Component<AssetDraftTableProps> {
 
-  constructor(props: FieldTableProps) {
+  constructor(props: AssetDraftTableProps) {
     super(props);
 
     this.handleAction = this.handleAction.bind(this);

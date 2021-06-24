@@ -144,7 +144,7 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-interface FieldTableProps extends WithStyles<typeof styles> {
+interface ProcessInstanceTableProps extends WithStyles<typeof styles> {
   intl: IntlShape,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumProcessInstanceHistorySortField>[]
@@ -163,9 +163,9 @@ interface FieldTableProps extends WithStyles<typeof styles> {
   loading?: boolean;
 }
 
-class ProcessInstanceTable extends React.Component<FieldTableProps> {
+class ProcessInstanceTable extends React.Component<ProcessInstanceTableProps> {
 
-  constructor(props: FieldTableProps) {
+  constructor(props: ProcessInstanceTableProps) {
     super(props);
 
     this.handleAction = this.handleAction.bind(this);

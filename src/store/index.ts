@@ -18,8 +18,10 @@ import { marketplaceAccountReducer } from './account-marketplace/reducer';
 import { messageReducer } from './i18n/reducer';
 import { orderReducer } from './order/reducer';
 import { payInReducer } from './payin/reducer';
+import { payOutReducer } from './payout/reducer';
 import { processInstanceReducer } from './process-instance/reducer';
 import { processInstanceHistoryReducer } from './process-instance-history/reducer';
+import { providerReducer } from './provider/reducer';
 import { securityReducer } from './security/reducer';
 import { transferReducer } from './transfer/reducer';
 import { viewportReducer } from './viewport/reducer';
@@ -29,11 +31,13 @@ export const rootReducer = Redux.combineReducers({
   account: Redux.combineReducers({
     helpdesk: helpdeskAccountReducer,
     marketplace: marketplaceAccountReducer,
+    provider: providerReducer,
   }),
   analytics: analyticsReducer,
   billing: Redux.combineReducers({
     order: orderReducer,
     payin: payInReducer,
+    payout: payOutReducer,
     transfer: transferReducer,
   }),
   config: configurationReducer,

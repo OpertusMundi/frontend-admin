@@ -311,7 +311,7 @@ const statusToBackGround = (status: EnumOrderStatus): string => {
   return '#0277BD';
 };
 
-interface FieldTableProps extends WithStyles<typeof styles> {
+interface OrderTableProps extends WithStyles<typeof styles> {
   intl: IntlShape,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumOrderSortField>[]
@@ -331,9 +331,9 @@ interface FieldTableProps extends WithStyles<typeof styles> {
   loading?: boolean;
 }
 
-class AccountTable extends React.Component<FieldTableProps> {
+class OrderTable extends React.Component<OrderTableProps> {
 
-  constructor(props: FieldTableProps) {
+  constructor(props: OrderTableProps) {
     super(props);
 
     this.handleAction = this.handleAction.bind(this);
@@ -409,7 +409,7 @@ class AccountTable extends React.Component<FieldTableProps> {
 }
 
 // Apply styles
-const styledComponent = withStyles(styles)(AccountTable);
+const styledComponent = withStyles(styles)(OrderTable);
 
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);

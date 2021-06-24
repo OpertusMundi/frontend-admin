@@ -69,7 +69,10 @@ const mapErrorCodeToText = (intl: IntlShape, message: Message, fieldMapper?: Fie
   return null;
 };
 
-export const localizeErrorCodes = (intl: IntlShape, response?: SimpleResponse, header: boolean = true, fieldMapper?: FieldMapperFunc) => {
+export const localizeErrorCodes = (
+  intl: IntlShape, response?: SimpleResponse, header: boolean = true, fieldMapper?: FieldMapperFunc,
+  customerErrorMapper?: (intl: IntlShape, message: Message, fieldMapper?: FieldMapperFunc) => string | null,
+) => {
   const messages: React.ReactNode[] = [];
 
   if (!response) {
@@ -80,13 +83,16 @@ export const localizeErrorCodes = (intl: IntlShape, response?: SimpleResponse, h
   }
 
   if (!header && response.messages.length === 1) {
-    const text = mapErrorCodeToText(intl, response.messages[0], fieldMapper);
+    let text = customerErrorMapper ? customerErrorMapper(intl, response.messages[0], fieldMapper) : null;
+    text = text ? text : mapErrorCodeToText(intl, response.messages[0], fieldMapper);
+
     messages.push(
       <span key={`error-0`}> {text} </span>
     );
   } else {
     response.messages.forEach((m, index) => {
-      const text = mapErrorCodeToText(intl, m, fieldMapper);
+      let text = customerErrorMapper ? customerErrorMapper(intl, m, fieldMapper) : null;
+      text = text ? text : mapErrorCodeToText(intl, m, fieldMapper);
       if (text) {
         messages.push(
           <p key={`error-${index}`}> {text} </p>
