@@ -42,17 +42,27 @@
       "header": {
         "actions": " ",
         "email": "Username",
+        "funds": "Wallet Funds",
         "consumer": "Consumer Status",
+        "consumer-funds": "Consumer Funds",
         "provider": "Provider Status",
+        "provider-funds": "Provider Funds",
         "registered-on": "Registered On"
       },
       "last-update": "Last updated: ",
       "tooltip": {
+        "create-payout": "Create PayOut",
         "send-message": "Send message",
         "view-assets": "View purchased assets and service subscriptions",
         "view-details": "View details",
         "view-finance": "View finance",
         "view-orders": "View orders"
+      },
+      "dialog": {
+        "create-payout-header": "Create PayOut",
+        "bank-account": "Bank Account Details",
+        "funds": "Wallet Funds",
+        "provider": "Provider"
       }
     }
   },
@@ -132,6 +142,29 @@
       },
       "tooltip": {
         "transfer-funds": "Transfer funds to provider wallet",
+        "view-details": "View PayIn"
+      }
+    },
+    "payout": {
+      "filter": {
+        "email": "User",
+        "bankwire-ref": "Bankwire Reference",
+        "status": "Status"
+      },
+      "header": {
+        "actions": " ",
+        "provider": "Provider",
+        "modified-on": "Modified On",
+        "bankwire-ref": "Bankwire Reference",
+        "status": "Status",
+        "funds": "Funds"
+      },
+      "last-update": "Last updated: ",
+      "message": {
+        "payout-success": "Payout has been saved successfully",
+        "payout-failure": ""
+      },
+      "tooltip": {
         "view-details": "View PayIn"
       }
     },
@@ -261,6 +294,7 @@
       "USER": "User"
     },
     "transaction-status": {
+      "NotSpecified": "Not Specified",
       "CREATED": "New",
       "FAILED": "Failed",
       "SUCCEEDED": "Succeeded"
@@ -279,6 +313,9 @@
     "BasicMessageCode.NotImplemented": "Operation is not implemented!",
     "BasicMessageCode.CannotDeleteSelf": "Cannot delete the current account",
     "BasicMessageCode.CannotRevokeLastAdmin": "You must assign a new administrator before changing user roles",
+    "validation": {
+      "DecimalMin": "Value of field {field} must be greater than {min}"
+    },
     "insert-success": "Record has been saved",
     "delete-failure": "Delete operation has failed",
     "delete-success": "Record has been deleted",
@@ -351,8 +388,8 @@
     "order-manager": "Orders",
     "orders-billing": "Orders and Billing",
     "payin-manager": "Pay Ins",
-    "transfer-manager": "Transfers",
     "payout-manager": "Pay Outs",
+    "transfer-manager": "Transfers",
     "profile": "Profile",
     "provider-manager": "Manage Providers",
     "settings": "Settings",
