@@ -396,9 +396,9 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
               <FormattedMessage id={'billing.order.timeline.order-summary'} />
             </Typography>
             <List disablePadding>
-              {order.items.map((item, index) => (
+              {order.items!.map((item, index) => (
                 <div key={`order-item-${index}`}>
-                  <a className={classes.link} href={`${config.marketplaceUrl}/catalogue/${item.item}`} target="_blank" rel="noreferrer">
+                  <a className={classes.link} href={`${config.marketplaceUrl}/catalogue/${item.assetId}`} target="_blank" rel="noreferrer">
                     <ListItem className={classes.listItem}>
                       <ListItemText secondary={item.description} />
                       <Typography variant="body2">

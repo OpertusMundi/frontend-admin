@@ -70,7 +70,7 @@ function getProvider(item: PayInItem): Customer | null {
   switch (item.type) {
     case EnumPayInItemType.ORDER:
       // Orders contain only a single item
-      return (item as OrderPayInItem).order?.items[0].provider || null;
+      return (item as OrderPayInItem).order?.items![0].provider || null;
     case EnumPayInItemType.SUBSCRIPTION_BILLING: {
       return null;
     }

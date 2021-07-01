@@ -223,15 +223,15 @@ export interface PayIn {
   /**
    * Provider PayIn identifier
    */
-  providerPayIn: string;
+  providerPayIn?: string;
   /**
    * Provider error code
    */
-  providerResultCode: string;
+  providerResultCode?: string;
   /**
    * Provider error message
    */
-  providerResultMessage: string;
+  providerResultMessage?: string;
 }
 
 export interface PayInStatus {
@@ -253,7 +253,7 @@ export interface BankwirePayIn extends PayIn {
   /**
    * The user has to proceed a Bank wire to this bank account
    */
-  bankAccount: BankAccount;
+  bankAccount?: BankAccount;
 }
 
 export interface CardDirectPayIn extends PayIn {
@@ -363,14 +363,50 @@ export enum EnumOrderItemType {
 }
 
 export interface OrderItem {
+  /**
+   * Index of the specific item in the order
+   */
   index: number;
+  /**
+   * Item type
+   */
   type: EnumOrderItemType;
-  item: string;
+  /**
+   * Catalogue item unique PID
+   */
+  assetId: string;
+  /**
+   * Catalogue item version
+   */
+  assetVersion: string;
+  /**
+   * Item description at the time of the purchase
+   */
   description: string;
+  /**
+   * Pricing model at the time of the purchase
+   */
   pricingModel: EffectivePricingModel,
+  /**
+   * Item total price
+   */
   totalPrice: number;
+  /**
+   * Item price excluding tax
+   */
   totalPriceExcludingTax: number;
-  provider: Customer;
+  /**
+   * Item tax
+   */
+  totalTax: number;
+  /**
+   * Optional discount code applied to the item's price
+   */
+  discountCode: string | null;
+  /**
+   * Item seller
+   */
+  provider?: Customer;
 }
 
 export interface Order {
@@ -378,7 +414,7 @@ export interface Order {
   currency: string;
   consumer?: Customer;
   deliveryMethod: EnumDeliveryMethod;
-  items: OrderItem[];
+  items?: OrderItem[];
   key: string;
   payIn?: PayIn;
   paymentMethod: EnumPaymentMethod
@@ -432,6 +468,15 @@ export interface PayOutCommand {
   debitedFunds: number;
 }
 
+export interface Refund {
+  refund: string
+  refundCreatedOn: Moment;
+  refundExecutedOn: Moment | null;
+  refundStatus: EnumTransactionStatus;
+  refundReasonType: string;
+  refundReasonMessage: string;
+}
+
 export interface PayOut {
   /**
    * Payout platform unique key
@@ -482,10 +527,5 @@ export interface PayOut {
   providerPayOut?: string;
   providerResultCode?: string;
   providerResultMessage?: string;
-  refund?: string
-  refundCreatedOn?: Moment;
-  refundExecutedOn?: Moment;
-  refundStatus?: EnumTransactionStatus;
-  refundReasonType?: string;
-  refundReasonMessage?: string;
+  refund?: Refund;
 }
