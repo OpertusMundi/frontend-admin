@@ -66,6 +66,12 @@
       }
     }
   },
+  "analytics": {
+    "filter": {
+      "countries": "Filter by Country",
+      "segments": "Filter by Segment"
+    }
+  },
   "billing": {
     "order": {
       "filter": {
@@ -142,6 +148,7 @@
       },
       "tooltip": {
         "transfer-funds": "Transfer funds to provider wallet",
+        "transfer-funds-completed": "Funds have been transferred",
         "view-details": "View PayIn"
       }
     },
