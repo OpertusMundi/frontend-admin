@@ -116,7 +116,11 @@ const mapErrorCodeToText = (intl: IntlShape, message: Message, fieldMapper?: Fie
               return intl.formatMessage({ id: `error.validation.${message.description}` }, { field, min: '0.00' });
             }
           }
+          break;
       }
+      break;
+    case 'PaymentMessageCode.VALIDATION_ERROR':
+      return message.description;
   }
 
   return null;
@@ -350,13 +354,13 @@ class ProviderManager extends React.Component<ProviderManagerProps, ProviderMana
 
     return (
       <Dialog
-        actions={processing ? [] : [
+        actions={[
           {
             key: EnumDialogAction.Yes,
             label: _t({ id: 'view.shared.action.yes' }),
             iconClass: () => (<Icon path={mdiBankCheck} size="1.5rem" />),
             color: 'primary',
-            disabled: provider.walletFunds <= 0,
+            disabled: provider.walletFunds <= 0 || processing,
           }, {
             key: EnumDialogAction.No,
             label: _t({ id: 'view.shared.action.no' }),
@@ -401,9 +405,6 @@ class ProviderManager extends React.Component<ProviderManagerProps, ProviderMana
             </Typography>
           </Grid>
         </Grid>
-        {processing &&
-          <Spinner className={classes.spinner} />
-        }
       </Dialog>
     );
   }

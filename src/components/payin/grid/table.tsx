@@ -126,7 +126,13 @@ const styles = (theme: Theme) => createStyles({
   rowIconAction: {
     width: 18,
     marginRight: 8,
+    marginTop: 2,
     cursor: 'pointer',
+  },
+  rowIconActionDisabled: {
+    width: 18,
+    marginRight: 8,
+    opacity: 0.5,
   },
   avatar: {
     width: theme.spacing(4),
@@ -218,6 +224,20 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
+function hasTransfer(row: PayIn): boolean {
+  if (!row.items) {
+    return true;
+  }
+
+  for (const item of row.items!) {
+    if (item.transfer) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function payinColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<PayIn, EnumPayInSortField>[] {
   return (
     [{
@@ -232,15 +252,22 @@ function payinColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
             <i
               onClick={() => handleAction ? handleAction(EnumAction.View, rowIndex, column, row) : null}
             >
-              <Icon path={mdiLink} className={classes.classes.rowIconAction} style={{ marginTop: 2 }} />
+              <Icon path={mdiLink} className={classes.classes.rowIconAction} />
             </i>
           </Tooltip>
-          {row.status === EnumTransactionStatus.SUCCEEDED &&
+          {row.status === EnumTransactionStatus.SUCCEEDED && !hasTransfer(row) &&
             <Tooltip title={intl.formatMessage({ id: 'billing.payin.tooltip.transfer-funds' })}>
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.TransferFunds, rowIndex, column, row) : null}
               >
-                <Icon path={mdiWalletPlusOutline} className={classes.classes.rowIconAction} style={{ marginTop: 2 }} />
+                <Icon path={mdiWalletPlusOutline} className={classes.classes.rowIconAction} />
+              </i>
+            </Tooltip>
+          }
+          {row.status === EnumTransactionStatus.SUCCEEDED && hasTransfer(row) &&
+            <Tooltip title={intl.formatMessage({ id: 'billing.payin.tooltip.transfer-funds-completed' })}>
+              <i>
+                <Icon path={mdiWalletPlusOutline} className={classes.classes.rowIconActionDisabled} />
               </i>
             </Tooltip>
           }
