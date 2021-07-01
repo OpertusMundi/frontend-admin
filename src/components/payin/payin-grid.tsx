@@ -109,6 +109,8 @@ class PayInManager extends React.Component<PayInManagerProps> {
             />,
             () => (<Icon path={mdiWalletOutline} size="3rem" />),
           );
+
+          this.find();
         }
       })
       .catch((err) => {
