@@ -21,6 +21,7 @@ import { SimpleResponse } from 'model/response';
 import message from 'service/message';
 import { convertFromRaw, EditorState, Editor } from 'draft-js';
 
+
 const fieldMapper: FieldMapperFunc = (field: string): string | null => {
   switch (field) {
     case 'id':
@@ -72,6 +73,8 @@ const styles = (theme: Theme) => createStyles({
   outline: {
     paddingLeft: '30px',
     width: '45vh',
+    overflowY: 'auto',
+    height: '80vh'
   },
   section: {
     color: '#6C6C6C',
@@ -94,17 +97,32 @@ const styles = (theme: Theme) => createStyles({
     fontWeight: 500,
     marginRight: '5px',
   },
-  save: {backgroundColor: '#190AFF',
-  color: '#fff',
-  position: 'absolute',
-  right: '13vh',
-  bottom: '16vh',
-  width: '170px',
-  height: '45px',
-  marginTop: '115px',
-  marginLeft: '50px',
-  display: 'inline-block',
-  borderRadius: '25px'
+  save: {
+    backgroundColor: '#190AFF',
+    color: '#fff',
+    position: 'absolute',
+    right: '14vh',
+    bottom: '22vh',
+    width: '170px',
+    height: '45px',
+    marginTop: '115px',
+    marginLeft: '50px',
+    display: 'inline-block',
+    borderRadius: '25px'
+  },
+  render: {
+
+    backgroundColor: '#000',
+    color: '#fff',
+    position: 'absolute',
+    right: '14vh',
+    bottom: '16vh',
+    width: '170px',
+    height: '45px',
+    marginTop: '115px',
+    marginLeft: '50px',
+    display: 'inline-block',
+    borderRadius: '25px'
   },
   logoImage: {
     width: '30px',
@@ -149,7 +167,9 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
 
   saveContract(): void {
     const contract = this.state.contract;
-    (contract.id === null || typeof (contract.id) === 'undefined' ? this.api.create(contract) : this.api.update(contract.id!, contract))
+    
+    (contract.id === null || typeof (contract.id) === 'undefined' ? this.api.create(contract) :
+       (contract.state ==='DRAFT' ? this.api.updateDraft(contract.id!, contract): this.api.updateContract(contract.id!, contract)))
       .then((response) => {
         if (response.data.success) {
           this.discardChanges();
@@ -179,41 +199,41 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
       }
       if (section.title)
         var sectionTitle = 'Section ' + section.index + ' - ' + section.title + ' ' + type
-      else 
-        sectionTitle = 'Section ' + section.index + ' ' + type  
-      return (<div key={section.id} className={classes.section} style={{ paddingLeft: section.indent}}>
+      else
+        sectionTitle = 'Section ' + section.index + ' ' + type
+      return (<div key={section.id} className={classes.section} style={{ paddingLeft: section.indent }}>
         <FormattedMessage id={section.id! + 1} defaultMessage={sectionTitle} />
       </div>)
     });
     const structure = contract.sections.map(section => {
-      let body, renderedOutput:any, icon:any;
-      
+      let body, renderedOutput: any, icon: any;
+
       if (section.dynamic) {
         body = section.styledOptions.map((option, index) => {
           var suboptionsArray = section.suboptions[index];
-          let suboptionBlock=[];
-          if (suboptionsArray){
+          let suboptionBlock = [];
+          if (suboptionsArray) {
             var length = suboptionsArray.length
           }
           else length = 0;
-        if (length > 0) {
-          for (let i = 0; i < length; i++) {
-            var storedSuboptionState = convertFromRaw(JSON.parse(suboptionsArray.find(o => o.id ===i)!.body));
-            var suboptionBody =
-              <div className={classes.option} key={index}> <span>Suboption {String.fromCharCode(65 + i)}</span>
-                <Editor editorState={EditorState.createWithContent(storedSuboptionState)} readOnly={true} onChange={() => { }} />
-              </div>;
-            suboptionBlock.push(suboptionBody);
-          }
-          renderedOutput = suboptionBlock.map((item, index) => {
-            return (
-              <div className={classes.suboption}>
-                {item}
-              </div>
-            )
-          });
+          if (length > 0) {
+            for (let i = 0; i < length; i++) {
+              var storedSuboptionState = convertFromRaw(JSON.parse(suboptionsArray.find(o => o.id === i)!.body));
+              var suboptionBody =
+                <div className={classes.option} key={index}> <span>Suboption {String.fromCharCode(65 + i)}</span>
+                  <Editor editorState={EditorState.createWithContent(storedSuboptionState)} readOnly={true} onChange={() => { }} />
+                </div>;
+              suboptionBlock.push(suboptionBody);
+            }
+            renderedOutput = suboptionBlock.map((item, index) => {
+              return (
+                <div className={classes.suboption}>
+                  {item}
+                </div>
+              )
+            });
 
-        };
+          };
           if (section.icons![index])
             icon = <img className={classes.logoImage} src={"/icons/" + section.icons![index]} alt="" />
 
@@ -227,11 +247,11 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
             </div>
           )
         });
-      
+
       }
       else {
         //for empty section body dont use Editor
-        if (section.options[0] === "") 
+        if (section.options[0] === "")
           body = '';
         else {
           let option = EditorState.createWithContent(convertFromRaw(JSON.parse(section.styledOptions[0])));
@@ -277,7 +297,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
               you created.`} />
             </div>
           </div>
-          <Grid className={classes.structure}>
+          <Grid id="renderedContract" className={classes.structure}>
             <div className={classes.columnTitle} >
               <FormattedMessage id="document.outline.title" defaultMessage={this.state.contract!.title} />
             </div>
@@ -307,7 +327,6 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
 
   }
 }
-
 
 
 const mapState = (state: RootState) => ({

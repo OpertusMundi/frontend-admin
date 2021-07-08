@@ -230,19 +230,34 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   }
 
   componentDidMount() {
-    const contractId = this.props.contractId
-    if (contractId) {
-      this.api.findOne(contractId).then((response: AxiosObjectResponse<Contract>) => {
-        if (response.data.success) {
-          const contract = response.data.result!;
-          this.setState({ contract: contract, sectionList: contract.sections, documentTitle: contract.title, documentSubtitle: contract.subtitle })
-        } else {
-          const messages = localizeErrorCodes(this.props.intl, response.data, false);
-          message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+    const contract = this.props.contract
+    if (contract) {
+      if (contract.state === 'DRAFT') {
+        this.api.findDraft(contract.id!).then((response: AxiosObjectResponse<Contract>) => {
+          if (response.data.success) {
+            const contract = response.data.result!;
+            this.setState({ contract: contract, sectionList: contract.sections, documentTitle: contract.title, documentSubtitle: contract.subtitle })
+          } else {
+            const messages = localizeErrorCodes(this.props.intl, response.data, false);
+            message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
 
-          this.props.history.push(StaticRoutes.ContractManager);
-        }
-      });
+            this.props.history.push(StaticRoutes.ContractManager);
+          }
+        });
+      }
+      else {
+        this.api.findContract(contract.id!).then((response: AxiosObjectResponse<Contract>) => {
+          if (response.data.success) {
+            const contract = response.data.result!;
+            this.setState({ contract: contract, sectionList: contract.sections, documentTitle: contract.title, documentSubtitle: contract.subtitle })
+          } else {
+            const messages = localizeErrorCodes(this.props.intl, response.data, false);
+            message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+
+            this.props.history.push(StaticRoutes.ContractManager);
+          }
+        });
+      }
     }
     return;
   }
@@ -546,7 +561,9 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       },
     });
     var contract = { ...this.state.contract, sections: this.state.sectionList, title: this.state.documentTitle, subtitle: this.state.documentSubtitle };
-    (id === null || typeof (id) === 'undefined' ? this.api.create(contract) : this.api.update(id!, contract))
+    
+    (id === null || typeof (id) === 'undefined' ? this.api.create(contract) :
+       (contract.state ==='DRAFT' ? this.api.updateDraft(id!, contract): this.api.updateContract(id!, contract)))
       .then((response) => {
         if (response.data.success) {
           this.discardChanges();

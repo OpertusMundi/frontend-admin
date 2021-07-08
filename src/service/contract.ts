@@ -22,7 +22,7 @@ export default class ContractApi extends Api {
     title: 'Document title',
     subtitle: 'Document subtitle',
     state: 'DRAFT',
-    version: '1',
+    version: '0',
     sections: [],
     createdAt: null,
     modifiedAt: null,
@@ -47,19 +47,32 @@ export default class ContractApi extends Api {
   }
   
 
-  public async findOne(id: number): Promise<AxiosObjectResponse<Contract>> {
+  public async findContract(id: number): Promise<AxiosObjectResponse<Contract>> {
     const url = `/action/user/contracts/${id}`;
 
     return this.get<ObjectResponse<Contract>>(url);
   }
+
+  public async findDraft(id: number): Promise<AxiosObjectResponse<Contract>> {
+    const url = `/action/user/contracts/drafts/${id}`;
+
+    return this.get<ObjectResponse<Contract>>(url);
+  }
+
 
   public async create(contract: Contract): Promise<AxiosObjectResponse<Contract>> {
     const url = `/action/user/contracts/`;
     return this.post<Contract, ObjectResponse<Contract>>(url, contract);
   }
 
-  public async update(id: number, contract: Contract): Promise<AxiosObjectResponse<Contract>> {
+  public async updateContract(id: number, contract: Contract): Promise<AxiosObjectResponse<Contract>> {
     const url = `/action/user/contracts/${id}`;
+
+    return this.post<Contract, ObjectResponse<Contract>>(url, contract);
+  }
+
+  public async updateDraft(id: number, contract: Contract): Promise<AxiosObjectResponse<Contract>> {
+    const url = `/action/user/contracts/drafts/${id}`;
 
     return this.post<Contract, ObjectResponse<Contract>>(url, contract);
   }
@@ -70,14 +83,26 @@ export default class ContractApi extends Api {
     return this.delete(url);
   }
 
+  public async removeDraft(id: number): Promise<AxiosSimpleResponse> {
+    const url = `/action/user/contracts/drafts/${id}`;
+
+    return this.delete(url);
+  }
+
   public async test(id: number): Promise<AxiosSimpleResponse> {
     const url = `/action/user/test/${id}`;
 
     return this.post(url, id);
   }
 
-  public async findContracts(): Promise<AxiosObjectResponse<Contract[]>> {
+  public async getContracts(): Promise<AxiosObjectResponse<Contract[]>> {
     const url = `/action/user/getContracts/`;
+
+    return this.get<ObjectResponse<Contract[]>>(url);
+  }
+
+  public async getDrafts(): Promise<AxiosObjectResponse<Contract[]>> {
+    const url = `/action/user/getDrafts/`;
 
     return this.get<ObjectResponse<Contract[]>>(url);
   }

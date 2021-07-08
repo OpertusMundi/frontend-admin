@@ -16,6 +16,7 @@ export interface ContractManagerState {
   response: ObjectResponse<Contract> | null;
   contract: Contract | null;
   contractId: number | null;
+  state: string | null;
 }
 
 // Actions
@@ -38,6 +39,7 @@ export const REMOVE_SELECTED = 'contract/explorer/REMOVE_SELECTED';
 export const RESET_SELECTED = 'contract/explorer/RESET_SELECTED';
 
 export const SET_SELECTED_CONTRACT = 'contract/create/SET_SELECTED_CONTRACT';
+export const SET_SELECTED_CONTRACT_STATE = 'contract/create/SET_SELECTED_CONTRACT_STATE';
 export const SET_MODIFIED_CONTRACT = 'contract/create/SET_MODIFIED_CONTRACT';
 
 export interface SetPagerAction {
@@ -98,7 +100,12 @@ export interface ResetSelectionAction {
 
 export interface SetSelectedContractAction {
   type: typeof SET_SELECTED_CONTRACT;
-  contractId: number | null;
+  contract: Contract | null;
+}
+
+export interface SetSelectedContractStateAction {
+  type: typeof SET_SELECTED_CONTRACT_STATE;
+  state: string | null;
 }
 
 export interface SetModifiedContractAction {
@@ -122,5 +129,6 @@ export type ContractManagerActions =
   | SaveInitAction
   | SaveCompleteAction
   | SetSelectedContractAction
+  | SetSelectedContractStateAction
   | SetModifiedContractAction
   ;

@@ -22,6 +22,7 @@ import {
   SAVE_COMPLETE,
   SAVE_INIT,
   SET_SELECTED_CONTRACT,
+  SET_SELECTED_CONTRACT_STATE,
   SET_MODIFIED_CONTRACT
 } from 'store/contract/types';
 import { EnumSortField } from 'model/contract';
@@ -45,7 +46,8 @@ const initialState: ContractManagerState = {
   lastUpdated: null,
   response: null,
   contract: null,
-  contractId: null
+  contractId: null,
+  state: null
 };
 
 export function contractReducer(
@@ -156,7 +158,14 @@ export function contractReducer(
     case SET_SELECTED_CONTRACT:
       return {
         ...state,
-        contractId: action.contractId,
+        contract: action.contract,
+        loading: false,
+      }
+
+    case SET_SELECTED_CONTRACT_STATE:
+      return {
+        ...state,
+        state: action.state,
         loading: false,
       }
 
