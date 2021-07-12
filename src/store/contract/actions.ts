@@ -16,6 +16,7 @@ import {
   SAVE_INIT,
   SAVE_COMPLETE,
   SET_SELECTED_CONTRACT,
+  SET_SELECTED_CONTRACT_STATE,
   SET_MODIFIED_CONTRACT
 } from './types';
 
@@ -101,10 +102,17 @@ export function resetSelection(): ContractManagerActions {
   };
 }
 
-export function setSelectedContract(contractId: number | null): ContractManagerActions {
+export function setSelectedContract(contract: Contract | null): ContractManagerActions {
   return {
     type: SET_SELECTED_CONTRACT,
-    contractId,
+    contract,
+  };
+}
+
+export function setSelectedContractState(state: string | null): ContractManagerActions {
+  return {
+    type: SET_SELECTED_CONTRACT_STATE,
+    state,
   };
 }
 

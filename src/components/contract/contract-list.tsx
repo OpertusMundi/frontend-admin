@@ -125,25 +125,46 @@ class ContractListComponent extends React.Component<ContractListComponentProps, 
   }
 
   componentDidMount() {
-    this.api.findContracts()
-      .then((response) => {
-        if (response.data.success) {
-          //this.discardChanges();
-          console.log('Response', response.data);
-          const contracts = response.data.result!;
-          console.log('contracts', contracts);
-          this.setState({ contracts: contracts, confirm: false, confirmOnNavigate: true });
-        } else {
-          const messages = localizeErrorCodes(this.props.intl, response.data, true);
-          message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
-        }
-      })
-      .catch((err: AxiosError<SimpleResponse>) => {
-        const messages = localizeErrorCodes(this.props.intl, err.response?.data, true);
+    this.getAllContracts();
+  }
+
+  getAllContracts(): void {
+    this.api.getContracts()
+    .then((response) => {
+      if (response.data.success) {
+        //this.discardChanges();
+        const contracts = response.data.result!;
+        this.setState({ contracts: contracts, confirm: false, confirmOnNavigate: true });
+        return contracts;
+      } else {
+        const messages = localizeErrorCodes(this.props.intl, response.data, true);
         message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
-      })
-      .finally(() => {
-      });
+      }
+    })
+    
+    .catch((err: AxiosError<SimpleResponse>) => {
+      const messages = localizeErrorCodes(this.props.intl, err.response?.data, true);
+      message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+    })
+    .finally(() => {
+      this.api.getDrafts()
+        .then((response) => {
+          if (response.data.success) {
+            const contracts = response.data.result!;
+            this.setState({ contracts: this.state.contracts!.concat(contracts), confirm: false, confirmOnNavigate: true });
+            return contracts;
+          } else {
+            const messages = localizeErrorCodes(this.props.intl, response.data, true);
+            message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+          }
+        })
+
+        .catch((err: AxiosError<SimpleResponse>) => {
+          const messages = localizeErrorCodes(this.props.intl, err.response?.data, true);
+          message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+        })
+    });
+
   }
 
   discardChanges(): void {
@@ -153,12 +174,9 @@ class ContractListComponent extends React.Component<ContractListComponentProps, 
   }
 
   updateState(contractId: number, state: string) {
-    var contracts = this.state.contracts!;
     this.api.updateState(contractId, state).then((response) => {
       if (response.data.success) {
-        const id = contracts.findIndex((c) => c.id === contractId);
-        contracts[id].state = state;
-        this.setState({ contracts: contracts, confirm: false, confirmOnNavigate: true });
+        this.getAllContracts()
       } else {
         const messages = localizeErrorCodes(this.props.intl, response.data, true);
         message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
@@ -175,11 +193,11 @@ class ContractListComponent extends React.Component<ContractListComponentProps, 
   deleteContract() {
     var contracts = this.state.contracts!;
     const contractId = this.state.contractForDelete!;
-    this.api.remove(contractId)
+    var state = this.state.contracts?.find(c => c.id == contractId)?.state;
+    (state === 'DRAFT' ? this.api.removeDraft(contractId) : this.api.remove(contractId))
       .then((response) => {
         if (response.data.success) {
           //this.discardChanges();
-          console.log('Response', response.data);
           contracts = contracts.filter((contract) => {
             return (contract.id !== contractId);
           });
@@ -194,17 +212,16 @@ class ContractListComponent extends React.Component<ContractListComponentProps, 
         message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
       })
       .finally(() => {
-      });
+      })
   }
 
-  onNavigate(e: React.MouseEvent | null, url: string, contractId: number | null) {
+  onNavigate(e: React.MouseEvent | null, url: string, contract: Contract | null) {
     if (e) {
       e.preventDefault();
     }
 
-    if (contractId) {
-      console.log('contract: ', contractId)
-      this.props.setSelectedContract(contractId);
+    if (contract) {
+      this.props.setSelectedContract(contract);
     }
     else {
       this.props.setSelectedContract(null);
@@ -319,7 +336,7 @@ class ContractListComponent extends React.Component<ContractListComponentProps, 
                   type="submit"
                   variant="contained"
                   className={classes.editBtn}
-                  onClick={(e) => this.onNavigate(e, DynamicRoutes.ContractCreate, contract.id!)}
+                  onClick={(e) => this.onNavigate(e, DynamicRoutes.ContractCreate, contract)}
                 >
                   <FormattedMessage id="view.shared.action.edit" defaultMessage="Edit" />
                 </Button>
