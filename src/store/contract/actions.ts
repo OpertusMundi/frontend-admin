@@ -1,13 +1,14 @@
-import { PageResult, Sorting, ObjectResponse } from 'model/response';
-import { EnumSortField, Contract, ContractQuery } from 'model/contract';
+import { PageResult, Sorting, ObjectResponse, SimpleResponse } from 'model/response';
+import { EnumMasterContractSortField, MasterContract, MasterContractHistory, MasterContractQuery } from 'model/contract';
 
 import {
-  ContractManagerActions,
+  ContractActions,
   SET_PAGER,
   RESET_PAGER,
   SET_FILTER,
   RESET_FILTER,
   SEARCH_INIT,
+  SEARCH_FAILURE,
   SEARCH_COMPLETE,
   ADD_SELECTED,
   REMOVE_SELECTED,
@@ -22,7 +23,7 @@ import {
 
 
 // Action Creators
-export function setPager(page: number, size: number): ContractManagerActions {
+export function setPager(page: number, size: number): ContractActions {
   return {
     type: SET_PAGER,
     page,
@@ -30,93 +31,100 @@ export function setPager(page: number, size: number): ContractManagerActions {
   };
 }
 
-export function resetPager(): ContractManagerActions {
+export function resetPager(): ContractActions {
   return {
     type: RESET_PAGER,
   };
 }
 
-export function setFilter(query: Partial<ContractQuery>): ContractManagerActions {
+export function setFilter(query: Partial<MasterContractQuery>): ContractActions {
   return {
     type: SET_FILTER,
     query,
   };
 }
 
-export function resetFilter(): ContractManagerActions {
+export function resetFilter(): ContractActions {
   return {
     type: RESET_FILTER,
   };
 }
 
-export function setSorting(sorting: Sorting<EnumSortField>[]): ContractManagerActions {
+export function setSorting(sorting: Sorting<EnumMasterContractSortField>[]): ContractActions {
   return {
     type: SET_SORTING,
     sorting,
   };
 }
 
-export function searchInit(): ContractManagerActions {
+export function searchInit(): ContractActions {
   return {
     type: SEARCH_INIT,
   };
 }
 
-export function searchComplete(result: PageResult<Contract>): ContractManagerActions {
+export function searchFailure(response: SimpleResponse): ContractActions {
+  return {
+    type: SEARCH_FAILURE,
+    response,
+  };
+}
+
+export function searchComplete(result: PageResult<MasterContractHistory>): ContractActions {
   return {
     type: SEARCH_COMPLETE,
     result,
   };
 }
 
-export function saveInit(): ContractManagerActions {
+export function saveInit(): ContractActions {
   return {
     type: SAVE_INIT,
   };
 }
 
-export function saveComplete(response: ObjectResponse<Contract>): ContractManagerActions {
+export function saveComplete(response: ObjectResponse<MasterContract>): ContractActions {
   return {
     type: SAVE_COMPLETE,
     response,
   };
 }
 
-export function addToSelection(selected: Contract[]): ContractManagerActions {
+export function addToSelection(selected: MasterContractHistory[]): ContractActions {
   return {
     type: ADD_SELECTED,
     selected,
   };
 }
 
-export function removeFromSelection(removed: Contract[]): ContractManagerActions {
+export function removeFromSelection(removed: MasterContractHistory[]): ContractActions {
   return {
     type: REMOVE_SELECTED,
     removed,
   };
 }
 
-export function resetSelection(): ContractManagerActions {
+export function resetSelection(): ContractActions {
   return {
     type: RESET_SELECTED,
   };
 }
 
-export function setSelectedContract(contract: Contract | null): ContractManagerActions {
+export function setSelectedContract(contract: MasterContractHistory | null): ContractActions {
   return {
     type: SET_SELECTED_CONTRACT,
     contract,
   };
 }
 
-export function setSelectedContractState(state: string | null): ContractManagerActions {
+export function setSelectedContractState(state: string | null): ContractActions {
   return {
     type: SET_SELECTED_CONTRACT_STATE,
     state,
   };
 }
 
-export function setModifiedContract(contract: Contract): ContractManagerActions {
+export function setModifiedContract(contract: MasterContract): ContractActions {
   return {
     type: SET_MODIFIED_CONTRACT,
     contract,

@@ -22,7 +22,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 
 // Custom component
-import { Section } from 'model/section';
+import { Section } from 'model/contract';
 
 const styles = (theme: Theme) => createStyles({
   card: {
@@ -102,7 +102,7 @@ const styles = (theme: Theme) => createStyles({
 
 export enum EditFieldEnum {
   Section = 'section',
-  Suboption = 'suboption',
+  SubOption = 'subOption',
   Title = 'title',
   Subtitle = 'subtitle',
 };
@@ -112,11 +112,11 @@ interface EditAreaComponentProps extends WithStyles<typeof styles> {
   section?: Section;
   documentTitle?: string;
   documentSubtitle?: string;
-  saveContent: (id: number, contentState: ContentState, body: string, title: string, option: number, suboption: number,
+  saveContent: (id: number, contentState: ContentState, body: string, title: string, option: number, subOption: number,
     summary: string, descriptionOfChange: string, icon: string, editField: EditFieldEnum) => void;
   editSection: (item: any) => void;
   addOptions: (sectionId: number, options: number) => void;
-  addSuboptions: (sectionId: number, option: number, suboptions: number) => void;
+  addSubOptions: (sectionId: number, option: number, subOptions: number) => void;
   editField: EditFieldEnum;
   sectionList?: Section[];
 }
@@ -133,9 +133,9 @@ interface EditAreaComponentState {
   optional?: boolean;
   icon: string;
   option: number;
-  suboption: number;
+  subOption: number;
   editField: EditFieldEnum;
-  // title for editing option or suboption
+  // title for editing option or subOption
   editingOption: boolean;
   openAutoTextSelect: boolean;
   openIconSelect: boolean;
@@ -168,7 +168,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
         title = this.props.documentSubtitle!;
     }
     this.state = {
-      editorState, title, option: 0, suboption: 0, editingOption: true, showEditor: show, summary, descriptionOfChange, variable, optional, dynamic, icon, openAutoTextSelect: false, openIconSelect: false,
+      editorState, title, option: 0, subOption: 0, editingOption: true, showEditor: show, summary, descriptionOfChange, variable, optional, dynamic, icon, openAutoTextSelect: false, openIconSelect: false,
       editField: this.props.editField
 
     };
@@ -197,9 +197,9 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     }
   }
 
-  onChangeSuboptionValue(id: number, event: any) {
+  onChangeSubOptionValue(id: number, event: any) {
     var selection = event.target.value;
-    this.props.addSuboptions(id, this.state.option, selection);
+    this.props.addSubOptions(id, this.state.option, selection);
   }
 
   onOptionSelect = (event: any) => {
@@ -212,30 +212,32 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     });
   }
 
-  onSuboptionSelect = (event: any) => {
+  onSubOptionSelect = (event: any) => {
     var selection = event.target.value
     var editingOption = false;
-    var body =this.props.section!.suboptions[this.state.option][selection].body;
+    var body = this.props.section!.subOptions[this.state.option][selection].body;
     this.setState({
-      suboption: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(body!))),
-      summary: this.props.section!.summary![selection], icon: this.props.section!.icons![selection], editField: EditFieldEnum.Suboption ,editingOption,
+      subOption: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(body!))),
+      summary: this.props.section!.summary![selection], icon: this.props.section!.icons![selection], editField: EditFieldEnum.SubOption, editingOption,
     });
   }
 
 
   onSummarySet = (event: any) => {
     var summary = event.target.value
-    if (summary==='')
-      summary=' '
-    this.setState({summary
+    if (summary === '')
+      summary = ' '
+    this.setState({
+      summary
     });
 
   }
   onDescriptionSet = (event: any) => {
     var descriptionOfChange = event.target.value
-    if (descriptionOfChange==='')
-    descriptionOfChange=' '
-    this.setState({descriptionOfChange
+    if (descriptionOfChange === '')
+      descriptionOfChange = ' '
+    this.setState({
+      descriptionOfChange
     });
 
   }
@@ -338,23 +340,23 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     );
   };
 
-  finishEdit = (editorState: EditorState): void =>{
+  finishEdit = (editorState: EditorState): void => {
     this.props.saveContent(this.props.section?.id!, editorState.getCurrentContent(), editorState.getCurrentContent().getPlainText(),
-          this.state.title, this.state.option, this.state.suboption, this.state.summary, this.state.descriptionOfChange, this.state.icon, this.state.editField)
+      this.state.title, this.state.option, this.state.subOption, this.state.summary, this.state.descriptionOfChange, this.state.icon, this.state.editField)
   }
 
   render() {
     const { editorState } = this.state;
     const { classes } = this.props;
-    let editor, iconSelector, type_buttons, options, suboptions, editOption, editSuboption, summary, descriptionOfChange, editingOptionTitle='', suboptionsSize=0;
+    let editor, iconSelector, type_buttons, options, subOptions, editOption, editSubOption, summary, descriptionOfChange, editingOptionTitle = '', subOptionSize = 0;
 
-    if (this.state.variable){
-      var type='Option ', currentOption =this.state.option ;
-      if (!this.state.editingOption){
-        type='Suboption ';
-        currentOption = this.state.suboption;
+    if (this.state.variable) {
+      var type = 'Option ', currentOption = this.state.option;
+      if (!this.state.editingOption) {
+        type = 'SubOption ';
+        currentOption = this.state.subOption;
       }
-      editingOptionTitle = '(' + type + String.fromCharCode(65 + parseInt('' +currentOption)) + ')';
+      editingOptionTitle = '(' + type + String.fromCharCode(65 + parseInt('' + currentOption)) + ')';
     }
 
     if (this.state.showEditor) {
@@ -403,59 +405,59 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
           <Select
             onChange={this.onOptionSelect}
           >
-             <MenuItem disabled>Option</MenuItem>
+            <MenuItem disabled>Option</MenuItem>
             {optionAlphanumeric.map((option, index) =>
-              <MenuItem  value={index}>{option}</MenuItem>)};
-          </Select>
-        </div>;
-      }
-      var suboptionsArray = this.props.section!.suboptions[this.state.option];
-      if (typeof (suboptionsArray) !== 'undefined')
-        suboptionsSize = suboptionsArray.length;
-      else
-        suboptionsSize = 0
-      suboptions =
-        <div style={{ 'marginTop': '2vh' }} onChange={(e) => this.onChangeSuboptionValue(this.props.section!.id!, e)}>
-          <label>Suboptions</label>
-          <input className={classes.options} type="number" value={suboptionsSize}></input>
-        </div>
-      let suboptionAlphanumeric = [];
-      for (let i = 0; i < suboptionsSize; i++) {
-        suboptionAlphanumeric.push(String.fromCharCode(65 + i));
-      }
-      if (suboptionAlphanumeric.length > 0)
-
-        editSuboption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel>Suboption</InputLabel>
-          <Select
-
-            onChange={this.onSuboptionSelect}
-          >
-
-            <MenuItem disabled>Suboption</MenuItem>
-            {suboptionAlphanumeric.map((option, index) =>
               <MenuItem value={index}>{option}</MenuItem>)};
-      </Select>
-          {suboptions}
+          </Select>
         </div>;
+      }
+      var subOptionsArray = this.props.section!.subOptions[this.state.option];
+      if (typeof (subOptionsArray) !== 'undefined')
+        subOptionSize = subOptionsArray.length;
       else
-        editSuboption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel>Suboption</InputLabel>
+        subOptionSize = 0
+      subOptions =
+        <div style={{ 'marginTop': '2vh' }} onChange={(e) => this.onChangeSubOptionValue(this.props.section!.id!, e)}>
+          <label>Subptions</label>
+          <input className={classes.options} type="number" value={subOptionSize}></input>
+        </div>
+      let subOptionAlphanumeric = [];
+      for (let i = 0; i < subOptionSize; i++) {
+        subOptionAlphanumeric.push(String.fromCharCode(65 + i));
+      }
+      if (subOptionAlphanumeric.length > 0)
+
+        editSubOption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel>SubOption</InputLabel>
           <Select
 
-            onChange={this.onSuboptionSelect}
+            onChange={this.onSubOptionSelect}
           >
 
-            <MenuItem disabled>Suboption</MenuItem>
+            <MenuItem disabled>SubOption</MenuItem>
+            {subOptionAlphanumeric.map((option, index) =>
+              <MenuItem value={index}>{option}</MenuItem>)};
           </Select>
-          {suboptions}
+          {subOptions}
+        </div>;
+      else
+        editSubOption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel>SubOption</InputLabel>
+          <Select
+
+            onChange={this.onSubOptionSelect}
+          >
+
+            <MenuItem disabled>SubOption</MenuItem>
+          </Select>
+          {subOptions}
         </div>;
 
       type_buttons =
-      <div>
-        <div onChange={(e) => this.onChangeValue(this.props.section!.id!, e)}>
-          <label className={classes.radio}><input type="radio" value="optional" name="type" defaultChecked={this.state.optional} /> Optional Section</label>
-          <label className={classes.radio}><input type="radio" value="dynamic" name="type" defaultChecked={this.state.dynamic} /> Dynamic Section
-                        {options}
-          </label>
+        <div>
+          <div onChange={(e) => this.onChangeValue(this.props.section!.id!, e)}>
+            <label className={classes.radio}><input type="radio" value="optional" name="type" defaultChecked={this.state.optional} /> Optional Section</label>
+            <label className={classes.radio}><input type="radio" value="dynamic" name="type" defaultChecked={this.state.dynamic} /> Dynamic Section
+              {options}
+            </label>
           </div>
         </div>;
 
@@ -494,7 +496,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
                 className={`rdw-dropdownoption-default placeholder-li ${this.state.openIconSelect ? 'close' : 'open'}`}
               >
                 None
-                </li>
+              </li>
             </ul>
           </div>
         </div>
@@ -504,7 +506,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
       <Grid container>
         {type_buttons}
         {editOption}
-        {editSuboption}
+        {editSubOption}
         <TextField className={classes.title} id="filled-title" variant="standard" value={this.state.title} suppressContentEditableWarning={true} contentEditable={true} label='Title'
           onChange={(e) => this.setState({ title: e.target.value })}
         />
@@ -524,7 +526,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
           }>
           DONE
-                </button>
+        </button>
       </Grid >
     );
   }
@@ -572,7 +574,6 @@ const placeholderOptions = [
   { key: "SellerLegalRep", value: "SellerLegalRep" },
   { key: "MTCId", value: "MTCId" },
   { key: "ContractId", value: "ContractId" },
-  { key: "ContractId", value: "ContractId" },
   { key: "ProductId", value: "ProductId" },
   { key: "ProductName", value: "ProductName" },
   { key: "ProductDescription", value: "ProductDescription" },
@@ -593,5 +594,5 @@ const iconOptions = [
   { key: "cc.png", value: "cc.png" },
   { key: "ccby.png", value: "ccby.png" },
   { key: "non-commercial.png", value: "non-commercial.png" },
-  { key: "sa.png", value: "sa.png"}
+  { key: "sa.png", value: "sa.png" }
 ]

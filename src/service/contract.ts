@@ -1,14 +1,15 @@
 import { AxiosRequestConfig } from 'axios';
 
 import { Api } from 'utils/api';
-// eslint-disable-next-line
-import { ObjectResponse, PageRequest, Sorting, AxiosObjectResponse, AxiosPageResponse, PageResult, AxiosSimpleResponse } from 'model/response';
-//import { Contract, OrganizationQuery } from 'model/contract';\
-import { Contract, EnumSortField } from 'model/contract';
-
-export interface ContractQuery {
-    id: number;
-}
+import {
+  AxiosObjectResponse, AxiosPageResponse,
+  ObjectResponse, PageRequest, Sorting, PageResult, AxiosSimpleResponse,
+} from 'model/response';
+import {
+  MasterContractQuery,
+  MasterContractCommand, MasterContract, MasterContractHistory,
+  EnumMasterContractSortField
+} from 'model/contract';
 
 export default class ContractApi extends Api {
 
@@ -16,102 +17,113 @@ export default class ContractApi extends Api {
     super(config);
   }
 
-  public createNew(): Contract {
+  public createNew(): MasterContractCommand {
     return {
-    account: 1,
-    title: 'Document title',
-    subtitle: 'Document subtitle',
-    state: 'DRAFT',
-    version: '0',
-    sections: [],
-    createdAt: null,
-    modifiedAt: null,
+      id: null,
+      title: 'Document title',
+      subtitle: 'Document subtitle',
+      sections: [],
     };
   }
 
-  public async find(query: Partial<ContractQuery>, pageRequest: PageRequest,  sorting: Sorting<EnumSortField>[]): Promise<AxiosPageResponse<Contract>> {
+  public contractToCommand(contract: MasterContract): MasterContractCommand {
+    return {
+      id: contract.id,
+      title: contract.title,
+      subtitle: contract.subtitle || '',
+      sections: [...(contract.sections || [])],
+    };
+  }
+
+  public async findHistory(
+    query: Partial<MasterContractQuery>, pageRequest: PageRequest, sorting: Sorting<EnumMasterContractSortField>[]
+  ): Promise<AxiosPageResponse<MasterContractHistory>> {
     const { page, size } = pageRequest;
     const { id: field, order } = sorting[0];
 
-    const queryString = (Object.keys(query) as Array<keyof ContractQuery>)
-      .reduce((result: string[], key: keyof ContractQuery) => {
+    const queryString = (Object.keys(query) as Array<keyof MasterContractQuery>)
+      .reduce((result: string[], key: keyof MasterContractQuery) => {
         return query[key] !== null ? [...result, `${key}=${query[key]}`] : result;
       }, []);
 
-    const url = `/action/user/contracts?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
+    const url = `/action/contract/history?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
 
-    var contract = this.get<ObjectResponse<PageResult<Contract>>>(url);
+    const response = this.get<ObjectResponse<PageResult<MasterContractHistory>>>(url);
 
-    return contract;
-
-  }
-  
-
-  public async findContract(id: number): Promise<AxiosObjectResponse<Contract>> {
-    const url = `/action/user/contracts/${id}`;
-
-    return this.get<ObjectResponse<Contract>>(url);
+    return response;
   }
 
-  public async findDraft(id: number): Promise<AxiosObjectResponse<Contract>> {
-    const url = `/action/user/contracts/drafts/${id}`;
+  public async findTemplates(
+    pageRequest: PageRequest, sorting: Sorting<EnumMasterContractSortField>[]
+  ): Promise<AxiosPageResponse<MasterContract>> {
+    const { page, size } = pageRequest;
+    const { id: field, order } = sorting[0];
 
-    return this.get<ObjectResponse<Contract>>(url);
+    const url = `/action/contract/templates?page=${page}&size=${size}&orderBy=${field}&order=${order}`;
+
+    var response = this.get<ObjectResponse<PageResult<MasterContract>>>(url);
+
+    return response;
   }
 
+  public async findTemplate(id: number): Promise<AxiosObjectResponse<MasterContract>> {
+    const url = `/action/contract/templates/${id}`;
 
-  public async create(contract: Contract): Promise<AxiosObjectResponse<Contract>> {
-    const url = `/action/user/contracts/`;
-    return this.post<Contract, ObjectResponse<Contract>>(url, contract);
+    return this.get<ObjectResponse<MasterContract>>(url);
   }
 
-  public async updateContract(id: number, contract: Contract): Promise<AxiosObjectResponse<Contract>> {
-    const url = `/action/user/contracts/${id}`;
+  public async createDraftFromTemplate(id: number): Promise<AxiosObjectResponse<MasterContract>> {
+    const url = `/action/contract/history/${id}`;
 
-    return this.post<Contract, ObjectResponse<Contract>>(url, contract);
+    return this.post<unknown, ObjectResponse<MasterContract>>(url, null);
   }
 
-  public async updateDraft(id: number, contract: Contract): Promise<AxiosObjectResponse<Contract>> {
-    const url = `/action/user/contracts/drafts/${id}`;
-
-    return this.post<Contract, ObjectResponse<Contract>>(url, contract);
-  }
-
-  public async remove(id: number): Promise<AxiosSimpleResponse> {
-    const url = `/action/user/contracts/${id}`;
+  public async deactivateTemplate(id: number): Promise<AxiosSimpleResponse> {
+    const url = `/action/contract/history/${id}`;
 
     return this.delete(url);
   }
 
-  public async removeDraft(id: number): Promise<AxiosSimpleResponse> {
-    const url = `/action/user/contracts/drafts/${id}`;
+  public async findDrafts(
+    pageRequest: PageRequest, sorting: Sorting<EnumMasterContractSortField>[]
+  ): Promise<AxiosPageResponse<MasterContract>> {
+    const { page, size } = pageRequest;
+    const { id: field, order } = sorting[0];
 
-    return this.delete(url);
+    const url = `/action/contract/drafts?page=${page}&size=${size}&orderBy=${field}&order=${order}`;
+
+    var response = this.get<ObjectResponse<PageResult<MasterContract>>>(url);
+
+    return response;
   }
 
-  public async test(id: number): Promise<AxiosSimpleResponse> {
-    const url = `/action/user/test/${id}`;
+  public async findDraft(id: number): Promise<AxiosObjectResponse<MasterContract>> {
+    const url = `/action/contract/drafts/${id}`;
 
-    return this.post(url, id);
+    return this.get<ObjectResponse<MasterContract>>(url);
   }
 
-  public async getContracts(): Promise<AxiosObjectResponse<Contract[]>> {
-    const url = `/action/user/getContracts/`;
+  public async createDraft(command: MasterContractCommand): Promise<AxiosObjectResponse<MasterContract>> {
+    const url = `/action/contract/drafts`;
 
-    return this.get<ObjectResponse<Contract[]>>(url);
+    return this.post<MasterContractCommand, ObjectResponse<MasterContract>>(url, command);
   }
 
-  public async getDrafts(): Promise<AxiosObjectResponse<Contract[]>> {
-    const url = `/action/user/getDrafts/`;
+  public async updateDraft(id: number, command: MasterContractCommand): Promise<AxiosObjectResponse<MasterContract>> {
+    const url = `/action/contract/drafts/${id}`;
 
-    return this.get<ObjectResponse<Contract[]>>(url);
+    return this.post<MasterContractCommand, ObjectResponse<MasterContract>>(url, command);
   }
 
-  public async updateState(id: number, state: String): Promise<AxiosSimpleResponse> {
+  public async deleteDraft(id: number): Promise<AxiosObjectResponse<MasterContract>> {
+    const url = `/action/contract/drafts/${id}`;
 
-    console.log('in api update state', id, state);
-    const url = `/action/user/contracts/updateState/${id}`;
+    return this.delete<ObjectResponse<MasterContract>>(url);
+  }
 
-    return this.post(url,state);
+  public async publishDraft(id: number): Promise<AxiosSimpleResponse> {
+    const url = `/action/contract/drafts/${id}`;
+
+    return this.put<unknown, ObjectResponse<MasterContract>>(url, null);
   }
 }

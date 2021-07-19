@@ -16,12 +16,12 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownWardIcon from '@material-ui/icons/ArrowDownward';
 
-
-// Custom components
-import SectionComponent from 'components/contract/form/section';
-import { Section } from 'model/section';
-
+// Components
 import { EditFieldEnum } from 'components/contract/form/edit-area';
+import SectionComponent from 'components/contract/form/section';
+
+// Model
+import { Section } from 'model/contract';
 
 // Styles
 const styles = (theme: Theme) => createStyles({
@@ -35,7 +35,7 @@ const styles = (theme: Theme) => createStyles({
     minHeight: '70vh',
     width: '34.2vw',
   },
-  title:{
+  title: {
     padding: '10px',
     background: '#d3d3d369',
     border: '1px dashed #6C6C6C',
@@ -58,7 +58,6 @@ interface PageComponentProps extends WithStyles<typeof styles> {
   documentSubtitle?: string;
   sectionList: Section[];
   deleteSubtitle: () => void;
-  addSection: (item: any) => void;
   removeSection: (item: any) => void;
   editSection: (item: any) => void;
   openEdit: (editField: EditFieldEnum, section?: Section) => void;
@@ -84,7 +83,7 @@ class PageComponent extends React.Component<PageComponentProps, PageComponentSta
     const { classes } = this.props;
     let subtitle;
     if (this.props.documentSubtitle) {
-      subtitle = <div  className={classes.title} >
+      subtitle = <div className={classes.title} >
         <FormattedMessage id="document.subtitle" defaultMessage={this.props.documentSubtitle} />
         <IconButton style={{ width: 20, height: 20, float: "right" }}
           onClick={() =>
@@ -102,7 +101,7 @@ class PageComponent extends React.Component<PageComponentProps, PageComponentSta
         </IconButton>
       </div>
     }
-    console.log('Sections:',this.props.sectionList );
+
     const sections = this.props.sectionList.map(section =>
       <Grid style={{ paddingLeft: section.indent, marginTop: '30px' }} key={section.id} container item xs={12} >
         <Grid className={classes.contract} container item xs={10} key={`section-${section.id}`}>
@@ -146,13 +145,12 @@ class PageComponent extends React.Component<PageComponentProps, PageComponentSta
 
     )
 
-
     return (
       <div>
         <Grid container item xs={12}>
           <Paper className={classes.paper}>
-            <div  className={classes.title}>
-              <FormattedMessage id="document.title"  defaultMessage={this.props.documentTitle} />
+            <div className={classes.title}>
+              <FormattedMessage id="document.title" defaultMessage={this.props.documentTitle} />
 
               <IconButton className="controls" style={{ width: 20, height: 20, float: "right" }}
                 onClick={() =>

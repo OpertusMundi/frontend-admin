@@ -73,7 +73,7 @@ import AssetDraftManager from 'components/draft/draft-grid';
 import Breadcrumb from './breadcrumb';
 import ContractForm from 'components/contract/contract-form';
 import ContractList from 'components/contract/contract-list';
-import ContractReviewForm from 'components/contract/contract-review-form';
+import ContractManager from 'components/contract/contract-grid';
 import DashboardComponent from 'components/dashboard';
 import HelpdeskAccountManager from 'components/account/account-grid';
 import IncidentManager from 'components/workflow/incident-manager';
@@ -747,7 +747,7 @@ class Home extends React.Component<HomeProps, HomeState> {
               <Route path={DynamicRoutes.AccountUpdate} component={AccountForm} />
               <Route path={DynamicRoutes.AccountCreate} component={AccountForm} />
               <Route path={DynamicRoutes.ContractCreate} component={ContractForm} />
-              <Route path={DynamicRoutes.ContractReview} component={ContractReviewForm} />
+              <Route path={DynamicRoutes.ContractUpdate} component={ContractForm} />
               <Route path={DynamicRoutes.OrderTimeline} component={OrderTimeline} />
               <Route path={DynamicRoutes.OrderView} component={PlaceHolder} />
               <Route path={DynamicRoutes.MarketplaceAccountView} component={MarketplaceAccountView} />
@@ -758,7 +758,7 @@ class Home extends React.Component<HomeProps, HomeState> {
               {/* Static */}
               <Route path={StaticRoutes.Analytics} component={QueryEditor} />
               <Route path={StaticRoutes.Dashboard} component={DashboardComponent} />
-              <Route path={StaticRoutes.ContractManager} component={ContractList} />
+              <Route path={StaticRoutes.ContractManager} component={ContractManager} />
               <Route path={StaticRoutes.DraftManager} component={AssetDraftManager} />
               <Route path={StaticRoutes.OrderManager} component={OrderManager} />
               <Route path={StaticRoutes.PayInManager} component={PayInManager} />

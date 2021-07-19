@@ -1,34 +1,26 @@
 import React from 'react';
 
+import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { convertFromRaw, EditorState, Editor } from 'draft-js';
+
 // Localization
-import { FormattedMessage, IntlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 
 // Styles
 import { Button, createStyles, Grid, Paper, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
+
+// Store
 import { RootState } from 'store';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
-import { Contract } from 'model/contract';
+
+// Model
 import { StaticRoutes } from 'model/routes';
+import { MasterContractCommand } from 'model/contract';
+
+// Services
 import ContractApi from 'service/contract';
 
-import Icon from '@mdi/react';
-import { mdiCommentAlertOutline } from '@mdi/js';
-import { FieldMapperFunc, localizeErrorCodes } from 'utils/error';
-import { AxiosError } from 'axios';
-import { SimpleResponse } from 'model/response';
-import message from 'service/message';
-import { convertFromRaw, EditorState, Editor } from 'draft-js';
-
-
-const fieldMapper: FieldMapperFunc = (field: string): string | null => {
-  switch (field) {
-    case 'id':
-      return 'contract.review.field.id';
-  }
-  return null;
-};
 const styles = (theme: Theme) => createStyles({
   paper: {
     paddingLeft: '30px',
@@ -82,7 +74,7 @@ const styles = (theme: Theme) => createStyles({
     fontSize: '1rem',
     textAlign: 'left',
   },
-  suboption: {
+  subOption: {
     paddingLeft: '12px',
     fontWeight: 400,
   },
@@ -130,17 +122,13 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-interface RouteParams {
-  id?: string | undefined;
-}
-
-
-interface ContractReviewFormComponentProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps<RouteParams> {
+interface ContractReviewFormComponentProps extends PropsFromRedux, WithStyles<typeof styles> {
   intl: IntlShape;
+  contract: MasterContractCommand;
+  saveContract: () => void;
 }
 
 interface ContractReviewFormComponentState {
-  contract: Contract;
   confirm: boolean,
   confirmOnNavigate: boolean,
 }
@@ -151,83 +139,59 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
 
   constructor(props: ContractReviewFormComponentProps) {
     super(props);
+
     this.api = new ContractApi();
-    console.log(this.props);
-    //var location = this.props.history.location as any
-    //const contract = this.props.contract
-    this.state = { contract: this.props.contract!, confirm: false, confirmOnNavigate: true, };
-
-    // console.log(location.state.contract);
-  }
-  discardChanges(): void {
-    this.setState({
-      confirmOnNavigate: false,
-    }, () => this.props.history.push(StaticRoutes.ContractManager));
-  }
-
-  saveContract(): void {
-    const contract = this.state.contract;
-    
-    (contract.id === null || typeof (contract.id) === 'undefined' ? this.api.create(contract) :
-       (contract.state ==='DRAFT' ? this.api.updateDraft(contract.id!, contract): this.api.updateContract(contract.id!, contract)))
-      .then((response) => {
-        if (response.data.success) {
-          this.discardChanges();
-        } else {
-          const messages = localizeErrorCodes(this.props.intl, response.data, true, fieldMapper);
-          message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
-        }
-      })
-      .catch((err: AxiosError<SimpleResponse>) => {
-        const messages = localizeErrorCodes(this.props.intl, err.response?.data, true, fieldMapper);
-        message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
-      })
-      .finally(() => {
-      });
   }
 
   render() {
-    const contract = this.state.contract;
-    const { classes } = this.props;
+    const { classes, contract } = this.props;
+
+    if (!contract) {
+      return null;
+    }
+
     const outline = contract.sections.map(section => {
-      let type = '';
+      let type = '', sectionTitle = '';
       if (section.optional) {
         type = '(Opt.)'
       }
       else if (section.dynamic) {
-        type = '(Dyn.)'
+        type = '(Dyn.)';
       }
-      if (section.title)
-        var sectionTitle = 'Section ' + section.index + ' - ' + section.title + ' ' + type
-      else
+      if (section.title) {
+        sectionTitle = 'Section ' + section.index + ' - ' + section.title + ' ' + type
+      } else {
         sectionTitle = 'Section ' + section.index + ' ' + type
+      }
+
       return (<div key={section.id} className={classes.section} style={{ paddingLeft: section.indent }}>
         <FormattedMessage id={section.id! + 1} defaultMessage={sectionTitle} />
       </div>)
     });
-    const structure = contract.sections.map(section => {
+
+    const structure = contract.sections.map((section) => {
       let body, renderedOutput: any, icon: any;
 
       if (section.dynamic) {
         body = section.styledOptions.map((option, index) => {
-          var suboptionsArray = section.suboptions[index];
-          let suboptionBlock = [];
-          if (suboptionsArray) {
-            var length = suboptionsArray.length
+          var subOptionsArray = section.subOptions[index];
+          let subOptionBlock = [];
+          if (subOptionsArray) {
+            var length = subOptionsArray.length
           }
           else length = 0;
           if (length > 0) {
             for (let i = 0; i < length; i++) {
-              var storedSuboptionState = convertFromRaw(JSON.parse(suboptionsArray.find(o => o.id === i)!.body));
-              var suboptionBody =
-                <div className={classes.option} key={index}> <span>Suboption {String.fromCharCode(65 + i)}</span>
-                  <Editor editorState={EditorState.createWithContent(storedSuboptionState)} readOnly={true} onChange={() => { }} />
+              var storedSubOptionState = convertFromRaw(JSON.parse(subOptionsArray.find(o => o.id === i)!.body));
+              var subOptionBody =
+                <div className={classes.option} key={index}> <span>SubOption {String.fromCharCode(65 + i)}</span>
+                  <Editor editorState={EditorState.createWithContent(storedSubOptionState)} readOnly={true} onChange={() => { }} />
                 </div>;
-              suboptionBlock.push(suboptionBody);
+              subOptionBlock.push(subOptionBody);
             }
-            renderedOutput = suboptionBlock.map((item, index) => {
+            renderedOutput = subOptionBlock.map((item, index) => {
               return (
-                <div className={classes.suboption}>
+                <div className={classes.subOption}>
                   {item}
                 </div>
               )
@@ -250,7 +214,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
 
       }
       else {
-        //for empty section body dont use Editor
+        // For empty section body don't use Editor
         if (section.options[0] === "")
           body = '';
         else {
@@ -278,11 +242,11 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
             <FormattedMessage id="document.outline" defaultMessage={'Document Outline'} />
           </div>
           <div className={classes.documentTitle} >
-            <FormattedMessage id="document.outline.title" defaultMessage={this.state.contract!.title} />
+            <FormattedMessage id="document.outline.title" defaultMessage={contract.title} />
           </div><div className={classes.documentSubtitle} >
             <FormattedMessage id="document.outline.subtitle" defaultMessage="{documentSubtitle}"
               values={{
-                documentSubtitle: this.state.contract!.subtitle,
+                documentSubtitle: contract.subtitle,
               }} />
           </div>
           {outline}
@@ -299,41 +263,33 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
           </div>
           <Grid id="renderedContract" className={classes.structure}>
             <div className={classes.columnTitle} >
-              <FormattedMessage id="document.outline.title" defaultMessage={this.state.contract!.title} />
+              <FormattedMessage id="document.outline.title" defaultMessage={contract!.title} />
             </div>
             <div className={classes.contractSubtitle} >
               <FormattedMessage id="document.outline.subtitle" defaultMessage="{documentSubtitle}"
                 values={{
-                  documentSubtitle: this.state.contract!.subtitle,
+                  documentSubtitle: contract!.subtitle,
                 }} />
             </div>
             {structure}
           </Grid>
-
-
-
         </Paper>
       </Grid>
       <Button
         className={classes.save}
         variant="contained"
-        onClick={() =>
-          this.saveContract()
-        }
+        onClick={() => this.props.saveContract()}
       >
         Confirm and Save
-        </Button>
+      </Button>
     </Grid>);
-
   }
 }
-
 
 const mapState = (state: RootState) => ({
   config: state.config,
   loading: state.contract.loading,
   lastUpdated: state.contract.lastUpdated,
-  contract: state.contract.contract,
 });
 
 const mapDispatch = {
@@ -350,10 +306,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 const styledComponent = withStyles(styles)(ContractReviewFormComponent);
 
 // Inject i18n resources
-//const localizedComponent = injectIntl(styledComponent);
-
-// Inject routing 
-const routedComponent = withRouter(styledComponent);
+const localizedComponent = injectIntl(styledComponent);
 
 // Inject state
-export default connector(routedComponent);
+export default connector(localizedComponent);

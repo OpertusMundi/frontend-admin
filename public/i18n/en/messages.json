@@ -201,9 +201,29 @@
     "website": "https://www.opertusmundi.eu/"
   },
   "contract": {
+    "filter": {
+      "title": "Title"
+    },
+    "header": {
+      "actions": "Actions",
+      "modified-on": "Modified On",
+      "status": "Status",
+      "title": "Title",
+      "subtitle": "Subtitle",
+      "user": "Owner",
+      "version": "Version"
+    },
+    "last-update": "Last updated: ",
     "master": {
       "title": "Master contract editor",
       "section": "Section"
+    },
+    "tooltip": {
+      "edit": "Edit",
+      "create-version": "Create new version",
+      "delete": "Delete",
+      "deactivate": "Deactivate",
+      "publish": "Publish draft"
     }
   },
   "draft": {
@@ -266,6 +286,13 @@
       "STRUCTURE": "Structure",
       "TRANSPORTATION": "Transportation",
       "UTILITIES_COMMUNICATION": "Utilities & Communication"
+    },
+    "contract-status": {
+      "DRAFT": "Draft",
+      "HISTORY": "History Record",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "PUBLISHED": "Published"
     },
     "delivery-method": {
       "NONE": " ",

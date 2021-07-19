@@ -17,7 +17,7 @@ import {
   REMOVE_SELECTED,
   RESET_SELECTED,
   SET_SORTING,
-  ContractManagerActions,
+  ContractActions,
   ContractManagerState,
   SAVE_COMPLETE,
   SAVE_INIT,
@@ -25,20 +25,21 @@ import {
   SET_SELECTED_CONTRACT_STATE,
   SET_MODIFIED_CONTRACT
 } from 'store/contract/types';
-import { EnumSortField } from 'model/contract';
+import { EnumMasterContractSortField } from 'model/contract';
 import { Order } from 'model/response';
 
 const initialState: ContractManagerState = {
   loading: false,
   query: {
-    id: 0,
+    title: '',
+    status: [],
   },
   pagination: {
     page: 0,
     size: 10,
   },
   sorting: [{
-    id: EnumSortField.MODIFIED_ON,
+    id: EnumMasterContractSortField.MODIFIED_ON,
     order: Order.DESC,
   }],
   result: null,
@@ -52,7 +53,7 @@ const initialState: ContractManagerState = {
 
 export function contractReducer(
   state = initialState,
-  action: ContractManagerActions
+  action: ContractActions
 ): ContractManagerState {
 
   switch (action.type) {
@@ -104,7 +105,7 @@ export function contractReducer(
         sorting: action.sorting,
       };
 
-      case SEARCH_INIT:
+    case SEARCH_INIT:
       return {
         ...state,
         selected: [],
@@ -154,7 +155,7 @@ export function contractReducer(
         response: action.response,
         loading: false,
       }
-    
+
     case SET_SELECTED_CONTRACT:
       return {
         ...state,

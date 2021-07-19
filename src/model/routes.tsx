@@ -110,7 +110,7 @@ export const StaticRoutes = {
 const AccountCreate = '/helpdesk/users/record/create';
 const AccountUpdate = '/helpdesk/users/record/update/:id';
 const ContractCreate = '/contract/create';
-const ContractReview = '/contract/review';
+const ContractUpdate = '/contract/update/:id';
 const OrderTimeline = '/billing/order/:key/timeline';
 const OrderView = '/billing/order/:key';
 const MarketplaceAccountView = '/marketplace/users/record/:key';
@@ -124,7 +124,7 @@ export const DynamicRoutes = {
   AccountCreate,
   AccountUpdate,
   ContractCreate,
-  ContractReview,
+  ContractUpdate,
   MarketplaceAccountView,
   OrderTimeline,
   OrderView,
@@ -330,17 +330,17 @@ export const routes: RouteRegistry = {
     links: defaultLinks,
   },
   [ContractCreate]: {
-    description: 'Create or update a contract',
+    description: 'Create a new draft',
     title: 'links.contract.create',
     defaultTitle: 'Create master contract',
     roles: [EnumRole.ADMIN],
     links: defaultLinks,
     progressBar: true,
   },
-  [ContractReview]: {
-    description: 'Review a contract',
-    title: 'links.contract.review',
-    defaultTitle: 'Review master contract',
+  [ContractUpdate]: {
+    description: 'Update a draft',
+    title: 'links.contract.update',
+    defaultTitle: 'Update master contract',
     roles: [EnumRole.ADMIN],
     links: defaultLinks,
     progressBar: true,

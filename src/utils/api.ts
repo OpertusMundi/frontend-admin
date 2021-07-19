@@ -33,8 +33,8 @@ export class Api {
       .catch((error: AxiosError) => this.handleError(error));
   }
 
-  protected delete(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse> {
-    return this.api.delete(url, config)
+  protected delete<T>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    return this.api.delete<T>(url, config)
       .catch((error: AxiosError) => this.handleError(error));
   }
 

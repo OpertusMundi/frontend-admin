@@ -1,10 +1,19 @@
 import React from 'react';
 
+import { AxiosError } from 'axios';
+
 // Localization
 import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
 import Button from '@material-ui/core/Button';
+
+// Icons
+import Icon from '@mdi/react';
+import { mdiTrashCan, mdiUndoVariant, mdiCommentAlertOutline } from '@mdi/js';
+
+// Components
+import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
 
 // Styles
 import { createStyles, Grid, WithStyles } from '@material-ui/core';
@@ -16,23 +25,20 @@ import { connect, ConnectedProps } from 'react-redux';
 
 // Store
 import { RootState } from 'store';
+import { setSelectedContract } from 'store/contract/actions';
+import { find } from 'store/contract/thunks';
 
-// Model
-import { DynamicRoutes, StaticRoutes } from 'model/routes';
+// Services
 import ContractApi from 'service/contract';
 import message from 'service/message';
-import { Contract } from 'model/contract';
+
+// Model
+import { buildPath, DynamicRoutes, StaticRoutes } from 'model/routes';
+import { PageRequest, Sorting, SimpleResponse } from 'model/response';
+import { EnumContractStatus, EnumMasterContractSortField, MasterContract, MasterContractHistory } from 'model/contract';
+
+// Utilities
 import { localizeErrorCodes } from 'utils/error';
-
-import Icon from '@mdi/react';
-import { mdiTrashCan, mdiUndoVariant, mdiCommentAlertOutline } from '@mdi/js';
-import { AxiosError } from 'axios';
-import { SimpleResponse } from 'model/response';
-
-import { setSelectedContract } from 'store/contract/actions';
-
-import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
-
 
 const styles = (theme: Theme) => createStyles({
   paper: {
@@ -104,10 +110,8 @@ interface ContractListComponentProps extends PropsFromRedux, WithStyles<typeof s
 interface ContractListComponentState {
   confirm: boolean,
   confirmOnNavigate: boolean,
-  contracts: Contract[] | null;
-  contractForDelete?: number;
+  record: MasterContractHistory | null
 }
-
 
 class ContractListComponent extends React.Component<ContractListComponentProps, ContractListComponentState> {
 
@@ -115,93 +119,36 @@ class ContractListComponent extends React.Component<ContractListComponentProps, 
 
   constructor(props: ContractListComponentProps) {
     super(props);
-    //var contracts = null
+
     this.api = new ContractApi();
 
-    //console.log('contracts', contracts);
-    this.state = { contracts: [], confirm: false, confirmOnNavigate: true };
-
-
+    this.state = {
+      confirm: false,
+      confirmOnNavigate: true,
+      record: null,
+    };
   }
 
   componentDidMount() {
-    this.getAllContracts();
+    this.find();
   }
 
-  getAllContracts(): void {
-    this.api.getContracts()
-    .then((response) => {
-      if (response.data.success) {
-        //this.discardChanges();
-        const contracts = response.data.result!;
-        this.setState({ contracts: contracts, confirm: false, confirmOnNavigate: true });
-        return contracts;
-      } else {
-        const messages = localizeErrorCodes(this.props.intl, response.data, true);
-        message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
-      }
-    })
-    
-    .catch((err: AxiosError<SimpleResponse>) => {
-      const messages = localizeErrorCodes(this.props.intl, err.response?.data, true);
-      message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
-    })
-    .finally(() => {
-      this.api.getDrafts()
-        .then((response) => {
-          if (response.data.success) {
-            const contracts = response.data.result!;
-            this.setState({ contracts: this.state.contracts!.concat(contracts), confirm: false, confirmOnNavigate: true });
-            return contracts;
-          } else {
-            const messages = localizeErrorCodes(this.props.intl, response.data, true);
-            message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
-          }
-        })
-
-        .catch((err: AxiosError<SimpleResponse>) => {
-          const messages = localizeErrorCodes(this.props.intl, err.response?.data, true);
+  find(): void {
+    this.props.find()
+      .then((response) => {
+        if (response && !response.success) {
+          const messages = localizeErrorCodes(this.props.intl, response, true);
           message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
-        })
-    });
-
+        }
+      });
   }
 
-  discardChanges(): void {
-    this.setState({
-      confirmOnNavigate: false,
-    }, () => this.props.history.push(StaticRoutes.ContractManager));
-  }
-
-  updateState(contractId: number, state: string) {
-    this.api.updateState(contractId, state).then((response) => {
-      if (response.data.success) {
-        this.getAllContracts()
-      } else {
-        const messages = localizeErrorCodes(this.props.intl, response.data, true);
-        message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
-      }
-    })
-    .catch((err: AxiosError<SimpleResponse>) => {
-      const messages = localizeErrorCodes(this.props.intl, err.response?.data, true);
-      message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
-    })
-    .finally(() => {
-    });
-  }
-
-  deleteContract() {
-    var contracts = this.state.contracts!;
-    const contractId = this.state.contractForDelete!;
-    var state = this.state.contracts?.find(c => c.id == contractId)?.state;
-    (state === 'DRAFT' ? this.api.removeDraft(contractId) : this.api.remove(contractId))
+  createDraftFromTemplate(contract: MasterContractHistory) {
+    this.api.createDraftFromTemplate(contract.id)
       .then((response) => {
         if (response.data.success) {
-          //this.discardChanges();
-          contracts = contracts.filter((contract) => {
-            return (contract.id !== contractId);
-          });
-          this.setState({ contracts: contracts, confirm: false, confirmOnNavigate: true });
+          const url = buildPath(DynamicRoutes.ContractUpdate, [response.data.result!.id.toString()]);
+          this.props.history.push(url);
         } else {
           const messages = localizeErrorCodes(this.props.intl, response.data, true);
           message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
@@ -210,52 +157,99 @@ class ContractListComponent extends React.Component<ContractListComponentProps, 
       .catch((err: AxiosError<SimpleResponse>) => {
         const messages = localizeErrorCodes(this.props.intl, err.response?.data, true);
         message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
-      })
-      .finally(() => {
-      })
+      });
   }
 
-  onNavigate(e: React.MouseEvent | null, url: string, contract: Contract | null) {
+  publishDraft(contract: MasterContractHistory) {
+    this.api.publishDraft(contract.id)
+      .then((response) => {
+        if (response.data.success) {
+          return this.find();
+        } else {
+          const messages = localizeErrorCodes(this.props.intl, response.data, true);
+          message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+        }
+      })
+      .catch((err: AxiosError<SimpleResponse>) => {
+        const messages = localizeErrorCodes(this.props.intl, err.response?.data, true);
+        message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+      });
+  }
+
+  deactivateTemplate(contract: MasterContractHistory) {
+    this.api.deactivateTemplate(contract.id)
+      .then((response) => {
+        if (response.data.success) {
+          return this.find();
+        } else {
+          const messages = localizeErrorCodes(this.props.intl, response.data, true);
+          message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+        }
+      })
+      .catch((err: AxiosError<SimpleResponse>) => {
+        const messages = localizeErrorCodes(this.props.intl, err.response?.data, true);
+        message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+      });
+  }
+
+  deleteDraft() {
+    const { record = null } = this.state;
+    if (record == null) {
+      return;
+    }
+    this.api.deleteDraft(record.id)
+      .then((response) => {
+        if (response.data.success) {
+          this.setState({
+            confirm: false,
+            record: null,
+          });
+
+          return this.find();
+        } else {
+          const messages = localizeErrorCodes(this.props.intl, response.data, true);
+          message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+        }
+      })
+      .catch((err: AxiosError<SimpleResponse>) => {
+        const messages = localizeErrorCodes(this.props.intl, err.response?.data, true);
+        message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+      });
+  }
+
+  onNavigate(e: React.MouseEvent | null, url: string) {
     if (e) {
       e.preventDefault();
     }
 
-    if (contract) {
-      this.props.setSelectedContract(contract);
-    }
-    else {
-      this.props.setSelectedContract(null);
-    }
-    //state = { id: id }
-    this.props.history.push({
-      pathname: url,
-    })
-    //this.props.history.push(url);
+    this.props.history.push(url);
   }
 
-  showConfirmDialog(contractId: number): void {
+  showConfirmDialog(record: MasterContractHistory): void {
     this.setState({
       confirm: true,
-      contractForDelete: contractId
+      record,
     });
   }
 
   hideConfirmDialog(): void {
     this.setState({
       confirm: false,
+      record: null,
     });
   }
 
   confirmDialogHandler(action: DialogAction): void {
     switch (action.key) {
       case EnumDialogAction.Yes:
-        this.deleteContract();
+        this.deleteDraft();
         break;
       default:
         this.hideConfirmDialog();
         break;
     }
   }
+
   renderConfirm() {
     const _t = this.props.intl.formatMessage;
 
@@ -289,85 +283,98 @@ class ContractListComponent extends React.Component<ContractListComponentProps, 
         }
         open={confirm}
       >
-        <FormattedMessage id="view.shared.message.delete-contract" defaultMessage='Are you sure you want to delete this contract?' />
+        <FormattedMessage id="view.shared.message.delete-contract" defaultMessage='Are you sure you want to delete this draft?' />
       </Dialog>
     );
   }
+
   render() {
-    const { classes } = this.props;
-    const contracts = this.state.contracts;
-    let list;
-    if (contracts) {
-      list = contracts.map((contract, index) => {
-        let publish;
-        if (contract.state === 'DRAFT') {
-          publish =
-            <Button
-              type="submit"
-              variant="contained"
-              className={classes.editBtn}
-              onClick={() => this.updateState(contract.id!, 'PUBLISHED')}
-            >
-              <FormattedMessage id="view.shared.action.delete" defaultMessage="Publish" />
-            </Button>;
-        }
-        else {
-          publish =
-            <Button
-              type="submit"
-              variant="contained"
-              className={classes.editBtn}
-              onClick={() => this.updateState(contract.id!, 'DRAFT')}
-            >
-              <FormattedMessage id="view.shared.action.delete" defaultMessage="Unpublish" />
-            </Button>;
-        }
-        return (
-          <Grid className={classes.contract}>
-            <div className={classes.contractInner} ><h3 className={classes.contractTitle}>{contract.title}</h3>
-              <div className={classes.state}>
-                <FormattedMessage id="view.shared.state" defaultMessage={capitalize(contract.state)} />
-              </div>
-              <div className={classes.date}>
-                <FormattedMessage id="view.shared.modified_at" defaultMessage={"Last modified: " + contract.modifiedAt?.format('DD-MM-YYYY')} />
-              </div>
-              <div className={classes.btnControl}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  className={classes.editBtn}
-                  onClick={(e) => this.onNavigate(e, DynamicRoutes.ContractCreate, contract)}
-                >
-                  <FormattedMessage id="view.shared.action.edit" defaultMessage="Edit" />
-                </Button>
+    const { classes, result } = this.props;
 
-                {publish}
+    const items = result ? result.items : [];
 
-                <Button
-                  type="submit"
-                  variant="contained"
-                  className={classes.editBtn}
-                  //onClick={(e) => this.deleteContract(contract.id!)}
-                  onClick={() => this.showConfirmDialog(contract.id!)}
-                >
-                  <FormattedMessage id="view.shared.action.delete" defaultMessage="Delete" />
-                </Button>
-              </div>
-            </div>
-          </Grid>)
-      })
+    const contracts = items.map((contract, index) => (
+      <Grid key={`contract-${index}`} className={classes.contract}>
+        <div className={classes.contractInner} ><h3 className={classes.contractTitle}>{contract.title}</h3>
+          <div className={classes.state}>
+            <FormattedMessage id="view.shared.state" defaultMessage={contract.status} />
+          </div>
+          <div className={classes.date}>
+            <FormattedMessage id="view.shared.modified_at" defaultMessage={"Last modified: " + contract.modifiedAt?.format('DD-MM-YYYY')} />
+          </div>
+          <div className={classes.btnControl}>
+            {contract.status === EnumContractStatus.DRAFT &&
+              <Button
+                type="button"
+                variant="contained"
+                className={classes.editBtn}
+                onClick={(e) => this.onNavigate(e, buildPath(DynamicRoutes.ContractUpdate, [contract.id.toString()]))}
+              >
+                <FormattedMessage id="view.shared.action.edit" defaultMessage="Edit" />
+              </Button>
+            }
 
-    }
+            {contract.status !== EnumContractStatus.DRAFT &&
+              <Button
+                type="button"
+                variant="contained"
+                className={classes.editBtn}
+                onClick={() => this.createDraftFromTemplate(contract)}
+              >
+                <FormattedMessage id="view.shared.action.new-version" defaultMessage="New version" />
+              </Button>
+            }
+
+            {contract.status === EnumContractStatus.DRAFT &&
+              <Button
+                type="button"
+                variant="contained"
+                className={classes.editBtn}
+                onClick={() => this.publishDraft(contract)}
+              >
+                <FormattedMessage id="view.shared.action.publish" defaultMessage="Publish" />
+              </Button>
+            }
+
+            {contract.status === EnumContractStatus.DRAFT &&
+              <Button
+                type="button"
+                variant="contained"
+                className={classes.editBtn}
+                onClick={() => this.showConfirmDialog(contract)}
+              >
+                <FormattedMessage id="view.shared.action.delete" defaultMessage="Delete" />
+              </Button>
+            }
+
+            {contract.status === EnumContractStatus.ACTIVE &&
+              <Button
+                type="submit"
+                variant="contained"
+                className={classes.editBtn}
+                onClick={() => this.deactivateTemplate(contract)}
+              >
+                <FormattedMessage id="view.shared.action.disable" defaultMessage="Disable" />
+              </Button>
+            }
+          </div>
+        </div>
+      </Grid>
+    ));
+
     return (
-      <div >
+      <div>
         <h2 className={classes.heading}> Master contracts </h2>
         <Button className={classes.createBtn}
           type="submit"
-          variant="contained" onClick={(e) => this.onNavigate(e, DynamicRoutes.ContractCreate, null)}>
-          New Master Contract</Button>
-        {list}
-        { this.renderConfirm()}
-      </div>
+          variant="contained"
+          onClick={(e) => this.onNavigate(e, DynamicRoutes.ContractCreate)}
+        >
+          New Master Contract
+        </Button>
+        {contracts}
+        {this.renderConfirm()}
+      </div >
     );
   }
 
@@ -375,12 +382,13 @@ class ContractListComponent extends React.Component<ContractListComponentProps, 
 
 const mapState = (state: RootState) => ({
   config: state.config,
-  loading: state.contract.loading,
   lastUpdated: state.contract.lastUpdated,
-  contractId: state.contract.contractId,
+  loading: state.contract.loading,
+  result: state.contract.result,
 });
 
 const mapDispatch = {
+  find: (pageRequest?: PageRequest, sorting?: Sorting<EnumMasterContractSortField>[]) => find(pageRequest, sorting),
   setSelectedContract,
 };
 
@@ -391,24 +399,11 @@ const connector = connect(
 
 type PropsFromRedux = ConnectedProps<typeof connector>
 
-
 // Apply styles
 const styledComponent = withStyles(styles)(ContractListComponent);
 
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);
 
-
 // Export localized component
 export default connector(localizedComponent);
-
-/*function customizer(value:any) {
-  if (moment.isMoment(value)) {
-    return moment(value);
-  }
-}*/
-
-export function capitalize(str: string): string {
-  str = str.toLowerCase();
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}

@@ -37,6 +37,14 @@ export interface HelpdeskAccount extends HelpdeskAccountBase {
   modifiedOn: Moment | null;
 }
 
+export interface SimpleHelpdeskAccount {
+  id: number;
+  key: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
 export interface HelpdeskAccountFormData {
   account: HelpdeskAccount;
 }

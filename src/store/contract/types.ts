@@ -1,20 +1,20 @@
 import { Moment } from 'moment';
 
 import { LogoutInitAction } from 'store/security/types';
-import { PageResult, PageRequest, Sorting, ObjectResponse } from 'model/response';
-import { Contract, ContractQuery, EnumSortField } from 'model/contract';
+import { PageResult, PageRequest, Sorting, ObjectResponse, SimpleResponse } from 'model/response';
+import { MasterContract, MasterContractQuery, EnumMasterContractSortField, MasterContractHistory } from 'model/contract';
 
 // State
 export interface ContractManagerState {
   loading: boolean;
   lastUpdated: Moment | null;
   pagination: PageRequest;
-  query: ContractQuery;
-  result: PageResult<Contract> | null;
-  selected: Contract[];
-  sorting: Sorting<EnumSortField>[];
-  response: ObjectResponse<Contract> | null;
-  contract: Contract | null;
+  query: MasterContractQuery;
+  result: PageResult<MasterContractHistory> | null;
+  selected: MasterContractHistory[];
+  sorting: Sorting<EnumMasterContractSortField>[];
+  response: ObjectResponse<MasterContract> | null;
+  contract: MasterContract | null;
   contractId: number | null;
   state: string | null;
 }
@@ -29,6 +29,7 @@ export const SET_FILTER = 'contract/explorer/SET_FILTER';
 export const RESET_FILTER = 'contract/explorer/RESET_FILTER';
 
 export const SEARCH_INIT = 'contract/explorer/SEARCH_INIT';
+export const SEARCH_FAILURE = 'contract/explorer/SEARCH_FAILURE';
 export const SEARCH_COMPLETE = 'contract/explorer/SEARCH_COMPLETE';
 
 export const SAVE_INIT = 'contract/explorer/SAVE_INIT';
@@ -54,12 +55,12 @@ export interface ResetPagerAction {
 
 export interface SetSortingAction {
   type: typeof SET_SORTING;
-  sorting: Sorting<EnumSortField>[];
+  sorting: Sorting<EnumMasterContractSortField>[];
 }
 
 export interface SetFilterAction {
   type: typeof SET_FILTER;
-  query: Partial<ContractQuery>;
+  query: Partial<MasterContractQuery>;
 }
 
 export interface ResetFilterAction {
@@ -70,9 +71,14 @@ export interface SearchInitAction {
   type: typeof SEARCH_INIT;
 }
 
+export interface SearchFailureAction {
+  type: typeof SEARCH_FAILURE;
+  response: SimpleResponse;
+}
+
 export interface SearchCompleteAction {
   type: typeof SEARCH_COMPLETE;
-  result: PageResult<Contract>;
+  result: PageResult<MasterContractHistory>;
 }
 
 export interface SaveInitAction {
@@ -81,17 +87,17 @@ export interface SaveInitAction {
 
 export interface SaveCompleteAction {
   type: typeof SAVE_COMPLETE;
-  response: ObjectResponse<Contract>;
+  response: ObjectResponse<MasterContract>;
 }
 
 export interface SetSelectedAction {
   type: typeof ADD_SELECTED;
-  selected: Contract[];
+  selected: MasterContractHistory[];
 }
 
 export interface RemoveFromSelectionAction {
   type: typeof REMOVE_SELECTED;
-  removed: Contract[];
+  removed: MasterContractHistory[];
 }
 
 export interface ResetSelectionAction {
@@ -100,7 +106,7 @@ export interface ResetSelectionAction {
 
 export interface SetSelectedContractAction {
   type: typeof SET_SELECTED_CONTRACT;
-  contract: Contract | null;
+  contract: MasterContractHistory | null;
 }
 
 export interface SetSelectedContractStateAction {
@@ -110,11 +116,11 @@ export interface SetSelectedContractStateAction {
 
 export interface SetModifiedContractAction {
   type: typeof SET_MODIFIED_CONTRACT;
-  contract: Contract;
+  contract: MasterContract;
 }
 
 
-export type ContractManagerActions =
+export type ContractActions =
   | LogoutInitAction
   | SetPagerAction
   | ResetPagerAction
@@ -122,6 +128,7 @@ export type ContractManagerActions =
   | SetFilterAction
   | ResetFilterAction
   | SearchInitAction
+  | SearchFailureAction
   | SearchCompleteAction
   | SetSelectedAction
   | RemoveFromSelectionAction

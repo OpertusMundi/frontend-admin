@@ -12,14 +12,14 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import IconButton from '@material-ui/core/IconButton';
-
-// Custom components
 import FormatIndentDecreaseIcon from '@material-ui/icons/FormatIndentDecrease';
 import FormatIndentIncreaseIcon from '@material-ui/icons/FormatIndentIncrease';
-import { Section } from 'model/section';
-import {Editor, EditorState, convertFromRaw, ContentState, ContentBlock} from 'draft-js';
 
-//import VariableSectionComponent from 'components/contract/form/variable-section'
+// Components
+import { Editor, EditorState, convertFromRaw, ContentState, ContentBlock } from 'draft-js';
+
+// Model
+import { Section } from 'model/contract';
 
 const styles = (theme: Theme) => createStyles({
   card: {
@@ -39,21 +39,15 @@ const styles = (theme: Theme) => createStyles({
     borderStyle: 'dashed',
     padding: '8px',
   },
-  suboption: {
-    //borderWidth: '0.5px',
-    //borderStyle: 'dashed',
+  subOption: {
     padding: '12px',
   }
 });
-
-
-
 
 interface SectionComponentProps extends WithStyles<typeof styles>, Section {
   intl: IntlShape;
   editSection: (item: any) => void;
 }
-
 
 interface SectionComponentState extends Section {
 }
@@ -62,15 +56,24 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
 
   constructor(props: SectionComponentProps) {
     super(props);
+
     this.state = {
-      id: this.props.id, index: this.props.index, indent: this.props.indent, title: this.props.title,
-      summary: this.props.summary, options: this.props.options, styledOptions: this.props.styledOptions, 
-      suboptions: this.props.suboptions, variable: this.props.variable,
-      optional: this.props.optional, dynamic: this.props.dynamic, descriptionOfChange: this.props.descriptionOfChange
+      id: this.props.id,
+      index: this.props.index,
+      indent: this.props.indent,
+      title: this.props.title,
+      summary: this.props.summary,
+      options: this.props.options,
+      styledOptions: this.props.styledOptions,
+      subOptions: this.props.subOptions,
+      variable: this.props.variable,
+      optional: this.props.optional,
+      dynamic: this.props.dynamic,
+      descriptionOfChange: this.props.descriptionOfChange
     };
   }
 
-  truncate(contentState: ContentState, charCount:number) {
+  truncate(contentState: ContentState, charCount: number) {
     const blocks = contentState.getBlockMap();
 
     let count = 0;
@@ -100,92 +103,100 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
   }
 
   render() {
-    //const _t = this.props.intl.formatMessage;
-
     const { classes } = this.props;
 
-    // eslint-disable-next-line
-    const { id, index, indent, title, optional, variable, dynamic, options, styledOptions, suboptions } = this.props;
+    const { id, index, indent, title, optional, variable, dynamic, options, styledOptions, subOptions } = this.props;
+
     let increaseIndent, decreaseIndent;
     if (id! > 0) {
-      increaseIndent = <IconButton onClick={() =>
-        this.props.editSection({ id: id!, indent: indent < 64 ? indent + 8 : indent })
-      }>
-        <FormatIndentIncreaseIcon />
-      </IconButton>
-      decreaseIndent =
+      increaseIndent = (
+        <IconButton onClick={() =>
+          this.props.editSection({ id: id!, indent: indent < 64 ? indent + 8 : indent })
+        }>
+          <FormatIndentIncreaseIcon />
+        </IconButton>
+      );
+      decreaseIndent = (
         <IconButton onClick={() =>
           this.props.editSection({ id: id!, indent: indent > 0 ? indent - 8 : indent })
         }>
           <FormatIndentDecreaseIcon />
         </IconButton>
+      );
     }
     var type = 'Section ';
     if (index.includes('.')) {
       type = 'Sub-section ';
     }
-    if (title)
-      var sectionTitle= type + index + ' - ' + title
-    else
-      sectionTitle= type + index
+    if (title) {
+      var sectionTitle = type + index + ' - ' + title
+    } else {
+      sectionTitle = type + index;
+    }
     let body, truncated = styledOptions[0];
     var defaultState = convertFromRaw(JSON.parse(truncated));
     defaultState = this.truncate(defaultState, 70)
     if (variable) {
       body = styledOptions.map((option, index) => {
-        var storedState =  convertFromRaw(JSON.parse(option));
+        var storedState = convertFromRaw(JSON.parse(option));
         storedState = this.truncate(storedState, 70);
-        /*if (storedState.getPlainText.length > 150)
-          truncated = option.substring(0, 150) + '...';
-        else
-          truncated = option;*/
-        var suboptionsArray = this.state.suboptions[index];
-        let suboptionBlock=[];
-        if (suboptionsArray){
-          var length = suboptionsArray.length
+
+        var subOptionsArray = this.state.subOptions[index];
+        let subOptionBlock = [];
+        if (subOptionsArray) {
+          var length = subOptionsArray.length
         }
-        else 
+        else {
           length = 0;
+        }
         if (length > 0) {
           for (let i = 0; i < length; i++) {
-            
-            var storedSuboptionState = convertFromRaw(JSON.parse(suboptionsArray[i].body));
-            storedSuboptionState = this.truncate(storedSuboptionState, 70);
-            var suboptionBody =
-              <div className={classes.option} key={index}> <span>Suboption {String.fromCharCode(65 + i)}</span>
-                <Editor editorState={EditorState.createWithContent(storedSuboptionState)} readOnly={true} onChange={() => { }} />
-              </div>;
-            suboptionBlock.push(suboptionBody);
+
+            var storedSubOptionState = convertFromRaw(JSON.parse(subOptionsArray[i].body));
+            storedSubOptionState = this.truncate(storedSubOptionState, 70);
+            const subOptionBody = (
+              <div className={classes.option} key={`editor-${index}-${i}`}>
+                <span>
+                  SubOption {String.fromCharCode(65 + i)}
+                </span>
+                <Editor editorState={EditorState.createWithContent(storedSubOptionState)} readOnly={true} onChange={() => { }} />
+              </div>
+            );
+            subOptionBlock.push(subOptionBody);
           }
-          var renderedOutput = suboptionBlock.map((item, index) => {
+          var renderedOutput = subOptionBlock.map((item, index) => {
             return (
-              <div className={classes.suboption}>
+              <div key={`sub-option-block-${index}`} className={classes.subOption}>
                 {item}
               </div>
             )
           });
-        }
-        else {
+        } else {
           renderedOutput = [];
         }
         let optionHeading;
-        if (options.length > 1)
-          optionHeading =  <span>Option {String.fromCharCode(65 + index)}</span>
-        
+        if (options.length > 1) {
+          optionHeading = (
+            <span>Option {String.fromCharCode(65 + index)}</span>
+          );
+        }
 
-        return <div><div className={classes.option} key={index}> {optionHeading}
-        <Editor editorState= {EditorState.createWithContent(storedState)} readOnly={true} onChange={() => {}}/> 
-        </div>
-        {renderedOutput}
-        </div>;
+        return (
+          <div key={`styled-options-${index}`}>
+            <div className={classes.option} key={index}>
+              {optionHeading}
+              <Editor editorState={EditorState.createWithContent(storedState)} readOnly={true} onChange={() => { }} />
+            </div>
+            {renderedOutput}
+          </div>
+        );
       });
+    } else {
+      body = (
+        <Editor editorState={EditorState.createWithContent(defaultState)} readOnly={true} onChange={() => { }} />
+      );
     }
-    else {
-       body = <Editor editorState= {EditorState.createWithContent(defaultState)} readOnly={true} onChange={() => {}}/>
-      /*if (options[0].length > 150)
-        truncated = options[0].substring(0, 150) + '...';
-        body = <div>{truncated}</div>*/
-    }
+
     return (
       <Card className={classes.card}>
         <CardHeader
@@ -198,8 +209,8 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
           title={sectionTitle}
         />
         <CardContent className={classes.text}>
-          <div style={{ paddingLeft: indent }}> {body}
-
+          <div style={{ paddingLeft: indent }}>
+            {body}
           </div>
         </CardContent>
       </Card>
