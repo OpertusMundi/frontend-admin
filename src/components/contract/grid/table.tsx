@@ -177,9 +177,12 @@ function contractColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
       cell: (
         rowIndex: number, column: Column<MasterContractHistory, EnumMasterContractSortField>, row: MasterContractHistory, handleAction?: cellActionHandler<MasterContractHistory, EnumMasterContractSortField>
       ): React.ReactNode => (
-        <Link to={buildPath(DynamicRoutes.ContractUpdate, [row.id + ''])} className={classes.classes.link}>
-          {row.title}
-        </Link>
+        row.status === EnumContractStatus.DRAFT ?
+          <Link to={buildPath(DynamicRoutes.ContractUpdate, [row.id + ''])} className={classes.classes.link}>
+            {row.title}
+          </Link>
+          :
+          <span>{row.title}</span>
       ),
     }, {
       header: intl.formatMessage({ id: 'contract.header.subtitle' }),
