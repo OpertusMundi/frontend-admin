@@ -75,6 +75,7 @@ const styles = (theme: Theme) => createStyles({
     textAlign: 'left',
   },
   subOption: {
+    marginTop: '8px',
     paddingLeft: '12px',
     fontWeight: 400,
   },
@@ -88,6 +89,10 @@ const styles = (theme: Theme) => createStyles({
   option: {
     fontWeight: 500,
     marginRight: '5px',
+    marginBottom: '10px',
+  },
+  optionBlock: {
+    marginBottom: '10px',
   },
   save: {
     backgroundColor: '#190AFF',
@@ -119,6 +124,7 @@ const styles = (theme: Theme) => createStyles({
   logoImage: {
     width: '30px',
     verticalAlign: 'middle',
+    marginBottom: '10px',
   },
 });
 
@@ -170,14 +176,14 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
     });
 
     const structure = contract.sections.map((section) => {
-      let body, renderedOutput: any, icon: any;
+      let body, renderedSuboptions: any, icon: any, length = 0;
 
       if (section.dynamic) {
         body = section.styledOptions.map((option, index) => {
           var subOptionsArray = section.subOptions[index];
           let subOptionBlock = [];
           if (subOptionsArray) {
-            var length = subOptionsArray.length
+            length = subOptionsArray.length
           }
           else length = 0;
           if (length > 0) {
@@ -189,7 +195,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
                 </div>;
               subOptionBlock.push(subOptionBody);
             }
-            renderedOutput = subOptionBlock.map((item, index) => {
+            renderedSuboptions = subOptionBlock.map((item, index) => {
               return (
                 <div className={classes.subOption}>
                   {item}
@@ -202,12 +208,11 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
             icon = <img className={classes.logoImage} src={"/icons/" + section.icons![index]} alt="" />
 
           return (
-            <div key={index}> <span className={classes.option} >Option {String.fromCharCode(65 + index)}</span>
+            <div className={classes.optionBlock} key={index}> <span className={classes.option} >Option {String.fromCharCode(65 + index)}</span>
 
-              {icon}
               <p>{section.summary![index]}</p>
               <Editor editorState={EditorState.createWithContent(convertFromRaw(JSON.parse(option)))} readOnly={true} onChange={() => { }} />
-              {renderedOutput}
+              {renderedSuboptions}
             </div>
           )
         });
@@ -219,19 +224,45 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
           body = '';
         else {
           let option = EditorState.createWithContent(convertFromRaw(JSON.parse(section.styledOptions[0])));
+          var subOptionsArray = section.subOptions[0];
+          let subOptionBlock = [];
+          if (subOptionsArray) {
+            length = subOptionsArray.length
+          }
+          else length = 0;
+          if (length > 0) {
+            for (let i = 0; i < length; i++) {
+              var storedSubOptionState = convertFromRaw(JSON.parse(subOptionsArray.find(o => o.id === i)!.body));
+              var subOptionBody =
+                <div className={classes.option}> <span>SubOption {String.fromCharCode(65 + i)}</span>
+                  <Editor editorState={EditorState.createWithContent(storedSubOptionState)} readOnly={true} onChange={() => { }} />
+                </div>;
+              subOptionBlock.push(subOptionBody);
+            }
+            renderedSuboptions = subOptionBlock.map((item, index) => {
+              return (
+                <div className={classes.subOption}>
+                  {item}
+                </div>
+              )
+            });
+          }
           if (section.icons![0])
             icon = <img className={classes.logoImage} src={"/icons/" + section.icons![0]} alt="" />
-          body = <div>
-            {icon}
+          body = <div   className={classes.optionBlock}>
             <p>{section.summary![0]}</p>
-            <Editor editorState={option} readOnly={true} onChange={() => { }} /> </div>;
+            <Editor editorState={option} readOnly={true} onChange={() => { }} />
+            {renderedSuboptions} </div>;
         }
       }
       return (<div>
         <div key={section.id} className={classes.section && classes.columnTitle}>
           <FormattedMessage id={section.id! + 1} defaultMessage={'Section ' + section.index + ' - ' + section.title} />
         </div>
-        <div>{body}</div>
+        <div>
+              {icon}
+              {body}
+        </div>
       </div>
       )
     });
