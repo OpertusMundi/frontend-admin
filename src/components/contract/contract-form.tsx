@@ -273,7 +273,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     const lastSection = sections.slice(-1)[0];
 
     if (lastSection) {
-      section.index = this.getCurrentIndex(sections.length, 0);
+      section.index = this.getCurrentIndex(sections, sections.length, 0);
     } else {
       section.index = '1';
     }
@@ -282,7 +282,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         ...state.contract,
         sections: [...state.contract.sections, {
           ...defaultSection, options: [...defaultOptions], ...section, styledOptions: [...defaultStyledOptions], ...section,
-          summary: [...[""]], ...section, icons: [...[""]], ...section
+          subOptions: {}, ...section, summary: [...[""]], ...section, icons: [...[""]], ...section
         },]
       }
     }));
@@ -294,7 +294,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     if (!this.state.displayToolbarActions) {
       return;
     }
-
+    
     var sections = [...contract.sections]
     var index = sections.find(s => s.id === id)!.index;
     sections = sections.filter((section) => {
@@ -304,7 +304,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     this.setState((state) => ({
       contract: {
         ...state.contract,
-        sections: this.sortSections(sections, index),
+        sections: this.sortSections(sections),
       },
     }));
   }
@@ -323,16 +323,16 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         var lastIndex = lastSection.index + '.1'
         section.index = '' + lastIndex;
       } else if (section.indent === lastSection.indent) {
-        section.index = this.getCurrentIndex(id, section.indent!);
+        section.index = this.getCurrentIndex(sections, id, section.indent!);
       } else if (section.indent === lastSection.indent - 8) {
-        section.index = this.getCurrentIndex(id, section.indent!);
+        section.index = this.getCurrentIndex(sections, id, section.indent!);
       } else if ((section.indent!) <= lastSection.indent - 16) {
-        section.index = this.getCurrentIndex(id, section.indent!);
+        section.index = this.getCurrentIndex(sections, id, section.indent!);
       } else {
         return;
       }
       sections[id].indent = section.indent!;
-      sections = this.sortSections(sections, section.index);
+      sections = this.sortSections(sections);
       sections[id] = { ...sections[id], ...section };
       this.setState((state) => ({
         contract: {
@@ -379,9 +379,8 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     }));
   }
 
-  getCurrentIndex(id: number, indent: number): string {
+  getCurrentIndex(sections: Section[], id: number, indent: number): string {
     const { contract } = this.state;
-    const sections = contract?.sections || [];
 
     let index = '-1';
     for (let i = id - 1; i >= 0; i--) {
@@ -412,9 +411,9 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     return index
   }
 
-  sortSections(sections: Section[], index: String): Section[] {
+  sortSections(sections: Section[]): Section[] {
     for (let i = 1; i < sections.length; i++) {
-      sections[i].index = this.getCurrentIndex(i, sections[i].indent);
+      sections[i].index = this.getCurrentIndex(sections, i, sections[i].indent);
     }
     return sections;
   }
