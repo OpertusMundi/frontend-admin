@@ -11,6 +11,10 @@ import {
   EnumMasterContractSortField
 } from 'model/contract';
 
+import { convertFromRaw} from 'draft-js';
+
+import {stateToHTML} from 'draft-js-export-html';
+
 export default class ContractApi extends Api {
 
   constructor(config: AxiosRequestConfig = {}) {
@@ -105,13 +109,31 @@ export default class ContractApi extends Api {
 
   public async createDraft(command: MasterContractCommand): Promise<AxiosObjectResponse<MasterContract>> {
     const url = `/action/contract/drafts`;
+    let sections = command.sections;
+
+    // Add html content to sections
 
     return this.post<MasterContractCommand, ObjectResponse<MasterContract>>(url, command);
   }
 
   public async updateDraft(id: number, command: MasterContractCommand): Promise<AxiosObjectResponse<MasterContract>> {
     const url = `/action/contract/drafts/${id}`;
+    let sections = command.sections;
 
+    /*for (var i = 0; i < sections.length; i++) {
+
+      let options = sections[i].options;
+      if (sections[i].subOptions[0]){
+        let suboptions = sections[i].subOptions[0];
+        console.log('suboption ' + suboptions[0].id + typeof suboptions[0].id)
+      }
+      //for (var j = 0; i < options.length; i++) {
+        //let raw = options[j].body;
+        //let contentState = convertFromRaw(JSON.parse(raw));
+        //sections[i].options[j].bodyHtml = stateToHTML(contentState);
+     // }
+
+    }*/
     return this.post<MasterContractCommand, ObjectResponse<MasterContract>>(url, command);
   }
 

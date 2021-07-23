@@ -36,17 +36,22 @@ export interface Section {
   variable: boolean;
   optional: boolean;
   dynamic: boolean;
-  options: string[];
-  styledOptions: string[];
-  subOptions: { [key: number]: SubOption[] }
-  summary?: string[];
-  icons?: string[];
+  options: Option[];
   descriptionOfChange: string;
 }
 
-export interface SubOption {
-  id: number;
+export interface Option {
   body: string;
+  bodyHtml?: string;
+  subOptions?: SubOption[];
+  summary?: string;
+  icon?: string;
+
+}
+
+export interface SubOption {
+  body: string;
+  bodyHtml: string;
 }
 
 export interface MasterContractCommand {

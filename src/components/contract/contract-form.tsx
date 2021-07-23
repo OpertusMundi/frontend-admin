@@ -43,6 +43,8 @@ import { FieldMapperFunc } from 'utils/error';
 
 import { setSelectedContract, setModifiedContract } from 'store/contract/actions';
 
+import {stateToHTML} from 'draft-js-export-html';
+
 const fieldMapper: FieldMapperFunc = (field: string): string | null => {
   switch (field) {
     case 'id':
@@ -150,16 +152,13 @@ const defaultSection: Section = {
   optional: false,
   dynamic: false,
   options: [],
-  styledOptions: [],
-  subOptions: {},
-  summary: [''],
-  icons: [''],
   descriptionOfChange: ''
 }
 
-const defaultOptions = ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.Aenean facilisis egestas gravida.Integer porttitor consectetur"];
 
-const defaultStyledOptions = [`{"blocks":[{"key":"5u8f1","text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit.Aenean facilisis egestas gravida.Integer porttito consectetur","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`]
+const defaultOptions = {
+  'body':`{"blocks":[{"key":"5u8f1","text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit.Aenean facilisis egestas gravida.Integer porttito consectetur","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`
+};
 
 interface RouteParams {
   id?: string | undefined;
@@ -281,7 +280,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       contract: {
         ...state.contract,
         sections: [...state.contract.sections, {
-          ...defaultSection, options: [...defaultOptions], ...section, styledOptions: [...defaultStyledOptions], ...section,
+          ...defaultSection, options: [{...defaultOptions}], ...section,
           subOptions: {}, ...section, summary: [...[""]], ...section, icons: [...[""]], ...section
         },]
       }
@@ -309,10 +308,9 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     }));
   }
 
-  editSection(section: Partial<Section>, body = "", summary = "", option = 0, raw = "", descriptionOfChange = "", icon = "", subOption = -1): void {
+  editSection(section: Partial<Section>, summary = "", option = 0, raw = "", descriptionOfChange = "", icon = "",htmlContent= "", subOption = -1, ): void {
     const { contract } = this.state;
     let sections = [...contract.sections]
-
     const id = sections.findIndex((s) => s.id === section.id);
     if ('indent' in section) {
       if (!this.state.displayToolbarActions) {
@@ -345,28 +343,24 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     sections[id] = { ...sections[id], ...section };
     if (raw) {
       if (subOption < 0) {
-        sections[id].options[option] = body
-        sections[id].styledOptions[option] = raw
+        sections[id].options[option].body = raw
       } else {
         // change sub option
-        var subOptionArray = sections[id].subOptions[option]
-        for (var i = 0; i < subOptionArray.length; i++) {
-          if (subOptionArray[i].id === subOption) {
-            subOptionArray[i].body = raw;
-          }
-        }
+        var subOptionArray = sections[id].options[option].subOptions!
+        subOptionArray[subOption].body = raw;
+        subOptionArray[subOption].bodyHtml = htmlContent;
       }
     }
 
     if (summary === ' ') {
-      sections[id].summary![option] = ''
+      sections[id].options[option].summary! = ''
     } else if (summary) {
-      sections[id].summary![option] = summary
+      sections[id].options[option].summary! = summary
     }
     if (icon === 'empty') {
-      sections[id].icons![option] = ''
+      sections[id].options[option].icon! = ''
     } else if (icon) {
-      sections[id].icons![option] = icon
+      sections[id].options[option].icon! = icon
     }
     if (descriptionOfChange) {
       sections[id].descriptionOfChange = descriptionOfChange;
@@ -412,8 +406,9 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   }
 
   sortSections(sections: Section[]): Section[] {
+    let sectionCopy = [...sections];
     for (let i = 1; i < sections.length; i++) {
-      sections[i].index = this.getCurrentIndex(sections, i, sections[i].indent);
+      sections[i].index = this.getCurrentIndex(sectionCopy, i, sections[i].indent);
     }
     return sections;
   }
@@ -488,13 +483,14 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     });
   }
 
-  saveContent(id: number, contentState: ContentState, body: string, title: string, option: number, subOption: number,
+  saveContent(id: number, contentState: ContentState, title: string, option: number, subOption: number,
     summary: string, descriptionOfChange: string, icon: string, editField: EditFieldEnum): void {
     var raw = JSON.stringify(convertToRaw(contentState));
+    let htmlContent = stateToHTML(contentState);
     if (editField === EditFieldEnum.Section) {
-      this.editSection({ id: id, title: title }, body, summary, option, raw, descriptionOfChange, icon);
+      this.editSection({ id: id, title: title }, summary, option, raw, descriptionOfChange, icon, htmlContent);
     } else if (editField === EditFieldEnum.SubOption) {
-      this.editSection({ id: id, title: title }, body, summary, option, raw, descriptionOfChange, icon, subOption);
+      this.editSection({ id: id, title: title }, summary, option, raw, descriptionOfChange, icon, htmlContent, subOption);
     } else if (editField === EditFieldEnum.Title) {
       this.setState((state) => ({
         contract: {
@@ -519,19 +515,15 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
 
     const id = sections.findIndex((s) => s.id === sectionId);
     var section = sections[id];
-    var length = section.styledOptions.length
+    var length = section.options.length
 
     if (options < length) {
       for (let i = length; i > options; i--) {
         section.options.pop();
-        section.styledOptions.pop();
       }
     } else {
       for (let i = length; i < options; i++) {
-        section.options.push('Additional option');
-        section.styledOptions.push(`{"blocks":[{"key":"5u8f1","text":"Additional option","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`);
-        section.summary!.push('');
-        section.icons!.push('');
+        section.options.push({'body':`{"blocks":[{"key":"5u8f1","text":"Additional option","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`});
       }
     }
     sections[id] = { ...sections[id], ...section };
@@ -549,7 +541,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
 
     const id = sections.findIndex((s) => s.id === sectionId);
     var section = sections[id];
-    let subOptionsArray = section.subOptions[option];
+    let subOptionsArray = section.options[option].subOptions!;
     if (subOptionsArray)
       var length = subOptionsArray.length;
     else
@@ -557,19 +549,19 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     if (length > 0) {
       for (let i = length; i < subOptions; i++)
         subOptionsArray.push({
-          'id': i,
-          'body': `{"blocks":[{"key":"5u8f1","text":"Additional subOption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`
+          'body': `{"blocks":[{"key":"5u8f1","text":"Additional subOption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`,
+          'bodyHtml': '<p>Additional subOption</p>'
         });
     }
     else {
       length = 0
       subOptionsArray = new Array<SubOption>();
       subOptionsArray.push({
-        'id': 0,
-        'body': `{"blocks":[{"key":"5u8f1","text":"Additional subOption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`
+        'body': `{"blocks":[{"key":"5u8f1","text":"Additional subOption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`,
+        'bodyHtml': '<p>Additional subOption</p>'
       });
 
-      section.subOptions[option] = subOptionsArray;
+      section.options[option].subOptions = subOptionsArray;
     }
 
     if (subOptions < length) {

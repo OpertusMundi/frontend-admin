@@ -179,8 +179,8 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
       let body, renderedSuboptions: any, icon: any, length = 0;
 
       if (section.dynamic) {
-        body = section.styledOptions.map((option, index) => {
-          var subOptionsArray = section.subOptions[index];
+        body = section.options.map((option, index) => {
+          var subOptionsArray = section.options[index].subOptions!;
           let subOptionBlock = [];
           if (subOptionsArray) {
             length = subOptionsArray.length
@@ -188,7 +188,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
           else length = 0;
           if (length > 0) {
             for (let i = 0; i < length; i++) {
-              var storedSubOptionState = convertFromRaw(JSON.parse(subOptionsArray.find(o => o.id === i)!.body));
+              var storedSubOptionState = convertFromRaw(JSON.parse(subOptionsArray[i].body));
               var subOptionBody =
                 <div className={classes.option} key={index}> <span>SubOption {String.fromCharCode(65 + i)}</span>
                   <Editor editorState={EditorState.createWithContent(storedSubOptionState)} readOnly={true} onChange={() => { }} />
@@ -204,14 +204,14 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
             });
 
           };
-          if (section.icons![index])
-            icon = <img className={classes.logoImage} src={"/icons/" + section.icons![index]} alt="" />
+          if (section.options[index].icon)
+            icon = <img className={classes.logoImage} src={"/icons/" + section.options[index].icon} alt="" />
 
           return (
             <div className={classes.optionBlock} key={index}> <span className={classes.option} >Option {String.fromCharCode(65 + index)}</span>
 
-              <p>{section.summary![index]}</p>
-              <Editor editorState={EditorState.createWithContent(convertFromRaw(JSON.parse(option)))} readOnly={true} onChange={() => { }} />
+              <p>{section.options[index].summary}</p>
+              <Editor editorState={EditorState.createWithContent(convertFromRaw(JSON.parse(option.body)))} readOnly={true} onChange={() => { }} />
               {renderedSuboptions}
             </div>
           )
@@ -220,11 +220,11 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
       }
       else {
         // For empty section body don't use Editor
-        if (section.options[0] === "")
+        if (section.options[0].body === "")
           body = '';
         else {
-          let option = EditorState.createWithContent(convertFromRaw(JSON.parse(section.styledOptions[0])));
-          var subOptionsArray = section.subOptions[0];
+          let option = EditorState.createWithContent(convertFromRaw(JSON.parse(section.options[0].body)));
+          var subOptionsArray = section.options[0].subOptions!;
           let subOptionBlock = [];
           if (subOptionsArray) {
             length = subOptionsArray.length
@@ -232,7 +232,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
           else length = 0;
           if (length > 0) {
             for (let i = 0; i < length; i++) {
-              var storedSubOptionState = convertFromRaw(JSON.parse(subOptionsArray.find(o => o.id === i)!.body));
+              var storedSubOptionState = convertFromRaw(JSON.parse(subOptionsArray[i].body));
               var subOptionBody =
                 <div className={classes.option}> <span>SubOption {String.fromCharCode(65 + i)}</span>
                   <Editor editorState={EditorState.createWithContent(storedSubOptionState)} readOnly={true} onChange={() => { }} />
@@ -247,10 +247,10 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
               )
             });
           }
-          if (section.icons![0])
-            icon = <img className={classes.logoImage} src={"/icons/" + section.icons![0]} alt="" />
+          if (section.options[0].icon)
+            icon = <img className={classes.logoImage} src={"/icons/" + section.options[0].icon} alt="" />
           body = <div   className={classes.optionBlock}>
-            <p>{section.summary![0]}</p>
+            <p>{section.options[0].summary}</p>
             <Editor editorState={option} readOnly={true} onChange={() => { }} />
             {renderedSuboptions} </div>;
         }

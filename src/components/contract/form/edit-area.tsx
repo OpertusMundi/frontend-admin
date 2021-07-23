@@ -112,7 +112,7 @@ interface EditAreaComponentProps extends WithStyles<typeof styles> {
   section?: Section;
   documentTitle?: string;
   documentSubtitle?: string;
-  saveContent: (id: number, contentState: ContentState, body: string, title: string, option: number, subOption: number,
+  saveContent: (id: number, contentState: ContentState, title: string, option: number, subOption: number,
     summary: string, descriptionOfChange: string, icon: string, editField: EditFieldEnum) => void;
   editSection: (item: any) => void;
   addOptions: (sectionId: number, options: number) => void;
@@ -149,13 +149,13 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     // if editing section or titles
     if (this.props.editField === EditFieldEnum.Section) {
       title = this.props.section!.title;
-      editorState = EditorState.createWithContent(convertFromRaw(JSON.parse(this.props.section!.styledOptions[0])), this.decorator)
+      editorState = EditorState.createWithContent(convertFromRaw(JSON.parse(this.props.section!.options[0].body)), this.decorator)
       show = true;
-      summary = this.props.section!.summary![0];
+      summary = this.props.section!.options[0].summary!;
       variable = this.props.section!.variable;
       optional = this.props.section!.optional;
       dynamic = this.props.section!.dynamic;
-      icon = this.props.section!.icons![0];
+      icon = this.props.section!.options[0].icon!;
       descriptionOfChange = this.props.section!.descriptionOfChange;
     }
     else {
@@ -207,18 +207,18 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     var selection = event.target.value
     var editingOption = true
     this.setState({
-      option: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse((this.props.section!.styledOptions[selection])))),
-      summary: this.props.section!.summary![selection], icon: this.props.section!.icons![selection], editField: EditFieldEnum.Section, editingOption
+      option: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse((this.props.section!.options[selection].body)))),
+      summary: this.props.section!.options[selection].summary!, icon: this.props.section!.options[selection].icon!, editField: EditFieldEnum.Section, editingOption
     });
   }
 
   onSubOptionSelect = (event: any) => {
     var selection = event.target.value
     var editingOption = false;
-    var body = this.props.section!.subOptions[this.state.option][selection].body;
+    var body = this.props.section!.options[this.state.option].subOptions![selection].body;
     this.setState({
       subOption: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(body!))),
-      summary: this.props.section!.summary![selection], icon: this.props.section!.icons![selection], editField: EditFieldEnum.SubOption, editingOption,
+       editField: EditFieldEnum.SubOption, editingOption,
     });
   }
 
@@ -341,7 +341,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   };
 
   finishEdit = (editorState: EditorState): void => {
-    this.props.saveContent(this.props.section?.id!, editorState.getCurrentContent(), editorState.getCurrentContent().getPlainText(),
+    this.props.saveContent(this.props.section?.id!, editorState.getCurrentContent(),
       this.state.title, this.state.option, this.state.subOption, this.state.summary, this.state.descriptionOfChange, this.state.icon, this.state.editField)
   }
 
@@ -397,7 +397,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
       if (this.state.dynamic) {
 
         let optionAlphanumeric = [];
-        for (let i = 0; i < this.props.section!.styledOptions.length; i++) {
+        for (let i = 0; i < this.props.section!.options.length; i++) {
           optionAlphanumeric.push(String.fromCharCode(65 + i));
         }
         options = <input className={classes.options} type="number" min="1" defaultValue={this.props.section!.options.length}></input>;
@@ -411,8 +411,8 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
           </Select>
         </div>;
       }
-      var subOptionsArray = this.props.section!.subOptions[this.state.option];
-      if (typeof (subOptionsArray) !== 'undefined')
+      var subOptionsArray = this.props.section!.options[this.state.option].subOptions!;
+      if (typeof (subOptionsArray) !== 'undefined' && subOptionsArray!== null)
         subOptionSize = subOptionsArray.length;
       else
         subOptionSize = 0
@@ -568,7 +568,6 @@ const placeholderOptions = [
   { key: "clientContactPerson", value: "clientContactPerson" },
   { key: "clientCompanyRegNumber", value: "clientCompanyRegNumber" },
   { key: "sellerCompanyRegNumber", value: "sellerCompanyRegNumber" },
-  { key: "clientEmail", value: "clientEmail" },
   { key: "AssetPrice", value: "AssetPrice" },
   { key: "CurrentDate", value: "CurrentDate" },
   { key: "SellerLegalRep", value: "SellerLegalRep" },

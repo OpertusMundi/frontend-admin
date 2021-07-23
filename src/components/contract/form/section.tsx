@@ -62,10 +62,7 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
       index: this.props.index,
       indent: this.props.indent,
       title: this.props.title,
-      summary: this.props.summary,
       options: this.props.options,
-      styledOptions: this.props.styledOptions,
-      subOptions: this.props.subOptions,
       variable: this.props.variable,
       optional: this.props.optional,
       dynamic: this.props.dynamic,
@@ -105,7 +102,7 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
   render() {
     const { classes } = this.props;
 
-    const { id, index, indent, title, optional, variable, dynamic, options, styledOptions, subOptions } = this.props;
+    const { id, index, indent, title, optional, variable, dynamic, options } = this.props;
 
     let increaseIndent, decreaseIndent;
     if (id! > 0) {
@@ -133,15 +130,15 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
     } else {
       sectionTitle = type + index;
     }
-    let body, truncated = styledOptions[0];
+    let body, truncated = options[0].body;
     var defaultState = convertFromRaw(JSON.parse(truncated));
     defaultState = this.truncate(defaultState, 70)
     if (variable) {
-      body = styledOptions.map((option, index) => {
-        var storedState = convertFromRaw(JSON.parse(option));
+      body = options.map((option, index) => {
+        var storedState = convertFromRaw(JSON.parse(option.body));
         storedState = this.truncate(storedState, 70);
 
-        var subOptionsArray = this.state.subOptions[index];
+        var subOptionsArray = this.state.options[index].subOptions!;
         let subOptionBlock = [];
         if (subOptionsArray) {
           var length = subOptionsArray.length
