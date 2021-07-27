@@ -70,11 +70,11 @@
   <!-- Inject Thymeleaf template variables -->
   <meta
     name="_csrf"
-    th:content="<%= '${_csrf.token}' %>"
+    th:content="<%= '${_csrf?.token}' %>"
   />
   <meta
     name="_csrf_header"
-    th:content="<%= '${_csrf.headerName}' %>"
+    th:content="<%= '${_csrf?.headerName}' %>"
   />
 </head>
 
