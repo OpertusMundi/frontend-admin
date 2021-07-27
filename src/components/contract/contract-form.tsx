@@ -344,6 +344,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     if (raw) {
       if (subOption < 0) {
         sections[id].options[option].body = raw
+        sections[id].options[option].bodyHtml = htmlContent
       } else {
         // change sub option
         var subOptionArray = sections[id].options[option].subOptions!
@@ -485,8 +486,11 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
 
   saveContent(id: number, contentState: ContentState, title: string, option: number, subOption: number,
     summary: string, descriptionOfChange: string, icon: string, editField: EditFieldEnum): void {
-    var raw = JSON.stringify(convertToRaw(contentState));
-    let htmlContent = stateToHTML(contentState);
+    let raw, htmlContent='';
+    raw = JSON.stringify(convertToRaw(contentState));
+    if (contentState.getPlainText()){
+      htmlContent = stateToHTML(contentState);
+    }
     if (editField === EditFieldEnum.Section) {
       this.editSection({ id: id, title: title }, summary, option, raw, descriptionOfChange, icon, htmlContent);
     } else if (editField === EditFieldEnum.SubOption) {
