@@ -46,8 +46,8 @@ const styles = (theme: Theme) => createStyles({
     color: '#6C6C6C',
   },
   columnTitle: {
-    marginTop: '3vh',
-    marginBottom: '2vh',
+    marginTop: '1.5vh',
+    marginBottom: '1.5vh',
     fontSize: '1.5rem',
     fontWeight: 'bold',
     //textAlign: 'center'
@@ -89,7 +89,7 @@ const styles = (theme: Theme) => createStyles({
   option: {
     fontWeight: 500,
     marginRight: '5px',
-    marginBottom: '10px',
+    marginBottom: '20px',
   },
   optionBlock: {
     marginBottom: '10px',
@@ -176,7 +176,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
     });
 
     const structure = contract.sections.map((section) => {
-      let body, renderedSuboptions: any, icon: any, length = 0;
+      let body, renderedSuboptions: any, icon: any, length = 0, sectionTitle = '';
 
       if (section.dynamic) {
         body = section.options.map((option, index) => {
@@ -190,7 +190,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
             for (let i = 0; i < length; i++) {
               var storedSubOptionState = convertFromRaw(JSON.parse(subOptionsArray[i].body));
               var subOptionBody =
-                <div className={classes.option} key={index}> <span>SubOption {String.fromCharCode(65 + i)}</span>
+                <div className={classes.subOption} key={index}> <span>SubOption {String.fromCharCode(65 + i)}</span>
                   <Editor editorState={EditorState.createWithContent(storedSubOptionState)} readOnly={true} onChange={() => { }} />
                 </div>;
               subOptionBlock.push(subOptionBody);
@@ -220,7 +220,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
       }
       else {
         // For empty section body don't use Editor
-        if (section.options[0].body === "")
+        if (section.options[0].bodyHtml === '')
           body = '';
         else {
           let option = EditorState.createWithContent(convertFromRaw(JSON.parse(section.options[0].body)));
@@ -234,7 +234,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
             for (let i = 0; i < length; i++) {
               var storedSubOptionState = convertFromRaw(JSON.parse(subOptionsArray[i].body));
               var subOptionBody =
-                <div className={classes.option}> <span>SubOption {String.fromCharCode(65 + i)}</span>
+                <div> <span>SubOption {String.fromCharCode(65 + i)}</span>
                   <Editor editorState={EditorState.createWithContent(storedSubOptionState)} readOnly={true} onChange={() => { }} />
                 </div>;
               subOptionBlock.push(subOptionBody);
@@ -255,9 +255,15 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
             {renderedSuboptions} </div>;
         }
       }
+
+      if (section.title) {
+        sectionTitle = 'Section ' + section.index + ' - ' + section.title 
+      } else {
+        sectionTitle = 'Section ' + section.index
+      }
       return (<div>
         <div key={section.id} className={classes.section && classes.columnTitle}>
-          <FormattedMessage id={section.id! + 1} defaultMessage={'Section ' + section.index + ' - ' + section.title} />
+          <FormattedMessage id={section.id! + 1} defaultMessage={sectionTitle} />
         </div>
         <div>
               {icon}
