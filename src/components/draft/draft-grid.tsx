@@ -106,6 +106,8 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
     this.setState({
       confirm: false,
       draft: null,
+      reason: '',
+      reasonRequired: false,
     });
   }
 
