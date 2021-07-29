@@ -23,29 +23,29 @@ export interface MarketplaceAccountManagerState {
 }
 
 // Actions
-export const SET_PAGER = 'account/manager/SET_PAGER';
-export const RESET_PAGER = 'account/manager/RESET_PAGER';
+export const SET_PAGER = 'marketplace-account/manager/SET_PAGER';
+export const RESET_PAGER = 'marketplace-account/manager/RESET_PAGER';
 
-export const SET_SORTING = 'account/manager/SET_SORTING';
+export const SET_SORTING = 'marketplace-account/manager/SET_SORTING';
 
-export const SET_FILTER = 'account/manager/SET_FILTER';
-export const RESET_FILTER = 'account/manager/RESET_FILTER';
+export const SET_FILTER = 'marketplace-account/manager/SET_FILTER';
+export const RESET_FILTER = 'marketplace-account/manager/RESET_FILTER';
 
-export const SEARCH_INIT = 'account/manager/SEARCH_INIT';
-export const SEARCH_FAILURE = 'account/manager/SEARCH_FAILURE';
-export const SEARCH_COMPLETE = 'account/manager/SEARCH_COMPLETE';
+export const SEARCH_INIT = 'marketplace-account/manager/SEARCH_INIT';
+export const SEARCH_FAILURE = 'marketplace-account/manager/SEARCH_FAILURE';
+export const SEARCH_COMPLETE = 'marketplace-account/manager/SEARCH_COMPLETE';
 
-export const ADD_SELECTED = 'account/manager/ADD_SELECTED';
-export const REMOVE_SELECTED = 'account/manager/REMOVE_SELECTED';
-export const RESET_SELECTED = 'account/manager/RESET_SELECTED';
+export const ADD_SELECTED = 'marketplace-account/manager/ADD_SELECTED';
+export const REMOVE_SELECTED = 'marketplace-account/manager/REMOVE_SELECTED';
+export const RESET_SELECTED = 'marketplace-account/manager/RESET_SELECTED';
 
-export const LOAD_ACCOUNT_INIT = 'account/manager/LOAD_ACCOUNT_INIT';
-export const LOAD_ACCOUNT_FAILURE = 'account/manager/LOAD_ACCOUNT_FAILURE';
-export const LOAD_ACCOUNT_SUCCESS = 'account/manager/LOAD_ACCOUNT_SUCCESS';
+export const LOAD_ACCOUNT_INIT = 'marketplace-account/manager/LOAD_ACCOUNT_INIT';
+export const LOAD_ACCOUNT_FAILURE = 'marketplace-account/manager/LOAD_ACCOUNT_FAILURE';
+export const LOAD_ACCOUNT_SUCCESS = 'marketplace-account/manager/LOAD_ACCOUNT_SUCCESS';
 
-export const REVIEW_ACCOUNT_INIT = 'account/manager/REVIEW_ACCOUNT_INIT';
-export const REVIEW_ACCOUNT_FAILURE = 'account/manager/REVIEW_ACCOUNT_FAILURE';
-export const REVIEW_ACCOUNT_SUCCESS = 'account/manager/REVIEW_ACCOUNT_SUCCESS';
+export const REVIEW_ACCOUNT_INIT = 'marketplace-account/manager/REVIEW_ACCOUNT_INIT';
+export const REVIEW_ACCOUNT_FAILURE = 'marketplace-account/manager/REVIEW_ACCOUNT_FAILURE';
+export const REVIEW_ACCOUNT_SUCCESS = 'marketplace-account/manager/REVIEW_ACCOUNT_SUCCESS';
 
 
 export interface SetPagerAction {

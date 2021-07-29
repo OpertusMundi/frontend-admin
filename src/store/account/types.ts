@@ -17,24 +17,24 @@ export interface HelpdeskAccountManagerState {
 }
 
 // Actions
-export const SET_PAGER = 'account/manager/SET_PAGER';
-export const RESET_PAGER = 'account/manager/RESET_PAGER';
+export const SET_PAGER = 'helpdesk-account/manager/SET_PAGER';
+export const RESET_PAGER = 'helpdesk-account/manager/RESET_PAGER';
 
-export const SET_SORTING = 'account/manager/SET_SORTING';
+export const SET_SORTING = 'helpdesk-account/manager/SET_SORTING';
 
-export const SET_FILTER = 'account/manager/SET_FILTER';
-export const RESET_FILTER = 'account/manager/RESET_FILTER';
+export const SET_FILTER = 'helpdesk-account/manager/SET_FILTER';
+export const RESET_FILTER = 'helpdesk-account/manager/RESET_FILTER';
 
-export const SEARCH_INIT = 'account/manager/SEARCH_INIT';
-export const SEARCH_FAILURE = 'account/manager/SEARCH_FAILURE';
-export const SEARCH_COMPLETE = 'account/manager/SEARCH_COMPLETE';
+export const SEARCH_INIT = 'helpdesk-account/manager/SEARCH_INIT';
+export const SEARCH_FAILURE = 'helpdesk-account/manager/SEARCH_FAILURE';
+export const SEARCH_COMPLETE = 'helpdesk-account/manager/SEARCH_COMPLETE';
 
-export const SAVE_INIT = 'account/manager/SAVE_INIT';
-export const SAVE_COMPLETE = 'account/manager/SAVE_COMPLETE';
+export const SAVE_INIT = 'helpdesk-account/manager/SAVE_INIT';
+export const SAVE_COMPLETE = 'helpdesk-account/manager/SAVE_COMPLETE';
 
-export const ADD_SELECTED = 'account/manager/ADD_SELECTED';
-export const REMOVE_SELECTED = 'account/manager/REMOVE_SELECTED';
-export const RESET_SELECTED = 'account/manager/RESET_SELECTED';
+export const ADD_SELECTED = 'helpdesk-account/manager/ADD_SELECTED';
+export const REMOVE_SELECTED = 'helpdesk-account/manager/REMOVE_SELECTED';
+export const RESET_SELECTED = 'helpdesk-account/manager/RESET_SELECTED';
 
 
 export interface SetPagerAction {
