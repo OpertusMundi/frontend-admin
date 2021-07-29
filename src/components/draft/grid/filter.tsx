@@ -97,8 +97,8 @@ class AssetDraftFilters extends React.Component<AssetDraftFiltersProps> {
     this.find();
   }
 
-  search(e: React.FormEvent): void {
-    e.preventDefault();
+  search(e: React.FormEvent | null = null): void {
+    e?.preventDefault();
 
     this.find();
   }
@@ -117,7 +117,8 @@ class AssetDraftFilters extends React.Component<AssetDraftFiltersProps> {
               getOptionLabel={(option) => option.label}
               value={this.statusOptions.filter(o => query.status.includes(o.value)) || null}
               onChange={(event, value) => {
-                setFilter({ status: value.map(v => v.value) })
+                setFilter({ status: value.map(v => v.value) });
+                this.search();
               }}
               renderInput={(params) => (
                 <TextField
