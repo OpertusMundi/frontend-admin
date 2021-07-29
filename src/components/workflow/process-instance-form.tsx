@@ -204,9 +204,13 @@ class ProcessInstance extends React.Component<ProcessInstanceProps, ProcessInsta
               <Typography variant="subtitle1" >
                 {'Details'}
               </Typography>
-              <Typography variant="caption" >
-                {errorDetails[incident.activityId]}
-              </Typography>
+              {(errorDetails[incident.activityId].split('||') || []).map((text, index) => (
+                <div key={`detail-line-${index}`}>
+                  <Typography variant="caption" >
+                    {text}
+                  </Typography>
+                </div>
+              ))}
             </>
           }
         </>
