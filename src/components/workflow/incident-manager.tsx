@@ -311,6 +311,8 @@ class IncidentManager extends React.Component<IncidentManagerProps, IncidentMana
     const { incident } = this.state;
     const { classes } = this.props;
 
+    const details = incident?.taskErrorDetails.split('||') || [];
+
     return (
       <div className={classes.drawer}>
         <Grid container spacing={2} className={classes.drawer}>
@@ -334,9 +336,11 @@ class IncidentManager extends React.Component<IncidentManagerProps, IncidentMana
             <Typography variant="subtitle2" gutterBottom className={classes.title}>
               <FormattedMessage id={'workflow.header.incident.error-details'} />
             </Typography>
-            <Typography variant="body2" gutterBottom className={classes.title}>
-              {incident?.taskErrorDetails}
-            </Typography>
+            {details.map((text, index) => (
+              <Typography key={`detail-line-${index}`} variant="body2" gutterBottom className={classes.title}>
+                {text}
+              </Typography>
+            ))}
           </Grid>
         </Grid>
       </div>
