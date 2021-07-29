@@ -75,8 +75,8 @@ class ProcessInstanceFilters extends React.Component<WorkflowInstanceProps> {
     this.find();
   }
 
-  search(e: React.FormEvent): void {
-    e.preventDefault();
+  search(e: React.FormEvent | null = null): void {
+    e?.preventDefault();
 
     this.find();
   }
@@ -87,17 +87,18 @@ class ProcessInstanceFilters extends React.Component<WorkflowInstanceProps> {
     return (
       <form onSubmit={this.search} noValidate autoComplete="off">
         <Grid container spacing={3} justify={'space-between'}>
-          <Grid item sm={8} xs={12}>
+          <Grid item md={4} xs={12}>
             <TextField
-              id="outlined-multiline-static"
+              id="businessKey"
               label="Business Key"
               value={query.businessKey}
+              fullWidth
               onChange={
                 (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => setFilter({ businessKey: event.target.value })
               }
             />
           </Grid>
-          <Grid container item sm={4} xs={12} justify={'flex-end'}>
+          <Grid container item md={8} xs={12} justify={'flex-end'}>
             <Button
               type="submit"
               variant="contained"
@@ -106,6 +107,19 @@ class ProcessInstanceFilters extends React.Component<WorkflowInstanceProps> {
               disabled={disabled}
             >
               <FormattedMessage id="view.shared.action.search" />
+            </Button>
+            <Button
+              type="button"
+              variant="contained"
+              color="default"
+              className={classes.button}
+              disabled={disabled}
+              onClick={() => {
+                this.props.resetFilter();
+                this.search();
+              }}
+            >
+              <FormattedMessage id="view.shared.action.reset" />
             </Button>
           </Grid>
         </Grid>
