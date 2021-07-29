@@ -198,9 +198,13 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
               <Typography variant="subtitle1" >
                 {'Details'}
               </Typography>
-              <Typography variant="caption" >
-                {errorDetails[incident.activityId]}
-              </Typography>
+              {(errorDetails[incident.activityId].split('||') || []).map((text, index) => (
+                <div key={`detail-line-${index}`}>
+                  <Typography variant="caption" >
+                    {text}
+                  </Typography>
+                </div>
+              ))}
             </>
           }
           {incident.resolved && incident.endTime &&
