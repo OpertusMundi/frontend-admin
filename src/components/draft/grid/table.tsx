@@ -165,9 +165,6 @@ const styles = (theme: Theme) => createStyles({
     marginRight: 8,
     cursor: 'pointer',
   },
-  link: {
-    color: 'inherit',
-  }
 });
 
 interface AssetDraftTableProps extends WithStyles<typeof styles> {

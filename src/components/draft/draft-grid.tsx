@@ -192,7 +192,11 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
   }
 
   viewDraft(providerKey: string, assetKey: string): void {
-    window.open(`https://api.dev.opertusmundi.eu/provider/${providerKey}/asset/${assetKey}`, "_blank");
+    const { config: { marketplaceUrl } } = this.props;
+    const trailingSlash = !marketplaceUrl.endsWith('/');
+    const url = `${marketplaceUrl}${trailingSlash ? '/' : ''}helpdesk-review/${assetKey}`;
+
+    window.open(url, "_blank");
   }
 
   viewProcessInstance(businessKey: string, completed: boolean): void {
