@@ -2,12 +2,12 @@
 
 Installing [Node.js](https://nodejs.org/en/) is required only for local development. Maven [frontend-maven-plugin](https://github.com/eirslett/frontend-maven-plugin) plugin will download automatically the appropriate Node.js version when building the project.
 
-The application builds the client using node version `v10.16.3`. It is recommended using the [Node Version Manager](https://github.com/nvm-sh/nvm) for managing the installed node version:
+The application builds the client using node version `v14.17.5`. It is recommended using the [Node Version Manager](https://github.com/nvm-sh/nvm) for managing the installed node version:
 
 ```bash
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-nvm install v10.16.3
-nvm use v10.16.3
+nvm install v14.17.5
+nvm use v14.17.5
 ```
 
 # Configure development environment
@@ -27,7 +27,7 @@ REACT_APP_ENABLE_LOGGER=false
 # Disable browser
 BROWSER=none
 
-# Development server port 
+# Development server port
 PORT=3000
 ```
 
