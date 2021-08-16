@@ -19,7 +19,7 @@ interface BingMapsLayerProps {
  */
 class BingMapsLayer extends React.Component<BingMapsLayerProps> {
 
-  private _layer: TileLayer | undefined;
+  private _layer: TileLayer<BingMaps> | undefined;
 
   static defaultProps = {
     imagerySet: 'Aerial',
@@ -29,7 +29,7 @@ class BingMapsLayer extends React.Component<BingMapsLayerProps> {
     return this.props.map;
   }
 
-  get layer(): TileLayer | undefined {
+  get layer(): TileLayer<BingMaps> | undefined {
     return this._layer;
   }
 

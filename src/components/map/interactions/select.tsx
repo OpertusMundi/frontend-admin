@@ -6,6 +6,7 @@ import { StyleLike } from 'ol/style/Style';
 import Select from 'ol/interaction/Select';
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
+import Geometry from 'ol/geom/Geometry';
 
 import { click as clickCondition, noModifierKeys as noModifierKeysCondition } from 'ol/events/condition';
 
@@ -14,8 +15,8 @@ interface SelectProps {
   hitTolerance?: number;
   map?: OpenLayersMap;
   multi?: boolean;
-  features: Collection<Feature>;
-  onFeatureSelect?: (features: Feature[]) => void;
+  features: Collection<Feature<Geometry>>;
+  onFeatureSelect?: (features: Feature<Geometry>[]) => void;
   style?: StyleLike;
 }
 

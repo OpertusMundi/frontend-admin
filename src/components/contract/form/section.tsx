@@ -102,7 +102,7 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
   render() {
     const { classes } = this.props;
 
-    const { id, index, indent, title, optional, variable, dynamic, options } = this.props;
+    const { id, index, indent, title, variable, options } = this.props;
 
     let increaseIndent, decreaseIndent;
     if (id! > 0) {

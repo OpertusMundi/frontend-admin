@@ -233,12 +233,12 @@ class AssetDraftTable extends React.Component<AssetDraftTableProps> {
           page: result ? result.pageRequest.page : 0,
         }}
         handleAction={this.handleAction}
-        handleChangePage={(index: number) => {
+        handlePageChange={(index: number) => {
           setPager(index, pagination.size);
 
           find();
         }}
-        handleChangeRowsPerPage={(size: number) => {
+        handleRowsPerPageChange={(size: number) => {
           setPager(0, size);
 
           this.props.find();

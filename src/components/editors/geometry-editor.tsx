@@ -10,7 +10,7 @@ import Style from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
 import Circle from 'ol/style/Circle';
-import Feature from 'ol/Feature';
+import Feature, { FeatureLike } from 'ol/Feature';
 import GeometryType from 'ol/geom/GeometryType';
 import Geometry from 'ol/geom/Geometry';
 import GeoJSON, { GeoJSONGeometry } from 'ol/format/GeoJSON';
@@ -72,8 +72,8 @@ const geometryToFeature = (geometry: Geometry, id = -1) => {
 };
 
 interface GeometryEditorState {
-  initial: Feature | null;
-  features: Collection<Feature>;
+  initial: Feature<Geometry> | null;
+  features: Collection<Feature<Geometry>>;
 }
 
 
@@ -89,7 +89,7 @@ class GeometryEditor extends React.Component<GeometryEditorProps, GeometryEditor
 
   state: GeometryEditorState = {
     initial: null,
-    features: new Collection<Feature>(),
+    features: new Collection<Feature<Geometry>>(),
   }
 
   constructor(props: GeometryEditorProps) {
@@ -113,12 +113,12 @@ class GeometryEditor extends React.Component<GeometryEditorProps, GeometryEditor
 
       this.setState({
         initial: feature.clone(),
-        features: new Collection<Feature>([feature]),
+        features: new Collection<Feature<Geometry>>([feature]),
       });
     }
   }
 
-  onFeatureChange(feature: Feature): void {
+  onFeatureChange(feature: Feature<Geometry> | FeatureLike): void {
     const { onChange } = this.props;
 
     if (onChange && feature?.getGeometry()) {
@@ -139,7 +139,7 @@ class GeometryEditor extends React.Component<GeometryEditorProps, GeometryEditor
 
   onDeleteGeometry(): void {
     this.setState({
-      features: new Collection<Feature>(),
+      features: new Collection<Feature<Geometry>>(),
     });
   }
 
@@ -147,7 +147,7 @@ class GeometryEditor extends React.Component<GeometryEditorProps, GeometryEditor
     const { initial } = this.state;
     if (initial) {
       this.setState({
-        features: new Collection<Feature>([initial.clone()]),
+        features: new Collection<Feature<Geometry>>([initial.clone()]),
       });
     }
   }
@@ -209,15 +209,15 @@ class GeometryEditor extends React.Component<GeometryEditorProps, GeometryEditor
           <OpenLayers.Interactions>
             <OpenLayers.Interaction.Draw
               active={this.state.features.getLength() === 0}
-              onDrawStart={(feature: Feature): void => {
+              onDrawStart={(feature: Feature<Geometry>): void => {
                 // Single feature
                 this.setState({
-                  features: new Collection<Feature>(),
+                  features: new Collection<Feature<Geometry>>(),
                 });
               }}
-              onDrawEnd={(feature: Feature): void => {
+              onDrawEnd={(feature: Feature<Geometry>): void => {
                 this.setState((state) => ({
-                  features: new Collection<Feature>([...state.features.getArray(), feature]),
+                  features: new Collection<Feature<Geometry>>([...state.features.getArray(), feature]),
                 }));
                 this.onFeatureChange(feature);
               }}
@@ -228,7 +228,7 @@ class GeometryEditor extends React.Component<GeometryEditorProps, GeometryEditor
               active={this.state.features.getLength() !== 0}
               features={features}
               style={drawStyle}
-              onModifyEnd={(features: Collection<Feature>): void => {
+              onModifyEnd={(features: Collection<FeatureLike>): void => {
                 if (features.getLength() === 1) {
                   this.onFeatureChange(features.item(0));
                 }

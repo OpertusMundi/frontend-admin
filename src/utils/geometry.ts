@@ -45,7 +45,7 @@ export function fromWKT(wkt: string): Geometry | null {
   }
 }
 
-export function toWKT(feature: Feature): string | null {
+export function toWKT(feature: Feature<Geometry>): string | null {
   const geometry = feature?.getGeometry();
 
   if (!geometry) {
@@ -58,5 +58,5 @@ export function toWKT(feature: Feature): string | null {
       featureProjection: 'EPSG:3857'
     });
   }
-  
+
 }

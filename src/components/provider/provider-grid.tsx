@@ -51,8 +51,6 @@ import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
 import ProviderFilters from './grid/filter';
 import ProviderTable from './grid/table';
 
-import Spinner from 'components/spinner';
-
 const styles = (theme: Theme) => createStyles({
   container: {
     display: 'flex',

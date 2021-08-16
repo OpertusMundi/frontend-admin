@@ -6,12 +6,13 @@ import { StyleLike } from 'ol/style/Style';
 import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 import Feature from 'ol/Feature';
+import Geometry from 'ol/geom/Geometry';
 import Collection from 'ol/Collection';
 import VectorLayer from 'ol/layer/Vector';
 
 import { FeatureCollection } from 'geojson';
 
-type FeatureLike = null | string | FeatureCollection | Feature | Feature[] | Collection<Feature>;
+type FeatureLike = null | string | FeatureCollection | Feature<Geometry> | Feature<Geometry>[] | Collection<Feature<Geometry>>;
 
 interface GeoJsonLayerProps {
   features: FeatureLike;
@@ -29,7 +30,7 @@ interface GeoJsonLayerProps {
  */
 class GeoJsonLayer extends React.Component<GeoJsonLayerProps> {
 
-  private _layer: VectorLayer | undefined;
+  private _layer: VectorLayer<VectorSource<Geometry>> | undefined;
 
   static defaultProps = {
     fitToExtent: false,
@@ -39,7 +40,7 @@ class GeoJsonLayer extends React.Component<GeoJsonLayerProps> {
     return this.props.map;
   }
 
-  get layer(): VectorLayer | undefined {
+  get layer(): VectorLayer<VectorSource<Geometry>> | undefined {
     return this._layer;
   }
 

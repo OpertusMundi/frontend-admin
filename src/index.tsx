@@ -4,10 +4,6 @@ import * as ReactRedux from 'react-redux';
 
 import { ConnectedRouter } from 'connected-react-router';
 
-// DnD support
-import { DndProvider } from 'react-dnd'
-import { HTML5Backend } from 'react-dnd-html5-backend'
-
 import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
@@ -52,9 +48,7 @@ Promise.resolve()
       <ReactRedux.Provider store={store}>
         <ConnectedRouter history={history}>
           <LoadingBar style={{ backgroundColor: '#d50000', height: '3px', zIndex: 10000 }} />
-          <DndProvider backend={HTML5Backend}>
-            <App />
-          </DndProvider>
+          <App />
         </ConnectedRouter>
       </ReactRedux.Provider>,
       document.getElementById('root')

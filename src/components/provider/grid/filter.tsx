@@ -87,7 +87,7 @@ class ProviderFilters extends React.Component<ProviderFiltersProps> {
 
     return (
       <form onSubmit={this.search} noValidate autoComplete="off">
-        <Grid container spacing={3} justify={'space-between'}>
+        <Grid container spacing={3} justifyContent={'space-between'}>
           <Grid item sm={4} xs={12}>
             <TextField
               id="name"
@@ -100,7 +100,7 @@ class ProviderFilters extends React.Component<ProviderFiltersProps> {
             />
           </Grid>
 
-          <Grid container item sm={8} xs={12} justify={'flex-end'}>
+          <Grid container item sm={8} xs={12} justifyContent={'flex-end'}>
             <Button
               type="submit"
               variant="contained"

@@ -5,11 +5,14 @@ import OpenLayersMap from 'ol/Map';
 import VectorSource, { VectorSourceEvent } from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 import VectorLayer from 'ol/layer/Vector';
+import Geometry from 'ol/geom/Geometry';
+import Projection from 'ol/proj/Projection';
 
 import { bbox as bboxLoadingStrategy } from 'ol/loadingstrategy';
 import { StyleLike } from 'ol/style/Style';
 
 import URI from 'urijs';
+
 
 interface WfsLayerProps<E> {
   color: string;
@@ -34,7 +37,7 @@ interface WfsLayerProps<E> {
  */
 class WfsLayer<E> extends React.Component<WfsLayerProps<E>> {
 
-  private _layer: VectorLayer | undefined;
+  private _layer: VectorLayer<VectorSource<Geometry>> | undefined;
 
   static defaultProps = {
     maxZoom: 15,
@@ -51,7 +54,7 @@ class WfsLayer<E> extends React.Component<WfsLayerProps<E>> {
     return this._layer;
   }
 
-  buildRequest(extent: [number, number, number, number]) {
+  buildRequest(extent: number[], resolution: number, projection: Projection) {
     const { outputFormat, url, srsName, typename, version } = this.props;
     const typenameParameter = (version.startsWith('2') ? 'typeNames' : 'typeName');
 
@@ -78,10 +81,12 @@ class WfsLayer<E> extends React.Component<WfsLayerProps<E>> {
         strategy: bboxLoadingStrategy,
       });
 
-      source.on('addfeature', (e: VectorSourceEvent) => {
-        if (extra) {
+      source.on('addfeature', (e: VectorSourceEvent<Geometry>) => {
+        const feature = e.feature;
+
+        if (feature && extra) {
           Object.getOwnPropertyNames(extra).forEach((key) => {
-            e.feature.set(key, extra[key as keyof E] || null, true);
+            feature.set(key, extra[key as keyof E] || null, true);
           });
         }
       });

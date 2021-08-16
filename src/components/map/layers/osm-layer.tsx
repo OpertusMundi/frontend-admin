@@ -18,7 +18,7 @@ interface OsmLayerProps {
  */
 class OsmLayer extends React.Component<OsmLayerProps> {
 
-  private _layer: TileLayer | undefined;
+  private _layer: TileLayer<OSM> | undefined;
 
   static defaultProps = {
     url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -28,7 +28,7 @@ class OsmLayer extends React.Component<OsmLayerProps> {
     return this.props.map;
   }
 
-  get layer(): TileLayer | undefined {
+  get layer(): TileLayer<OSM> | undefined {
     return this._layer;
   }
 

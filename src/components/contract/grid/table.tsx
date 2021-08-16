@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 
-import { injectIntl, IntlShape, FormattedMessage, FormattedTime } from 'react-intl';
+import { injectIntl, IntlShape, FormattedTime } from 'react-intl';
 
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
@@ -287,12 +287,12 @@ class ContractTable extends React.Component<ContractTableProps> {
           page: result ? result.pageRequest.page : 0,
         }}
         handleAction={this.handleAction}
-        handleChangePage={(index: number) => {
+        handlePageChange={(index: number) => {
           setPager(index, pagination.size);
 
           find();
         }}
-        handleChangeRowsPerPage={(size: number) => {
+        handleRowsPerPageChange={(size: number) => {
           setPager(0, size);
 
           this.props.find();

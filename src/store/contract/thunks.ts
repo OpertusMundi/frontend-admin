@@ -3,7 +3,7 @@ import { ThunkAction } from 'redux-thunk'
 // Redux
 import { RootState } from 'store';
 import { ContractActions } from './types';
-import { searchInit, searchComplete, searchFailure, setSorting, setPager, saveInit, saveComplete } from './actions';
+import { searchInit, searchComplete, searchFailure, setSorting, setPager } from './actions';
 
 // Services
 import ContractApi from 'service/contract';

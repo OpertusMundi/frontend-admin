@@ -52,7 +52,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
       <>
         <CssBaseline />
         <Container maxWidth="sm">
-          <Grid container justify="center" direction="column" className={classes.container}>
+          <Grid container justifyContent="center" direction="column" className={classes.container}>
             <Grid item>
               <h1 className='float-left display-3 mr-4'>{code}</h1>
               <h4 className='pt-3'>
@@ -72,7 +72,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
                   <Icon path={mdiHomeOutline} size="1rem" style={{ marginRight: 10 }} />
                   <span style={{ fontSize: '1rem' }}>
                     <FormattedMessage id={`error.http-status-code.${code}.button`} />
-                  </span> 
+                  </span>
                 </Button>
               </Link>
             </Grid>

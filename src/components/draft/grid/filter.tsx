@@ -109,7 +109,7 @@ class AssetDraftFilters extends React.Component<AssetDraftFiltersProps> {
 
     return (
       <form onSubmit={this.search} noValidate autoComplete="off">
-        <Grid container spacing={3} justify={'space-between'}>
+        <Grid container spacing={3} justifyContent={'space-between'}>
           <Grid item sm={8} xs={12}>
             <Autocomplete
               multiple
@@ -130,7 +130,7 @@ class AssetDraftFilters extends React.Component<AssetDraftFiltersProps> {
             />
           </Grid>
 
-          <Grid container item sm={4} xs={12} justify={'flex-end'}>
+          <Grid container item sm={4} xs={12} justifyContent={'flex-end'}>
             <Button
               type="submit"
               variant="contained"

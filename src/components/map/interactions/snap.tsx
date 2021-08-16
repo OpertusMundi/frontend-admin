@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import Map from 'ol/Map';
 import Feature from 'ol/Feature';
+import Geometry from 'ol/geom/Geometry';
 import Collection from 'ol/Collection';
 import Snap from 'ol/interaction/Snap';
 
@@ -10,7 +11,7 @@ interface SnapProps {
   // Enable/Disable interaction
   active?: boolean;
   // Feature to edit
-  features: Collection<Feature>;
+  features: Collection<Feature<Geometry>>;
   // Map instance
   map?: Map;
   // True if Translate interaction is enabled

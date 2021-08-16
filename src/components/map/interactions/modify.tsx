@@ -2,21 +2,23 @@
 import * as React from 'react';
 
 import Map from 'ol/Map';
-import Feature from 'ol/Feature';
+import Feature, { FeatureLike } from 'ol/Feature';
+import Geometry from 'ol/geom/Geometry';
 import Collection from 'ol/Collection';
 import Modify, { ModifyEvent } from 'ol/interaction/Modify';
 
 import { StyleLike } from 'ol/style/Style';
 
+
 interface ModifyProps {
   // Enable/Disable interaction
   active?: boolean;
   // Feature to edit
-  features: Collection<Feature>;
+  features: Collection<Feature<Geometry>>;
   // Map instance
   map?: Map;
   // Events
-  onModifyEnd?: (features: Collection<Feature>) => void;
+  onModifyEnd?: (features: Collection<FeatureLike>) => void;
   // Style
   style?: StyleLike;
 }

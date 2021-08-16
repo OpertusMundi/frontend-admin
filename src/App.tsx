@@ -11,7 +11,7 @@ import * as ReactIntl from 'react-intl';
 
 import { Route } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux'
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 
 import './App.scss';
@@ -24,7 +24,7 @@ import { setSize } from 'store/viewport/actions';
 import ContentRoot from 'components/content-root';
 
 // Configure material UI theme
-const theme = createMuiTheme({
+const theme = createTheme({
   overrides: {
     MuiDialog: {
       paper: {

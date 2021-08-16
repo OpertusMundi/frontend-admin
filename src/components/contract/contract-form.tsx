@@ -34,7 +34,7 @@ import { MasterContract, MasterContractCommand, Section, SubOption } from 'model
 import ContractApi from 'service/contract';
 
 import { RootState } from 'store';
-import { DynamicRoutes, StaticRoutes } from 'model/routes';
+import { StaticRoutes } from 'model/routes';
 import { AxiosError } from 'axios';
 import { AxiosObjectResponse, SimpleResponse } from 'model/response';
 import { RouteComponentProps } from 'react-router-dom';
@@ -293,9 +293,8 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     if (!this.state.displayToolbarActions) {
       return;
     }
-    
+
     var sections = [...contract.sections]
-    var index = sections.find(s => s.id === id)!.index;
     sections = sections.filter((section) => {
       return (section.id !== id);
     });
@@ -375,8 +374,6 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   }
 
   getCurrentIndex(sections: Section[], id: number, indent: number): string {
-    const { contract } = this.state;
-
     let index = '-1';
     for (let i = id - 1; i >= 0; i--) {
       let section = sections[i];

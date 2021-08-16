@@ -17,7 +17,7 @@ interface MapProps {
   altShiftDragRotate?: boolean;
   center?: [number, number];
   className?: string;
-  click?: (e: MapBrowserEvent, map: OpenLayersMap) => void;
+  click?: (e: MapBrowserEvent<MouseEvent>, map: OpenLayersMap) => void;
   defaultCenter?: [number, number];
   defaultZoom?: number;
   doubleClickZoom?: boolean;
@@ -33,7 +33,7 @@ interface MapProps {
   onFocusOnly?: boolean;
   pinchRotate?: boolean;
   pinchZoom?: boolean;
-  pointerMove?: (e: MapBrowserEvent, map: OpenLayersMap) => void;
+  pointerMove?: (e: MapBrowserEvent<MouseEvent>, map: OpenLayersMap) => void;
   shiftDragZoom?: boolean;
   width?: number | string;
   zoom?: number;
@@ -179,7 +179,7 @@ class Map extends React.Component<MapProps> {
     if (typeof this.props.pointerMove === 'function') {
       map.on(['pointermove'], (e: BaseEvent) => {
         if (this.props.pointerMove) {
-          this.props.pointerMove(e as MapBrowserEvent, map);
+          this.props.pointerMove(e as MapBrowserEvent<MouseEvent>, map);
         }
       });
     }
@@ -187,7 +187,7 @@ class Map extends React.Component<MapProps> {
     if (typeof this.props.click === 'function') {
       map.on(['click'], (e: BaseEvent) => {
         if (this.props.click) {
-          this.props.click(e as MapBrowserEvent, map);
+          this.props.click(e as MapBrowserEvent<MouseEvent>, map);
         }
       });
     }

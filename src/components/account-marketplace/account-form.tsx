@@ -81,7 +81,7 @@ class CustomerReview extends React.Component<CustomerReviewProps> {
     }
 
     return (
-      <Grid container item xs={12} justify="center">
+      <Grid container item xs={12} justifyContent="center">
 
       </Grid >
     );

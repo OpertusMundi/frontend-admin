@@ -86,7 +86,7 @@ class ProcessInstanceFilters extends React.Component<WorkflowInstanceProps> {
 
     return (
       <form onSubmit={this.search} noValidate autoComplete="off">
-        <Grid container spacing={3} justify={'space-between'}>
+        <Grid container spacing={3} justifyContent={'space-between'}>
           <Grid item md={4} xs={12}>
             <TextField
               id="businessKey"
@@ -98,7 +98,7 @@ class ProcessInstanceFilters extends React.Component<WorkflowInstanceProps> {
               }
             />
           </Grid>
-          <Grid container item md={8} xs={12} justify={'flex-end'}>
+          <Grid container item md={8} xs={12} justifyContent={'flex-end'}>
             <Button
               type="submit"
               variant="contained"

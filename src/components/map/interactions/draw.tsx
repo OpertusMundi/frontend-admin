@@ -3,10 +3,11 @@ import * as React from 'react';
 
 import Map from 'ol/Map';
 import Feature from 'ol/Feature';
+import Geometry from 'ol/geom/Geometry';
 import Collection from 'ol/Collection';
 import Draw, { DrawEvent } from 'ol/interaction/Draw';
 
-import { default as GeometryType } from 'ol/geom/GeometryType';
+import GeometryType from 'ol/geom/GeometryType';
 import { StyleLike } from 'ol/style/Style';
 
 interface DrawProps {
@@ -17,10 +18,10 @@ interface DrawProps {
   // Allow drawing only a single feature
   single?: boolean;
   // Geometry type
-  type: GeometryType,
+  type: string;
   // Event handlers
-  onDrawStart?: (feature: Feature) => void;
-  onDrawEnd?: (feature: Feature) => void;
+  onDrawStart?: (feature: Feature<Geometry>) => void;
+  onDrawEnd?: (feature: Feature<Geometry>) => void;
   // Style
   style?: StyleLike;
 }
@@ -36,7 +37,7 @@ class DrawInteraction extends React.Component<DrawProps> {
   private interaction: Draw | undefined;
 
   // Feature collection for the OpenLayers Draw interaction
-  private features = new Collection<Feature>();
+  private features = new Collection<Feature<Geometry>>();
 
   static defaultProps = {
     active: true,
@@ -44,7 +45,7 @@ class DrawInteraction extends React.Component<DrawProps> {
     type: GeometryType.POLYGON,
   }
 
-  createInteraction(type: GeometryType, active: boolean) {
+  createInteraction(type: string, active: boolean) {
     const { map = null, onDrawEnd, onDrawStart, single, style } = this.props;
 
     this.removeInteraction();

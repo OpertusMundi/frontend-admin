@@ -356,7 +356,7 @@ class Profile extends React.Component<ProfileFormProps, ProfileFormState> {
         <div className={classes.hidden}>
           <input ref={this.fileEditRef} type="file" onChange={(e) => this.onImageChange(e)} name="picture" />
         </div>
-        <Grid container item xs={12} justify="center">
+        <Grid container item xs={12} justifyContent="center">
           <Card className={classes.card}>
             <CardHeader
               action={

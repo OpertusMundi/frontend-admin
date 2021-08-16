@@ -381,7 +381,7 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
     }
 
     return (
-      <Grid container item xs={12} justify="center">
+      <Grid container item xs={12} justifyContent="center">
         <Card className={classes.card}>
           <CardHeader
             avatar={

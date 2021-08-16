@@ -72,7 +72,6 @@ import AccountForm from 'components/account/account-form';
 import AssetDraftManager from 'components/draft/draft-grid';
 import Breadcrumb from './breadcrumb';
 import ContractForm from 'components/contract/contract-form';
-import ContractList from 'components/contract/contract-list';
 import ContractManager from 'components/contract/contract-grid';
 import DashboardComponent from 'components/dashboard';
 import HelpdeskAccountManager from 'components/account/account-grid';
@@ -533,13 +532,13 @@ class Home extends React.Component<HomeProps, HomeState> {
           </div>
           <Divider />
           <Grid container direction="column" className={classes.userContainer}>
-            <Grid container item justify="center">
+            <Grid container item justifyContent="center">
               <Link to={StaticRoutes.Profile}>
                 <Avatar alt={this.userName} src={this.avatar} variant="circular" className={classes.avatar} />
               </Link>
             </Grid>
             {open[EnumSection.Drawer] &&
-              <Grid container item justify="center">
+              <Grid container item justifyContent="center">
                 <Typography component="h6" color="inherit" noWrap className={classes.title} align="center">
                   {this.userName}
                 </Typography>

@@ -100,7 +100,7 @@ class PayOutFilters extends React.Component<PayOutFiltersProps> {
 
     return (
       <form onSubmit={this.search} noValidate autoComplete="off">
-        <Grid container spacing={3} justify={'space-between'}>
+        <Grid container spacing={3} justifyContent={'space-between'}>
           <Grid item sm={3} xs={12}>
             <TextField
               id="bankwireRef"
@@ -145,7 +145,7 @@ class PayOutFilters extends React.Component<PayOutFiltersProps> {
             />
           </Grid>
 
-          <Grid container item sm={3} xs={12} justify={'flex-end'}>
+          <Grid container item sm={3} xs={12} justifyContent={'flex-end'}>
             <Button
               type="submit"
               variant="contained"

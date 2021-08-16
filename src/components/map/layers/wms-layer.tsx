@@ -31,7 +31,7 @@ interface WmsProps {
  */
 class WmsLayer extends React.Component<WmsProps> {
 
-  private _layer: TileLayer | undefined;
+  private _layer: TileLayer<TileWMS> | undefined;
 
   static defaultProps = {
     crs: 'EPSG:3857',
@@ -48,7 +48,7 @@ class WmsLayer extends React.Component<WmsProps> {
     return this.props.map;
   }
 
-  get layer(): TileLayer | undefined {
+  get layer(): TileLayer<TileWMS> | undefined {
     return this._layer;
   }
 

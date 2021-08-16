@@ -64,7 +64,7 @@ class ReactOverlay extends React.Component<ReactOverlayProps> {
     const { position: currPosition } = this.props;
     const { position: prevPosition } = prevProps;
 
-    if (!_.isEqual(currPosition, prevPosition)) {
+    if (currPosition && !_.isEqual(currPosition, prevPosition)) {
       this.overlay?.setPosition(currPosition);
     }
   }
@@ -86,7 +86,8 @@ class ReactOverlay extends React.Component<ReactOverlayProps> {
 
     const position = this.overlay?.getPosition();
 
-    this.overlay?.setPosition(undefined);
+    // NOTE: Although setPosition is declared with arguments (Coordinate|undefined), Typescript does not recognize the undefined option
+    this.overlay?.setPosition(undefined as unknown as number[]);
 
     if (this.props.close) {
       this.props.close(position);

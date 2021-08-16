@@ -4,6 +4,7 @@ import OpenLayersMap from 'ol/Map';
 
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
+import Geometry from 'ol/geom/Geometry';
 import GeoJSON from 'ol/format/GeoJSON';
 import VectorSource from 'ol/source/Vector';
 
@@ -11,7 +12,7 @@ import { Heatmap as HeatmapLayer } from 'ol/layer';
 
 import { FeatureCollection } from 'geojson';
 
-type FeatureLike = null | string | FeatureCollection | Feature | Feature[] | Collection<Feature>;
+type FeatureLike = null | string | FeatureCollection | Feature<Geometry> | Feature<Geometry>[] | Collection<Feature<Geometry>>;
 
 interface HeatMapLayerProps {
   blur?: number;

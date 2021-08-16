@@ -287,7 +287,7 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
 
     return (
       <>
-        <Grid container justify="center">
+        <Grid container justifyContent="center">
           <Formik
             innerRef={this.formRef}
             initialValues={{
@@ -457,7 +457,7 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
                           fullWidth
                         />
                       </Grid>
-                      <Grid container item xs={12} className={classes.item} alignItems="center" justify="flex-end" >
+                      <Grid container item xs={12} className={classes.item} alignItems="center" justifyContent="flex-end" >
                         <FormControlLabel
                           control={
                             <Field
@@ -474,7 +474,7 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
                         />
                       </Grid>
 
-                      <Grid container item xs={12} justify="flex-end">
+                      <Grid container item xs={12} justifyContent="flex-end">
                         <Button
                           type="submit"
                           style={{ marginRight: 10 }}

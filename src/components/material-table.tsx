@@ -91,8 +91,8 @@ interface MaterialTableProps<R, S> extends WithStyles<typeof styles> {
   intl: IntlShape;
   columns: Column<R, S>[];
   handleAction?: cellActionHandler<R, S>;
-  handleChangePage?: (page: number) => void;
-  handleChangeRowsPerPage?: (value: number) => void;
+  handlePageChange?: (page: number) => void;
+  handleRowsPerPageChange?: (value: number) => void;
   handleRowClick?: (index: number, row: R) => void;
   handleRowDoubleClick?: (index: number, row: R) => void;
   pagination?: PaginationOptions,
@@ -106,7 +106,7 @@ interface MaterialTableProps<R, S> extends WithStyles<typeof styles> {
 class MaterialTable<R, S> extends React.Component<MaterialTableProps<R, S>> {
 
   resolveValue(index: number, column: Column<R, S>, row: R, handleAction?: cellActionHandler<R, S>) {
-    // Custom rendering function that accepts as arguments 
+    // Custom rendering function that accepts as arguments
     if (typeof column.cell === 'function') {
       return column.cell.bind(this)(index, column, row, handleAction);
     }
@@ -139,7 +139,7 @@ class MaterialTable<R, S> extends React.Component<MaterialTableProps<R, S>> {
   }
 
   render() {
-    const { classes, columns, rows, handleAction, handleChangePage, handleChangeRowsPerPage, pagination, sorting, setSorting, loading = false } = this.props;
+    const { classes, columns, rows, handleAction, handlePageChange, handleRowsPerPageChange, pagination, sorting, setSorting, loading = false } = this.props;
     const _t = this.props.intl.formatMessage;
 
     const columnCount = columns.filter(c => !c.hidden).length;
@@ -263,8 +263,8 @@ class MaterialTable<R, S> extends React.Component<MaterialTableProps<R, S>> {
             labelDisplayedRows={({ from, to, count }) => (
               <FormattedMessage id="table.rows-displayed" values={{ from, to: (to === -1 ? count : to), count }} />
             )}
-            onChangePage={(event, newPage) => handleChangePage ? handleChangePage(newPage) : null}
-            onChangeRowsPerPage={(e) => handleChangeRowsPerPage ? handleChangeRowsPerPage(+e.target.value) : null}
+            onPageChange={(event, newPage) => handlePageChange ? handlePageChange(newPage) : null}
+            onRowsPerPageChange={(e) => handleRowsPerPageChange ? handleRowsPerPageChange(+e.target.value) : null}
           />
         }
       </div >

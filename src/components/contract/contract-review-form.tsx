@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { convertFromRaw, EditorState, Editor } from 'draft-js';
 
 // Localization
@@ -15,7 +14,6 @@ import { RootState } from 'store';
 import { connect, ConnectedProps } from 'react-redux';
 
 // Model
-import { StaticRoutes } from 'model/routes';
 import { MasterContractCommand } from 'model/contract';
 
 // Services
@@ -257,7 +255,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
       }
 
       if (section.title) {
-        sectionTitle = 'Section ' + section.index + ' - ' + section.title 
+        sectionTitle = 'Section ' + section.index + ' - ' + section.title
       } else {
         sectionTitle = 'Section ' + section.index
       }

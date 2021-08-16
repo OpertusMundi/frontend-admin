@@ -1,5 +1,6 @@
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
+import Geometry from 'ol/geom/Geometry';
 
 import { createEmpty, extend, isEmpty } from 'ol/extent';
 
@@ -11,7 +12,7 @@ export const opacityToHex = (value: number = 100): string => {
   return opacity[index];
 };
 
-const toFeatureArray = (features: Feature | Feature[] | Collection<Feature>) => {
+const toFeatureArray = (features: Feature<Geometry> | Feature<Geometry>[] | Collection<Feature<Geometry>>) => {
   if (features instanceof Feature) {
     return [features];
   }
@@ -25,7 +26,7 @@ const toFeatureArray = (features: Feature | Feature[] | Collection<Feature>) => 
   return null;
 };
 
-export const mergeExtent = (features: Feature | Feature[] | Collection<Feature>) => {
+export const mergeExtent = (features: Feature<Geometry> | Feature<Geometry>[] | Collection<Feature<Geometry>>) => {
   const array = toFeatureArray(features);
 
   if (array) {
