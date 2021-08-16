@@ -13,12 +13,12 @@ export interface AnalyticsManagerState {
 }
 
 // Actions
-export const SET_FILTER = 'order/manager/SET_FILTER';
-export const RESET_FILTER = 'order/manager/RESET_FILTER';
+export const SET_FILTER = 'analytics/manager/SET_FILTER';
+export const RESET_FILTER = 'analytics/manager/RESET_FILTER';
 
-export const QUERY_INIT = 'order/manager/QUERY_INIT';
-export const QUERY_FAILURE = 'order/manager/QUERY_FAILURE';
-export const QUERY_COMPLETE = 'order/manager/QUERY_COMPLETE';
+export const QUERY_INIT = 'analytics/manager/QUERY_INIT';
+export const QUERY_FAILURE = 'analytics/manager/QUERY_FAILURE';
+export const QUERY_COMPLETE = 'analytics/manager/QUERY_COMPLETE';
 
 export interface SetFilterAction {
   type: typeof SET_FILTER;
