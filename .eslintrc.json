@@ -1,0 +1,23 @@
+// https://create-react-app.dev/docs/setting-up-your-editor/#extending-or-replacing-the-default-eslint-config
+{
+  "extends": [
+    "react-app"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "**/*.ts?(x)"
+      ],
+      "rules": {
+        "react/style-prop-object": [
+          "error",
+          {
+            "allow": [
+              "FormattedNumber"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
