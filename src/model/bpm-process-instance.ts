@@ -153,17 +153,16 @@ export interface BpmActivity {
 export interface ProcessInstanceDetails {
   activities: BpmActivity[];
   errorDetails: { [activity: string]: string };
-  incidents: BpmIncident[];
   instance: BpmProcessInstance;
   owner?: MarketplaceAccountDetails;
+}
+
+export interface ActiveProcessInstanceDetails extends ProcessInstanceDetails {
+  incidents: BpmIncident[];
   variables: { [name: string]: BpmVariable };
 }
 
-export interface HistoryProcessInstanceDetails {
-  activities: BpmActivity[];
-  errorDetails: { [activity: string]: string };
+export interface HistoryProcessInstanceDetails extends ProcessInstanceDetails {
   incidents: BpmHistoryIncident[];
-  instance: BpmProcessInstance;
-  owner?: MarketplaceAccountDetails;
   variables: BpmHistoryVariable[];
 }

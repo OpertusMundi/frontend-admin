@@ -64,9 +64,6 @@ const styles = (theme: Theme) => createStyles({
   paper: {
     padding: '6px 16px',
   },
-  secondaryTail: {
-    backgroundColor: theme.palette.secondary.main,
-  },
   card: {
     minWidth: 480,
     maxWidth: 640,

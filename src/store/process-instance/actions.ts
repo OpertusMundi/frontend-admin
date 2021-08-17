@@ -1,9 +1,9 @@
 import { PageResult, Sorting } from 'model/response';
 import {
+  ActiveProcessInstanceDetails,
   EnumProcessInstanceSortField,
   ProcessInstanceQuery,
   ProcessInstance,
-  ProcessInstanceDetails,
 } from 'model/bpm-process-instance';
 
 import {
@@ -136,7 +136,7 @@ export function loadInit(businessKey: string | null, processInstance: string | n
   };
 }
 
-export function loadSuccess(processInstance: ProcessInstanceDetails): ProcessInstanceActions {
+export function loadSuccess(processInstance: ActiveProcessInstanceDetails): ProcessInstanceActions {
   return {
     type: LOAD_SUCCESS,
     processInstance,

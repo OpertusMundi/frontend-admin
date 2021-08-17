@@ -22,9 +22,9 @@ import ProcessInstanceApi from 'service/bpm-process-instance';
 
 // Model
 import {
+  ActiveProcessInstanceDetails,
   EnumProcessInstanceSortField,
   ProcessInstance,
-  ProcessInstanceDetails,
 } from 'model/bpm-process-instance';
 import { PageRequest, Sorting, PageResult, ObjectResponse } from 'model/response';
 
@@ -91,7 +91,7 @@ export const find = (
 
 export const findOne = (
   businessKey: string | null, processInstance: string | null
-): ThunkResult<ObjectResponse<ProcessInstanceDetails>> => async (dispatch, getState) => {
+): ThunkResult<ObjectResponse<ActiveProcessInstanceDetails>> => async (dispatch, getState) => {
   dispatch(loadInit(businessKey, processInstance));
   // Get response
   const api = new ProcessInstanceApi();

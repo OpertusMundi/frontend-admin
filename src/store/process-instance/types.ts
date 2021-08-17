@@ -7,10 +7,10 @@ import {
   Sorting,
 } from 'model/response';
 import {
+  ActiveProcessInstanceDetails,
   EnumProcessInstanceSortField,
   ProcessInstanceQuery,
   ProcessInstance,
-  ProcessInstanceDetails,
 } from 'model/bpm-process-instance';
 
 
@@ -20,7 +20,7 @@ export interface ProcessInstanceState {
   loading: boolean;
   loadingProcessInstance: boolean,
   pagination: PageRequest;
-  processInstance: ProcessInstanceDetails | null,
+  processInstance: ActiveProcessInstanceDetails | null,
   processInstanceCounter: number | null,
   query: ProcessInstanceQuery;
   result: PageResult<ProcessInstance> | null;
@@ -126,7 +126,7 @@ export interface LoadInitAction {
 
 export interface LoadSuccessAction {
   type: typeof LOAD_SUCCESS;
-  processInstance: ProcessInstanceDetails,
+  processInstance: ActiveProcessInstanceDetails,
 }
 
 export interface LoadFailureAction {

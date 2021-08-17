@@ -12,12 +12,12 @@ import {
 } from 'model/response';
 
 import {
+  ActiveProcessInstanceDetails,
   EnumProcessInstanceSortField,
   EnumProcessInstanceHistorySortField,
-  ProcessInstance,
-  ProcessInstanceDetails,
-  ProcessInstanceQuery,
   HistoryProcessInstanceDetails,
+  ProcessInstance,
+  ProcessInstanceQuery,
 } from 'model/bpm-process-instance';
 
 export default class WorkflowApi extends Api {
@@ -48,20 +48,20 @@ export default class WorkflowApi extends Api {
     return this.get<ObjectResponse<PageResult<ProcessInstance>>>(url);
   }
 
-  public async findOne(businessKey: string | null, processInstanceId: string | null): Promise<AxiosObjectResponse<ProcessInstanceDetails>> {
+  public async findOne(businessKey: string | null, processInstanceId: string | null): Promise<AxiosObjectResponse<ActiveProcessInstanceDetails>> {
     const url = processInstanceId ?
       `/action/workflows/process-instances/${processInstanceId}`
       :
       `/action/workflows/process-instances/business-key/${businessKey}`;;
 
 
-    return this.get<ObjectResponse<ProcessInstanceDetails>>(url);
+    return this.get<ObjectResponse<ActiveProcessInstanceDetails>>(url);
   }
 
-  public async findOneByBusinessKey(businessKey: string): Promise<AxiosObjectResponse<ProcessInstanceDetails>> {
+  public async findOneByBusinessKey(businessKey: string): Promise<AxiosObjectResponse<ActiveProcessInstanceDetails>> {
     const url = `/action/workflows/process-instances/business-key/${businessKey}`;
 
-    return this.get<ObjectResponse<ProcessInstanceDetails>>(url);
+    return this.get<ObjectResponse<ActiveProcessInstanceDetails>>(url);
   }
 
   public async findHistory(

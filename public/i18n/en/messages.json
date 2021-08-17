@@ -533,6 +533,11 @@
           "running": "Waiting for intermediate message",
           "error": "Failed to process intermediate message at {timestamp}"
         },
+        "intermediateTimer": {
+          "completed": "Time event at {timestamp}",
+          "running": "Waiting for time event",
+          "error": "Failed to process time intermediate Event at {timestamp}"
+        },
         "duration": "Duration {duration}"
       },
       "state": {
