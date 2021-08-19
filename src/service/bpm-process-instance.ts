@@ -16,6 +16,7 @@ import {
   EnumProcessInstanceSortField,
   EnumProcessInstanceHistorySortField,
   HistoryProcessInstanceDetails,
+  ProcessDefinition,
   ProcessInstance,
   ProcessInstanceQuery,
 } from 'model/bpm-process-instance';
@@ -24,6 +25,12 @@ export default class WorkflowApi extends Api {
 
   constructor(config: AxiosRequestConfig = {}) {
     super(config);
+  }
+
+  public async getProcessDefinitions(): Promise<AxiosObjectResponse<ProcessDefinition[]>> {
+    const url = `/action/workflows/process-definitions`;
+
+    return this.get<ObjectResponse<ProcessDefinition[]>>(url);
   }
 
   public async count(): Promise<AxiosObjectResponse<number>> {

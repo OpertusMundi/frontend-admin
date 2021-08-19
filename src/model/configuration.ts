@@ -1,3 +1,5 @@
+import { ProcessDefinition } from './bpm-process-instance';
+
 interface OsmConfiguration {
   url: string;
 }
@@ -16,4 +18,5 @@ export interface ApplicationConfiguration {
   map?: MapConfiguration;
   marketplaceUrl: string;
   osm?: OsmConfiguration;
+  processDefinitions: ProcessDefinition[];
 }

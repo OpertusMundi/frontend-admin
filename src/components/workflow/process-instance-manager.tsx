@@ -167,6 +167,7 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
     const {
       addToSelection,
       classes,
+      config: { processDefinitions },
       workflow: { instances: { runtime: { query, result, pagination, selected, sorting, loading, lastUpdated } } },
       find,
       setPager,
@@ -185,6 +186,7 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
               resetFilter={resetFilter}
               find={find}
               disabled={loading}
+              processDefinitions={processDefinitions}
             />
             {lastUpdated &&
               <Grid container spacing={3}>

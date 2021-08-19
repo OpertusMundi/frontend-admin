@@ -15,8 +15,16 @@ export enum EnumProcessInstanceHistorySortField {
   STARTED_ON = 'STARTED_ON',
 }
 
+export interface ProcessDefinition {
+  key: string;
+  name: string;
+  version: string;
+  versionTag: string;
+}
+
 export interface ProcessInstanceQuery {
   businessKey: string;
+  processDefinitionKey: string;
 }
 
 export interface ProcessInstance {

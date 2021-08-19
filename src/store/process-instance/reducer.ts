@@ -44,6 +44,7 @@ const initialState: ProcessInstanceState = {
   processInstanceCounter: 0,
   query: {
     businessKey: '',
+    processDefinitionKey: '',
   },
   result: null,
   selected: [],

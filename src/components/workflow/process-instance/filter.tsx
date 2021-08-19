@@ -8,8 +8,12 @@ import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
 import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
 import Grid from '@material-ui/core/Grid';
+import InputLabel from '@material-ui/core/InputLabel';
 import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 // Icons
 import Icon from '@mdi/react';
@@ -17,7 +21,12 @@ import { mdiCommentAlertOutline } from '@mdi/js';
 
 // Model
 import { PageRequest, PageResult, Sorting } from 'model/response';
-import { EnumProcessInstanceSortField, ProcessInstance, ProcessInstanceQuery } from 'model/bpm-process-instance';
+import {
+  EnumProcessInstanceSortField,
+  ProcessDefinition,
+  ProcessInstance,
+  ProcessInstanceQuery,
+} from 'model/bpm-process-instance';
 
 // Services
 import message from 'service/message';
@@ -40,6 +49,9 @@ const styles = (theme: Theme) => createStyles({
     marginRight: theme.spacing(1),
     width: 200,
   },
+  formControl: {
+    minWidth: 240,
+  },
 });
 
 interface WorkflowInstanceProps extends WithStyles<typeof styles> {
@@ -51,6 +63,7 @@ interface WorkflowInstanceProps extends WithStyles<typeof styles> {
     pageRequest?: PageRequest, sorting?: Sorting<EnumProcessInstanceSortField>[]
   ) => Promise<PageResult<ProcessInstance> | null>,
   disabled: boolean,
+  processDefinitions: ProcessDefinition[],
 }
 
 class ProcessInstanceFilters extends React.Component<WorkflowInstanceProps> {
@@ -82,7 +95,7 @@ class ProcessInstanceFilters extends React.Component<WorkflowInstanceProps> {
   }
 
   render() {
-    const { classes, disabled, query, setFilter } = this.props;
+    const { classes, disabled, query, setFilter, processDefinitions } = this.props;
 
     return (
       <form onSubmit={this.search} noValidate autoComplete="off">
@@ -98,7 +111,27 @@ class ProcessInstanceFilters extends React.Component<WorkflowInstanceProps> {
               }
             />
           </Grid>
-          <Grid container item md={8} xs={12} justifyContent={'flex-end'}>
+          <Grid item md={4} xs={12}>
+            <FormControl className={classes.formControl}>
+              <InputLabel id="processDefinitionKey-label">Process Definition</InputLabel>
+              <Select
+                labelId="processDefinitionKey-label"
+                id="processDefinitionKey"
+                value={query.processDefinitionKey}
+                onChange={
+                  (event: React.ChangeEvent<{ value: unknown }>): void => setFilter({ processDefinitionKey: event.target.value as string })
+                }
+              >
+                <MenuItem value="">
+                  <em>All</em>
+                </MenuItem>
+                {processDefinitions.map((def) => (
+                  <MenuItem key={def.key} value={def.key}>{def.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid container item md={4} xs={12} justifyContent={'flex-end'}>
             <Button
               type="submit"
               variant="contained"
@@ -123,7 +156,7 @@ class ProcessInstanceFilters extends React.Component<WorkflowInstanceProps> {
             </Button>
           </Grid>
         </Grid>
-      </form>
+      </form >
     );
   }
 }
