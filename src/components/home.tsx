@@ -96,6 +96,8 @@ import SecureContent from 'components/secure-content';
 import SecureRoute from 'components/secure-route';
 import TransferManager from 'components/transfer/transfer-grid';
 
+import PerfectScrollbar from 'react-perfect-scrollbar';
+
 // Store
 import { RootState } from 'store';
 import { logout } from 'store/security/thunks';
@@ -124,9 +126,11 @@ const styles = (theme: Theme) => createStyles({
     width: theme.spacing(6),
     height: theme.spacing(6),
   },
+  containerWrapper: {
+    height: 'calc(100vh - 64px)',
+  },
   container: {
     padding: theme.spacing(1),
-    height: 'calc(100vh - 64px)',
   },
   paper: {
     padding: theme.spacing(0),
@@ -137,7 +141,7 @@ const styles = (theme: Theme) => createStyles({
   content: {
     flexGrow: 1,
     height: '100vh',
-    overflow: 'auto',
+    overflow: 'hidden',
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
@@ -739,44 +743,46 @@ class Home extends React.Component<HomeProps, HomeState> {
         </Drawer>
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          <Container maxWidth={false} className={classes.container}>
-            <Switch>
-              <Redirect from="/" to={StaticRoutes.Dashboard} exact />
-              {/* Dynamic */}
-              <Route path={DynamicRoutes.AccountUpdate} component={AccountForm} />
-              <Route path={DynamicRoutes.AccountCreate} component={AccountForm} />
-              <Route path={DynamicRoutes.ContractCreate} component={ContractForm} />
-              <Route path={DynamicRoutes.ContractUpdate} component={ContractForm} />
-              <Route path={DynamicRoutes.OrderTimeline} component={OrderTimeline} />
-              <Route path={DynamicRoutes.OrderView} component={PlaceHolder} />
-              <Route path={DynamicRoutes.MarketplaceAccountView} component={MarketplaceAccountView} />
-              <Route path={DynamicRoutes.ProcessInstanceHistoryView} component={ProcessInstanceHistoryForm} />
-              <Route path={DynamicRoutes.ProcessInstanceView} component={ProcessInstanceForm} />
-              <Route path={DynamicRoutes.PayInView} component={PlaceHolder} />
-              <Route path={DynamicRoutes.PayOutView} component={PlaceHolder} />
-              {/* Static */}
-              <Route path={StaticRoutes.Analytics} component={QueryEditor} />
-              <Route path={StaticRoutes.Dashboard} component={DashboardComponent} />
-              <Route path={StaticRoutes.ContractManager} component={ContractManager} />
-              <Route path={StaticRoutes.DraftManager} component={AssetDraftManager} />
-              <Route path={StaticRoutes.OrderManager} component={OrderManager} />
-              <Route path={StaticRoutes.PayInManager} component={PayInManager} />
-              <Route path={StaticRoutes.PayOutManager} component={PayOutManager} />
-              <Route path={StaticRoutes.ProviderManager} component={ProviderManager} />
-              <Route path={StaticRoutes.TransferManager} component={TransferManager} />
-              <Route path={StaticRoutes.Map} component={MapViewerComponent} />
-              <Route path={StaticRoutes.Profile} component={Profile} />
-              <Route path={StaticRoutes.Settings} component={PlaceHolder} />
-              {/* Secured paths */}
-              <SecureRoute path={StaticRoutes.HelpdeskAccountManager} component={HelpdeskAccountManager} roles={[EnumRole.ADMIN]} />
-              <SecureRoute path={StaticRoutes.IncidentManager} component={IncidentManager} roles={[EnumRole.ADMIN]} />
-              <SecureRoute path={StaticRoutes.MarketplaceAccountManager} component={MarketplaceAccountManager} roles={[EnumRole.ADMIN]} />
-              <SecureRoute path={StaticRoutes.ProcessInstanceManager} component={ProcessInstanceManager} roles={[EnumRole.ADMIN]} />
-              <SecureRoute path={StaticRoutes.ProcessInstanceHistoryManager} component={ProcessInstanceHistoryManager} roles={[EnumRole.ADMIN]} />
-              {/* Default */}
-              <Redirect push={true} to={ErrorPages.NotFound} />
-            </Switch>
-          </Container>
+          <PerfectScrollbar className={classes.containerWrapper}>
+            <Container maxWidth={false} className={classes.container}>
+              <Switch>
+                <Redirect from="/" to={StaticRoutes.Dashboard} exact />
+                {/* Dynamic */}
+                <Route path={DynamicRoutes.AccountUpdate} component={AccountForm} />
+                <Route path={DynamicRoutes.AccountCreate} component={AccountForm} />
+                <Route path={DynamicRoutes.ContractCreate} component={ContractForm} />
+                <Route path={DynamicRoutes.ContractUpdate} component={ContractForm} />
+                <Route path={DynamicRoutes.OrderTimeline} component={OrderTimeline} />
+                <Route path={DynamicRoutes.OrderView} component={PlaceHolder} />
+                <Route path={DynamicRoutes.MarketplaceAccountView} component={MarketplaceAccountView} />
+                <Route path={DynamicRoutes.ProcessInstanceHistoryView} component={ProcessInstanceHistoryForm} />
+                <Route path={DynamicRoutes.ProcessInstanceView} component={ProcessInstanceForm} />
+                <Route path={DynamicRoutes.PayInView} component={PlaceHolder} />
+                <Route path={DynamicRoutes.PayOutView} component={PlaceHolder} />
+                {/* Static */}
+                <Route path={StaticRoutes.Analytics} component={QueryEditor} />
+                <Route path={StaticRoutes.Dashboard} component={DashboardComponent} />
+                <Route path={StaticRoutes.ContractManager} component={ContractManager} />
+                <Route path={StaticRoutes.DraftManager} component={AssetDraftManager} />
+                <Route path={StaticRoutes.OrderManager} component={OrderManager} />
+                <Route path={StaticRoutes.PayInManager} component={PayInManager} />
+                <Route path={StaticRoutes.PayOutManager} component={PayOutManager} />
+                <Route path={StaticRoutes.ProviderManager} component={ProviderManager} />
+                <Route path={StaticRoutes.TransferManager} component={TransferManager} />
+                <Route path={StaticRoutes.Map} component={MapViewerComponent} />
+                <Route path={StaticRoutes.Profile} component={Profile} />
+                <Route path={StaticRoutes.Settings} component={PlaceHolder} />
+                {/* Secured paths */}
+                <SecureRoute path={StaticRoutes.HelpdeskAccountManager} component={HelpdeskAccountManager} roles={[EnumRole.ADMIN]} />
+                <SecureRoute path={StaticRoutes.IncidentManager} component={IncidentManager} roles={[EnumRole.ADMIN]} />
+                <SecureRoute path={StaticRoutes.MarketplaceAccountManager} component={MarketplaceAccountManager} roles={[EnumRole.ADMIN]} />
+                <SecureRoute path={StaticRoutes.ProcessInstanceManager} component={ProcessInstanceManager} roles={[EnumRole.ADMIN]} />
+                <SecureRoute path={StaticRoutes.ProcessInstanceHistoryManager} component={ProcessInstanceHistoryManager} roles={[EnumRole.ADMIN]} />
+                {/* Default */}
+                <Redirect push={true} to={ErrorPages.NotFound} />
+              </Switch>
+            </Container>
+          </PerfectScrollbar>
         </main>
         <Drawer
           anchor={'right'}
