@@ -545,7 +545,7 @@
         "INTERNALLY_TERMINATED": "The process has been internally terminated by the BPM engine at {timestamp}"
       },
       "variables": {
-        "title": "Variables"
+        "title": "Variables [{count}]"
       }
     },
     "header": {

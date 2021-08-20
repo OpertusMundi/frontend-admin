@@ -78,18 +78,14 @@ export interface BpmProcessInstance {
 }
 
 export interface BpmVariable {
+  createTime?: Moment;
+  errorMessage?: string;
+  name: string;
+  removalTime?: Moment | null
+  state?: string;
+  taskId?: string;
   type: string;
   value: string | number | boolean | null;
-}
-
-export interface BpmHistoryVariable extends BpmVariable {
-  createTime: Moment;
-  errorMessage: string;
-  name: string;
-  removalTime: Moment | null
-  state: string;
-  taskId: string;
-
 }
 
 export interface BpmIncident {
@@ -163,14 +159,13 @@ export interface ProcessInstanceDetails {
   errorDetails: { [activity: string]: string };
   instance: BpmProcessInstance;
   owner?: MarketplaceAccountDetails;
+  variables: BpmVariable[];
 }
 
 export interface ActiveProcessInstanceDetails extends ProcessInstanceDetails {
   incidents: BpmIncident[];
-  variables: { [name: string]: BpmVariable };
 }
 
 export interface HistoryProcessInstanceDetails extends ProcessInstanceDetails {
   incidents: BpmHistoryIncident[];
-  variables: BpmHistoryVariable[];
 }

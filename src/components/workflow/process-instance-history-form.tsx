@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import qs from 'qs';
 import moment from 'moment';
 import React from 'react';
@@ -18,17 +17,16 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 import { red } from '@material-ui/core/colors';
 
 import Spinner from 'components/spinner';
 import ProcessInstanceTimeline from './timeline';
+import ProcessInstanceVariables from './variable-list';
 
 // Icons
 import Icon from '@mdi/react';
@@ -37,10 +35,6 @@ import {
   mdiDatabaseCogOutline,
   mdiClockFast,
   mdiVariable,
-  mdiContentCopy,
-  mdiNumeric,
-  mdiText,
-  mdiCheckboxMarkedOutline,
   mdiAccountOutline,
 } from '@mdi/js';
 
@@ -52,18 +46,9 @@ import { findOne } from 'store/process-instance-history/thunks'
 import AccountApi from 'service/account-marketplace';
 import { MarketplaceAccountDetails } from 'model/account-marketplace';
 
-const COPY = 'copy';
-
 const styles = (theme: Theme) => createStyles({
-  root: {
-    display: 'flex',
-    padding: 0,
-  },
   item: {
     width: '100%',
-  },
-  paper: {
-    padding: '6px 16px',
   },
   card: {
     borderRadius: 0,
@@ -127,26 +112,6 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
     }
   }
 
-  mapVariableTypeToIcon(type: string) {
-    switch (type.toLocaleLowerCase()) {
-      case 'number':
-      case 'numeric':
-      case 'integer':
-      case 'float':
-      case 'long':
-        return (
-          <Icon path={mdiNumeric} size="1rem" />
-        );
-      case 'boolean':
-        return (
-          <Icon path={mdiCheckboxMarkedOutline} size="1rem" />
-        );
-    }
-    return (
-      <Icon path={mdiText} size="1rem" />
-    );
-  }
-
   getAccountAvatar(account: MarketplaceAccountDetails | null): React.ReactElement {
     const { classes } = this.props;
 
@@ -172,20 +137,6 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
         <Icon path={mdiAccountOutline} size="1.2rem" />
       </Avatar>
     );
-  }
-
-  copyValueToClipboard(value: string | number | boolean | null) {
-    if (!value || typeof value === 'boolean') {
-      return;
-    }
-    const element: HTMLInputElement = document.getElementById('copy-to-clipboard') as HTMLInputElement;
-
-    if (element && document.queryCommandSupported(COPY)) {
-      element.focus();
-      element.value = typeof value === 'number' ? '' + value : value;
-      element.select();
-      document.execCommand(COPY);
-    }
   }
 
   renderDetails(): React.ReactElement | null {
@@ -250,41 +201,12 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
               <Icon path={mdiVariable} size="1.5rem" />
             </Avatar>
           }
-          title={_t({ id: 'workflow.instance.variables.title' })}
+          title={_t({ id: 'workflow.instance.variables.title' }, { count: variables.length })}
         ></CardHeader>
         <CardContent>
-          <List disablePadding>
-            {_.uniqBy(variables, 'name').filter(v => !['startUserKey'].includes(v.name)).sort().map((v) => {
-              const value = v.value;
-
-              return (
-                <div key={`variable-${v.name}`}>
-                  <ListItem className={classes.listItem}>
-                    <ListItemAvatar>
-                      <Avatar className={classes.small}>
-                        {this.mapVariableTypeToIcon(v.type)}
-                      </Avatar>
-                    </ListItemAvatar>
-                    {typeof value === 'boolean' &&
-                      <ListItemText primary={v.name} secondary={value === true ? 'True' : 'False'} />
-                    }
-                    {typeof value !== 'boolean' &&
-                      <ListItemText primary={v.name} secondary={value} />
-                    }
-                    {typeof value !== 'boolean' && v.value &&
-                      <ListItemSecondaryAction>
-                        <IconButton edge="end" aria-label="delete" onClick={() => this.copyValueToClipboard(v.value)}>
-                          <Icon path={mdiContentCopy} size="1.2rem" />
-                        </IconButton>
-                      </ListItemSecondaryAction>
-                    }
-                  </ListItem>
-                </div>
-              );
-            })}
-          </List>
+          <ProcessInstanceVariables variables={variables} />
         </CardContent>
-      </Card>
+      </Card >
     );
   }
 
@@ -326,7 +248,6 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
             </Grid>
           </Grid>
         </Grid>
-        <input type="text" id="copy-to-clipboard" defaultValue="" style={{ position: 'absolute', left: -1000 }} />
       </>
     );
   }
