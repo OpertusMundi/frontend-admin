@@ -85,6 +85,7 @@ const styles = (theme: Theme) => createStyles({
     overflow: 'auto',
   },
   option: {
+    display: 'block',
     fontWeight: 500,
     marginRight: '5px',
     marginBottom: '20px',
@@ -123,6 +124,10 @@ const styles = (theme: Theme) => createStyles({
     width: '30px',
     verticalAlign: 'middle',
     marginBottom: '10px',
+  },
+  shortDescription: {
+    display: 'inline-block',
+    marginLeft: '30px',
   },
 });
 
@@ -174,10 +179,11 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
     });
 
     const structure = contract.sections.map((section) => {
-      let body, renderedSuboptions: any, icon: any, length = 0, sectionTitle = '';
+      let body, renderedSuboptions: any, icon, length = 0, sectionTitle = '';
 
       if (section.dynamic) {
         body = section.options.map((option, index) => {
+          icon = <div/>
           var subOptionsArray = section.options[index].subOptions!;
           let subOptionBlock = [];
           if (subOptionsArray) {
@@ -202,12 +208,14 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
             });
 
           };
-          if (section.options[index].icon)
-            icon = <img className={classes.logoImage} src={"/icons/" + section.options[index].icon} alt="" />
+          if (section.options[index].icon){
+            icon = <img className={classes.logoImage} src={`data:image/svg+xml;base64,${section.options[index].icon}`} />
+          }
 
           return (
             <div className={classes.optionBlock} key={index}> <span className={classes.option} >Option {String.fromCharCode(65 + index)}</span>
-
+              {icon}
+              <div className={classes.shortDescription} >{section.options[index].shortDescription}</div>
               <p>{section.options[index].summary}</p>
               <Editor editorState={EditorState.createWithContent(convertFromRaw(JSON.parse(option.body)))} readOnly={true} onChange={() => { }} />
               {renderedSuboptions}
@@ -245,9 +253,12 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
               )
             });
           }
-          if (section.options[0].icon)
-            icon = <img className={classes.logoImage} src={"/icons/" + section.options[0].icon} alt="" />
+          if (section.options[0].icon){
+            icon = <img className={classes.logoImage} src={`data:image/svg+xml;base64,${section.options[0].icon}`} />
+          }
           body = <div   className={classes.optionBlock}>
+            {icon}
+            <div className={classes.shortDescription} >{section.options[0].shortDescription}</div>
             <p>{section.options[0].summary}</p>
             <Editor editorState={option} readOnly={true} onChange={() => { }} />
             {renderedSuboptions} </div>;
@@ -264,7 +275,6 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
           <FormattedMessage id={section.id! + 1} defaultMessage={sectionTitle} />
         </div>
         <div>
-              {icon}
               {body}
         </div>
       </div>

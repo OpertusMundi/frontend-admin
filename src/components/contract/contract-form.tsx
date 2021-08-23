@@ -281,7 +281,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         ...state.contract,
         sections: [...state.contract.sections, {
           ...defaultSection, options: [{...defaultOptions}], ...section,
-          subOptions: {}, ...section, summary: [...[""]], ...section, icons: [...[""]], ...section
+          subOptions: {}, ...section
         },]
       }
     }));
@@ -307,7 +307,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     }));
   }
 
-  editSection(section: Partial<Section>, summary = "", option = 0, raw = "", descriptionOfChange = "", icon = "",htmlContent= "", subOption = -1, ): void {
+  editSection(section: Partial<Section>, summary = "", option = 0, raw = "", descriptionOfChange = "", icon = "", shortDescription = "", htmlContent= "", subOption = -1, ): void {
     const { contract } = this.state;
     let sections = [...contract.sections]
     const id = sections.findIndex((s) => s.id === section.id);
@@ -361,6 +361,9 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       sections[id].options[option].icon! = ''
     } else if (icon) {
       sections[id].options[option].icon! = icon
+    }
+    if (shortDescription) {
+      sections[id].options[option].shortDescription = shortDescription;
     }
     if (descriptionOfChange) {
       sections[id].descriptionOfChange = descriptionOfChange;
@@ -482,16 +485,16 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   }
 
   saveContent(id: number, contentState: ContentState, title: string, option: number, subOption: number,
-    summary: string, descriptionOfChange: string, icon: string, editField: EditFieldEnum): void {
+    summary: string, descriptionOfChange: string, icon: string, shortDescription: string, editField: EditFieldEnum): void {
     let raw, htmlContent='';
     raw = JSON.stringify(convertToRaw(contentState));
     if (contentState.getPlainText()){
       htmlContent = stateToHTML(contentState);
     }
     if (editField === EditFieldEnum.Section) {
-      this.editSection({ id: id, title: title }, summary, option, raw, descriptionOfChange, icon, htmlContent);
+      this.editSection({ id: id, title: title }, summary, option, raw, descriptionOfChange, icon, shortDescription, htmlContent);
     } else if (editField === EditFieldEnum.SubOption) {
-      this.editSection({ id: id, title: title }, summary, option, raw, descriptionOfChange, icon, htmlContent, subOption);
+      this.editSection({ id: id, title: title }, summary, option, raw, descriptionOfChange, icon, shortDescription, htmlContent, subOption);
     } else if (editField === EditFieldEnum.Title) {
       this.setState((state) => ({
         contract: {

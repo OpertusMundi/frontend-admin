@@ -46,6 +46,7 @@ export interface Option {
   subOptions?: SubOption[];
   summary?: string;
   icon?: string;
+  shortDescription?: string;
 
 }
 

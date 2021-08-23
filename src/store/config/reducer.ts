@@ -11,6 +11,7 @@ import {
 const initialState: ConfigurationState = {
   marketplaceUrl: '',
   processDefinitions: [],
+  icons: {}
 };
 
 export function configurationReducer(

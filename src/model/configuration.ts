@@ -19,4 +19,5 @@ export interface ApplicationConfiguration {
   marketplaceUrl: string;
   osm?: OsmConfiguration;
   processDefinitions: ProcessDefinition[];
+  icons: {[key : string] : string}
 }
