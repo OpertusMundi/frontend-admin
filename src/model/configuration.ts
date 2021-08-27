@@ -1,3 +1,4 @@
+import { ContractIcon } from './contract';
 import { ProcessDefinition } from './bpm-process-instance';
 
 interface OsmConfiguration {
@@ -19,5 +20,5 @@ export interface ApplicationConfiguration {
   marketplaceUrl: string;
   osm?: OsmConfiguration;
   processDefinitions: ProcessDefinition[];
-  icons: {[key : string] : string}
+  contractIcons: ContractIcon[];
 }

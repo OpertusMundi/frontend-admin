@@ -175,7 +175,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
         title = this.props.documentSubtitle!;
     }
     this.state = {
-      editorState, title, option: 0, subOption: 0, editingOption: true, showEditor: show, summary, descriptionOfChange, variable, optional, 
+      editorState, title, option: 0, subOption: 0, editingOption: true, showEditor: show, summary, descriptionOfChange, variable, optional,
       dynamic, icon, shortDescription, openAutoTextSelect: false, openIconSelect: false, editField: this.props.editField
 
     };
@@ -496,7 +496,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
         suppressContentEditableWarning={true} contentEditable={true}
         onChange={(e) => this.onShortDescriptionSet(e)} />
         </div>
-        
+
       iconSelector =
         <div onClick={() => openIconSelector()} className="rdw-block-wrapper" aria-expanded={this.state.openIconSelect} aria-label="rdw-block-control" role="button" tabIndex={0}>
           <div className="rdw-dropdown-wrapper rdw-block-dropdown" aria-expanded={this.state.openIconSelect} aria-label="rdw-dropdown" style={{ width: 300 }}>
@@ -505,15 +505,15 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
               <div className={`rdw-dropdown-caretto${this.state.openIconSelect ? 'close' : 'open'}`} />
             </div>
             <ul className={`rdw-dropdown-optionwrapper ${this.state.openIconSelect ? classes.open : classes.close}`} >
-              { Object.entries(config.icons).map(icon => (
+              { config.contractIcons.map(icon => (
                 <li
-                  onClick={() => selectIcon(icon[1])}
-                  key={icon[1]}
+                  onClick={() => selectIcon(icon.image)}
+                  key={icon.icon}
                   className={`rdw-dropdownoption-default placeholder-li ${this.state.openIconSelect ? 'close' : 'open'}`}
                   style={{ display: 'block', padding: '5px' }}
                 >
-                  {icon[0]}
-                  <img className={classes.icon}  src={`data:image/svg+xml;base64,${icon[1]}`} />
+                  {icon.icon}
+                  <img className={classes.icon}  src={`data:image/svg+xml;base64,${icon.image}`} />
                 </li>
               ))}
               <li

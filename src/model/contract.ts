@@ -12,6 +12,31 @@ export enum EnumContract {
   USER_CONTRACT = 'USER_CONTRACT',
 }
 
+export enum EnumContractIcon {
+  AlterationNotPermitted = 'AlterationNotPermitted',
+  AlterationPermitted = 'AlterationPermitted',
+  CommercialUseNotPermitted = 'CommercialUseNotPermitted',
+  CommercialUsePermitted = 'CommercialUsePermitted',
+  DeliveredByTopio = 'DeliveredByTopio',
+  DeliveredByVendor = 'DeliveredByVendor',
+  DigitalDelivery = 'DigitalDelivery',
+  PhysicalDelivery = 'PhysicalDelivery',
+  ThirdPartyNotPermitted = 'ThirdPartyNotPermitted',
+  ThirdPartyPermitted = 'ThirdPartyPermitted',
+  UpdatesNotIncluded = 'UpdatesNotIncluded',
+  UpdatesIncluded = 'UpdatesIncluded',
+  WarrantyNotProvided = 'WarrantyNotProvided',
+  WarrantyProvided = 'WarrantyProvided',
+  NoRestrictionsWorldwide = 'NoRestrictionsWorldwide',
+  Geomarketing = 'Geomarketing ',
+}
+
+export enum EnumContractIconCategory {
+  Terms = 'Terms',
+  Countries = 'Countries',
+  Restrictions = 'Restrictions',
+}
+
 export enum EnumContractStatus {
   DRAFT = 'DRAFT',
   HISTORY = 'HISTORY',
@@ -26,6 +51,12 @@ export enum EnumMasterContractSortField {
   STATUS = 'STATUS',
   TITLE = 'TITLE',
   VERSION = 'VERSION',
+}
+
+export interface ContractIcon {
+  category: EnumContractIconCategory;
+  icon: EnumContractIcon;
+  image: string;
 }
 
 export interface Section {
