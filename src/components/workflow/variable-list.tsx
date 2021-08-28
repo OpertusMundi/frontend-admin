@@ -88,7 +88,6 @@ class ProcessInstanceVariables extends React.Component<ProcessInstanceVariablesP
   }
 
   render() {
-    const _t = this.props.intl.formatMessage;
     const { classes, variables = [] } = this.props;
 
     return (
