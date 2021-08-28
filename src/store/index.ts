@@ -12,10 +12,11 @@ import { configurationReducer } from './config/reducer';
 import { contractReducer } from './contract/reducer';
 import { draftReducer } from './draft/reducer';
 import { helpdeskAccountReducer } from './account/reducer';
+import { helpdeskInboxReducer } from './message-inbox-helpdesk/reducer';
+import { i18nReducer } from './i18n/reducer';
 import { incidentReducer } from './incident/reducer';
 import { mapViewerReducer } from './map/reducer';
 import { marketplaceAccountReducer } from './account-marketplace/reducer';
-import { messageReducer } from './i18n/reducer';
 import { orderReducer } from './order/reducer';
 import { payInReducer } from './payin/reducer';
 import { payOutReducer } from './payout/reducer';
@@ -24,6 +25,7 @@ import { processInstanceHistoryReducer } from './process-instance-history/reduce
 import { providerReducer } from './provider/reducer';
 import { securityReducer } from './security/reducer';
 import { transferReducer } from './transfer/reducer';
+import { userInboxReducer } from './message-inbox-user/reducer';
 import { viewportReducer } from './viewport/reducer';
 
 // Combine reducers
@@ -40,10 +42,14 @@ export const rootReducer = Redux.combineReducers({
     payout: payOutReducer,
     transfer: transferReducer,
   }),
+  message: Redux.combineReducers({
+    helpdeskInbox: helpdeskInboxReducer,
+    userInbox: userInboxReducer,
+  }),
   config: configurationReducer,
   contract: contractReducer,
   draft: draftReducer,
-  i18n: messageReducer,
+  i18n: i18nReducer,
   map: mapViewerReducer,
   security: securityReducer,
   viewport: viewportReducer,

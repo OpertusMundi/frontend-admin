@@ -56,6 +56,8 @@ import {
   mdiBankTransferOut,
   mdiFinance,
   mdiChartBarStacked,
+  mdiTray,
+  mdiTrayFull,
   mdiWalletOutline,
 } from '@mdi/js';
 
@@ -80,6 +82,8 @@ import MapViewerComponent from 'components/map-viewer';
 import MapViewerConfigComponent from 'components/map-viewer-config';
 import MarketplaceAccountManager from 'components/account-marketplace/account-grid';
 import MarketplaceAccountView from 'components/account-marketplace/account-form';
+import MessageInboxHelpdesk from 'components/message-inbox-helpdesk/message-grid';
+import MessageInboxUser from 'components/message-inbox-user/message-grid';
 import PayInManager from 'components/payin/payin-grid';
 import PayOutManager from 'components/payout/payout-manager';
 import PlaceHolder from 'components/placeholder';
@@ -103,12 +107,15 @@ import { RootState } from 'store';
 import { logout } from 'store/security/thunks';
 import { countIncidents } from 'store/incident/thunks';
 import { countProcessInstances } from 'store/process-instance/thunks';
+import { countUnassignedMessages } from 'store/message-inbox-helpdesk/thunks';
+import { countNewMessages } from 'store/message-inbox-user/thunks';
 
 enum EnumSection {
   Admin = 'Admin',
   Billing = 'Billing',
   Drawer = 'Drawer',
-  MapDrawer = 'MapDrawer'
+  MapDrawer = 'MapDrawer',
+  Message = 'Message',
 };
 
 const drawerWidth = 280;
@@ -240,6 +247,7 @@ interface HomeState {
     [EnumSection.Billing]: boolean;
     [EnumSection.Drawer]: boolean;
     [EnumSection.MapDrawer]: boolean;
+    [EnumSection.Message]: boolean;
   },
   menuAnchor: HTMLElement | null,
   isMenuOpen: boolean,
@@ -270,6 +278,7 @@ class Home extends React.Component<HomeProps, HomeState> {
       [EnumSection.Billing]: false,
       [EnumSection.Drawer]: true,
       [EnumSection.MapDrawer]: false,
+      [EnumSection.Message]: false,
     },
     menuAnchor: null,
     isMenuOpen: false,
@@ -313,10 +322,14 @@ class Home extends React.Component<HomeProps, HomeState> {
 
     this.props.countIncidents();
     this.props.countProcessInstances();
+    this.props.countNewMessages();
+    this.props.countUnassignedMessages();
 
     this.refreshCountersInterval = window.setInterval(() => {
       this.props.countIncidents();
       this.props.countProcessInstances();
+      this.props.countNewMessages();
+      this.props.countUnassignedMessages();
     }, 5 * 60 * 1000);
   }
 
@@ -351,6 +364,7 @@ class Home extends React.Component<HomeProps, HomeState> {
         ...this.state.open,
         [EnumSection.Admin]: this.state.open[key] ? this.state.open[EnumSection.Admin] : false,
         [EnumSection.Billing]: this.state.open[key] ? this.state.open[EnumSection.Billing] : false,
+        [EnumSection.Message]: this.state.open[key] ? this.state.open[EnumSection.Message] : false,
         [key]: !this.state.open[key],
       }
     });
@@ -450,16 +464,15 @@ class Home extends React.Component<HomeProps, HomeState> {
     );
   }
 
-  createAccount(): void {
-    const path = buildPath(DynamicRoutes.AccountCreate, []);
-    this.props.history.push(path);
-  }
-
   render() {
     const { open } = this.state;
     const { classes, workflow: { incidents: { incidentCounter } } } = this.props;
 
     const _t = this.props.intl.formatMessage;
+
+    const unassigned = this.props.messages.helpdeskInbox.count;
+    const unread = this.props.messages.userInbox.count;
+    const total = unassigned + unread;
 
     return (
       <div className={classes.root}>
@@ -490,14 +503,6 @@ class Home extends React.Component<HomeProps, HomeState> {
                     onClick={() => this.onDrawerOpen(EnumSection.MapDrawer)}
                   >
                     <Icon path={mdiLayers} size="1.5rem" />
-                  </IconButton>
-                }
-                {this.props.profile?.roles.includes(EnumRole.ADMIN) &&
-                  <IconButton
-                    color="inherit"
-                    onClick={() => this.createAccount()}
-                  >
-                    <Icon path={mdiAccountPlusOutline} size="1.5rem" />
                   </IconButton>
                 }
                 <IconButton
@@ -649,13 +654,45 @@ class Home extends React.Component<HomeProps, HomeState> {
                 </List>
               </Collapse>
 
-              <ListItem button
-                onClick={(e) => this.onNavigate(e, StaticRoutes.MessageManager)}>
+              <ListItem button onClick={() => this.onSectionToggle(EnumSection.Message)}>
                 <ListItemIcon>
-                  <Icon path={mdiForumOutline} size="1.5rem" />
+                  <Badge
+                    badgeContent={total}
+                    color={unassigned === 0 ? "primary" : "secondary"}
+                    invisible={total === 0 || open[EnumSection.Message]}
+                  >
+                    <Icon path={mdiForumOutline} size="1.5rem" />
+                  </Badge>
                 </ListItemIcon>
-                <ListItemText primary={_t({ id: 'links.message-manager' })} />
+                <ListItemText primary={_t({ id: 'links.message-inbox' })} />
+                {open[EnumSection.Message] ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
+
+              <Collapse in={open[EnumSection.Message]} timeout="auto" unmountOnExit className={classes.collapse}>
+                <List component="div" disablePadding className={open[EnumSection.Drawer] ? '' : classes.childMenu}>
+
+                  <ListItem button
+                    onClick={(e) => this.onNavigate(e, StaticRoutes.MessageInboxHelpdesk)}>
+                    <ListItemIcon>
+                      <Badge badgeContent={unassigned} color="secondary" invisible={unassigned === 0 || !open[EnumSection.Message]}>
+                        <Icon path={mdiTrayFull} size="1.5rem" />
+                      </Badge>
+                    </ListItemIcon>
+                    <ListItemText primary={_t({ id: 'links.message-inbox-helpdesk' })} />
+                  </ListItem>
+
+                  <ListItem button
+                    onClick={(e) => this.onNavigate(e, StaticRoutes.MessageInboxUser)}>
+                    <ListItemIcon>
+                      <Badge badgeContent={unread} color="primary" invisible={unread === 0 || !open[EnumSection.Message]}>
+                        <Icon path={mdiTray} size="1.5rem" />
+                      </Badge>
+                    </ListItemIcon>
+                    <ListItemText primary={_t({ id: 'links.message-inbox-user' })} />
+                  </ListItem>
+
+                </List>
+              </Collapse>
 
               <ListItem button
                 onClick={(e) => this.onNavigate(e, StaticRoutes.Map)}>
@@ -770,6 +807,8 @@ class Home extends React.Component<HomeProps, HomeState> {
                 <Route path={StaticRoutes.ProviderManager} component={ProviderManager} />
                 <Route path={StaticRoutes.TransferManager} component={TransferManager} />
                 <Route path={StaticRoutes.Map} component={MapViewerComponent} />
+                <Route path={StaticRoutes.MessageInboxHelpdesk} component={MessageInboxHelpdesk} />
+                <Route path={StaticRoutes.MessageInboxUser} component={MessageInboxUser} />
                 <Route path={StaticRoutes.Profile} component={Profile} />
                 <Route path={StaticRoutes.Settings} component={PlaceHolder} />
                 {/* Secured paths */}
@@ -802,12 +841,15 @@ class Home extends React.Component<HomeProps, HomeState> {
 const mapState = (state: RootState) => ({
   profile: state.security.profile,
   workflow: state.workflow,
+  messages: state.message,
 });
 
 const mapDispatch = {
   logout: () => logout(),
   countIncidents: () => countIncidents(),
   countProcessInstances: () => countProcessInstances(),
+  countUnassignedMessages: () => countUnassignedMessages(),
+  countNewMessages: () => countNewMessages(),
 };
 
 const connector = connect(

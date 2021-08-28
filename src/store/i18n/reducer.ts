@@ -11,7 +11,7 @@ const initialState: MessageState = {
   messages: {},
 };
 
-export function messageReducer(
+export function i18nReducer(
   state = initialState,
   action: MessageTypes
 ): MessageState {

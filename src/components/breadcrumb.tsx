@@ -38,14 +38,6 @@ interface BreadcrumbProps extends PropsFromRedux, RouteComponentProps, WithStyle
 
 class Breadcrumb extends React.Component<BreadcrumbProps> {
 
-  private getToolbarComponent(): (() => React.ReactNode) | null {
-    const match = matchRoute(this.props.location.pathname);
-    if ((match) && (match.properties.toolbarComponent)) {
-      return match.properties.toolbarComponent;
-    }
-    return null;
-  }
-
   private checkRoles(routeRoles: ((roles: EnumRole[], state: RootState) => boolean) | EnumRole[] | null, userRoles: EnumRole[], state: RootState): boolean {
     if (typeof routeRoles === 'function') {
       return routeRoles(userRoles, state);
@@ -83,7 +75,8 @@ class Breadcrumb extends React.Component<BreadcrumbProps> {
   render() {
     const { classes, location, profile, state } = this.props;
 
-    const toolbarComponentFunc = this.getToolbarComponent();
+    const match = matchRoute(this.props.location.pathname);
+    const toolbarComponentFunc = match?.properties?.toolbarComponent;
 
     const roles = profile ? profile.roles : [];
 
@@ -99,7 +92,7 @@ class Breadcrumb extends React.Component<BreadcrumbProps> {
 
     return (
       <>
-        {toolbarComponentFunc && toolbarComponentFunc()}
+        {toolbarComponentFunc && toolbarComponentFunc(match?.properties)}
         {!toolbarComponentFunc &&
           <Breadcrumbs separator="›" className={classes.breadcrumb}>
             {paths.map((path) => {

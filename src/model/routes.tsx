@@ -8,10 +8,12 @@ import * as pathToRegexp from 'path-to-regexp';
 /**
  * Components
  */
+import AccountManagerToolbar from 'components/account/toolbar';
+import MessageInboxHelpdeskToolbar from 'components/message-inbox-helpdesk/toolbar';
+import MessageInboxUserToolbar from 'components/message-inbox-user/toolbar';
 import OrderTimelineToolbar from 'components/order/toolbar/order-timeline';
 import ProcessInstanceToolbar from 'components/workflow/toolbar/process-instance';
 import ProcessInstanceHistoryToolbar from 'components/workflow/toolbar/process-instance-history';
-
 /**
  * Icons
  */
@@ -27,12 +29,13 @@ import {
   mdiCogOutline,
   mdiCogSyncOutline,
   mdiFaceAgent,
-  mdiForumOutline,
   mdiHandshakeOutline,
   mdiMapOutline,
   mdiPackageVariantClosed,
   mdiSignatureFreehand,
   mdiTextBoxCheckOutline,
+  mdiTray,
+  mdiTrayFull,
   mdiViewDashboardOutline,
   mdiWalletOutline,
 } from '@mdi/js';
@@ -70,7 +73,8 @@ const HelpdeskAccountManager = '/helpdesk/users';
 const IncidentManager = '/workflow/incidents'
 const Map = '/map';
 const MarketplaceAccountManager = '/marketplace/users'
-const MessageManager = '/messages';
+const MessageInboxHelpdesk = '/messages/inbox/helpdesk';
+const MessageInboxUser = '/messages/inbox/user';
 const OrderManager = '/billing/orders';
 const PayInManager = '/billing/payins';
 const PayOutManager = '/billing/payouts';
@@ -88,7 +92,8 @@ export const StaticRoutes = {
   Dashboard,
   IncidentManager,
   Map,
-  MessageManager,
+  MessageInboxHelpdesk,
+  MessageInboxUser,
   OrderManager,
   PayInManager,
   PayOutManager,
@@ -156,7 +161,7 @@ export const ErrorPages = {
  */
 const defaultLinks = [Dashboard];
 
-interface Route {
+export interface Route {
   breadcrumb?: boolean;
   progressBar?: boolean
   description: string;
@@ -165,7 +170,7 @@ interface Route {
   defaultTitle?: string;
   links?: string[];
   roles?: ((roles: EnumRole[], state: RootState) => boolean) | EnumRole[];
-  toolbarComponent?: () => React.ReactNode;
+  toolbarComponent?: (route?: Route) => React.ReactNode;
   params?: string[];
 }
 
@@ -211,12 +216,29 @@ export const routes: RouteRegistry = {
     defaultTitle: 'Map',
     links: [Dashboard]
   },
-  [MessageManager]: {
-    icon: (className?: string) => (<Icon path={mdiForumOutline} size="1.5rem" className={className} />),
-    description: 'Messages',
-    title: 'links.message-manager',
-    defaultTitle: 'Messages',
-    links: [Dashboard]
+  [MessageInboxHelpdesk]: {
+    icon: (className?: string) => (<Icon path={mdiTrayFull} size="1.5rem" className={className} />),
+    description: 'Helpdesk Inbox',
+    title: 'links.message-inbox-helpdesk',
+    defaultTitle: 'Helpdesk Inbox',
+    links: [Dashboard],
+    toolbarComponent: (route?: Route): React.ReactNode => {
+      return (
+        <MessageInboxHelpdeskToolbar route={route} />
+      );
+    }
+  },
+  [MessageInboxUser]: {
+    icon: (className?: string) => (<Icon path={mdiTray} size="1.5rem" className={className} />),
+    description: 'User Inbox',
+    title: 'links.message-inbox-user',
+    defaultTitle: 'User Inbox',
+    links: [Dashboard],
+    toolbarComponent: (route?: Route): React.ReactNode => {
+      return (
+        <MessageInboxUserToolbar route={route} />
+      );
+    }
   },
   [OrderManager]: {
     icon: (className?: string) => (<Icon path={mdiPackageVariantClosed} size="1.5rem" className={className} />),
@@ -274,6 +296,11 @@ export const routes: RouteRegistry = {
     defaultTitle: 'Helpdesk Account Management',
     roles: [EnumRole.ADMIN],
     links: [Dashboard],
+    toolbarComponent: (route?: Route): React.ReactNode => {
+      return (
+        <AccountManagerToolbar route={route} />
+      )
+    },
   },
   [MarketplaceAccountManager]: {
     icon: (className?: string) => (<Icon path={mdiAccountMultiple} size="1.5rem" className={className} />),
@@ -449,7 +476,6 @@ export function matchRoute(path: string): RouteMatch | null {
 
   return null;
 }
-
 
 /**
  * Find a route by its path e.g. /Dashboard
