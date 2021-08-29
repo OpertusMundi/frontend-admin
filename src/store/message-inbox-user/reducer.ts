@@ -130,7 +130,6 @@ export function userInboxReducer(
     case SEARCH_COMPLETE:
       return {
         ...state,
-        count: action.response.result!.count,
         messages: action.response,
         pagination: {
           page: action.response.result!.pageRequest.page,
