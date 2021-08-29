@@ -209,7 +209,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
 
           };
           if (section.options[index].icon){
-            icon = <img className={classes.logoImage} src={`data:image/svg+xml;base64,${section.options[index].icon}`} />
+            icon = <img alt="" className={classes.logoImage} src={`data:image/svg+xml;base64,${section.options[index].icon}`} />
           }
 
           return (
@@ -254,7 +254,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
             });
           }
           if (section.options[0].icon){
-            icon = <img className={classes.logoImage} src={`data:image/svg+xml;base64,${section.options[0].icon}`} />
+            icon = <img alt = "" className={classes.logoImage} src={`data:image/svg+xml;base64,${section.options[0].icon}`} />
           }
           body = <div   className={classes.optionBlock}>
             {icon}

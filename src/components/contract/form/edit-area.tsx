@@ -513,7 +513,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
                   style={{ display: 'block', padding: '5px' }}
                 >
                   {icon.icon}
-                  <img className={classes.icon}  src={`data:image/svg+xml;base64,${icon.image}`} />
+                  <img alt="" className={classes.icon}  src={`data:image/svg+xml;base64,${icon.image}`} />
                 </li>
               ))}
               <li
@@ -542,8 +542,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
         {iconSelector}
 
-
-        <img className={classes.outerIcon} src={`data:image/svg+xml;base64,${this.state.icon}`} />
+        <img alt="" className={classes.outerIcon} src={`data:image/svg+xml;base64,${this.state.icon}`} />
 
         {shortDescription}
 

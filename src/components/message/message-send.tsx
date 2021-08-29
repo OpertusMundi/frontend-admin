@@ -11,20 +11,15 @@ import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
 import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
 
 // Icons
 import Icon from '@mdi/react';
 import {
-  mdiArchiveOutline,
   mdiSendOutline,
-  mdiTrayPlus,
 } from '@mdi/js';
 
 // Model
@@ -96,11 +91,10 @@ class MessageSend extends React.Component<MessageSendProps, MessageSendState> {
     const { text } = this.state;
     const { message, send } = this.props;
 
-    this.props.send(message!.senderId, message!.thread, text);
+    send(message!.senderId, message!.thread, text);
   }
 
   render() {
-    const _t = this.props.intl.formatTime;
     const { text } = this.state;
     const { align, classes, readOnly } = this.props;
 

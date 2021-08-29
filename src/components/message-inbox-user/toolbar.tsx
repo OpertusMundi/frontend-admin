@@ -52,7 +52,7 @@ class Toolbar extends React.Component<ToolbarProps> {
 
 
   render() {
-    const { classes, route, profile } = this.props;
+    const { classes, route } = this.props;
 
     return (
       <div className={classes.root}>
@@ -79,7 +79,6 @@ class Toolbar extends React.Component<ToolbarProps> {
 }
 
 const mapState = (state: RootState) => ({
-  profile: state.security.profile,
 });
 
 const mapDispatch = {

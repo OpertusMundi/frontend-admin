@@ -35,7 +35,6 @@ import Typography from '@material-ui/core/Typography';
 import Icon from '@mdi/react';
 import {
   mdiAccountMultiple,
-  mdiAccountPlusOutline,
   mdiCogClockwise,
   mdiBadgeAccountOutline,
   mdiBellAlertOutline,
@@ -66,7 +65,7 @@ import clsx from 'clsx';
 
 // Model
 import { EnumHelpdeskRole as EnumRole } from 'model/role';
-import { routes, DynamicRoutes, ErrorPages, getRoute, StaticRoutes, buildPath } from 'model/routes';
+import { routes, DynamicRoutes, ErrorPages, getRoute, StaticRoutes } from 'model/routes';
 import { HelpdeskAccount } from 'model/account';
 
 // Components

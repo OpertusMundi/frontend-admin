@@ -20,7 +20,6 @@ import Typography from '@material-ui/core/Typography';
 // Icons
 import Icon from '@mdi/react';
 import {
-  mdiArchiveOutline,
   mdiTrayPlus,
 } from '@mdi/js';
 

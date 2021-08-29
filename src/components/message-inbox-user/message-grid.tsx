@@ -20,8 +20,6 @@ import Icon from '@mdi/react';
 import {
   mdiCommentAlertOutline,
   mdiSendOutline,
-  mdiTrashCan,
-  mdiUndoVariant,
 } from '@mdi/js';
 
 // Services
@@ -41,7 +39,6 @@ import { PageRequest, Sorting } from 'model/response';
 import { EnumMessageSortField, ClientMessage, ClientMessageCommand } from 'model/chat';
 
 // Components
-import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
 import Message from 'components/message/message';
 import MessageHeader from 'components/message/message-header';
 import MessageSend from 'components/message/message-send';
@@ -69,16 +66,11 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-interface MessageManagerState {
-  confirm: boolean;
-  record: ClientMessage | null
-}
-
 interface MessageManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
   intl: IntlShape,
 }
 
-class MessageManager extends React.Component<MessageManagerProps, MessageManagerState> {
+class MessageManager extends React.Component<MessageManagerProps> {
 
   private api: MessageApi;
 
@@ -92,35 +84,6 @@ class MessageManager extends React.Component<MessageManagerProps, MessageManager
     this.readTimer = null;
 
     this.sendMessage = this.sendMessage.bind(this);
-  }
-
-  state: MessageManagerState = {
-    confirm: false,
-    record: null,
-  }
-
-  showConfirmDialog(record: ClientMessage): void {
-    this.setState({
-      confirm: true,
-      record,
-    });
-  }
-
-  hideConfirmDialog(): void {
-    this.setState({
-      confirm: false,
-      record: null,
-    });
-  }
-
-  confirmDialogHandler(action: DialogAction): void {
-    switch (action.key) {
-      case EnumDialogAction.Yes:
-        break;
-
-    }
-
-    this.hideConfirmDialog();
   }
 
   componentDidMount() {
@@ -177,15 +140,11 @@ class MessageManager extends React.Component<MessageManagerProps, MessageManager
 
   render() {
     const {
-      addToSelection,
       classes,
       find,
-      inbox: { query, messages, pagination, loading, lastUpdated, selectedMessages, thread, sorting },
+      inbox: { messages, loading, selectedMessages, thread },
       profile,
       setPager,
-      setFilter,
-      removeFromSelection,
-      resetFilter,
     } = this.props;
 
     const items = messages?.result?.items || [];
@@ -261,43 +220,6 @@ class MessageManager extends React.Component<MessageManagerProps, MessageManager
 
   }
 
-  renderConfirm() {
-    const _t = this.props.intl.formatMessage;
-
-    const { confirm, record } = this.state;
-
-    if (!confirm || !record) {
-      return null;
-    }
-
-    return (
-      <Dialog
-        actions={[
-          {
-            key: EnumDialogAction.Yes,
-            label: _t({ id: 'view.shared.action.yes' }),
-            iconClass: () => (<Icon path={mdiTrashCan} size="1.5rem" />),
-            color: 'primary',
-          }, {
-            key: EnumDialogAction.No,
-            label: _t({ id: 'view.shared.action.no' }),
-            iconClass: () => (<Icon path={mdiUndoVariant} size="1.5rem" />)
-          }
-        ]}
-        handleClose={() => this.hideConfirmDialog()}
-        handleAction={(action) => this.confirmDialogHandler(action)}
-        header={
-          <span>
-            <i className={'mdi mdi-comment-question-outline mr-2'}></i>
-            <FormattedMessage id="view.shared.dialog.title" />
-          </span>
-        }
-        open={confirm}
-      >
-        <FormattedMessage id="view.shared.message.delete-confirm" values={{ name: record.text }} />
-      </Dialog>
-    );
-  }
 }
 
 const mapState = (state: RootState) => ({

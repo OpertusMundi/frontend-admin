@@ -21,7 +21,6 @@ import Typography from '@material-ui/core/Typography';
 import Icon from '@mdi/react';
 import {
   mdiReplyOutline,
-  mdiTrayPlus,
 } from '@mdi/js';
 
 // Model
@@ -76,7 +75,6 @@ const styles = (theme: Theme) => createStyles({
 interface MessageHeaderProps extends WithStyles<typeof styles> {
   intl: IntlShape;
   message: ClientMessage;
-  assign?: (id: string) => void;
   read?: (id: string) => void;
   select?: (message: ClientMessage) => void;
   selected: boolean;
@@ -89,8 +87,8 @@ class MessageHeader extends React.Component<MessageHeaderProps> {
   }
   render() {
     const _t = this.props.intl.formatTime;
-    const { classes, message, assign, selected } = this.props;
-    const { id, createdAt, sender, text, recipientId, read, reply } = message;
+    const { classes, message, selected } = this.props;
+    const { createdAt, sender, text, read, reply } = message;
 
     const url = sender && sender.logoImage ? `data:${sender.logoImageMimeType};base64,${sender.logoImage}` : null;
 
