@@ -3,15 +3,13 @@ import React from 'react';
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
-import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
+import { injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
-import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
 
 // Icons
 import Icon from '@mdi/react';
@@ -28,6 +26,7 @@ import { executeQuery } from 'store/analytics/thunks';
 
 // Components
 import QueryEditorFilters from './components/filter';
+import ChartArea from './components/chart';
 
 const styles = (theme: Theme) => createStyles({
   container: {
@@ -85,8 +84,7 @@ class QueryEditor extends React.Component<QueryEditorProps, QueryEditorState> {
   render() {
     const {
       classes,
-      editor: { query, loading, lastUpdated },
-      executeQuery,
+      editor: { query, loading, response },
       setFilter,
       resetFilter,
     } = this.props;
@@ -98,20 +96,16 @@ class QueryEditor extends React.Component<QueryEditorProps, QueryEditorState> {
             query={query}
             setFilter={setFilter}
             resetFilter={resetFilter}
-            executeQuery={executeQuery}
             disabled={loading}
           />
-          {lastUpdated &&
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Typography variant="caption" display="block" gutterBottom className={classes.caption}>
-                  <FormattedMessage id="account.helpdesk.last-update" />
-                  <FormattedTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
-                </Typography>
-              </Grid>
-            </Grid>
-          }
         </Paper>
+
+        {response?.result &&
+          <Paper className={classes.paper}>
+            <ChartArea data={response?.result || null}
+            />
+          </Paper>
+        }
       </div >
     );
   }

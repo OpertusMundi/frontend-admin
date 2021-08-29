@@ -21,6 +21,16 @@ const initialState: AnalyticsManagerState = {
   loading: false,
   query: {
     metric: EnumSalesQueryMetric.SUM_SALES,
+    areas: {
+      enabled: false,
+      codes: [],
+    },
+    segments: {
+      enabled: false,
+      segments: [],
+    },
+    time: {
+    }
   },
   response: null,
 };

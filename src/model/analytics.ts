@@ -1,3 +1,4 @@
+import { Moment } from 'moment';
 import { EnumTopicCategory } from 'model/catalogue';
 
 export enum EnumTemporalUnit {
@@ -11,15 +12,15 @@ interface TemporalDimension {
   /**
    * Time interval unit (required)
    */
-  unit: EnumTemporalUnit;
+  unit?: EnumTemporalUnit;
   /**
    * Min date in YYYY-MM-DD ISO format
    */
-  min?: string;
+  min?: Moment | string | null;
   /**
    * Max date in YYYY-MM-DD ISO format
    */
-  max?: string;
+  max?: Moment | string | null;
 }
 
 interface SpatialDimension {
@@ -43,7 +44,7 @@ interface SegmentDimension {
    * If one or more segments are selected, data will be filtered using the
    * specified segments
    */
-  segments?: EnumTopicCategory;
+  segments?: EnumTopicCategory[];
 }
 
 interface BaseQuery {
@@ -120,7 +121,7 @@ export interface AssetQuery extends BaseQuery {
  * query, properties are set up to the specified time granularity e.g. if time unit is `MONTH`,
  * only properties `year` and `month` will be returned
  */
-interface TimeInstant {
+export interface TimeInstant {
   year: number;
   month?: number;
   week?: number;

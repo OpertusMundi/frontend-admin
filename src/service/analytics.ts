@@ -1,3 +1,5 @@
+import { Moment } from 'moment';
+
 import { Api } from 'utils/api';
 
 import { AxiosObjectResponse, ObjectResponse } from 'model/response';
@@ -56,23 +58,39 @@ export default class AnalyticsApi extends Api {
   public async executeSalesQuery(query: SalesQuery): Promise<ObjectResponse<DataSeries>> {
     const url = '/action/analytics/sales';
 
-    return this.post<SalesQuery, ObjectResponse<DataSeries>>(url, query)
-      .then((response: AxiosObjectResponse<DataSeries>) => {
-        const { data } = response;
+    const { time = { unit: null, min: null, max: null } } = query;
 
-        return data;
-      });
+    return this.post<any, ObjectResponse<DataSeries>>(url, {
+      ...query,
+      time: {
+        unit: time?.unit || null,
+        min: time?.min ? (time!.min as Moment).format('YYYY-MM-DD') : null,
+        max: time?.max ? (time!.max as Moment).format('YYYY-MM-DD') : null,
+      }
+    }).then((response: AxiosObjectResponse<DataSeries>) => {
+      const { data } = response;
+
+      return data;
+    });
   }
 
   public async executeAssetQuery(query: AssetQuery): Promise<ObjectResponse<DataSeries>> {
     const url = '/action/analytics/assets';
 
-    return this.post<AssetQuery, ObjectResponse<DataSeries>>(url, query)
-      .then((response: AxiosObjectResponse<DataSeries>) => {
-        const { data } = response;
+    const { time = { unit: null, min: null, max: null } } = query;
 
-        return data;
-      });
+    return this.post<any, ObjectResponse<DataSeries>>(url, {
+      ...query,
+      time: {
+        unit: time?.unit || null,
+        min: time?.min ? (time!.min as Moment).format('YYYY-MM-DD') : null,
+        max: time?.max ? (time!.max as Moment).format('YYYY-MM-DD') : null,
+      }
+    }).then((response: AxiosObjectResponse<DataSeries>) => {
+      const { data } = response;
+
+      return data;
+    });
   }
 
   /**

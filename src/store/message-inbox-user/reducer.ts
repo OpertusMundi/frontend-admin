@@ -196,7 +196,7 @@ export function userInboxReducer(
       };
 
     case READ_SUCCESS:
-      const r =  {
+      return {
         ...state,
         count: state.count - 1,
         loading: false,
@@ -210,8 +210,6 @@ export function userInboxReducer(
           } : undefined,
         } : null,
       };
-      console.log(r);
-      return r;
 
     case SEND_INIT:
       return {

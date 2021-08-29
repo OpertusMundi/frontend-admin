@@ -9,6 +9,7 @@ import * as pathToRegexp from 'path-to-regexp';
  * Components
  */
 import AccountManagerToolbar from 'components/account/toolbar';
+import AnalyticsToolbar from 'components/analytics/toolbar';
 import MessageInboxHelpdeskToolbar from 'components/message-inbox-helpdesk/toolbar';
 import MessageInboxUserToolbar from 'components/message-inbox-user/toolbar';
 import OrderTimelineToolbar from 'components/order/toolbar/order-timeline';
@@ -25,6 +26,7 @@ import {
   mdiBadgeAccountOutline,
   mdiBankTransferIn,
   mdiBankTransferOut,
+  mdiChartBarStacked,
   mdiBellAlertOutline,
   mdiCogOutline,
   mdiCogSyncOutline,
@@ -208,7 +210,18 @@ export const routes: RouteRegistry = {
     defaultTitle: 'Master Contract List',
     links: defaultLinks
   },
-
+  [Analytics]: {
+    icon: (className?: string) => (<Icon path={mdiChartBarStacked} size="1.5rem" className={className} />),
+    description: 'Analytics',
+    title: 'links.analytics',
+    defaultTitle: 'Analytics',
+    links: [Dashboard],
+    toolbarComponent: (route?: Route): React.ReactNode => {
+      return (
+        <AnalyticsToolbar route={route} />
+      );
+    }
+  },
   [Map]: {
     icon: (className?: string) => (<Icon path={mdiMapOutline} size="1.5rem" className={className} />),
     description: 'Map',
