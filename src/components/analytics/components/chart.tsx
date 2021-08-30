@@ -64,7 +64,6 @@ class ChartArea extends React.Component<ChartAreaProps> {
       return [];
     }
 
-    const result: string[] = [];
     const time = !!points[0].time;
     const segment = !!points[0].segment;
     const location = !!points[0].location;
@@ -77,7 +76,7 @@ class ChartArea extends React.Component<ChartAreaProps> {
       return _.uniq(points.map((p) => p.location!.code));
     }
 
-    return result;
+    return ['All'];
   }
 
   getSeries(points: DataPoint[], timeUnit?: EnumTemporalUnit): any {
@@ -212,7 +211,7 @@ class ChartArea extends React.Component<ChartAreaProps> {
       }
     });
 
-    if (dimensions === 1) {
+    if (dimensions < 2) {
       return [{
         type: 'bar',
         data: points.map((p) => p),
@@ -253,16 +252,24 @@ class ChartArea extends React.Component<ChartAreaProps> {
           const p = params.data as DataPoint;
           const lines: string[] = [];
 
+          lines.push('<div style="display: flex; flex-direction: column;"/>')
           if (p.time) {
-            lines.push(`<p>${this.timeToString(p.time!, timeUnit)}</p>`)
+            lines.push(`<p style="margin: 4px;">${this.timeToString(p.time!, timeUnit)}`)
           }
           if (p.location) {
-            lines.push(`<p>${p.location!.code}</p>`)
+            lines.push(`<p style="margin: 4px;">${p.location!.code}</p>`)
           }
           if (p.segment) {
-            lines.push(`<p>${_fm({ id: `enum.category-topic.${p.segment}` })}</p>`)
+            lines.push(`<p style="margin: 4px;">${_fm({ id: `enum.category-topic.${p.segment}` })}</p>`)
           }
-          lines.push(`<p>${_fn(p.value, { currency: 'EUR', style: 'currency', currencyDisplay: 'symbol' })}</p>`);
+          lines.push(`
+            <div style="display: flex; align-items: center ;">
+              <div style="display: flex; color: ${params.color}; font-size: 1.5rem;">&#x25CF;</div>
+              <div style="display: flex; margin-top: 4px;">${_fn(p.value, { currency: 'EUR', style: 'currency', currencyDisplay: 'symbol' })}</div>
+            </div>`
+          );
+
+          lines.push('</div>');
 
           return lines.join('');
         },

@@ -100,7 +100,7 @@ class QueryEditor extends React.Component<QueryEditorProps, QueryEditorState> {
           />
         </Paper>
 
-        {response?.result &&
+        {response?.result && response?.result.points.length !== 0 &&
           <Paper className={classes.paper}>
             <ChartArea data={response?.result || null}
             />
