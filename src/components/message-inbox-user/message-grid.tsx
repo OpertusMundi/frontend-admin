@@ -117,6 +117,7 @@ class MessageManager extends React.Component<MessageManagerProps> {
           );
         })
         .then(() => {
+          this.find();
           this.props.getThreadMessages(threadKey);
         })
     }
@@ -207,7 +208,7 @@ class MessageManager extends React.Component<MessageManagerProps> {
               <Grid container item>
                 <MessageSend
                   align={'right'}
-                  message={selectedMessages[0] || null}
+                  message={thread.result![thread.result!.length - 1] || null}
                   readOnly={loading}
                   send={this.sendMessage}
                 />

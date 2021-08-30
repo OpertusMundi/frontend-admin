@@ -111,8 +111,6 @@ export function userInboxReducer(
     case SEARCH_INIT:
       return {
         ...state,
-        selectedMessages: [],
-        messages: null,
         loading: true,
       };
 
@@ -135,6 +133,8 @@ export function userInboxReducer(
           page: action.response.result!.pageRequest.page,
           size: action.response.result!.pageRequest.size,
         },
+        // Preserve selection if message exists in the result
+        selectedMessages: state.selectedMessages.filter(m1 => !!action.response.result!.items.find(m2 => m1.id === m2.id)),
         lastUpdated: moment(),
         loading: false,
       };

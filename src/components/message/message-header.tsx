@@ -14,13 +14,12 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 
 // Icons
 import Icon from '@mdi/react';
 import {
-  mdiReplyOutline,
+  mdiExclamationThick,
 } from '@mdi/js';
 
 // Model
@@ -70,6 +69,9 @@ const styles = (theme: Theme) => createStyles({
   selected: {
     background: 'rgb(232, 244, 253)',
   },
+  icon: {
+    marginTop: theme.spacing(2),
+  },
 });
 
 interface MessageHeaderProps extends WithStyles<typeof styles> {
@@ -106,10 +108,8 @@ class MessageHeader extends React.Component<MessageHeaderProps> {
               }
             </Avatar>
           }
-          action={reply !== null &&
-            <IconButton aria-label="reply">
-              <Icon path={mdiReplyOutline} size="1.5rem" />
-            </IconButton>
+          action={reply === null &&
+            <Icon path={mdiExclamationThick} size="1.2rem" className={classes.icon} />
           }
           title={
             <Typography
