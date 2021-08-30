@@ -30,7 +30,7 @@ import { localizeErrorCodes } from 'utils/error';
 
 // Services
 import message from 'service/message';
-import { MasterContract, MasterContractCommand, Section, SubOption } from 'model/contract';
+import { EnumContractIcon, MasterContract, MasterContractCommand, Section, SubOption } from 'model/contract';
 import ContractApi from 'service/contract';
 
 import { RootState } from 'store';
@@ -307,7 +307,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     }));
   }
 
-  editSection(section: Partial<Section>, summary = "", option = 0, raw = "", descriptionOfChange = "", icon = "", shortDescription = "", htmlContent= "", subOption = -1, ): void {
+  editSection(section: Partial<Section>, summary = "", option = 0, raw = "", descriptionOfChange = "", icon: EnumContractIcon | null, shortDescription = "", htmlContent= "", subOption = -1, ): void {
     const { contract } = this.state;
     let sections = [...contract.sections]
     const id = sections.findIndex((s) => s.id === section.id);
@@ -357,8 +357,8 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     } else if (summary) {
       sections[id].options[option].summary! = summary
     }
-    if (icon === 'empty') {
-      sections[id].options[option].icon! = ''
+    if (icon === null) {
+      sections[id].options[option].icon! = null!
     } else if (icon) {
       sections[id].options[option].icon! = icon
     }
@@ -485,7 +485,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   }
 
   saveContent(id: number, contentState: ContentState, title: string, option: number, subOption: number,
-    summary: string, descriptionOfChange: string, icon: string, shortDescription: string, editField: EditFieldEnum): void {
+    summary: string, descriptionOfChange: string, icon: EnumContractIcon | null, shortDescription: string, editField: EditFieldEnum): void {
     let raw, htmlContent='';
     raw = JSON.stringify(convertToRaw(contentState));
     if (contentState.getPlainText()){

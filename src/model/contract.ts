@@ -76,7 +76,7 @@ export interface Option {
   bodyHtml?: string;
   subOptions?: SubOption[];
   summary?: string;
-  icon?: string;
+  icon?: EnumContractIcon | null;
   shortDescription?: string;
 
 }

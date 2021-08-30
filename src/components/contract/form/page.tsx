@@ -59,7 +59,7 @@ interface PageComponentProps extends WithStyles<typeof styles> {
   sectionList: Section[];
   deleteSubtitle: () => void;
   removeSection: (item: any) => void;
-  editSection: (item: any) => void;
+  editSection: (...item: any) => void;
   openEdit: (editField: EditFieldEnum, section?: Section) => void;
   editTitle: (item: any) => void;
   moveSectionUp: (item: any) => void;

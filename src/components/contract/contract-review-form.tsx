@@ -153,7 +153,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
   }
 
   render() {
-    const { classes, contract } = this.props;
+    const { classes, contract, config } = this.props;
 
     if (!contract) {
       return null;
@@ -179,11 +179,12 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
     });
 
     const structure = contract.sections.map((section) => {
-      let body, renderedSuboptions: any, icon, length = 0, sectionTitle = '';
+      let body, renderedSuboptions: any, icon, shortDescription: any, length = 0, sectionTitle = '' ;
 
       if (section.dynamic) {
         body = section.options.map((option, index) => {
-          icon = <div/>
+          icon = <div/> 
+          shortDescription = <div/>
           var subOptionsArray = section.options[index].subOptions!;
           let subOptionBlock = [];
           if (subOptionsArray) {
@@ -209,13 +210,17 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
 
           };
           if (section.options[index].icon){
-            icon = <img alt="" className={classes.logoImage} src={`data:image/svg+xml;base64,${section.options[index].icon}`} />
+            const enumIcon = config.contractIcons.find(c => c.icon === section.options[index].icon);
+            icon = <img className={classes.logoImage} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
+          }
+          if (section.options[index].shortDescription){
+            shortDescription = <div className={classes.shortDescription} >{section.options[index].shortDescription}</div>
           }
 
           return (
             <div className={classes.optionBlock} key={index}> <span className={classes.option} >Option {String.fromCharCode(65 + index)}</span>
               {icon}
-              <div className={classes.shortDescription} >{section.options[index].shortDescription}</div>
+              {shortDescription}
               <p>{section.options[index].summary}</p>
               <Editor editorState={EditorState.createWithContent(convertFromRaw(JSON.parse(option.body)))} readOnly={true} onChange={() => { }} />
               {renderedSuboptions}
@@ -254,11 +259,15 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
             });
           }
           if (section.options[0].icon){
-            icon = <img alt = "" className={classes.logoImage} src={`data:image/svg+xml;base64,${section.options[0].icon}`} />
+            const enumIcon = config.contractIcons.find(c => c.icon === section.options[0].icon);
+            icon = <img className={classes.logoImage} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
+          }
+          if (section.options[0].shortDescription){
+            shortDescription = <div className={classes.shortDescription} >{section.options[0].shortDescription}</div>
           }
           body = <div   className={classes.optionBlock}>
             {icon}
-            <div className={classes.shortDescription} >{section.options[0].shortDescription}</div>
+            {shortDescription}
             <p>{section.options[0].summary}</p>
             <Editor editorState={option} readOnly={true} onChange={() => { }} />
             {renderedSuboptions} </div>;

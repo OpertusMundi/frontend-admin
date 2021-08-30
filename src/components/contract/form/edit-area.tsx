@@ -24,7 +24,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 
 // Custom component
-import { Section } from 'model/contract';
+import { EnumContractIcon, Section } from 'model/contract';
 import { RootState } from 'store';
 
 const styles = (theme: Theme) => createStyles({
@@ -118,8 +118,8 @@ interface EditAreaComponentProps extends WithStyles<typeof styles>, PropsFromRed
   documentTitle?: string;
   documentSubtitle?: string;
   saveContent: (id: number, contentState: ContentState, title: string, option: number, subOption: number,
-    summary: string, descriptionOfChange: string, icon: string, shortDescription: string, editField: EditFieldEnum) => void;
-  editSection: (item: any) => void;
+    summary: string, descriptionOfChange: string, icon: EnumContractIcon | null, shortDescription: string, editField: EditFieldEnum) => void;
+  editSection: (...item:any) => void;
   addOptions: (sectionId: number, options: number) => void;
   addSubOptions: (sectionId: number, option: number, subOptions: number) => void;
   editField: EditFieldEnum;
@@ -136,7 +136,7 @@ interface EditAreaComponentState {
   variable: boolean;
   dynamic?: boolean;
   optional?: boolean;
-  icon: string;
+  icon: EnumContractIcon | null;
   shortDescription: string;
   option: number;
   subOption: number;
@@ -151,7 +151,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
   constructor(props: EditAreaComponentProps) {
     super(props);
-    let title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = '', shortDescription = '', images={};
+    let title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = null, shortDescription = '', images={};
     // if editing section or titles
     if (this.props.editField === EditFieldEnum.Section) {
       title = this.props.section!.title;
@@ -191,7 +191,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   onChangeValue(id: number, event: any) {
     var selection = event.target.value
     if (selection === 'optional') {
-      this.props.editSection({ id: id, optional: true, dynamic: false })
+      this.props.editSection({ id: id, optional: true, dynamic: false, summary: '', })
       this.setState({ optional: true, dynamic: false });
     }
     else if (selection === 'dynamic') {
@@ -366,7 +366,8 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   render() {
     const { editorState } = this.state;
     const { classes, config } = this.props;
-    let editor, iconSelector, type_buttons, options, subOptions, editOption, editSubOption, summary, descriptionOfChange, shortDescription, editingOptionTitle = '', subOptionSize = 0;
+    let editor, iconSelector, type_buttons, options, subOptions, editOption, editSubOption, summary, descriptionOfChange, 
+              shortDescription, editingOptionTitle = '', subOptionSize = 0, selectedIcon;
     if (this.state.variable) {
       var type = 'Option ', currentOption = this.state.option;
       if (!this.state.editingOption) {
@@ -478,7 +479,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
         });
       }
 
-      const selectIcon = (icon: string): void => {
+      const selectIcon = (icon: EnumContractIcon | null): void => {
         this.setState({
           icon
         });
@@ -507,7 +508,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
             <ul className={`rdw-dropdown-optionwrapper ${this.state.openIconSelect ? classes.open : classes.close}`} >
               { config.contractIcons.map(icon => (
                 <li
-                  onClick={() => selectIcon(icon.image)}
+                  onClick={() => selectIcon(icon.icon)}
                   key={icon.icon}
                   className={`rdw-dropdownoption-default placeholder-li ${this.state.openIconSelect ? 'close' : 'open'}`}
                   style={{ display: 'block', padding: '5px' }}
@@ -517,7 +518,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
                 </li>
               ))}
               <li
-                onClick={() => selectIcon('empty')}
+                onClick={() => selectIcon(null)}
                 className={`rdw-dropdownoption-default placeholder-li ${this.state.openIconSelect ? 'close' : 'open'}`}
                 style={{ display: 'block', padding: '5px' }}
               >
@@ -526,6 +527,10 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
             </ul>
           </div>
         </div>
+        if (this.state.icon){
+          const enumIcon = config.contractIcons.find(c => c.icon === this.state.icon);
+          selectedIcon = <img className={classes.outerIcon} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
+       }
     }
     return (
       <Grid container>
@@ -542,8 +547,8 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
         {iconSelector}
 
-        <img alt="" className={classes.outerIcon} src={`data:image/svg+xml;base64,${this.state.icon}`} />
-
+        {selectedIcon}
+        
         {shortDescription}
 
         <button className={classes.doneBtn}
