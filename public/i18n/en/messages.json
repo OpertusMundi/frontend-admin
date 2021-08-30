@@ -403,7 +403,10 @@
   },
   "inbox": {
     "helpdesk": {
-      "message-assigned": "The message has been assigned to your account"
+      "message-assigned": "The message has been assigned to your account",
+      "tooltip": {
+        "assign-message": "Assign message to my account"
+      }
     },
     "user": {
       "message-sent": "Message was sent successfully"

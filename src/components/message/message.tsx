@@ -72,7 +72,8 @@ class Message extends React.Component<MessageProps> {
   }
 
   render() {
-    const _t = this.props.intl.formatTime;
+    const _fm = this.props.intl.formatMessage;
+    const _ft = this.props.intl.formatTime;
     const { align, classes, message, assign, size } = this.props;
     const { createdAt, sender, text, recipientId } = message;
 
@@ -96,7 +97,11 @@ class Message extends React.Component<MessageProps> {
             </Avatar>
           }
           action={recipientId === null &&
-            <IconButton aria-label="assign" onClick={() => assign ? assign(message.id) : null}>
+            <IconButton
+              aria-label="assign"
+              onClick={() => assign ? assign(message.id) : null}
+              title={_fm({ id: 'inbox.helpdesk.tooltip.assign-message' })}
+            >
               <Icon path={mdiTrayPlus} size="1.5rem" />
             </IconButton>
           }
@@ -106,7 +111,7 @@ class Message extends React.Component<MessageProps> {
               variant="caption" color="textSecondary" component="p"
               className={classes.text}
             >
-              {_t(createdAt.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' })}
+              {_ft(createdAt.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' })}
             </Typography>
           }
         />
