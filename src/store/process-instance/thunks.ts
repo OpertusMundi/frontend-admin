@@ -7,6 +7,9 @@ import {
   countProcessInstancesComplete,
   countProcessInstancesFailure,
   countProcessInstancesInit,
+  deleteInit,
+  deleteSuccess,
+  deleteFailure,
   loadInit,
   loadSuccess,
   loadFailure,
@@ -26,7 +29,7 @@ import {
   EnumProcessInstanceSortField,
   ProcessInstance,
 } from 'model/bpm-process-instance';
-import { PageRequest, Sorting, PageResult, ObjectResponse } from 'model/response';
+import { PageRequest, Sorting, PageResult, ObjectResponse, SimpleResponse } from 'model/response';
 
 // Helper thunk result type
 type ThunkResult<R> = ThunkAction<Promise<R>, RootState, unknown, ProcessInstanceActions>;
@@ -103,6 +106,23 @@ export const findOne = (
     dispatch(loadSuccess(response.data.result!));
   } else {
     dispatch(loadFailure());
+  }
+
+  return response.data;
+}
+
+export const deleteInstance = (processInstance: string): ThunkResult<SimpleResponse> => async (dispatch, getState) => {
+  dispatch(deleteInit(processInstance));
+  // Get response
+  const api = new ProcessInstanceApi();
+
+  const response = await api.deleteProcessInstance(processInstance);
+
+  // Update state
+  if (response.data.success) {
+    dispatch(deleteSuccess());
+  } else {
+    dispatch(deleteFailure());
   }
 
   return response.data;

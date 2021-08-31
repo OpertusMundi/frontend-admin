@@ -11,11 +11,12 @@ import { Theme, withStyles } from '@material-ui/core/styles';
 
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
 // Icons
 import Icon from '@mdi/react';
-import { mdiCheckOutline, mdiCommentAlertOutline, mdiUndoVariant } from '@mdi/js';
+import { mdiCommentAlertOutline, mdiDeleteAlertOutline, mdiUndoVariant } from '@mdi/js';
 
 // Services
 import message from 'service/message';
@@ -32,11 +33,11 @@ import {
   setPager,
   setSorting,
 } from 'store/process-instance/actions';
-import { find } from 'store/process-instance/thunks';
+import { find, deleteInstance } from 'store/process-instance/thunks';
 
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
-import { PageRequest, Sorting } from 'model/response';
+import { PageRequest, Sorting, SimpleResponse } from 'model/response';
 import { EnumProcessInstanceSortField, ProcessInstance } from 'model/bpm-process-instance';
 
 // Components
@@ -49,6 +50,9 @@ const styles = (theme: Theme) => createStyles({
   container: {
     display: 'flex',
     flexWrap: 'wrap',
+  },
+  item: {
+    padding: theme.spacing(0, 1),
   },
   paper: {
     padding: theme.spacing(1),
@@ -66,12 +70,18 @@ const styles = (theme: Theme) => createStyles({
   caption: {
     paddingLeft: 0,
     fontSize: '0.7rem',
-  }
+  },
+  textField: {
+    margin: 0,
+    padding: 0,
+    width: '100%',
+  },
 });
 
 interface WorkflowManagerState {
-  retry: boolean;
-  instance: ProcessInstance | null,
+  confirm: boolean;
+  instance: ProcessInstance | null;
+  businessKey: string | null;
 }
 
 interface WorkflowManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
@@ -87,56 +97,65 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
 
     this.api = new ProcessInstanceApi();
 
+    this.deleteInstance = this.deleteInstance.bind(this);
     this.viewProcessInstance = this.viewProcessInstance.bind(this);
   }
 
   state: WorkflowManagerState = {
-    retry: false,
+    confirm: false,
     instance: null,
+    businessKey: null,
   }
 
-  showRetryDialog(instance: ProcessInstance): void {
+  showDeleteConfirmDialog(instance: ProcessInstance): void {
     this.setState({
-      retry: true,
+      confirm: true,
       instance,
+      businessKey: '',
     });
   }
 
-  hideRetryDialog(): void {
+  hideDeleteConfirmDialog(): void {
     this.setState({
-      retry: false,
+      confirm: false,
       instance: null,
+      businessKey: null,
     });
   }
 
   confirmDialogHandler(action: DialogAction): void {
+    const _t = this.props.intl.formatMessage;
     const { instance } = this.state;
 
     switch (action.key) {
       case EnumDialogAction.Accept: {
         if (instance) {
-          // this.api.accept(workflow.publisher.id, workflow.key)
-          //   .then((response) => {
-          //     if (response.data.success) {
-          //       this.find();
-
-          //       message.info('workflow.message.accept-success');
-
-          //       this.hideRetryDialog();
-          //     } else {
-          //       const messages = localizeErrorCodes(this.props.intl, response.data);
-          //       message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
-          //     }
-          //   })
-          //   .catch((err: AxiosError<SimpleResponse>) => {
-          //     const messages = localizeErrorCodes(this.props.intl, err.response?.data);
-          //     message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
-          //   });
+          this.props.deleteInstance(instance.processInstanceId)
+            .then((r: SimpleResponse) => {
+              if (r.success) {
+                message.info('workflow.message.delete-success');
+                this.props.find();
+              } else {
+                message.errorHtml(
+                  _t({ id: 'workflow.message.delete-failure' }),
+                  () => (<Icon path={mdiCommentAlertOutline} size="3rem" />)
+                );
+              }
+            })
+            .catch(() => {
+              message.errorHtml(
+                _t({ id: 'workflow.message.delete-failure' }),
+                () => (<Icon path={mdiCommentAlertOutline} size="3rem" />)
+              );
+            })
+            .finally(() => {
+              this.hideDeleteConfirmDialog();
+            });
         }
         break;
       }
       case EnumDialogAction.Cancel:
-        this.hideRetryDialog();
+        this.hideDeleteConfirmDialog();
         break;
     }
   }
@@ -151,6 +170,10 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
         message.errorHtml("Find operation has failed", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
       }
     });
+  }
+
+  deleteInstance(instance: ProcessInstance): void {
+    this.showDeleteConfirmDialog(instance);
   }
 
   viewProcessInstance(processInstance: string): void {
@@ -215,6 +238,7 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
               viewProcessInstance={(processInstance: string) => this.viewProcessInstance(processInstance)}
               sorting={sorting}
               loading={loading}
+              deleteInstance={this.deleteInstance}
             />
           </Paper>
         </div >
@@ -226,9 +250,10 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
   renderReviewDialog() {
     const _t = this.props.intl.formatMessage;
 
-    const { retry, instance: record } = this.state;
+    const { confirm, instance: record, businessKey } = this.state;
+    const { classes } = this.props;
 
-    if (!retry || !record) {
+    if (!confirm || !record) {
       return null;
     }
 
@@ -237,16 +262,17 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
         actions={[
           {
             key: EnumDialogAction.Accept,
-            label: _t({ id: 'view.shared.action.accept' }),
-            iconClass: () => (<Icon path={mdiCheckOutline} size="1.5rem" />),
-            color: 'primary',
+            label: _t({ id: 'view.shared.action.delete' }),
+            iconClass: () => (<Icon path={mdiDeleteAlertOutline} size="1.5rem" />),
+            color: 'secondary',
+            disabled: businessKey !== record.businessKey,
           }, {
             key: EnumDialogAction.Cancel,
             label: _t({ id: 'view.shared.action.cancel' }),
             iconClass: () => (<Icon path={mdiUndoVariant} size="1.5rem" />)
           }
         ]}
-        handleClose={() => this.hideRetryDialog()}
+        handleClose={() => this.hideDeleteConfirmDialog()}
         handleAction={(action) => this.confirmDialogHandler(action)}
         header={
           <span>
@@ -254,13 +280,35 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
             <FormattedMessage id="view.shared.dialog.title" />
           </span>
         }
-        open={retry}
+        open={confirm}
       >
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={classes.item}>
             <FormattedMessage
-              id="workflow.message.review-workflow"
-              values={{ title: record.processDefinitionName, version: record.processDefinitionVersion }}
+              id="workflow.message.delete-confirm.1"
+              tagName={'p'}
+              values={{ id: <b>{record.businessKey}</b>, type: <b>{record.processDefinitionName}</b> }}
+            />
+            <Typography variant="h5" display="block" gutterBottom color="secondary">
+              <FormattedMessage
+                id="workflow.message.delete-confirm.2"
+                tagName={'p'}
+              />
+            </Typography>
+            <FormattedMessage
+              id="workflow.message.delete-confirm.3"
+              tagName={'p'}
+            />
+          </Grid>
+          <Grid item xs={12} className={classes.item}>
+            <TextField
+              id="name"
+              label={_t({ id: 'workflow.header.instance.business-key' })}
+              variant="standard"
+              margin="normal"
+              className={classes.textField}
+              value={businessKey || ''}
+              onChange={e => this.setState({ businessKey: e.target.value })}
             />
           </Grid>
         </Grid>
@@ -277,6 +325,7 @@ const mapState = (state: RootState) => ({
 
 const mapDispatch = {
   addToSelection,
+  deleteInstance,
   find: (pageRequest?: PageRequest, sorting?: Sorting<EnumProcessInstanceSortField>[]) => find(pageRequest, sorting),
   removeFromSelection,
   resetFilter,

@@ -25,6 +25,9 @@ import {
   LOAD_INIT,
   LOAD_SUCCESS,
   LOAD_FAILURE,
+  DELETE_INIT,
+  DELETE_SUCCESS,
+  DELETE_FAILURE,
   ProcessInstanceActions,
   ProcessInstanceState,
 } from 'store/process-instance/types';
@@ -201,6 +204,21 @@ export function processInstanceReducer(
     case LOAD_FAILURE:
       return {
         ...state,
+        loadingProcessInstance: false,
+      };
+
+    case DELETE_INIT:
+      return {
+        ...state,
+        loading: true,
+        loadingProcessInstance: true,
+      };
+
+    case DELETE_FAILURE:
+    case DELETE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
         loadingProcessInstance: false,
       };
 

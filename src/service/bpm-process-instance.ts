@@ -7,8 +7,10 @@ import {
   PageRequest,
   PageResult,
   ObjectResponse,
+  SimpleResponse,
   AxiosObjectResponse,
   AxiosPageResponse,
+  AxiosSimpleResponse,
 } from 'model/response';
 
 import {
@@ -98,5 +100,10 @@ export default class WorkflowApi extends Api {
     return this.get<ObjectResponse<HistoryProcessInstanceDetails>>(url);
   }
 
+  public async deleteProcessInstance(processInstanceId: string): Promise<AxiosSimpleResponse> {
+    const url = `/action/workflows/process-instances/${processInstanceId}`;
+
+    return this.delete<SimpleResponse>(url);
+  }
 
 }

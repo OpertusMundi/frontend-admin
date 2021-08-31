@@ -12,6 +12,7 @@ import Icon from '@mdi/react';
 import {
   mdiContentCopy,
   mdiDatabaseCogOutline,
+  mdiDeleteAlertOutline,
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
@@ -23,6 +24,7 @@ const COPY = 'copy';
 
 enum EnumAction {
   CopyBusinessKey = 'copy-business-key',
+  Delete = 'delete',
   View = 'view',
 };
 
@@ -45,6 +47,15 @@ function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
             >
               <Badge color="secondary" variant="dot" invisible={row.incidentCount === 0}>
                 <Icon path={mdiDatabaseCogOutline} className={classes.classes.rowIconAction} />
+              </Badge>
+            </i>
+          </Tooltip>
+          <Tooltip title={intl.formatMessage({ id: 'workflow.tooltip.instance.delete' })}>
+            <i
+              onClick={() => handleAction ? handleAction(EnumAction.Delete, rowIndex, column, row) : null}
+            >
+              <Badge color="secondary" variant="dot" invisible={row.incidentCount === 0}>
+                <Icon path={mdiDeleteAlertOutline} className={classes.classes.rowIconAction} />
               </Badge>
             </i>
           </Tooltip>
@@ -154,6 +165,7 @@ interface ProcessInstanceTableProps extends WithStyles<typeof styles> {
   sorting: Sorting<EnumProcessInstanceSortField>[];
   viewProcessInstance: (processInstance: string) => void;
   loading?: boolean;
+  deleteInstance: (processInstance: ProcessInstance) => void;
 }
 
 class ProcessInstanceTable extends React.Component<ProcessInstanceTableProps> {
@@ -179,6 +191,10 @@ class ProcessInstanceTable extends React.Component<ProcessInstanceTableProps> {
 
       case EnumAction.View:
         this.props.viewProcessInstance(row.processInstanceId);
+        break;
+
+      case EnumAction.Delete:
+        this.props.deleteInstance(row);
         break;
 
       default:

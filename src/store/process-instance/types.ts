@@ -18,10 +18,10 @@ import {
 export interface ProcessInstanceState {
   lastUpdated: Moment | null;
   loading: boolean;
-  loadingProcessInstance: boolean,
+  loadingProcessInstance: boolean;
   pagination: PageRequest;
-  processInstance: ActiveProcessInstanceDetails | null,
-  processInstanceCounter: number | null,
+  processInstance: ActiveProcessInstanceDetails | null;
+  processInstanceCounter: number | null;
   query: ProcessInstanceQuery;
   result: PageResult<ProcessInstance> | null;
   selected: ProcessInstance[];
@@ -46,9 +46,14 @@ export const SET_SORTING = 'workflow/process-instance/SET_SORTING';
 export const RESET_SELECTED = 'workflow/process-instance/RESET_SELECTED';
 
 export const RESET_INSTANCE = 'workflow/process-instance/RESET_INSTANCE';
+
 export const LOAD_INIT = 'workflow/process-instance/LOAD_INIT';
 export const LOAD_SUCCESS = 'workflow/process-instance/LOAD_SUCCESS';
 export const LOAD_FAILURE = 'workflow/process-instance/LOAD_FAILURE';
+
+export const DELETE_INIT = 'workflow/process-instance/DELETE_INIT';
+export const DELETE_SUCCESS = 'workflow/process-instance/DELETE_SUCCESS';
+export const DELETE_FAILURE = 'workflow/process-instance/DELETE_FAILURE';
 
 export interface CountProcessInstanceInitAction {
   type: typeof COUNT_PROCESS_INSTANCE_INIT;
@@ -115,22 +120,35 @@ export interface ResetSelectionAction {
 }
 
 export interface ResetInstanceAction {
-  type: typeof RESET_INSTANCE,
+  type: typeof RESET_INSTANCE;
 }
 
 export interface LoadInitAction {
   type: typeof LOAD_INIT;
-  businessKey: string | null,
-  processInstance: string | null,
+  businessKey: string | null;
+  processInstance: string | null;
 }
 
 export interface LoadSuccessAction {
   type: typeof LOAD_SUCCESS;
-  processInstance: ActiveProcessInstanceDetails,
+  processInstance: ActiveProcessInstanceDetails;
 }
 
 export interface LoadFailureAction {
   type: typeof LOAD_FAILURE;
+}
+
+export interface DeleteInitAction {
+  type: typeof DELETE_INIT;
+  processInstance: string;
+}
+
+export interface DeleteSuccessAction {
+  type: typeof DELETE_SUCCESS;
+}
+
+export interface DeleteFailureAction {
+  type: typeof DELETE_FAILURE;
 }
 
 export type ProcessInstanceActions =
@@ -153,4 +171,7 @@ export type ProcessInstanceActions =
   | LoadInitAction
   | LoadSuccessAction
   | LoadFailureAction
+  | DeleteInitAction
+  | DeleteSuccessAction
+  | DeleteFailureAction
   ;

@@ -523,6 +523,7 @@
         "cancel": "Cancel",
         "close": "Close",
         "create": "Create",
+        "delete": "Delete",
         "no": "No",
         "reject": "Reject",
         "reset": "Clear",
@@ -603,10 +604,16 @@
     },
     "last-update": "Last updated: ",
     "message": {
+      "delete-confirm.1": "The process instance {id} of type {type} will be deleted.",
+      "delete-confirm.2": "This action is irreversible.",
+      "delete-confirm.3": "To continue, type the business key of the process instance in the text box below.",
+      "delete-failure": "Delete operation has failed",
+      "delete-success": "Process instance has been deleted",
       "retry": "Would you like to increase the retry counter for process instance of type [{type}] with business key [{businessKey}]?"
     },
     "tooltip": {
       "instance": {
+        "delete": "Delete process instance",
         "view": "View details"
       },
       "incident": {

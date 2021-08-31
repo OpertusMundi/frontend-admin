@@ -26,6 +26,9 @@ import {
   LOAD_INIT,
   LOAD_SUCCESS,
   LOAD_FAILURE,
+  DELETE_INIT,
+  DELETE_SUCCESS,
+  DELETE_FAILURE,
 } from './types';
 
 
@@ -146,5 +149,24 @@ export function loadSuccess(processInstance: ActiveProcessInstanceDetails): Proc
 export function loadFailure(): ProcessInstanceActions {
   return {
     type: LOAD_FAILURE,
+  };
+}
+
+export function deleteInit(processInstance: string): ProcessInstanceActions {
+  return {
+    type: DELETE_INIT,
+    processInstance,
+  };
+}
+
+export function deleteSuccess(): ProcessInstanceActions {
+  return {
+    type: DELETE_SUCCESS,
+  };
+}
+
+export function deleteFailure(): ProcessInstanceActions {
+  return {
+    type: DELETE_FAILURE,
   };
 }
