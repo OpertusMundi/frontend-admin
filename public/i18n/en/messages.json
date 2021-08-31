@@ -285,7 +285,8 @@
       "SOCIETY": "Society",
       "STRUCTURE": "Structure",
       "TRANSPORTATION": "Transportation",
-      "UTILITIES_COMMUNICATION": "Utilities & Communication"
+      "UTILITIES_COMMUNICATION": "Utilities & Communication",
+      "undefined": "No Topic"
     },
     "contract-status": {
       "DRAFT": "Draft",
