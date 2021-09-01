@@ -28,7 +28,12 @@ export enum EnumContractIcon {
   WarrantyNotProvided = 'WarrantyNotProvided',
   WarrantyProvided = 'WarrantyProvided',
   NoRestrictionsWorldwide = 'NoRestrictionsWorldwide',
+  AdvertisingMarketing = 'AdvertisingMarketing',
   Geomarketing = 'Geomarketing ',
+  IntranetApplications = 'IntranetApplications',
+  MobileApplications = 'MobileApplications',
+  NavigationMobility = 'NavigationMobility',
+  WebApplications = 'WebApplications'
 }
 
 export enum EnumContractIconCategory {
