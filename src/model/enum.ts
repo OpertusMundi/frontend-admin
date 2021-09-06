@@ -33,6 +33,10 @@ export enum EnumSpatialDataServiceType {
 
 export enum EnumPaymentMethod {
   /**
+   * No payment is required (free)
+   */
+  FREE = 'FREE',
+  /**
    * Payment with registered card
    */
   CARD_DIRECT = 'CARD_DIRECT',

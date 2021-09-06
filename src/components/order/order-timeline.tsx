@@ -41,6 +41,7 @@ import {
   mdiCloseOutline,
   mdiCreditCardRefundOutline,
   mdiCheckOutline,
+  mdiPiggyBankOutline,
 } from '@mdi/js';
 
 // Store
@@ -163,11 +164,27 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
 
   renderPaymentDetails(order: Order): React.ReactNode {
     switch (order.paymentMethod) {
+      case EnumPaymentMethod.FREE:
+        return this.renderFreePaymentDetails(order);
       case EnumPaymentMethod.BANKWIRE:
         return this.renderBankwirePaymentDetails(order);
       case EnumPaymentMethod.CARD_DIRECT:
         return this.renderCardPaymentDetails(order);
     }
+  }
+
+  renderFreePaymentDetails(order: Order): React.ReactNode {
+    const p = order.payIn as BankwirePayIn;
+
+    return (
+      <>
+        <Grid item xs={12}>
+          <Typography gutterBottom>
+            <FormattedMessage id={`billing.order.timeline.payment-method.${order.paymentMethod}`} />
+          </Typography>
+        </Grid>
+      </>
+    )
   }
 
   renderBankwirePaymentDetails(order: Order): React.ReactNode {
@@ -284,6 +301,8 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
         return (<Icon path={mdiPackageVariantClosed} size="1.5rem" />);
       case EnumOrderStatus.CHARGED: {
         switch (order.paymentMethod) {
+          case EnumPaymentMethod.FREE:
+            return (<Icon path={mdiPiggyBankOutline} size="1.5rem" />);
           case EnumPaymentMethod.BANKWIRE:
             return (<Icon path={mdiBankTransfer} size="1.5rem" />);
           case EnumPaymentMethod.CARD_DIRECT:

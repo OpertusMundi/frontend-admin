@@ -109,6 +109,10 @@
           "SUCCEEDED": "Order has been completed"
         },
         "payment": {
+          "FREE": {
+            "CREATED": "Waiting for PayIn creation ...",
+            "SUCCEEDED": "Free PayIn has been created"
+          },
           "BANKWIRE": {
             "CREATED": "Waiting for bank transfer to be accepted ...",
             "FAILED": "Bank transfer has been refused",
@@ -121,6 +125,7 @@
           }
         },
         "payment-method": {
+          "FREE": "Free",
           "BANKWIRE": "Bank transfer",
           "CARD_DIRECT": "Credit Card"
         }
@@ -339,6 +344,7 @@
       "SUBSCRIPTION_BILLING": "Subscription billing"
     },
     "payment-method": {
+      "FREE": "Free",
       "CARD_DIRECT": "Card",
       "BANKWIRE": "Bank Transfer"
     },
