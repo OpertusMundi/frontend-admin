@@ -323,8 +323,13 @@
     },
     "order-status": {
       "CREATED": "New",
+      "PENDING_PROVIDER_APPROVAL": "Provider approval is required",
+      "PROVIDER_REJECTED": "Provider has rejected the order",
+      "PROVIDER_ACCEPTED": "Provider has accepted the order",
       "CHARGED": "Charged",
-      "PENDING": "Pending",
+      "PENDING_PROVIDER_SEND_CONFIRMATION": "Pending order shipping",
+      "PENDING_CONSUMER_RECEIVE_CONFIRMATION": "Pending order delivery",
+      "ASSET_REGISTRATION": "Pending",
       "CANCELLED": "Cancelled",
       "REFUNDED": "Refunded",
       "SUCCEEDED": "Completed"
