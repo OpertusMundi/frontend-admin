@@ -102,8 +102,13 @@
         "timeline-header": "Timeline",
         "status": {
           "CREATED": "Order has been placed",
+          "PENDING_PROVIDER_APPROVAL": "Provider approval is required",
+          "PROVIDER_REJECTED": "Provider has rejected the order",
+          "PROVIDER_ACCEPTED": "Provider has accepted the order",
           "CHARGED": "PayIn has been created",
-          "PENDING": "PayIn was successful. Order fulfillment process instance has been started",
+          "PENDING_PROVIDER_SEND_CONFIRMATION": "Pending order shipping",
+          "PENDING_CONSUMER_RECEIVE_CONFIRMATION": "Pending order delivery",
+          "ASSET_REGISTRATION": "PayIn was successful. Order fulfillment process instance has been started",
           "CANCELLED": "Order has been cancelled",
           "REFUNDED": "Order has been  refunded",
           "SUCCEEDED": "Order has been completed"
