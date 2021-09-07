@@ -183,7 +183,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
 
       if (section.dynamic) {
         body = section.options.map((option, index) => {
-          icon = <div/> 
+          icon = <div/>
           shortDescription = <div/>
           var subOptionsArray = section.options[index].subOptions!;
           let subOptionBlock = [];
@@ -211,7 +211,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
           };
           if (section.options[index].icon){
             const enumIcon = config.contractIcons.find(c => c.icon === section.options[index].icon);
-            icon = <img className={classes.logoImage} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
+            icon = <img alt="" className={classes.logoImage} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
           }
           if (section.options[index].shortDescription){
             shortDescription = <div className={classes.shortDescription} >{section.options[index].shortDescription}</div>
@@ -260,7 +260,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
           }
           if (section.options[0].icon){
             const enumIcon = config.contractIcons.find(c => c.icon === section.options[0].icon);
-            icon = <img className={classes.logoImage} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
+            icon = <img  alt="" className={classes.logoImage} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
           }
           if (section.options[0].shortDescription){
             shortDescription = <div className={classes.shortDescription} >{section.options[0].shortDescription}</div>

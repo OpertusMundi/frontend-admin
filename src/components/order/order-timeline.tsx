@@ -174,8 +174,6 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
   }
 
   renderFreePaymentDetails(order: Order): React.ReactNode {
-    const p = order.payIn as BankwirePayIn;
-
     return (
       <>
         <Grid item xs={12}>
