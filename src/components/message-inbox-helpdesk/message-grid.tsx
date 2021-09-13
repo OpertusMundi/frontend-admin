@@ -141,7 +141,7 @@ class MessageManager extends React.Component<MessageManagerProps> {
           ))}
 
           {!loading && items.length === 0 &&
-            <Alert severity="info">No new messages found!</Alert>
+            <Alert severity="info">No new messages found</Alert>
           }
 
         </div >

@@ -48,7 +48,7 @@ const styles = (theme: Theme) => createStyles({
   },
   cardActions: {
     justifyContent: 'flex-end',
-    padding: theme.spacing(0, 1, 0, 1),
+    padding: theme.spacing(0, 1, 1, 1),
   },
   textField: {
     fontSize: 12,
