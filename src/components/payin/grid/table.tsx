@@ -258,7 +258,7 @@ function payinColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
               <Icon path={mdiLink} className={classes.classes.rowIconAction} />
             </i>
           </Tooltip>
-          {row.status === EnumTransactionStatus.SUCCEEDED && !hasTransfer(row) && row.paymentMethod != EnumPaymentMethod.FREE &&
+          {row.status === EnumTransactionStatus.SUCCEEDED && !hasTransfer(row) && row.paymentMethod !== EnumPaymentMethod.FREE &&
             <Tooltip title={intl.formatMessage({ id: 'billing.payin.tooltip.transfer-funds' })}>
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.TransferFunds, rowIndex, column, row) : null}
