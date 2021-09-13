@@ -8,7 +8,12 @@ import { injectIntl, IntlShape } from 'react-intl';
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
+import { red } from '@material-ui/core/colors';
+
 import Avatar from '@material-ui/core/Avatar';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
 import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -25,6 +30,7 @@ import {
   mdiNumeric,
   mdiText,
   mdiCheckboxMarkedOutline,
+  mdiVariable,
 } from '@mdi/js';
 
 // Service
@@ -33,6 +39,14 @@ import { BpmVariable } from 'model/bpm-process-instance';
 const COPY = 'copy';
 
 const styles = (theme: Theme) => createStyles({
+  avatar: {
+    backgroundColor: red[500],
+  },
+  card: {
+    borderRadius: 0,
+    padding: theme.spacing(1),
+    margin: theme.spacing(1),
+  },
   listItem: {
     padding: theme.spacing(1, 0),
   },
@@ -88,44 +102,57 @@ class ProcessInstanceVariables extends React.Component<ProcessInstanceVariablesP
   }
 
   render() {
+    const _t = this.props.intl.formatMessage;
     const { classes, variables = [] } = this.props;
 
-    return (
-      <>
-        <PerfectScrollbar className={classes.variablesList}>
-          <List disablePadding>
-            {_.uniqBy(variables, 'name').filter(v => !['startUserKey'].includes(v.name)).sort().map((v) => {
-              const value = v.value;
+    const sortedVariables = _.uniqBy(variables, 'name').filter(v => !['startUserKey'].includes(v.name)).sort();
 
-              return (
-                <div key={`variable-${v.name}`}>
-                  <ListItem className={classes.listItem}>
-                    <ListItemAvatar>
-                      <Avatar className={classes.small}>
-                        {this.mapVariableTypeToIcon(v.type)}
-                      </Avatar>
-                    </ListItemAvatar>
-                    {typeof value === 'boolean' &&
-                      <ListItemText primary={v.name} secondary={value === true ? 'True' : 'False'} />
-                    }
-                    {typeof value !== 'boolean' &&
-                      <ListItemText primary={v.name} secondary={value} />
-                    }
-                    {typeof value !== 'boolean' && v.value &&
-                      <ListItemSecondaryAction>
-                        <IconButton edge="end" aria-label="delete" onClick={() => this.copyValueToClipboard(v.value)}>
-                          <Icon path={mdiContentCopy} size="1.2rem" />
-                        </IconButton>
-                      </ListItemSecondaryAction>
-                    }
-                  </ListItem>
-                </div>
-              );
-            })}
-          </List>
-        </PerfectScrollbar>
-        <input type="text" id="copy-to-clipboard" defaultValue="" style={{ position: 'absolute', left: -1000 }} />
-      </>
+    return (
+      <Card className={classes.card}>
+        <CardHeader
+          avatar={
+            <Avatar className={classes.avatar}>
+              <Icon path={mdiVariable} size="1.5rem" />
+            </Avatar>
+          }
+          title={_t({ id: 'workflow.instance.variables.title' }, { count: sortedVariables.length })}
+        ></CardHeader>
+        <CardContent>
+          <PerfectScrollbar className={classes.variablesList}>
+            <List disablePadding>
+              {sortedVariables.map((v) => {
+                const value = v.value;
+
+                return (
+                  <div key={`variable-${v.name}`}>
+                    <ListItem className={classes.listItem}>
+                      <ListItemAvatar>
+                        <Avatar className={classes.small}>
+                          {this.mapVariableTypeToIcon(v.type)}
+                        </Avatar>
+                      </ListItemAvatar>
+                      {typeof value === 'boolean' &&
+                        <ListItemText primary={v.name} secondary={value === true ? 'True' : 'False'} />
+                      }
+                      {typeof value !== 'boolean' &&
+                        <ListItemText primary={v.name} secondary={value} />
+                      }
+                      {typeof value !== 'boolean' && v.value &&
+                        <ListItemSecondaryAction>
+                          <IconButton edge="end" aria-label="delete" onClick={() => this.copyValueToClipboard(v.value)}>
+                            <Icon path={mdiContentCopy} size="1.2rem" />
+                          </IconButton>
+                        </ListItemSecondaryAction>
+                      }
+                    </ListItem>
+                  </div>
+                );
+              })}
+            </List>
+          </PerfectScrollbar>
+          <input type="text" id="copy-to-clipboard" defaultValue="" style={{ position: 'absolute', left: -1000 }} />
+        </CardContent>
+      </Card>
     );
   }
 
