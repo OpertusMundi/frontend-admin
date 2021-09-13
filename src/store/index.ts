@@ -11,6 +11,7 @@ import { analyticsReducer } from './analytics/reducer';
 import { configurationReducer } from './config/reducer';
 import { contractReducer } from './contract/reducer';
 import { draftReducer } from './draft/reducer';
+import { eventReducer } from './event/reducer';
 import { helpdeskAccountReducer } from './account/reducer';
 import { helpdeskInboxReducer } from './message-inbox-helpdesk/reducer';
 import { i18nReducer } from './i18n/reducer';
@@ -49,6 +50,7 @@ export const rootReducer = Redux.combineReducers({
   config: configurationReducer,
   contract: contractReducer,
   draft: draftReducer,
+  event: eventReducer,
   i18n: i18nReducer,
   map: mapViewerReducer,
   security: securityReducer,

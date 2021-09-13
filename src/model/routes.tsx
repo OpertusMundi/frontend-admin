@@ -26,6 +26,7 @@ import {
   mdiBadgeAccountOutline,
   mdiBankTransferIn,
   mdiBankTransferOut,
+  mdiBugOutline,
   mdiChartBarStacked,
   mdiBellAlertOutline,
   mdiCogOutline,
@@ -71,6 +72,7 @@ const ConsumerManager = '/consumers';
 const ContractManager = '/contract/list';
 const Dashboard = '/dashboard';
 const DraftManager = '/drafts';
+const EventManager = '/events';
 const HelpdeskAccountManager = '/helpdesk/users';
 const IncidentManager = '/workflow/incidents'
 const Map = '/map';
@@ -105,6 +107,7 @@ export const StaticRoutes = {
   HelpdeskAccountManager,
   MarketplaceAccountManager,
   DraftManager,
+  EventManager,
   ProcessInstanceManager,
   ProcessInstanceHistoryManager,
   TransferManager,
@@ -350,8 +353,15 @@ export const routes: RouteRegistry = {
   [DraftManager]: {
     icon: (className?: string) => (<Icon path={mdiTextBoxCheckOutline} size="1.5rem" className={className} />),
     description: 'Manage provider draft assets',
-    title: 'links.draft.explorer',
+    title: 'links.draft-manager',
     defaultTitle: 'Draft Management',
+    links: [Dashboard],
+  },
+  [EventManager]: {
+    icon: (className?: string) => (<Icon path={mdiBugOutline} size="1.5rem" className={className} />),
+    description: 'System Events',
+    title: 'links.event-manager',
+    defaultTitle: 'System Events',
     links: [Dashboard],
   },
   // Dynamic
