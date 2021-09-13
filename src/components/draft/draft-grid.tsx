@@ -34,7 +34,7 @@ import { localizeErrorCodes } from 'utils/error';
 // Model
 import { DynamicRoutes, buildPath } from 'model/routes';
 import { PageRequest, Sorting, SimpleResponse } from 'model/response';
-import { EnumSortField, AssetDraft } from 'model/draft';
+import { EnumSortField, AssetDraft, EnumDraftStatus } from 'model/draft';
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
@@ -191,11 +191,15 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
     }
   }
 
-  viewDraft(providerKey: string, assetKey: string): void {
+  viewDraft(asset: AssetDraft): void {
     const { config: { marketplaceUrl } } = this.props;
-    const trailingSlash = !marketplaceUrl.endsWith('/');
-    const url = `${marketplaceUrl}${trailingSlash ? '/' : ''}helpdesk-review/${assetKey}`;
+    const { status, assetDraft, assetPublished } = asset;
 
+    const trailingSlash = !marketplaceUrl.endsWith('/');
+    const url = status === EnumDraftStatus.PUBLISHED ?
+      `${marketplaceUrl}${trailingSlash ? '/' : ''}catalogue/${assetPublished}` :
+      `${marketplaceUrl}${trailingSlash ? '/' : ''}helpdesk-review/${assetDraft}`;
+    console.log(url);
     window.open(url, "_blank");
   }
 
