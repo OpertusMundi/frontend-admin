@@ -308,7 +308,7 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
         }
         return null;
       }
-      case EnumOrderStatus.PENDING:
+      case EnumOrderStatus.ASSET_REGISTRATION:
         return (<Icon path={mdiCogSyncOutline} size="1.5rem" />);
       case EnumOrderStatus.CANCELLED:
         return (<Icon path={mdiCloseOutline} size="1.5rem" />);
@@ -332,7 +332,7 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
           default:
             return '#757575';
         }
-      case EnumOrderStatus.PENDING:
+      case EnumOrderStatus.ASSET_REGISTRATION:
         return '#757575';
       case EnumOrderStatus.CANCELLED:
         return '#f44336';
