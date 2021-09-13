@@ -198,7 +198,7 @@ const styles = (theme: Theme) => createStyles({
   },
   rowIcon: {
     width: 18,
-    marginRight: 8,
+    marginLeft: 8,
   },
   rowIconAction: {
     width: 18,
