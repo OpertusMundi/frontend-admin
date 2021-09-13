@@ -262,9 +262,10 @@
       },
       "last-update": "Last updated: ",
       "tooltip": {
-        "view-process-instance": "View publish workflow process instance",
-        "review": "Review",
-        "view": "Preview in Marketplace"
+        "view-process-instance": "View publish workflow instance",
+        "preview": "Preview in Marketplace",
+        "review": "Review Draft",
+        "view": "View in Marketplace"
       }
     },
     "message": {
@@ -418,6 +419,30 @@
       "retry-failure": "Retry operation has failed"
     }
   },
+  "event": {
+    "filter": {
+      "user": "User",
+      "level": "Level"
+    },
+    "header": {
+      "actions": "Actions",
+      "client-address": "Remote IP Address",
+      "exception": "Exception",
+      "message": "Message",
+      "level": "Level",
+      "logger": "Logger",
+      "timestamp": "Timestamp",
+      "user-name": "User"
+    },
+    "level": {
+      "TRACE": "TRACE",
+      "DEBUG": "DEBUG",
+      "INFO": "INFO",
+      "WARN": "WARN",
+      "ERROR": "ERROR"
+    },
+    "last-update": "Last updated: "
+  },
   "inbox": {
     "helpdesk": {
       "message-assigned": "The message has been assigned to your account",
@@ -459,6 +484,7 @@
     },
     "dashboard": "Overview",
     "draft-manager": "Asset Drafts",
+    "event-manager": "System Events",
     "map": "Map",
     "message-inbox": "Messages",
     "message-inbox-helpdesk": "Helpdesk Inbox",
