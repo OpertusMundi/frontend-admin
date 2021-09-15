@@ -105,7 +105,9 @@ class ProcessInstanceVariables extends React.Component<ProcessInstanceVariablesP
     const _t = this.props.intl.formatMessage;
     const { classes, variables = [] } = this.props;
 
-    const sortedVariables = _.uniqBy(variables, 'name').filter(v => !['startUserKey'].includes(v.name)).sort();
+    const sortedVariables = _.uniqBy(variables, 'name')
+      .filter(v => !['startUserKey'].includes(v.name))
+      .sort((v1, v2) => v1.name >= v2.name ? 1 : -1);
 
     return (
       <Card className={classes.card}>
