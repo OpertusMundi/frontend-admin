@@ -119,13 +119,12 @@ interface EditAreaComponentProps extends WithStyles<typeof styles>, PropsFromRed
   documentSubtitle?: string;
   saveContent: (id: number, contentState: ContentState, title: string, option: number, subOption: number,
     summary: string, descriptionOfChange: string, icon: EnumContractIcon | null, shortDescription: string, editField: EditFieldEnum) => void;
-  editSection: (...item:any) => void;
+  editSection: (...item: any) => void;
   addOptions: (sectionId: number, options: number) => void;
   addSubOptions: (sectionId: number, option: number, subOptions: number) => void;
   editField: EditFieldEnum;
   sectionList?: Section[];
 }
-
 
 interface EditAreaComponentState {
   editorState: EditorState;
@@ -151,7 +150,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
   constructor(props: EditAreaComponentProps) {
     super(props);
-    let title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = null, shortDescription = '', images={};
+    let title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = null, shortDescription = '';
     // if editing section or titles
     if (this.props.editField === EditFieldEnum.Section) {
       title = this.props.section!.title;
@@ -164,55 +163,61 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
       icon = this.props.section!.options[0].icon!;
       shortDescription = this.props.section!.options[0].shortDescription!;
       descriptionOfChange = this.props.section!.descriptionOfChange;
-    }
-    else {
+    } else {
       editorState = EditorState.createEmpty(this.decorator);
       show = false;
       if (this.props.editField === EditFieldEnum.Title) {
         title = this.props.documentTitle!;
-      }
-      else
+      } else {
         title = this.props.documentSubtitle!;
+      }
     }
     this.state = {
-      editorState, title, option: 0, subOption: 0, editingOption: true, showEditor: show, summary, descriptionOfChange, variable, optional,
-      dynamic, icon, shortDescription, openAutoTextSelect: false, openIconSelect: false, editField: this.props.editField
-
+      descriptionOfChange,
+      dynamic,
+      editField: props.editField,
+      editingOption: true,
+      editorState,
+      icon,
+      openAutoTextSelect: false,
+      openIconSelect: false,
+      option: 0,
+      optional,
+      shortDescription,
+      showEditor: show,
+      subOption: 0,
+      summary,
+      title,
+      variable,
     };
   }
 
-
   customBlockStyleFn = (contentBlock: ContentBlock) => {
     return ['public-DraftStyleDefault-block'];
-
-
   }
 
   onChangeValue(id: number, event: any) {
-    var selection = event.target.value
+    const selection = event.target.value
     if (selection === 'optional') {
       this.props.editSection({ id: id, optional: true, dynamic: false, summary: '', })
       this.setState({ optional: true, dynamic: false });
-    }
-    else if (selection === 'dynamic') {
+    } else if (selection === 'dynamic') {
       this.props.addOptions(id, 2);
       this.props.editSection({ id: id, dynamic: true, optional: false })
       this.setState({ optional: false, dynamic: true });
-    }
-    else {
+    } else {
       this.props.addOptions(id, selection);
     }
   }
 
   onChangeSubOptionValue(id: number, event: any) {
-    var selection = event.target.value;
+    const selection = event.target.value;
     this.props.addSubOptions(id, this.state.option, selection);
   }
 
   onOptionSelect = (event: any) => {
-
-    var selection = event.target.value
-    var editingOption = true
+    const selection = event.target.value;
+    const editingOption = true;
     this.setState({
       option: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse((this.props.section!.options[selection].body)))), summary: this.props.section!.options[selection].summary!,
       icon: this.props.section!.options[selection].icon!, shortDescription: this.props.section!.options[selection].shortDescription!, editField: EditFieldEnum.Section, editingOption
@@ -220,44 +225,44 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   }
 
   onSubOptionSelect = (event: any) => {
-    var selection = event.target.value
-    var editingOption = false;
-    var body = this.props.section!.options[this.state.option].subOptions![selection].body;
+    const selection = event.target.value
+    const editingOption = false;
+    const body = this.props.section!.options[this.state.option].subOptions![selection].body;
     this.setState({
       subOption: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(body!))),
-       editField: EditFieldEnum.SubOption, editingOption,
+      editField: EditFieldEnum.SubOption, editingOption,
     });
   }
 
-
   onSummarySet = (event: any) => {
-    var summary = event.target.value
-    if (summary === '')
-      summary = ' '
+    let summary = event.target.value
+    if (summary === '') {
+      summary = ' ';
+    }
     this.setState({
-      summary
+      summary,
     });
 
   }
 
   onShortDescriptionSet = (event: any) => {
-    var shortDescription = event.target.value
-    if (shortDescription === '')
-      shortDescription = ' '
+    let shortDescription = event.target.value
+    if (shortDescription === '') {
+      shortDescription = ' ';
+    }
     this.setState({
       shortDescription
     });
-
   }
 
   onDescriptionOfChangeSet = (event: any) => {
-    var descriptionOfChange = event.target.value
-    if (descriptionOfChange === '')
-      descriptionOfChange = ' '
+    let descriptionOfChange = event.target.value
+    if (descriptionOfChange === '') {
+      descriptionOfChange = ' ';
+    }
     this.setState({
       descriptionOfChange
     });
-
   }
 
   TokenSpan = (props: any) => {
@@ -291,12 +296,12 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     const selection = this.state.editorState.getSelection();
     const entityKey = Entity.create('TokenSpan', 'IMMUTABLE', { meta });
 
-    //var entityStyle = OrderedSet.of('bgcolor-rgb(192,192,192)')
-    var entityStyle = OrderedSet.of('BOLD')
-    entityStyle = entityStyle.add('UNDERLINE')
-    var textWithEntity = Modifier.insertText(currentContent, selection, label, entityStyle, entityKey);
+    //let entityStyle = OrderedSet.of('bgcolor-rgb(192,192,192)')
+    let entityStyle = OrderedSet.of('BOLD');
+    entityStyle = entityStyle.add('UNDERLINE');
+    let textWithEntity = Modifier.insertText(currentContent, selection, label, entityStyle, entityKey);
 
-    var newSelection = editorState.getSelection().merge({
+    let newSelection = editorState.getSelection().merge({
       focusOffset: selection.getFocusOffset() + label.length,
       anchorOffset: selection.getAnchorOffset() + label.length
     })
@@ -309,12 +314,12 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     })
     //const nextOffSet = editorState.getSelection().getFocusOffset() + 1
 
-    var newState = EditorState.push(editorState, textWithEntity, 'insert-characters')
+    const newState = EditorState.push(editorState, textWithEntity, 'insert-characters')
     this.setState({
       editorState: EditorState.forceSelection(newState, newSelection)
-
     });
-    return newState
+
+    return newState;
   }
 
 
@@ -325,8 +330,6 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   };
 
   Replacements = () => {
-    //var open = false;
-
     const setOpen = (): void => {
       this.setState({
         openAutoTextSelect: !this.state.openAutoTextSelect,
@@ -342,7 +345,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
             <span>automated text</span>
             <div className={`rdw-dropdown-caretto${this.state.openAutoTextSelect ? 'close' : 'open'}`} />
           </div>
-          <ul className={`rdw-dropdown-optionwrapper ${this.state.openAutoTextSelect ? classes.open : classes.close}`} >
+          <ul className={`rdw-dropdown-optionwrapper ${this.state.openAutoTextSelect ? classes.open : classes.close}`}>
             {placeholderOptions.map(item => (
               <li
                 onClick={() => this.insertPlaceholder(item.value, '')}
@@ -366,10 +369,10 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   render() {
     const { editorState } = this.state;
     const { classes, config } = this.props;
-    let editor, iconSelector, type_buttons, options, subOptions, editOption, editSubOption, summary, descriptionOfChange, 
-              shortDescription, editingOptionTitle = '', subOptionSize = 0, selectedIcon;
+    let editor, iconSelector, type_buttons, options, subOptions, editOption, editSubOption, summary,
+      shortDescription, editingOptionTitle = '', subOptionSize = 0, selectedIcon;
     if (this.state.variable) {
-      var type = 'Option ', currentOption = this.state.option;
+      let type = 'Option ', currentOption = this.state.option;
       if (!this.state.editingOption) {
         type = 'SubOption ';
         currentOption = this.state.subOption;
@@ -378,30 +381,25 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     }
 
     if (this.state.showEditor) {
-      editor = <div >
-
-        <InputLabel className={classes.title}>Text {editingOptionTitle}</InputLabel>
-        <Editor
-          toolbar={{
-            options: ['inline', 'list'],
-            inline: { inDropdown: false, options: ['bold', 'italic', 'underline'], },
-            list: { inDropdown: true },
-            textAlign: { inDropdown: true },
-          }}
-          toolbarCustomButtons={[this.Replacements()]}
-          editorState={editorState}
-          wrapperClassName={classes.wrapper}
-          editorClassName={classes.editor}
-          onEditorStateChange={this.onEditorStateChange.bind(this)}
-          customBlockRenderFunc={this.customBlockStyleFn}
-        />
-      </div>;
-      descriptionOfChange = <div className={classes.control}> <InputLabel className={classes.title}>Description of change (Optional)</InputLabel>
-        <TextField className={classes.title} id="filled-label" variant="standard" value={this.state.descriptionOfChange || ''}
-          suppressContentEditableWarning={true} contentEditable={true}
-          onChange={(e) => this.onDescriptionOfChangeSet(e)} />
-
-      </div>;
+      editor = (
+        <div>
+          <InputLabel className={classes.title}>Text {editingOptionTitle}</InputLabel>
+          <Editor
+            toolbar={{
+              options: ['inline', 'list'],
+              inline: { inDropdown: false, options: ['bold', 'italic', 'underline'], },
+              list: { inDropdown: true },
+              textAlign: { inDropdown: true },
+            }}
+            toolbarCustomButtons={[this.Replacements()]}
+            editorState={editorState}
+            wrapperClassName={classes.wrapper}
+            editorClassName={classes.editor}
+            onEditorStateChange={this.onEditorStateChange.bind(this)}
+            customBlockRenderFunc={this.customBlockStyleFn}
+          />
+        </div>
+      );
     }
 
     if (this.state.variable) {
@@ -411,57 +409,59 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
           optionAlphanumeric.push(String.fromCharCode(65 + i));
         }
         options = <input className={classes.options} type="number" min="1" defaultValue={this.props.section!.options.length}></input>;
-        editOption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel >Option</InputLabel>
-          <Select
-            onChange={this.onOptionSelect}
-          >
-            <MenuItem disabled>Option</MenuItem>
-            {optionAlphanumeric.map((option, index) =>
-              <MenuItem value={index}>{option}</MenuItem>)};
-          </Select>
-        </div>;
+        editOption = (
+          <div style={{ 'marginLeft': '4vh' }}>
+            <InputLabel>Option</InputLabel>
+            <Select
+              onChange={this.onOptionSelect}
+            >
+              <MenuItem disabled>Option</MenuItem>
+              {optionAlphanumeric.map((option, index) =>
+                <MenuItem value={index}>{option}</MenuItem>)};
+            </Select>
+          </div>
+        );
       }
-      var subOptionsArray = this.props.section!.options[this.state.option].subOptions!;
-      if (typeof (subOptionsArray) !== 'undefined' && subOptionsArray!== null)
+      const subOptionsArray = this.props.section!.options[this.state.option].subOptions!;
+      if (typeof (subOptionsArray) !== 'undefined' && subOptionsArray !== null) {
         subOptionSize = subOptionsArray.length;
-      else
-        subOptionSize = 0
-      subOptions =
+      } else {
+        subOptionSize = 0;
+      }
+      subOptions = (
         <div style={{ 'marginTop': '2vh' }} onChange={(e) => this.onChangeSubOptionValue(this.props.section!.id!, e)}>
           <label>Subptions</label>
           <input className={classes.options} type="number" value={subOptionSize}></input>
         </div>
+      );
       let subOptionAlphanumeric = [];
       for (let i = 0; i < subOptionSize; i++) {
         subOptionAlphanumeric.push(String.fromCharCode(65 + i));
       }
-      if (subOptionAlphanumeric.length > 0)
+      if (subOptionAlphanumeric.length > 0) {
+        editSubOption = (
+          <div style={{ 'marginLeft': '4vh' }}> <InputLabel>SubOption</InputLabel>
+            <Select onChange={this.onSubOptionSelect}>
+              <MenuItem disabled>SubOption</MenuItem>
+              {subOptionAlphanumeric.map((option, index) =>
+                <MenuItem value={index}>{option}</MenuItem>
+              )}
+            </Select>
+            {subOptions}
+          </div>
+        );
+      } else {
+        editSubOption = (
+          <div style={{ 'marginLeft': '4vh' }}> <InputLabel>SubOption</InputLabel>
+            <Select onChange={this.onSubOptionSelect}>
+              <MenuItem disabled>SubOption</MenuItem>
+            </Select>
+            {subOptions}
+          </div>
+        );
+      }
 
-        editSubOption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel>SubOption</InputLabel>
-          <Select
-
-            onChange={this.onSubOptionSelect}
-          >
-
-            <MenuItem disabled>SubOption</MenuItem>
-            {subOptionAlphanumeric.map((option, index) =>
-              <MenuItem value={index}>{option}</MenuItem>)};
-          </Select>
-          {subOptions}
-        </div>;
-      else
-        editSubOption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel>SubOption</InputLabel>
-          <Select
-
-            onChange={this.onSubOptionSelect}
-          >
-
-            <MenuItem disabled>SubOption</MenuItem>
-          </Select>
-          {subOptions}
-        </div>;
-
-      type_buttons =
+      type_buttons = (
         <div>
           <div onChange={(e) => this.onChangeValue(this.props.section!.id!, e)}>
             <label className={classes.radio}><input type="radio" value="optional" name="type" defaultChecked={this.state.optional} /> Optional Section</label>
@@ -469,21 +469,21 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
               {options}
             </label>
           </div>
-        </div>;
+        </div>
+      );
     }
 
+    const openIconSelector = (): void => {
+      this.setState({
+        openIconSelect: !this.state.openIconSelect,
+      });
+    }
 
-      const openIconSelector = (): void => {
-        this.setState({
-          openIconSelect: !this.state.openIconSelect,
-        });
-      }
-
-      const selectIcon = (icon: EnumContractIcon | null): void => {
-        this.setState({
-          icon
-        });
-      }
+    const selectIcon = (icon: EnumContractIcon | null): void => {
+      this.setState({
+        icon
+      });
+    }
 
     if (this.props.editField === EditFieldEnum.Section) {
       summary = <div className={classes.control}> <InputLabel className={classes.title}>Summary</InputLabel>
@@ -493,20 +493,31 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
       </div>;
 
       shortDescription = <div className={classes.control}> <InputLabel className={classes.title}>Short description</InputLabel>
-      <TextField className={classes.title} id="filled-label" variant="standard" value={this.state.shortDescription || ''}
-        suppressContentEditableWarning={true} contentEditable={true}
-        onChange={(e) => this.onShortDescriptionSet(e)} />
-        </div>
+        <TextField className={classes.title} id="filled-label" variant="standard" value={this.state.shortDescription || ''}
+          suppressContentEditableWarning={true} contentEditable={true}
+          onChange={(e) => this.onShortDescriptionSet(e)} />
+      </div>
 
-      iconSelector =
-        <div onClick={() => openIconSelector()} className="rdw-block-wrapper" aria-expanded={this.state.openIconSelect} aria-label="rdw-block-control" role="button" tabIndex={0}>
-          <div className="rdw-dropdown-wrapper rdw-block-dropdown" aria-expanded={this.state.openIconSelect} aria-label="rdw-dropdown" style={{ width: 300 }}>
+      iconSelector = (
+        <div
+          className="rdw-block-wrapper"
+          aria-expanded={this.state.openIconSelect}
+          aria-label="rdw-block-control" role="button"
+          tabIndex={0}
+          onClick={() => openIconSelector()}
+        >
+          <div
+            className="rdw-dropdown-wrapper rdw-block-dropdown"
+            aria-expanded={this.state.openIconSelect}
+            aria-label="rdw-dropdown"
+            style={{ width: 300 }}
+          >
             <div className="rdw-dropdown-selectedtext">
               <span>Select icon</span>
               <div className={`rdw-dropdown-caretto${this.state.openIconSelect ? 'close' : 'open'}`} />
             </div>
-            <ul className={`rdw-dropdown-optionwrapper ${this.state.openIconSelect ? classes.open : classes.close}`} >
-              { config.contractIcons.map(icon => (
+            <ul className={`rdw-dropdown-optionwrapper ${this.state.openIconSelect ? classes.open : classes.close}`}>
+              {config.contractIcons.map(icon => (
                 <li
                   onClick={() => selectIcon(icon.icon)}
                   key={icon.icon}
@@ -514,7 +525,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
                   style={{ display: 'block', padding: '5px' }}
                 >
                   {icon.icon}
-                  <img alt="" className={classes.icon}  src={`data:image/svg+xml;base64,${icon.image}`} />
+                  <img alt="" className={classes.icon} src={`data:image/svg+xml;base64,${icon.image}`} />
                 </li>
               ))}
               <li
@@ -527,42 +538,43 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
             </ul>
           </div>
         </div>
-        if (this.state.icon){
-          const enumIcon = config.contractIcons.find(c => c.icon === this.state.icon);
-          selectedIcon = <img className={classes.outerIcon} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
-       }
+      );
+
+      if (this.state.icon) {
+        const enumIcon = config.contractIcons.find(c => c.icon === this.state.icon);
+        selectedIcon = <img alt="" className={classes.outerIcon} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
+      }
     }
     return (
       <Grid container>
         {type_buttons}
         {editOption}
         {editSubOption}
-        <TextField className={classes.title} id="filled-title" variant="standard" value={this.state.title} suppressContentEditableWarning={true} contentEditable={true} label='Title'
+        <TextField
+          className={classes.title}
+          id="filled-title"
+          variant="standard"
+          value={this.state.title}
+          suppressContentEditableWarning={true}
+          contentEditable={true}
+          label='Title'
           onChange={(e) => this.setState({ title: e.target.value })}
         />
-
         {editor}
-
         {summary}
-
         {iconSelector}
-
         {selectedIcon}
-        
         {shortDescription}
-
-        <button className={classes.doneBtn}
-          onClick={() => this.finishEdit(editorState)
-
-          }>
+        <button
+          className={classes.doneBtn}
+          onClick={() => this.finishEdit(editorState)}
+        >
           DONE
         </button>
-      </Grid >
+      </Grid>
     );
   }
-
 }
-
 
 const mapState = (state: RootState) => ({
   config: state.config,
@@ -576,7 +588,7 @@ const connector = connect(
   mapDispatch,
 );
 
-type PropsFromRedux = ConnectedProps<typeof connector>
+type PropsFromRedux = ConnectedProps<typeof connector>;
 
 // Apply styles
 const styledComponent = withStyles(styles)(EditAreaComponent);
@@ -596,7 +608,7 @@ const newStyle = {
     backgroundColor: 'rgba(204, 204, 255, 1.0)',
     padding: '2px 0',
   }
-}
+};
 
 const placeholderOptions = [
   { key: "sellerID", value: "sellerID" },
@@ -631,6 +643,4 @@ const placeholderOptions = [
   { key: "Years", value: "Years" },
   { key: "Period", value: "Period" },
   { key: "Number", value: "Number" },
-
-]
-
+];
