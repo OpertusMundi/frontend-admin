@@ -529,6 +529,11 @@ export interface MarketplaceAccountQuery {
   name: string;
 }
 
+export enum EnumAccountType {
+  OPERTUSMUNDI = 'OPERTUSMUNDI',
+  VENDOR = 'VENDOR',
+}
+
 export interface MarketplaceAccount {
   accountStatus: EnumActivationStatus;
   activatedAt: Moment;
@@ -549,6 +554,8 @@ export interface MarketplaceAccount {
   providerName: string;
   providerUpdatePending: boolean;
   registeredOn: Moment;
+  roles: EnumRole[];
+  type: EnumAccountType;
   userName: string;
 }
 

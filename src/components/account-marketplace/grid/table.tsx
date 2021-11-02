@@ -13,6 +13,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Icon from '@mdi/react';
 import {
   mdiCogSyncOutline,
+  mdiDomain,
   mdiEmailAlertOutline,
   mdiFinance,
   mdiFolderOpenOutline,
@@ -24,7 +25,7 @@ import {
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
 import { buildPath, DynamicRoutes } from 'model/routes';
-import { EnumMarketplaceAccountSortField, EnumKycLevel, MarketplaceAccount, MarketplaceAccountQuery } from 'model/account-marketplace';
+import { EnumMarketplaceAccountSortField, EnumKycLevel, MarketplaceAccount, MarketplaceAccountQuery, EnumAccountType } from 'model/account-marketplace';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 // Utilities
@@ -36,6 +37,7 @@ enum EnumAction {
   ViewDetails = 'view-details',
   ViewFinance = 'view-finance',
   ViewOrders = 'view-orders',
+  VendorDetails = 'vendor-details',
 };
 
 function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<MarketplaceAccount, EnumMarketplaceAccountSortField>[] {
@@ -47,43 +49,58 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
       cell: (
         rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
       ): React.ReactNode => (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-details' })}>
-            <i
-              onClick={() => handleAction ? handleAction(EnumAction.ViewDetails, rowIndex, column, row) : null}
-            >
-              <Icon path={mdiLink} className={classes.classes.rowIconAction} />
-            </i>
-          </Tooltip>
-          <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.send-message' })}>
-            <i
-              onClick={() => handleAction ? handleAction(EnumAction.SendMessage, rowIndex, column, row) : null}
-            >
-              <Icon path={mdiMessageTextOutline} className={classes.classes.rowIconAction} style={{ marginTop: 2 }} />
-            </i>
-          </Tooltip>
-          <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-assets' })}>
-            <i
-              onClick={() => handleAction ? handleAction(EnumAction.ViewAssets, rowIndex, column, row) : null}
-            >
-              <Icon path={mdiFolderOpenOutline} className={classes.classes.rowIconAction} />
-            </i>
-          </Tooltip>
-          <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-orders' })}>
-            <i
-              onClick={() => handleAction ? handleAction(EnumAction.ViewOrders, rowIndex, column, row) : null}
-            >
-              <Icon path={mdiPackageVariantClosed} className={classes.classes.rowIconAction} />
-            </i>
-          </Tooltip>
-          <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-finance' })}>
-            <i
-              onClick={() => handleAction ? handleAction(EnumAction.ViewFinance, rowIndex, column, row) : null}
-            >
-              <Icon path={mdiFinance} className={classes.classes.rowIconAction} />
-            </i>
-          </Tooltip>
-        </div>
+        <>
+          {row.type === EnumAccountType.VENDOR &&
+            <div style={{ display: 'flex', justifyContent: 'start' }}>
+              <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.vendor-details' })}>
+                <i
+                  onClick={() => handleAction ? handleAction(EnumAction.VendorDetails, rowIndex, column, row) : null}
+                >
+                  <Icon path={mdiDomain} className={classes.classes.rowIconAction} />
+                </i>
+              </Tooltip>
+            </div>
+          }
+          {row.type === EnumAccountType.OPERTUSMUNDI &&
+            <div style={{ display: 'flex', justifyContent: 'start' }}>
+              <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-details' })}>
+                <i
+                  onClick={() => handleAction ? handleAction(EnumAction.ViewDetails, rowIndex, column, row) : null}
+                >
+                  <Icon path={mdiLink} className={classes.classes.rowIconAction} />
+                </i>
+              </Tooltip>
+              <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.send-message' })}>
+                <i
+                  onClick={() => handleAction ? handleAction(EnumAction.SendMessage, rowIndex, column, row) : null}
+                >
+                  <Icon path={mdiMessageTextOutline} className={classes.classes.rowIconAction} style={{ marginTop: 2 }} />
+                </i>
+              </Tooltip>
+              <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-assets' })}>
+                <i
+                  onClick={() => handleAction ? handleAction(EnumAction.ViewAssets, rowIndex, column, row) : null}
+                >
+                  <Icon path={mdiFolderOpenOutline} className={classes.classes.rowIconAction} />
+                </i>
+              </Tooltip>
+              <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-orders' })}>
+                <i
+                  onClick={() => handleAction ? handleAction(EnumAction.ViewOrders, rowIndex, column, row) : null}
+                >
+                  <Icon path={mdiPackageVariantClosed} className={classes.classes.rowIconAction} />
+                </i>
+              </Tooltip>
+              <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-finance' })}>
+                <i
+                  onClick={() => handleAction ? handleAction(EnumAction.ViewFinance, rowIndex, column, row) : null}
+                >
+                  <Icon path={mdiFinance} className={classes.classes.rowIconAction} />
+                </i>
+              </Tooltip>
+            </div>
+          }
+        </>
       ),
     }, {
       header: '',
