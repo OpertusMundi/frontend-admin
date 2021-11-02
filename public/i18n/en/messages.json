@@ -43,9 +43,9 @@
         "actions": " ",
         "email": "Username",
         "funds": "Wallet Funds",
-        "consumer": "Consumer Status",
+        "consumer": "Consumer",
         "consumer-funds": "Consumer Funds",
-        "provider": "Provider Status",
+        "provider": "Provider",
         "provider-funds": "Provider Funds",
         "registered-on": "Registered On"
       },
@@ -56,7 +56,8 @@
         "view-assets": "View purchased assets and service subscriptions",
         "view-details": "View details",
         "view-finance": "View finance",
-        "view-orders": "View orders"
+        "view-orders": "View orders",
+        "vendor-details": "Vendor account"
       },
       "dialog": {
         "create-payout-header": "Create PayOut",
@@ -485,6 +486,7 @@
     "dashboard": "Overview",
     "draft-manager": "Asset Drafts",
     "event-manager": "System Events",
+    "maintenance-manager": "Maintenance",
     "map": "Map",
     "message-inbox": "Messages",
     "message-inbox-helpdesk": "Helpdesk Inbox",
