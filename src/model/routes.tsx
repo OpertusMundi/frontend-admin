@@ -41,6 +41,7 @@ import {
   mdiTrayFull,
   mdiViewDashboardOutline,
   mdiWalletOutline,
+  mdiProgressWrench,
 } from '@mdi/js';
 
 /**
@@ -75,6 +76,7 @@ const DraftManager = '/drafts';
 const EventManager = '/events';
 const HelpdeskAccountManager = '/helpdesk/users';
 const IncidentManager = '/workflow/incidents'
+const MaintenanceManager = '/maintenance';
 const Map = '/map';
 const MarketplaceAccountManager = '/marketplace/users'
 const MessageInboxHelpdesk = '/messages/inbox/helpdesk';
@@ -111,6 +113,7 @@ export const StaticRoutes = {
   ProcessInstanceManager,
   ProcessInstanceHistoryManager,
   TransferManager,
+  MaintenanceManager,
 };
 
 /**
@@ -362,6 +365,13 @@ export const routes: RouteRegistry = {
     description: 'System Events',
     title: 'links.event-manager',
     defaultTitle: 'System Events',
+    links: [Dashboard],
+  },
+  [MaintenanceManager]: {
+    icon: (className?: string) => (<Icon path={mdiProgressWrench} size="1.5rem" className={className} />),
+    description: 'Maintenance Tasks',
+    title: 'links.maintenance-manager',
+    defaultTitle: 'Maintenance Tasks',
     links: [Dashboard],
   },
   // Dynamic

@@ -59,6 +59,8 @@ import {
   mdiTray,
   mdiTrayFull,
   mdiWalletOutline,
+  mdiProgressWrench,
+  mdiMenu,
 } from '@mdi/js';
 
 // Utilities
@@ -79,6 +81,7 @@ import DashboardComponent from 'components/dashboard';
 import EventManager from 'components/event/event-manager';
 import HelpdeskAccountManager from 'components/account/account-grid';
 import IncidentManager from 'components/workflow/incident-manager';
+import MaintenanceManager from 'components/system/maintenance-manager';
 import MapViewerComponent from 'components/map-viewer';
 import MapViewerConfigComponent from 'components/map-viewer-config';
 import MarketplaceAccountManager from 'components/account-marketplace/account-grid';
@@ -513,7 +516,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                   onClick={(e) => this.onMenuOpen(e)}
                   color="inherit"
                 >
-                  <Icon path={mdiTools} size="1.5rem" />
+                  <Icon path={mdiMenu} size="1.5rem" />
                 </IconButton>
               </div>
             </div>
@@ -782,6 +785,17 @@ class Home extends React.Component<HomeProps, HomeState> {
                         </ListItem>
                       </SecureContent>
 
+                      <SecureContent roles={[EnumRole.ADMIN]}>
+                        <ListItem button
+                          className={open[EnumSection.Drawer] ? classes.nested : ''}
+                          onClick={(e) => this.onNavigate(e, StaticRoutes.MaintenanceManager)}>
+                          <ListItemIcon>
+                            <Icon path={mdiProgressWrench} size="1.5rem" />
+                          </ListItemIcon>
+                          <ListItemText primary={_t({ id: routes[StaticRoutes.MaintenanceManager].title })} />
+                        </ListItem>
+                      </SecureContent>
+
                     </List>
                   </Collapse>
                 </>
@@ -819,6 +833,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                 <Route path={StaticRoutes.PayOutManager} component={PayOutManager} />
                 <Route path={StaticRoutes.ProviderManager} component={ProviderManager} />
                 <Route path={StaticRoutes.TransferManager} component={TransferManager} />
+                <Route path={StaticRoutes.MaintenanceManager} component={MaintenanceManager} />
                 <Route path={StaticRoutes.Map} component={MapViewerComponent} />
                 <Route path={StaticRoutes.MessageInboxHelpdesk} component={MessageInboxHelpdesk} />
                 <Route path={StaticRoutes.MessageInboxUser} component={MessageInboxUser} />
