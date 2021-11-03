@@ -195,7 +195,7 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
     }
 
     return (
-      <Card className={classes.card}>
+      <Card className={classes.card} id={id!.toString()}>
         <CardHeader
           action={
             <div>

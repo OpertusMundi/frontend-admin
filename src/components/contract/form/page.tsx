@@ -15,6 +15,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownWardIcon from '@material-ui/icons/ArrowDownward';
+import Tooltip from '@material-ui/core/Tooltip';
+import AddIcon from '@material-ui/icons/Add';
+import AddBoxIcon from '@material-ui/icons/AddBox';
 
 // Components
 import { EditFieldEnum } from 'components/contract/form/edit-area';
@@ -45,6 +48,10 @@ const styles = (theme: Theme) => createStyles({
     height: '20px',
     marginTop: '50px',
   },
+  middleControls: {
+    height: '20px',
+    margin: 'auto',
+  },
   contract: {
     maxWidth: '80%',
   },
@@ -64,6 +71,7 @@ interface PageComponentProps extends WithStyles<typeof styles> {
   editTitle: (item: any) => void;
   moveSectionUp: (item: any) => void;
   moveSectionDown: (item: any) => void;
+  addMiddleSection: (...item: any) => void;
 }
 
 interface PageComponentState {
@@ -106,6 +114,26 @@ class PageComponent extends React.Component<PageComponentProps, PageComponentSta
       <Grid style={{ paddingLeft: section.indent, marginTop: '30px' }} key={section.id} container item xs={12} >
         <Grid className={classes.contract} container item xs={10} key={`section-${section.id}`}>
           <SectionComponent {...section} editSection={this.props.editSection.bind(this)} />
+          <div className={classes.middleControls}>
+            <Tooltip title="Add normal section">
+              <IconButton
+                onClick={() =>
+                  this.props.addMiddleSection(section.index, section.indent, false )
+                }
+              >
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Add variable section">
+              <IconButton
+                onClick={() =>
+                  this.props.addMiddleSection(section.index, section.indent, true)
+                }
+              >
+                <AddBoxIcon />
+              </IconButton>
+            </Tooltip>
+          </div>
         </Grid>
         <div className={classes.controls}>
           <IconButton style={{ height: 20 }}

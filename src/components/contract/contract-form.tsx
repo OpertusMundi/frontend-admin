@@ -86,6 +86,10 @@ const styles = (theme: Theme) => createStyles({
     fontWeight: 'normal',
     fontSize: '1rem',
     textAlign: 'left',
+    "&:hover": {
+      opacity: '50%',
+      cursor: 'all-scroll'
+    }
   },
   documentTitle: {
     marginTop: '60px',
@@ -184,6 +188,8 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
 
   private api: ContractApi;
 
+  private saveDraftInterval: number | null = null;
+
   constructor(props: ContractFormComponentProps) {
     super(props);
 
@@ -255,6 +261,21 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
 
   componentDidMount() {
     this.loadData();
+
+    this.saveDraftInterval = window.setInterval(() => {
+
+      const command: MasterContractCommand = {
+        ...this.state.contract
+      };
+      const { id } = command;
+      //(id === null ? this.api.createDraft(command) : this.api.updateDraft(id, command))
+    }, 5 * 60 * 1000);
+  }
+
+  componentWillUnmount() {
+    if (this.saveDraftInterval != null) {
+      clearInterval(this.saveDraftInterval);
+    }
   }
 
   deleteSubtitle(): void {
@@ -286,6 +307,42 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       }
     }));
   }
+
+  addMiddleSection(prevSectionIndex: string, prevSectionIndent: number, variable: boolean): void {
+    const { contract: { sections = [] } } = this.state;
+    const prevArrayIndex = sections.findIndex((s) => s.index === prevSectionIndex); 
+
+
+    const  newId = Math.max.apply(Math, sections.map((o) => o.id!)) + 1
+
+    var firstPart = ""
+    if (prevSectionIndex.includes('.')) {
+      var sectionParts = prevSectionIndex.split('.')
+      prevSectionIndex = sectionParts.pop()!
+      firstPart = sectionParts.join('.') + '.'
+    }
+    var lastPart = parseInt(prevSectionIndex, 10) + 1
+    var sectionIndex = firstPart + '' + lastPart;
+
+    var section = {variable: variable, id: newId, index: sectionIndex, indent: prevSectionIndent }
+
+    var newSection = {
+      ...defaultSection, options: [{...defaultOptions}], ...section,
+      subOptions: {}, ...section}
+
+    sections.splice(prevArrayIndex + 1, 0, newSection);
+
+    this.sortSections(sections)
+
+    this.setState((state) => ({
+      contract: {
+        ...state.contract,
+        sections: sections,
+        },
+      }
+    ));
+  }
+
 
   removeSection(id: number): void {
     const { contract } = this.state;
@@ -619,6 +676,11 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       });
   }
 
+  scrollToSection(id: string){
+    var section_to_scroll_to = document.getElementById(id);
+    section_to_scroll_to!.scrollIntoView();
+  }
+
   renderReview() {
     const { contract } = this.state;
 
@@ -656,6 +718,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         sectionTitle = 'Section ' + section.index + ' ' + type
       return (
         <div
+          onClick={() => this.scrollToSection(section.id!.toString())}
           key={section.id}
           className={classes.section}
           style={{ paddingLeft: section.indent }}
@@ -740,6 +803,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
               sectionList={sections}
               deleteSubtitle={this.deleteSubtitle.bind(this)}
               editTitle={this.editTitle.bind(this)}
+              addMiddleSection={this.addMiddleSection.bind(this)}
               removeSection={this.removeSection.bind(this)}
               editSection={this.editSection.bind(this)}
               openEdit={this.openEdit.bind(this)}
@@ -790,7 +854,6 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
 
   render() {
     const { review } = this.state;
-
     return review ? this.renderReview() : this.renderEdit();
   }
 }
