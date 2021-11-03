@@ -14,7 +14,7 @@ import './editor-styles.scss';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
-import { EditorState, ContentBlock, ContentState, convertFromRaw, CompositeDecorator, Entity, Modifier } from 'draft-js';
+import { EditorState, ContentBlock, ContentState, convertFromRaw, CompositeDecorator, Entity, Modifier, convertToRaw } from 'draft-js';
 
 import { OrderedSet } from 'immutable';
 
@@ -26,6 +26,7 @@ import Select from '@material-ui/core/Select';
 // Custom component
 import { EnumContractIcon, Section } from 'model/contract';
 import { RootState } from 'store';
+import { stateToHTML } from 'draft-js-export-html';
 
 const styles = (theme: Theme) => createStyles({
   card: {
@@ -128,6 +129,7 @@ interface EditAreaComponentProps extends WithStyles<typeof styles>, PropsFromRed
 
 
 interface EditAreaComponentState {
+  section?: Section;
   editorState: EditorState;
   showEditor: boolean;
   title: string;
@@ -151,7 +153,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
   constructor(props: EditAreaComponentProps) {
     super(props);
-    let title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = null, shortDescription = '', images={};
+    let section, title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = null,  shortDescription = '';
     // if editing section or titles
     if (this.props.editField === EditFieldEnum.Section) {
       title = this.props.section!.title;
@@ -164,6 +166,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
       icon = this.props.section!.options[0].icon!;
       shortDescription = this.props.section!.options[0].shortDescription!;
       descriptionOfChange = this.props.section!.descriptionOfChange;
+      section = this.props.section;
     }
     else {
       editorState = EditorState.createEmpty(this.decorator);
@@ -175,8 +178,8 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
         title = this.props.documentSubtitle!;
     }
     this.state = {
-      editorState, title, option: 0, subOption: 0, editingOption: true, showEditor: show, summary, descriptionOfChange, variable, optional,
-      dynamic, icon, shortDescription, openAutoTextSelect: false, openIconSelect: false, editField: this.props.editField
+      section, editorState, title, option: 0, subOption: 0, editingOption: true, showEditor: show, summary, descriptionOfChange, variable,
+      optional, dynamic, icon, shortDescription, openAutoTextSelect: false, openIconSelect: false, editField: this.props.editField
 
     };
   }
@@ -214,15 +217,15 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     var selection = event.target.value
     var editingOption = true
     this.setState({
-      option: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse((this.props.section!.options[selection].body)))), summary: this.props.section!.options[selection].summary!,
-      icon: this.props.section!.options[selection].icon!, shortDescription: this.props.section!.options[selection].shortDescription!, editField: EditFieldEnum.Section, editingOption
+      option: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse((this.state.section!.options[selection].body)))), summary: this.state.section!.options[selection].summary!,
+      icon: this.state.section!.options[selection].icon!, shortDescription: this.state.section!.options[selection].shortDescription!, editField: EditFieldEnum.Section, editingOption
     });
   }
 
   onSubOptionSelect = (event: any) => {
     var selection = event.target.value
     var editingOption = false;
-    var body = this.props.section!.options[this.state.option].subOptions![selection].body;
+    var body = this.state.section!.options[this.state.option].subOptions![selection].body;
     this.setState({
       subOption: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(body!))),
        editField: EditFieldEnum.SubOption, editingOption,
@@ -317,10 +320,29 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     return newState
   }
 
+  saveOnOptionOpen = (event: any) => {
+    var section = this.state.section!;
+    var htmlContent=''
+    var contentState = this.state.editorState.getCurrentContent()
+    var raw = JSON.stringify(convertToRaw(contentState));
+    if (contentState.getPlainText()){
+      htmlContent = stateToHTML(contentState);
+    }
+    section.options[this.state.option].body = raw
+    section.options[this.state.option].bodyHtml = htmlContent
+    this.setState({
+      section
+    });
+  }
 
   onEditorStateChange(editorState: EditorState): void {
+    if (this.props.editField === EditFieldEnum.Section){
+
+
+    }
+    //this.editSection({ id: id, title: title }, summary, option, raw, descriptionOfChange, icon, shortDescription, htmlContent);
     this.setState({
-      editorState,
+      editorState
     });
   };
 
@@ -359,7 +381,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   };
 
   finishEdit = (editorState: EditorState): void => {
-    this.props.saveContent(this.props.section?.id!, editorState.getCurrentContent(),
+    this.props.saveContent(this.state.section?.id!, editorState.getCurrentContent(),
       this.state.title, this.state.option, this.state.subOption, this.state.summary, this.state.descriptionOfChange, this.state.icon, this.state.shortDescription, this.state.editField)
   }
 
@@ -407,13 +429,14 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     if (this.state.variable) {
       if (this.state.dynamic) {
         let optionAlphanumeric = [];
-        for (let i = 0; i < this.props.section!.options.length; i++) {
+        for (let i = 0; i < this.state.section!.options.length; i++) {
           optionAlphanumeric.push(String.fromCharCode(65 + i));
         }
-        options = <input className={classes.options} type="number" min="1" defaultValue={this.props.section!.options.length}></input>;
+        options = <input className={classes.options} type="number" min="1" defaultValue={this.state.section!.options.length}></input>;
         editOption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel >Option</InputLabel>
           <Select
             onChange={this.onOptionSelect}
+            onOpen={this.saveOnOptionOpen}
           >
             <MenuItem disabled>Option</MenuItem>
             {optionAlphanumeric.map((option, index) =>
@@ -421,13 +444,13 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
           </Select>
         </div>;
       }
-      var subOptionsArray = this.props.section!.options[this.state.option].subOptions!;
+      var subOptionsArray = this.state.section!.options[this.state.option].subOptions!;
       if (typeof (subOptionsArray) !== 'undefined' && subOptionsArray!== null)
         subOptionSize = subOptionsArray.length;
       else
         subOptionSize = 0
       subOptions =
-        <div style={{ 'marginTop': '2vh' }} onChange={(e) => this.onChangeSubOptionValue(this.props.section!.id!, e)}>
+        <div style={{ 'marginTop': '2vh' }} onChange={(e) => this.onChangeSubOptionValue(this.state.section!.id!, e)}>
           <label>Subptions</label>
           <input className={classes.options} type="number" value={subOptionSize}></input>
         </div>
@@ -463,7 +486,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
       type_buttons =
         <div>
-          <div onChange={(e) => this.onChangeValue(this.props.section!.id!, e)}>
+          <div onChange={(e) => this.onChangeValue(this.state.section!.id!, e)}>
             <label className={classes.radio}><input type="radio" value="optional" name="type" defaultChecked={this.state.optional} /> Optional Section</label>
             <label className={classes.radio}><input type="radio" value="dynamic" name="type" defaultChecked={this.state.dynamic} /> Dynamic Section
               {options}
