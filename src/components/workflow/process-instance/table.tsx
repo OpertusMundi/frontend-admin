@@ -46,7 +46,7 @@ function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
               onClick={() => handleAction ? handleAction(EnumAction.View, rowIndex, column, row) : null}
             >
               <Badge color="secondary" variant="dot" invisible={row.incidentCount === 0}>
-                <Icon path={mdiDatabaseCogOutline} className={classes.classes.rowIconAction} />
+                <Icon path={mdiDatabaseCogOutline} className={classes.classes.rowIconActionWithBadge} />
               </Badge>
             </i>
           </Tooltip>
@@ -54,7 +54,7 @@ function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
             <i
               onClick={() => handleAction ? handleAction(EnumAction.Delete, rowIndex, column, row) : null}
             >
-              <Badge color="secondary" variant="dot" invisible={row.incidentCount === 0}>
+              <Badge color="secondary" variant="dot" invisible={true}>
                 <Icon path={mdiDeleteAlertOutline} className={classes.classes.rowIconAction} />
               </Badge>
             </i>
@@ -138,14 +138,19 @@ const styles = (theme: Theme) => createStyles({
   },
   rowIcon: {
     width: 18,
-    marginRight: 8,
+    marginRight: theme.spacing(1),
     cursor: 'pointer',
   },
   rowIconAction: {
     width: 18,
-    marginRight: 8,
+    marginRight: theme.spacing(1),
     cursor: 'pointer',
   },
+  rowIconActionWithBadge: {
+    width: 18,
+    marginRight: theme.spacing(2),
+    cursor: 'pointer',
+  }
 });
 
 interface ProcessInstanceTableProps extends WithStyles<typeof styles> {

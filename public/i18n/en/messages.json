@@ -43,9 +43,9 @@
         "actions": " ",
         "email": "Username",
         "funds": "Wallet Funds",
-        "consumer": "Consumer Status",
+        "consumer": "Consumer",
         "consumer-funds": "Consumer Funds",
-        "provider": "Provider Status",
+        "provider": "Provider",
         "provider-funds": "Provider Funds",
         "registered-on": "Registered On"
       },
@@ -56,7 +56,8 @@
         "view-assets": "View purchased assets and service subscriptions",
         "view-details": "View details",
         "view-finance": "View finance",
-        "view-orders": "View orders"
+        "view-orders": "View orders",
+        "vendor-details": "Vendor account"
       },
       "dialog": {
         "create-payout-header": "Create PayOut",
@@ -102,13 +103,22 @@
         "timeline-header": "Timeline",
         "status": {
           "CREATED": "Order has been placed",
+          "PENDING_PROVIDER_APPROVAL": "Provider approval is required",
+          "PROVIDER_REJECTED": "Provider has rejected the order",
+          "PROVIDER_ACCEPTED": "Provider has accepted the order",
           "CHARGED": "PayIn has been created",
-          "PENDING": "PayIn was successful. Order fulfillment process instance has been started",
+          "PENDING_PROVIDER_SEND_CONFIRMATION": "Pending order shipping",
+          "PENDING_CONSUMER_RECEIVE_CONFIRMATION": "Pending order delivery",
+          "ASSET_REGISTRATION": "PayIn was successful. Order fulfillment process instance has been started",
           "CANCELLED": "Order has been cancelled",
           "REFUNDED": "Order has been  refunded",
           "SUCCEEDED": "Order has been completed"
         },
         "payment": {
+          "FREE": {
+            "CREATED": "Waiting for PayIn creation ...",
+            "SUCCEEDED": "Free PayIn has been created"
+          },
           "BANKWIRE": {
             "CREATED": "Waiting for bank transfer to be accepted ...",
             "FAILED": "Bank transfer has been refused",
@@ -121,6 +131,7 @@
           }
         },
         "payment-method": {
+          "FREE": "Free",
           "BANKWIRE": "Bank transfer",
           "CARD_DIRECT": "Credit Card"
         }
@@ -252,9 +263,10 @@
       },
       "last-update": "Last updated: ",
       "tooltip": {
-        "view-process-instance": "View publish workflow process instance",
-        "review": "Review",
-        "view": "Preview in Marketplace"
+        "view-process-instance": "View publish workflow instance",
+        "preview": "Preview in Marketplace",
+        "review": "Review Draft",
+        "view": "View in Marketplace"
       }
     },
     "message": {
@@ -323,8 +335,13 @@
     },
     "order-status": {
       "CREATED": "New",
+      "PENDING_PROVIDER_APPROVAL": "Provider approval is required",
+      "PROVIDER_REJECTED": "Provider has rejected the order",
+      "PROVIDER_ACCEPTED": "Provider has accepted the order",
       "CHARGED": "Charged",
-      "PENDING": "Pending",
+      "PENDING_PROVIDER_SEND_CONFIRMATION": "Pending order shipping",
+      "PENDING_CONSUMER_RECEIVE_CONFIRMATION": "Pending order delivery",
+      "ASSET_REGISTRATION": "Pending",
       "CANCELLED": "Cancelled",
       "REFUNDED": "Refunded",
       "SUCCEEDED": "Completed"
@@ -334,6 +351,7 @@
       "SUBSCRIPTION_BILLING": "Subscription billing"
     },
     "payment-method": {
+      "FREE": "Free",
       "CARD_DIRECT": "Card",
       "BANKWIRE": "Bank Transfer"
     },
@@ -402,6 +420,30 @@
       "retry-failure": "Retry operation has failed"
     }
   },
+  "event": {
+    "filter": {
+      "user": "User",
+      "level": "Level"
+    },
+    "header": {
+      "actions": "Actions",
+      "client-address": "Remote IP Address",
+      "exception": "Exception",
+      "message": "Message",
+      "level": "Level",
+      "logger": "Logger",
+      "timestamp": "Timestamp",
+      "user-name": "User"
+    },
+    "level": {
+      "TRACE": "TRACE",
+      "DEBUG": "DEBUG",
+      "INFO": "INFO",
+      "WARN": "WARN",
+      "ERROR": "ERROR"
+    },
+    "last-update": "Last updated: "
+  },
   "inbox": {
     "helpdesk": {
       "message-assigned": "The message has been assigned to your account",
@@ -443,6 +485,8 @@
     },
     "dashboard": "Overview",
     "draft-manager": "Asset Drafts",
+    "event-manager": "System Events",
+    "maintenance-manager": "Maintenance",
     "map": "Map",
     "message-inbox": "Messages",
     "message-inbox-helpdesk": "Helpdesk Inbox",

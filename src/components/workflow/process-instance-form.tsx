@@ -35,7 +35,6 @@ import {
   mdiClockFast,
   mdiDatabaseCogOutline,
   mdiTimelineClockOutline,
-  mdiVariable,
 } from '@mdi/js';
 
 // Store
@@ -198,29 +197,18 @@ class ProcessInstance extends React.Component<ProcessInstanceProps, ProcessInsta
   }
 
   renderVariables(): React.ReactElement | null {
-    const { classes, processInstance: instance } = this.props;
+    const { processInstance: instance } = this.props;
 
     if (!instance) {
       return null;
     }
 
-    const _t = this.props.intl.formatMessage;
     const { variables } = instance;
 
     return (
-      <Card className={classes.card}>
-        <CardHeader
-          avatar={
-            <Avatar className={classes.avatar}>
-              <Icon path={mdiVariable} size="1.5rem" />
-            </Avatar>
-          }
-          title={_t({ id: 'workflow.instance.variables.title' }, { count: variables.length })}
-        ></CardHeader>
-        <CardContent>
-          <ProcessInstanceVariables variables={variables} />
-        </CardContent>
-      </Card>
+      <ProcessInstanceVariables
+        variables={variables}
+      />
     );
   }
 

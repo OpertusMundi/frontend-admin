@@ -23,6 +23,7 @@ import {
   mdiCreditCardOutline,
   mdiLink,
   mdiPackageVariantClosed,
+  mdiPiggyBankOutline,
   mdiWalletPlusOutline,
 } from '@mdi/js';
 
@@ -55,6 +56,8 @@ const getCustomerName = (payin: PayIn): string => {
 
 function mapStatusToIcon(payin: PayIn) {
   switch (payin.paymentMethod) {
+    case EnumPaymentMethod.FREE:
+      return (<Icon path={mdiPiggyBankOutline} size="1.5rem" />);
     case EnumPaymentMethod.BANKWIRE:
       return (<Icon path={mdiBankTransfer} size="1.5rem" />);
     case EnumPaymentMethod.CARD_DIRECT:
@@ -255,7 +258,7 @@ function payinColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
               <Icon path={mdiLink} className={classes.classes.rowIconAction} />
             </i>
           </Tooltip>
-          {row.status === EnumTransactionStatus.SUCCEEDED && !hasTransfer(row) &&
+          {row.status === EnumTransactionStatus.SUCCEEDED && !hasTransfer(row) && row.paymentMethod !== EnumPaymentMethod.FREE &&
             <Tooltip title={intl.formatMessage({ id: 'billing.payin.tooltip.transfer-funds' })}>
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.TransferFunds, rowIndex, column, row) : null}

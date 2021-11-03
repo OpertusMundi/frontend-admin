@@ -120,7 +120,7 @@ interface EditAreaComponentProps extends WithStyles<typeof styles>, PropsFromRed
   documentSubtitle?: string;
   saveContent: (id: number, contentState: ContentState, title: string, option: number, subOption: number,
     summary: string, descriptionOfChange: string, icon: EnumContractIcon | null, shortDescription: string, editField: EditFieldEnum) => void;
-  editSection: (...item:any) => void;
+  editSection: (...item: any) => void;
   addOptions: (sectionId: number, options: number) => void;
   addSubOptions: (sectionId: number, option: number, subOptions: number) => void;
   editField: EditFieldEnum;
@@ -153,7 +153,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
   constructor(props: EditAreaComponentProps) {
     super(props);
-    let section, title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = null,  shortDescription = '';
+    let section, title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = null, shortDescription = '';
     // if editing section or titles
     if (this.props.editField === EditFieldEnum.Section) {
       title = this.props.section!.title;
@@ -228,7 +228,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     var body = this.state.section!.options[this.state.option].subOptions![selection].body;
     this.setState({
       subOption: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(body!))),
-       editField: EditFieldEnum.SubOption, editingOption,
+      editField: EditFieldEnum.SubOption, editingOption,
     });
   }
 
@@ -322,10 +322,10 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
   saveOnOptionOpen = (event: any) => {
     var section = this.state.section!;
-    var htmlContent=''
+    var htmlContent = ''
     var contentState = this.state.editorState.getCurrentContent()
     var raw = JSON.stringify(convertToRaw(contentState));
-    if (contentState.getPlainText()){
+    if (contentState.getPlainText()) {
       htmlContent = stateToHTML(contentState);
     }
     section.options[this.state.option].body = raw
@@ -336,7 +336,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   }
 
   onEditorStateChange(editorState: EditorState): void {
-    if (this.props.editField === EditFieldEnum.Section){
+    if (this.props.editField === EditFieldEnum.Section) {
 
 
     }
@@ -388,8 +388,8 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   render() {
     const { editorState } = this.state;
     const { classes, config } = this.props;
-    let editor, iconSelector, type_buttons, options, subOptions, editOption, editSubOption, summary, descriptionOfChange, 
-              shortDescription, editingOptionTitle = '', subOptionSize = 0, selectedIcon;
+    let editor, iconSelector, type_buttons, options, subOptions, editOption, editSubOption, summary, descriptionOfChange,
+      shortDescription, editingOptionTitle = '', subOptionSize = 0, selectedIcon;
     if (this.state.variable) {
       var type = 'Option ', currentOption = this.state.option;
       if (!this.state.editingOption) {
@@ -445,7 +445,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
         </div>;
       }
       var subOptionsArray = this.state.section!.options[this.state.option].subOptions!;
-      if (typeof (subOptionsArray) !== 'undefined' && subOptionsArray!== null)
+      if (typeof (subOptionsArray) !== 'undefined' && subOptionsArray !== null)
         subOptionSize = subOptionsArray.length;
       else
         subOptionSize = 0
@@ -496,17 +496,17 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     }
 
 
-      const openIconSelector = (): void => {
-        this.setState({
-          openIconSelect: !this.state.openIconSelect,
-        });
-      }
+    const openIconSelector = (): void => {
+      this.setState({
+        openIconSelect: !this.state.openIconSelect,
+      });
+    }
 
-      const selectIcon = (icon: EnumContractIcon | null): void => {
-        this.setState({
-          icon
-        });
-      }
+    const selectIcon = (icon: EnumContractIcon | null): void => {
+      this.setState({
+        icon
+      });
+    }
 
     if (this.props.editField === EditFieldEnum.Section) {
       summary = <div className={classes.control}> <InputLabel className={classes.title}>Summary</InputLabel>
@@ -516,10 +516,10 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
       </div>;
 
       shortDescription = <div className={classes.control}> <InputLabel className={classes.title}>Short description</InputLabel>
-      <TextField className={classes.title} id="filled-label" variant="standard" value={this.state.shortDescription || ''}
-        suppressContentEditableWarning={true} contentEditable={true}
-        onChange={(e) => this.onShortDescriptionSet(e)} />
-        </div>
+        <TextField className={classes.title} id="filled-label" variant="standard" value={this.state.shortDescription || ''}
+          suppressContentEditableWarning={true} contentEditable={true}
+          onChange={(e) => this.onShortDescriptionSet(e)} />
+      </div>
 
       iconSelector =
         <div onClick={() => openIconSelector()} className="rdw-block-wrapper" aria-expanded={this.state.openIconSelect} aria-label="rdw-block-control" role="button" tabIndex={0}>
@@ -529,7 +529,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
               <div className={`rdw-dropdown-caretto${this.state.openIconSelect ? 'close' : 'open'}`} />
             </div>
             <ul className={`rdw-dropdown-optionwrapper ${this.state.openIconSelect ? classes.open : classes.close}`} >
-              { config.contractIcons.map(icon => (
+              {config.contractIcons.map(icon => (
                 <li
                   onClick={() => selectIcon(icon.icon)}
                   key={icon.icon}
@@ -537,7 +537,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
                   style={{ display: 'block', padding: '5px' }}
                 >
                   {icon.icon}
-                  <img alt="" className={classes.icon}  src={`data:image/svg+xml;base64,${icon.image}`} />
+                  <img alt="" className={classes.icon} src={`data:image/svg+xml;base64,${icon.image}`} />
                 </li>
               ))}
               <li
@@ -550,10 +550,10 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
             </ul>
           </div>
         </div>
-        if (this.state.icon){
-          const enumIcon = config.contractIcons.find(c => c.icon === this.state.icon);
-          selectedIcon = <img className={classes.outerIcon} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
-       }
+      if (this.state.icon) {
+        const enumIcon = config.contractIcons.find(c => c.icon === this.state.icon);
+        selectedIcon = <img className={classes.outerIcon} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
+      }
     }
     return (
       <Grid container>
@@ -571,7 +571,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
         {iconSelector}
 
         {selectedIcon}
-        
+
         {shortDescription}
 
         <button className={classes.doneBtn}
@@ -580,10 +580,9 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
           }>
           DONE
         </button>
-      </Grid >
+      </Grid>
     );
   }
-
 }
 
 
@@ -654,6 +653,4 @@ const placeholderOptions = [
   { key: "Years", value: "Years" },
   { key: "Period", value: "Period" },
   { key: "Number", value: "Number" },
-
-]
-
+];
