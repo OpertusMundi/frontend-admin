@@ -19,6 +19,7 @@ import { MasterContractCommand } from 'model/contract';
 // Services
 import ContractApi from 'service/contract';
 
+
 const styles = (theme: Theme) => createStyles({
   paper: {
     paddingLeft: '30px',
@@ -97,7 +98,20 @@ const styles = (theme: Theme) => createStyles({
     backgroundColor: '#190AFF',
     color: '#fff',
     position: 'absolute',
-    right: '14vh',
+    right: '10vh',
+    bottom: '22vh',
+    width: '170px',
+    height: '45px',
+    marginTop: '115px',
+    marginLeft: '50px',
+    display: 'inline-block',
+    borderRadius: '25px'
+  },
+  previous: {
+    backgroundColor: '#190AFF',
+    color: '#fff',
+    position: 'absolute',
+    right: '27vh',
     bottom: '22vh',
     width: '170px',
     height: '45px',
@@ -135,12 +149,14 @@ interface ContractReviewFormComponentProps extends PropsFromRedux, WithStyles<ty
   intl: IntlShape;
   contract: MasterContractCommand;
   saveContract: () => void;
+  setEdit: () => void;
 }
 
 interface ContractReviewFormComponentState {
   confirm: boolean,
   confirmOnNavigate: boolean,
 }
+
 
 class ContractReviewFormComponent extends React.Component<ContractReviewFormComponentProps, ContractReviewFormComponentState> {
 
@@ -335,6 +351,12 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
         onClick={() => this.props.saveContract()}
       >
         Confirm and Save
+      </Button>
+      <Button className={classes.previous}
+          variant="contained"
+          onClick={(e) => this.props.setEdit()}
+        >
+          Previous
       </Button>
     </Grid>);
   }

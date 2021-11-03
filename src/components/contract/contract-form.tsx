@@ -676,6 +676,11 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       });
   }
 
+  setEdit(){
+    this.setState({ review: false })
+  }
+
+
   scrollToSection(id: string){
     var section_to_scroll_to = document.getElementById(id);
     section_to_scroll_to!.scrollIntoView();
@@ -688,6 +693,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       <ContractReviewForm
         contract={contract}
         saveContract={() => this.saveDraft()}
+        setEdit={() => this.setEdit()}
       />
     );
   }
