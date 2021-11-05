@@ -365,7 +365,8 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     }));
   }
 
-  editSection(section: Partial<Section>, summary = "", option = 0, raw = "", descriptionOfChange = "", icon: EnumContractIcon | null, shortDescription = "", htmlContent= "", subOption = -1, ): void {
+  editSection(section: Partial<Section>, summary = "", option = 0, raw = "", descriptionOfChange = "", icon: EnumContractIcon | null, shortDescription = "",
+         htmlContent= "", subOption = -1, mutexSuboptions = false): void {
     const { contract } = this.state;
     let sections = [...contract.sections]
     const id = sections.findIndex((s) => s.id === section.id);
@@ -408,6 +409,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         subOptionArray[subOption].body = raw;
         subOptionArray[subOption].bodyHtml = htmlContent;
       }
+      sections[id].options[option].mutexSuboptions = mutexSuboptions
     }
 
     if (summary === ' ') {
@@ -543,14 +545,16 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   }
 
   saveContent(id: number, contentState: ContentState, title: string, option: number, subOption: number,
-    summary: string, descriptionOfChange: string, icon: EnumContractIcon | null, shortDescription: string, editField: EditFieldEnum): void {
+    summary: string, descriptionOfChange: string, icon: EnumContractIcon | null, shortDescription: string,
+    editField: EditFieldEnum, mutexSuboptions: boolean): void {
+      console.log(mutexSuboptions);
     let raw, htmlContent='';
     raw = JSON.stringify(convertToRaw(contentState));
     if (contentState.getPlainText()){
       htmlContent = stateToHTML(contentState);
     }
     if (editField === EditFieldEnum.Section) {
-      this.editSection({ id: id, title: title }, summary, option, raw, descriptionOfChange, icon, shortDescription, htmlContent);
+      this.editSection({ id: id, title: title}, summary, option, raw, descriptionOfChange, icon, shortDescription, htmlContent, -1, mutexSuboptions);
     } else if (editField === EditFieldEnum.SubOption) {
       this.editSection({ id: id, title: title }, summary, option, raw, descriptionOfChange, icon, shortDescription, htmlContent, subOption);
     } else if (editField === EditFieldEnum.Title) {

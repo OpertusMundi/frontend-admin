@@ -80,6 +80,7 @@ export interface Option {
   body: string;
   bodyHtml?: string;
   subOptions?: SubOption[];
+  mutexSuboptions?: boolean;
   summary?: string;
   icon?: EnumContractIcon | null;
   shortDescription?: string;

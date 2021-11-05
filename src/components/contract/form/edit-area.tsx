@@ -119,7 +119,8 @@ interface EditAreaComponentProps extends WithStyles<typeof styles>, PropsFromRed
   documentTitle?: string;
   documentSubtitle?: string;
   saveContent: (id: number, contentState: ContentState, title: string, option: number, subOption: number,
-    summary: string, descriptionOfChange: string, icon: EnumContractIcon | null, shortDescription: string, editField: EditFieldEnum) => void;
+    summary: string, descriptionOfChange: string, icon: EnumContractIcon | null, shortDescription: string,
+    editField: EditFieldEnum, mutexSuboptions: boolean) => void;
   editSection: (...item: any) => void;
   addOptions: (sectionId: number, options: number) => void;
   addSubOptions: (sectionId: number, option: number, subOptions: number) => void;
@@ -147,13 +148,14 @@ interface EditAreaComponentState {
   editingOption: boolean;
   openAutoTextSelect: boolean;
   openIconSelect: boolean;
+  mutexSuboptions: boolean;
 }
 
 class EditAreaComponent extends React.Component<EditAreaComponentProps, EditAreaComponentState> {
 
   constructor(props: EditAreaComponentProps) {
     super(props);
-    let section, title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = null, shortDescription = '';
+    let section, title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = null, shortDescription = '', mutexSuboptions=false;
     // if editing section or titles
     if (this.props.editField === EditFieldEnum.Section) {
       title = this.props.section!.title;
@@ -167,6 +169,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
       shortDescription = this.props.section!.options[0].shortDescription!;
       descriptionOfChange = this.props.section!.descriptionOfChange;
       section = this.props.section;
+      mutexSuboptions = this.props.section!.options[0].mutexSuboptions!;
     }
     else {
       editorState = EditorState.createEmpty(this.decorator);
@@ -178,9 +181,9 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
         title = this.props.documentSubtitle!;
     }
     this.state = {
-      section, editorState, title, option: 0, subOption: 0, editingOption: true, showEditor: show, summary, descriptionOfChange, variable,
-      optional, dynamic, icon, shortDescription, openAutoTextSelect: false, openIconSelect: false, editField: this.props.editField
-
+      section, editorState, title, option: 0, subOption: 0, editingOption: true, showEditor: show, summary,
+      descriptionOfChange, variable, optional, dynamic, icon, shortDescription, openAutoTextSelect: false, 
+      openIconSelect: false, editField: this.props.editField, mutexSuboptions
     };
   }
 
@@ -217,7 +220,8 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     var editingOption = true
     this.setState({
       option: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse((this.state.section!.options[selection].body)))), summary: this.state.section!.options[selection].summary!,
-      icon: this.state.section!.options[selection].icon!, shortDescription: this.state.section!.options[selection].shortDescription!, editField: EditFieldEnum.Section, editingOption
+      icon: this.state.section!.options[selection].icon!, shortDescription: this.state.section!.options[selection].shortDescription!, 
+      editField: EditFieldEnum.Section, editingOption, mutexSuboptions: this.state.section!.options[selection].mutexSuboptions!
     });
   }
 
@@ -228,6 +232,12 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     this.setState({
       subOption: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(body!))),
       editField: EditFieldEnum.SubOption, editingOption,
+    });
+  }
+
+  onMutexSuboptionsChecked = (event: any) => {
+    this.setState({
+      mutexSuboptions: event.target.checked
     });
   }
 
@@ -345,11 +355,6 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   }
 
   onEditorStateChange(editorState: EditorState): void {
-    if (this.props.editField === EditFieldEnum.Section) {
-
-
-    }
-    //this.editSection({ id: id, title: title }, summary, option, raw, descriptionOfChange, icon, shortDescription, htmlContent);
     this.setState({
       editorState
     });
@@ -391,7 +396,8 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
   finishEdit = (editorState: EditorState): void => {
     this.props.saveContent(this.state.section?.id!, editorState.getCurrentContent(),
-      this.state.title, this.state.option, this.state.subOption, this.state.summary, this.state.descriptionOfChange, this.state.icon, this.state.shortDescription, this.state.editField)
+      this.state.title, this.state.option, this.state.subOption, this.state.summary, this.state.descriptionOfChange,
+      this.state.icon, this.state.shortDescription, this.state.editField, this.state.mutexSuboptions)
   }
 
   render() {
@@ -459,9 +465,16 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
       else
         subOptionSize = 0
       subOptions =
-        <div style={{ 'marginTop': '2vh', 'marginBottom': '0.5vh' }} onChange={(e) => this.onChangeSubOptionValue(this.state.section!.id!, e)}>
+        <div style={{ 'marginTop': '2vh', 'marginBottom': '0.8vh' }} onChange={(e) => this.onChangeSubOptionValue(this.state.section!.id!, e)}>
           <label>Suboptions</label>
           <input className={classes.options} type="number" value={subOptionSize}></input>
+        </div>
+      var mutexCheckbox = 
+        <div>
+          <input type="checkbox" id="mutexSuboptions" name="mutexSuboptions"
+            checked={this.state.mutexSuboptions} onClick={(e) => this.onMutexSuboptionsChecked(e)}>
+          </input>
+          <label htmlFor="mutexSuboptions">Mutual exclusive</label>
         </div>
       let subOptionAlphanumeric = [];
       for (let i = 0; i < subOptionSize; i++) {
@@ -480,6 +493,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
               <MenuItem value={index}>{option}</MenuItem>)};
           </Select>
           {subOptions}
+          {mutexCheckbox}
         </div>;
       else
         editSubOption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel>SubOption</InputLabel>
@@ -491,6 +505,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
             <MenuItem disabled>SubOption</MenuItem>
           </Select>
           {subOptions}
+          {mutexCheckbox}
         </div>;
 
       type_buttons =
