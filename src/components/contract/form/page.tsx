@@ -176,7 +176,7 @@ class PageComponent extends React.Component<PageComponentProps, PageComponentSta
     return (
       <div>
         <Grid container item xs={12}>
-          <Paper className={classes.paper}>
+          <Paper className={classes.paper} style={{overflow: 'hidden'}}>
             <div className={classes.title}>
               <FormattedMessage id="document.title" defaultMessage={this.props.documentTitle} />
 
@@ -192,6 +192,7 @@ class PageComponent extends React.Component<PageComponentProps, PageComponentSta
             <Grid container item xs={12}>
               {sections}
             </Grid>
+            <div id="endAnchor" ></div>
           </Paper>
         </Grid>
       </div>

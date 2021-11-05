@@ -268,8 +268,8 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         ...this.state.contract
       };
       const { id } = command;
-      //(id === null ? this.api.createDraft(command) : this.api.updateDraft(id, command))
-    }, 5 * 60 * 1000);
+      (id === null ? this.api.createDraft(command) : this.api.updateDraft(id, command))
+    },  30 * 1000);
   }
 
   componentWillUnmount() {
@@ -306,6 +306,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         },]
       }
     }));
+    this.scrollToSection('endAnchor');
   }
 
   addMiddleSection(prevSectionIndex: string, prevSectionIndent: number, variable: boolean): void {
