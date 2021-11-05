@@ -97,28 +97,26 @@ const styles = (theme: Theme) => createStyles({
   save: {
     backgroundColor: '#190AFF',
     color: '#fff',
-    position: 'absolute',
-    right: '10vh',
-    bottom: '22vh',
     width: '170px',
     height: '45px',
     marginTop: '115px',
-    marginLeft: '50px',
-    display: 'inline-block',
+    //marginLeft: '50px',
+    display: 'block',
     borderRadius: '25px'
   },
   previous: {
     backgroundColor: '#190AFF',
     color: '#fff',
-    position: 'absolute',
-    right: '27vh',
-    bottom: '22vh',
     width: '170px',
     height: '45px',
-    marginTop: '115px',
-    marginLeft: '50px',
-    display: 'inline-block',
+    marginTop: '50px',
+    //marginLeft: '50px',
+    display: 'block',
     borderRadius: '25px'
+  },
+  controlButtons: {
+    marginLeft: 'auto',
+    marginRight: 'auto',
   },
   render: {
 
@@ -345,19 +343,21 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
           </Grid>
         </Paper>
       </Grid>
-      <Button
-        className={classes.save}
-        variant="contained"
-        onClick={() => this.props.saveContract()}
-      >
-        Confirm and Save
-      </Button>
-      <Button className={classes.previous}
+      <Grid className={classes.controlButtons}>
+        <Button
+          className={classes.save}
           variant="contained"
-          onClick={(e) => this.props.setEdit()}
+          onClick={() => this.props.saveContract()}
         >
-          Previous
-      </Button>
+          Confirm and Save
+        </Button>
+        <Button className={classes.previous}
+            variant="contained"
+            onClick={(e) => this.props.setEdit()}
+          >
+            Previous
+        </Button>
+      </Grid>
     </Grid>);
   }
 }
