@@ -213,7 +213,6 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   }
 
   onOptionSelect = (event: any) => {
-
     var selection = event.target.value
     var editingOption = true
     this.setState({
@@ -320,7 +319,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     return newState
   }
 
-  saveOnOptionOpen = (event: any) => {
+  saveOnDropdown = (event: any) => {
     var section = this.state.section!;
     var htmlContent = ''
     var contentState = this.state.editorState.getCurrentContent()
@@ -328,8 +327,18 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     if (contentState.getPlainText()) {
       htmlContent = stateToHTML(contentState);
     }
-    section.options[this.state.option].body = raw
-    section.options[this.state.option].bodyHtml = htmlContent
+    if (this.state.editField === EditFieldEnum.Section){
+      section.options[this.state.option].body = raw
+      section.options[this.state.option].bodyHtml = htmlContent
+      section.options[this.state.option].icon = this.state.icon
+      section.options[this.state.option].shortDescription = this.state.shortDescription
+
+    }
+    else if (this.state.editField === EditFieldEnum.SubOption){
+      section.options[this.state.option].subOptions![this.state.subOption].body = raw
+      section.options[this.state.option].subOptions![this.state.subOption].bodyHtml = htmlContent
+    
+    }
     this.setState({
       section
     });
@@ -436,7 +445,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
         editOption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel >Option</InputLabel>
           <Select
             onChange={this.onOptionSelect}
-            onOpen={this.saveOnOptionOpen}
+            onOpen={this.saveOnDropdown}
           >
             <MenuItem disabled>Option</MenuItem>
             {optionAlphanumeric.map((option, index) =>
@@ -450,8 +459,8 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
       else
         subOptionSize = 0
       subOptions =
-        <div style={{ 'marginTop': '2vh' }} onChange={(e) => this.onChangeSubOptionValue(this.state.section!.id!, e)}>
-          <label>Subptions</label>
+        <div style={{ 'marginTop': '2vh', 'marginBottom': '0.5vh' }} onChange={(e) => this.onChangeSubOptionValue(this.state.section!.id!, e)}>
+          <label>Suboptions</label>
           <input className={classes.options} type="number" value={subOptionSize}></input>
         </div>
       let subOptionAlphanumeric = [];
@@ -462,8 +471,8 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
         editSubOption = <div style={{ 'marginLeft': '4vh' }} > <InputLabel>SubOption</InputLabel>
           <Select
-
             onChange={this.onSubOptionSelect}
+            onOpen={this.saveOnDropdown}
           >
 
             <MenuItem disabled>SubOption</MenuItem>
