@@ -72,6 +72,10 @@ const styles = (theme: Theme) => createStyles({
     fontWeight: 'normal',
     fontSize: '1rem',
     textAlign: 'left',
+    "&:hover": {
+      opacity: '50%',
+      cursor: 'all-scroll'
+    }
   },
   subOption: {
     marginTop: '8px',
@@ -166,6 +170,11 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
     this.api = new ContractApi();
   }
 
+  scrollToSection(id: string){
+    var section_to_scroll_to = document.getElementById(id);
+    section_to_scroll_to!.scrollIntoView();
+  }
+
   render() {
     const { classes, contract, config } = this.props;
 
@@ -187,7 +196,8 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
         sectionTitle = 'Section ' + section.index + ' ' + type
       }
 
-      return (<div key={section.id} className={classes.section} style={{ paddingLeft: section.indent }}>
+      return (<div key={section.id} className={classes.section} style={{ paddingLeft: section.indent }}
+              onClick={() => this.scrollToSection(section.id!.toString())}>
         <FormattedMessage id={section.id! + 1} defaultMessage={sectionTitle} />
       </div>)
     });
@@ -279,7 +289,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
           if (section.options[0].shortDescription){
             shortDescription = <div className={classes.shortDescription} >{section.options[0].shortDescription}</div>
           }
-          body = <div   className={classes.optionBlock}>
+          body = <div className={classes.optionBlock}>
             {icon}
             {shortDescription}
             <p>{section.options[0].summary}</p>
@@ -294,7 +304,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
         sectionTitle = 'Section ' + section.index
       }
       return (<div>
-        <div key={section.id} className={classes.section && classes.columnTitle}>
+        <div id={section.id!.toString()}  key={section.id} className={classes.section && classes.columnTitle}>
           <FormattedMessage id={section.id! + 1} defaultMessage={sectionTitle} />
         </div>
         <div>
