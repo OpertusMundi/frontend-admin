@@ -155,7 +155,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
   constructor(props: EditAreaComponentProps) {
     super(props);
-    let section, title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = null, shortDescription = '', mutexSuboptions=false;
+    let section, title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = null, shortDescription = '', mutexSuboptions=true;
     // if editing section or titles
     if (this.props.editField === EditFieldEnum.Section) {
       title = this.props.section!.title;
@@ -197,8 +197,12 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   onChangeValue(id: number, event: any) {
     var selection = event.target.value
     if (selection === 'optional') {
-      this.props.editSection({ id: id, optional: true, dynamic: false, summary: '', })
-      this.setState({ optional: true, dynamic: false });
+      this.props.editSection({ id: id, optional: true, dynamic: false, })
+      var section = this.state.section!;
+      if (section.options.length > 1){
+        section.options.splice(1);
+      }
+      this.setState({ optional: true, dynamic: false , section});
     }
     else if (selection === 'dynamic') {
       this.props.addOptions(id, 2);
@@ -404,20 +408,22 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     const { editorState } = this.state;
     const { classes, config } = this.props;
     let editor, iconSelector, type_buttons, options, subOptions, editOption, editSubOption, summary, descriptionOfChange,
-      shortDescription, editingOptionTitle = '', subOptionSize = 0, selectedIcon;
+      shortDescription, editingOptionTitle , subOptionSize = 0, selectedIcon;
     if (this.state.variable) {
       var type = 'Option ', currentOption = this.state.option;
       if (!this.state.editingOption) {
-        type = 'SubOption ';
+        type = 'Suboption ';
         currentOption = this.state.subOption;
       }
-      editingOptionTitle = '(' + type + String.fromCharCode(65 + parseInt('' + currentOption)) + ')';
+      const optionForEdit = type + String.fromCharCode(65 + parseInt('' + currentOption));
+      editingOptionTitle = <h3 className={classes.title}> {optionForEdit}</h3>
+      
     }
+
 
     if (this.state.showEditor) {
       editor = <div >
 
-        <InputLabel className={classes.title}>Text {editingOptionTitle}</InputLabel>
         <Editor
           toolbar={{
             options: ['inline', 'list'],
@@ -584,9 +590,11 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
         {type_buttons}
         {editOption}
         {editSubOption}
+        
         <TextField className={classes.title} id="filled-title" variant="standard" value={this.state.title} suppressContentEditableWarning={true} contentEditable={true} label='Title'
           onChange={(e) => this.setState({ title: e.target.value })}
         />
+        {editingOptionTitle}
 
         {editor}
 

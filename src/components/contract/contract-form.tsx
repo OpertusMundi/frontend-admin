@@ -161,7 +161,8 @@ const defaultSection: Section = {
 
 
 const defaultOptions = {
-  'body':`{"blocks":[{"key":"5u8f1","text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit.Aenean facilisis egestas gravida.Integer porttito consectetur","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`
+  'body':`{"blocks":[{"key":"5u8f1","text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit.Aenean facilisis egestas gravida.Integer porttito consectetur","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`,
+  'mutexSuboptions': true
 };
 
 interface RouteParams {
@@ -547,7 +548,6 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   saveContent(id: number, contentState: ContentState, title: string, option: number, subOption: number,
     summary: string, descriptionOfChange: string, icon: EnumContractIcon | null, shortDescription: string,
     editField: EditFieldEnum, mutexSuboptions: boolean): void {
-      console.log(mutexSuboptions);
     let raw, htmlContent='';
     raw = JSON.stringify(convertToRaw(contentState));
     if (contentState.getPlainText()){
@@ -615,16 +615,16 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     if (length > 0) {
       for (let i = length; i < subOptions; i++)
         subOptionsArray.push({
-          'body': `{"blocks":[{"key":"5u8f1","text":"Additional subOption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`,
-          'bodyHtml': '<p>Additional subOption</p>'
+          'body': `{"blocks":[{"key":"5u8f1","text":"Additional suboption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`,
+          'bodyHtml': '<p>Additional suboption</p>'
         });
     }
     else {
       length = 0
       subOptionsArray = new Array<SubOption>();
       subOptionsArray.push({
-        'body': `{"blocks":[{"key":"5u8f1","text":"Additional subOption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`,
-        'bodyHtml': '<p>Additional subOption</p>'
+        'body': `{"blocks":[{"key":"5u8f1","text":"Additional suboption","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`,
+        'bodyHtml': '<p>Additional suboption</p>'
       });
 
       section.options[option].subOptions = subOptionsArray;

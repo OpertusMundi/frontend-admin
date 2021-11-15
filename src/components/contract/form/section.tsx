@@ -154,7 +154,7 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
             const subOptionBody = (
               <div className={classes.option} key={`editor-${index}-${i}`}>
                 <span>
-                  SubOption {String.fromCharCode(65 + i)}
+                  Suboption {String.fromCharCode(65 + i)}
                 </span>
                 <Editor editorState={EditorState.createWithContent(storedSubOptionState)} readOnly={true} onChange={() => { }} />
               </div>
