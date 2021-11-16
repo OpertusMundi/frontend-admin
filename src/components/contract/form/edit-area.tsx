@@ -120,7 +120,7 @@ interface EditAreaComponentProps extends WithStyles<typeof styles>, PropsFromRed
   documentSubtitle?: string;
   saveContent: (id: number, contentState: ContentState, title: string, option: number, subOption: number,
     summary: string, descriptionOfChange: string, icon: EnumContractIcon | null, shortDescription: string,
-    editField: EditFieldEnum, mutexSuboptions: boolean) => void;
+    editField: EditFieldEnum, mutexSuboptions: boolean, closeEditor?: boolean) => void;
   editSection: (...item: any) => void;
   addOptions: (sectionId: number, options: number) => void;
   addSubOptions: (sectionId: number, option: number, subOptions: number) => void;
@@ -187,6 +187,46 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     };
   }
 
+  componentDidUpdate(prevProps: EditAreaComponentProps) {
+
+    if (prevProps.section !== this.props.section) {
+      //save previous section and edit new
+      this.props.saveContent(this.state.section?.id!, this.state.editorState.getCurrentContent(),
+          this.state.title, this.state.option, this.state.subOption, this.state.summary, this.state.descriptionOfChange,
+          this.state.icon, this.state.shortDescription, this.state.editField, this.state.mutexSuboptions, false)
+
+      let section, title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = null, shortDescription = '', mutexSuboptions = true;
+      // if editing section or titles
+      if (this.props.editField === EditFieldEnum.Section) {
+        title = this.props.section!.title;
+        editorState = EditorState.createWithContent(convertFromRaw(JSON.parse(this.props.section!.options[0].body)), this.decorator)
+        show = true;
+        summary = this.props.section!.options[0].summary!;
+        variable = this.props.section!.variable;
+        optional = this.props.section!.optional;
+        dynamic = this.props.section!.dynamic;
+        icon = this.props.section!.options[0].icon!;
+        shortDescription = this.props.section!.options[0].shortDescription!;
+        descriptionOfChange = this.props.section!.descriptionOfChange;
+        section = this.props.section;
+        mutexSuboptions = this.props.section!.options[0].mutexSuboptions!;
+      }
+      else {
+        editorState = EditorState.createEmpty(this.decorator);
+        show = false;
+        if (this.props.editField === EditFieldEnum.Title) {
+          title = this.props.documentTitle!;
+        }
+        else
+          title = this.props.documentSubtitle!;
+      }
+      this.setState({
+        section, editorState, title, option: 0, subOption: 0, editingOption: true, showEditor: show, summary,
+        descriptionOfChange, variable, optional, dynamic, icon, shortDescription, openAutoTextSelect: false,
+        openIconSelect: false, editField: this.props.editField, mutexSuboptions
+      });
+    }
+  }
 
   customBlockStyleFn = (contentBlock: ContentBlock) => {
     return ['public-DraftStyleDefault-block'];
@@ -419,7 +459,6 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
       editingOptionTitle = <h3 className={classes.title}> {optionForEdit}</h3>
       
     }
-
 
     if (this.state.showEditor) {
       editor = <div >

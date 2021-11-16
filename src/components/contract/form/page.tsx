@@ -110,11 +110,13 @@ class PageComponent extends React.Component<PageComponentProps, PageComponentSta
       </div>
     }
 
-    const sections = this.props.sectionList.map(section =>
+
+    const sections = this.props.sectionList.map((section, i) =>
       <Grid style={{ paddingLeft: section.indent, marginTop: '30px' }} key={section.id} container item xs={12} >
         <Grid className={classes.contract} container item xs={10} key={`section-${section.id}`}>
           <SectionComponent {...section} editSection={this.props.editSection.bind(this)} />
-          <div className={classes.middleControls}>
+          {i < this.props.sectionList.length-1 && 
+            <div className={classes.middleControls}>
             <Tooltip title="Add normal section">
               <IconButton
                 onClick={() =>
@@ -134,6 +136,7 @@ class PageComponent extends React.Component<PageComponentProps, PageComponentSta
               </IconButton>
             </Tooltip>
           </div>
+          }
         </Grid>
         <div className={classes.controls}>
           <IconButton style={{ height: 20 }}

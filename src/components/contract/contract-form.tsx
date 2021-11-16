@@ -372,7 +372,8 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     let sections = [...contract.sections]
     const id = sections.findIndex((s) => s.id === section.id);
     if ('indent' in section) {
-      if (!this.state.displayToolbarActions) {
+      // skip first section
+      if (id === 0) {
         return;
       }
       var lastSection = sections[id - 1];
@@ -534,9 +535,6 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   }
 
   openEdit(editField: EditFieldEnum, section?: Section): void {
-    if (!this.state.displayToolbarActions) {
-      return
-    }
     this.setState({
       displayEditor: true,
       displayToolbarActions: false,
@@ -547,7 +545,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
 
   saveContent(id: number, contentState: ContentState, title: string, option: number, subOption: number,
     summary: string, descriptionOfChange: string, icon: EnumContractIcon | null, shortDescription: string,
-    editField: EditFieldEnum, mutexSuboptions: boolean): void {
+    editField: EditFieldEnum, mutexSuboptions: boolean, closeEditor=true): void {
     let raw, htmlContent='';
     raw = JSON.stringify(convertToRaw(contentState));
     if (contentState.getPlainText()){
@@ -572,7 +570,9 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         }
       }));
     }
-    this.setState({ displayEditor: false, displayToolbarActions: true });
+    if(closeEditor){
+      this.setState({ displayEditor: false, displayToolbarActions: true });
+    }
   }
 
   addOptions(sectionId: number, options: number): void {

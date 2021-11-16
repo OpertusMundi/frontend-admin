@@ -219,7 +219,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
             for (let i = 0; i < length; i++) {
               var storedSubOptionState = convertFromRaw(JSON.parse(subOptionsArray[i].body));
               var subOptionBody =
-                <div className={classes.subOption} key={index}> <span>SubOption {String.fromCharCode(65 + i)}</span>
+                <div className={classes.subOption} key={index}> <span>Suboption {String.fromCharCode(65 + i)}</span>
                   <Editor editorState={EditorState.createWithContent(storedSubOptionState)} readOnly={true} onChange={() => { }} />
                 </div>;
               subOptionBlock.push(subOptionBody);
