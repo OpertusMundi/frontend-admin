@@ -67,11 +67,6 @@ interface MaintenanceManagerProps extends PropsFromRedux, WithStyles<typeof styl
 
 class MaintenanceManager extends React.Component<MaintenanceManagerProps, MaintenanceManagerState> {
 
-  constructor(props: MaintenanceManagerProps) {
-    super(props);
-
-  }
-
   state: MaintenanceManagerState = {
   }
 
