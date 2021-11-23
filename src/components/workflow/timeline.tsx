@@ -44,6 +44,9 @@ const styles = (theme: Theme) => createStyles({
   paper: {
     padding: '6px 16px',
   },
+  details: {
+    lineBreak: 'anywhere',
+  }
 });
 
 interface Incident {
@@ -64,6 +67,7 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
 
   mapActivityToMessage(activity: BpmActivity, instance: ProcessInstanceDetails, incidents: Incident[]) {
     const _t = this.props.intl.formatTime;
+    const { classes } = this.props;
     const { errorDetails } = instance;
 
     const incident = incidents.find((i) => i.activityId === activity.activityId) || null;
@@ -107,7 +111,7 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
                 {'Details'}
               </Typography>
               {(errorDetails[incident.activityId].split('||') || []).map((text, index) => (
-                <div key={`detail-line-${index}`}>
+                <div key={`detail-line-${index}`} className={classes.details}>
                   <Typography variant="caption" >
                     {text}
                   </Typography>
