@@ -154,6 +154,7 @@ class ContentRoot extends React.Component<PropsFromRedux> {
           newestOnTop={false}
           closeOnClick
           pauseOnHover
+          icon={false}
         />
       </div>
     );
