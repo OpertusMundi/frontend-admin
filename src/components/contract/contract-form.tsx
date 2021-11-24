@@ -1,7 +1,8 @@
 import React from 'react';
 
-// Localization
+// Localization, Routing
 import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
+import { useNavigate, useLocation, useParams, NavigateFunction, Location } from 'react-router-dom';
 
 // Styles
 import { Button, createStyles, WithStyles } from '@material-ui/core';
@@ -37,13 +38,12 @@ import { RootState } from 'store';
 import { StaticRoutes } from 'model/routes';
 import { AxiosError } from 'axios';
 import { AxiosObjectResponse, SimpleResponse } from 'model/response';
-import { RouteComponentProps } from 'react-router-dom';
 
 import { FieldMapperFunc } from 'utils/error';
 
 import { setSelectedContract, setModifiedContract } from 'store/contract/actions';
 
-import {stateToHTML} from 'draft-js-export-html';
+import { stateToHTML } from 'draft-js-export-html';
 
 const fieldMapper: FieldMapperFunc = (field: string): string | null => {
   switch (field) {
@@ -159,9 +159,8 @@ const defaultSection: Section = {
   descriptionOfChange: ''
 }
 
-
 const defaultOptions = {
-  'body':`{"blocks":[{"key":"5u8f1","text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit.Aenean facilisis egestas gravida.Integer porttito consectetur","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`,
+  'body': `{"blocks":[{"key":"5u8f1","text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit.Aenean facilisis egestas gravida.Integer porttito consectetur","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`,
   'mutexSuboptions': true
 };
 
@@ -169,8 +168,11 @@ interface RouteParams {
   id?: string | undefined;
 }
 
-interface ContractFormComponentProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps<RouteParams> {
+interface ContractFormComponentProps extends PropsFromRedux, WithStyles<typeof styles> {
   intl: IntlShape;
+  navigate: NavigateFunction;
+  location: Location;
+  params: RouteParams;
 }
 
 interface ContractFormComponentState {
@@ -212,11 +214,11 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       e.preventDefault();
     }
 
-    this.props.history.push(url);
+    this.props.navigate(url);
   }
 
   get id(): number | null {
-    const { id } = this.props.match.params;
+    const { id } = this.props.params;
 
     if (!id) {
       return null;
@@ -243,7 +245,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
           const messages = localizeErrorCodes(this.props.intl, response.data, false);
           message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
 
-          this.props.history.push(StaticRoutes.ContractManager);
+          this.props.navigate(StaticRoutes.ContractManager);
         }
         return null;
       });
@@ -270,7 +272,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       };
       const { id } = command;
       (id === null ? this.api.createDraft(command) : this.api.updateDraft(id, command))
-    },  30 * 1000);
+    }, 30 * 1000);
   }
 
   componentWillUnmount() {
@@ -302,7 +304,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       contract: {
         ...state.contract,
         sections: [...state.contract.sections, {
-          ...defaultSection, options: [{...defaultOptions}], ...section,
+          ...defaultSection, options: [{ ...defaultOptions }], ...section,
           subOptions: {}, ...section
         },]
       }
@@ -312,10 +314,10 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
 
   addMiddleSection(prevSectionIndex: string, prevSectionIndent: number, variable: boolean): void {
     const { contract: { sections = [] } } = this.state;
-    const prevArrayIndex = sections.findIndex((s) => s.index === prevSectionIndex); 
+    const prevArrayIndex = sections.findIndex((s) => s.index === prevSectionIndex);
 
 
-    const  newId = Math.max.apply(Math, sections.map((o) => o.id!)) + 1
+    const newId = Math.max.apply(Math, sections.map((o) => o.id!)) + 1
 
     var firstPart = ""
     if (prevSectionIndex.includes('.')) {
@@ -326,11 +328,12 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
     var lastPart = parseInt(prevSectionIndex, 10) + 1
     var sectionIndex = firstPart + '' + lastPart;
 
-    var section = {variable: variable, id: newId, index: sectionIndex, indent: prevSectionIndent }
+    var section = { variable: variable, id: newId, index: sectionIndex, indent: prevSectionIndent }
 
     var newSection = {
-      ...defaultSection, options: [{...defaultOptions}], ...section,
-      subOptions: {}, ...section}
+      ...defaultSection, options: [{ ...defaultOptions }], ...section,
+      subOptions: {}, ...section
+    }
 
     sections.splice(prevArrayIndex + 1, 0, newSection);
 
@@ -340,8 +343,8 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       contract: {
         ...state.contract,
         sections: sections,
-        },
-      }
+      },
+    }
     ));
   }
 
@@ -367,7 +370,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   }
 
   editSection(section: Partial<Section>, summary = "", option = 0, raw = "", descriptionOfChange = "", icon: EnumContractIcon | null, shortDescription = "",
-         htmlContent= "", subOption = -1, mutexSuboptions = false): void {
+    htmlContent = "", subOption = -1, mutexSuboptions = false): void {
     const { contract } = this.state;
     let sections = [...contract.sections]
     const id = sections.findIndex((s) => s.id === section.id);
@@ -545,14 +548,14 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
 
   saveContent(id: number, contentState: ContentState, title: string, option: number, subOption: number,
     summary: string, descriptionOfChange: string, icon: EnumContractIcon | null, shortDescription: string,
-    editField: EditFieldEnum, mutexSuboptions: boolean, closeEditor=true): void {
-    let raw, htmlContent='';
+    editField: EditFieldEnum, mutexSuboptions: boolean, closeEditor = true): void {
+    let raw, htmlContent = '';
     raw = JSON.stringify(convertToRaw(contentState));
-    if (contentState.getPlainText()){
+    if (contentState.getPlainText()) {
       htmlContent = stateToHTML(contentState);
     }
     if (editField === EditFieldEnum.Section) {
-      this.editSection({ id: id, title: title}, summary, option, raw, descriptionOfChange, icon, shortDescription, htmlContent, -1, mutexSuboptions);
+      this.editSection({ id: id, title: title }, summary, option, raw, descriptionOfChange, icon, shortDescription, htmlContent, -1, mutexSuboptions);
     } else if (editField === EditFieldEnum.SubOption) {
       this.editSection({ id: id, title: title }, summary, option, raw, descriptionOfChange, icon, shortDescription, htmlContent, subOption);
     } else if (editField === EditFieldEnum.Title) {
@@ -570,7 +573,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         }
       }));
     }
-    if(closeEditor){
+    if (closeEditor) {
       this.setState({ displayEditor: false, displayToolbarActions: true });
     }
   }
@@ -589,7 +592,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       }
     } else {
       for (let i = length; i < options; i++) {
-        section.options.push({'body':`{"blocks":[{"key":"5u8f1","text":"Additional option","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`});
+        section.options.push({ 'body': `{"blocks":[{"key":"5u8f1","text":"Additional option","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}` });
       }
     }
     sections[id] = { ...sections[id], ...section };
@@ -656,7 +659,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
   discardChanges(): void {
     this.setState({
       confirmOnNavigate: false,
-    }, () => this.props.history.push(StaticRoutes.ContractManager));
+    }, () => this.props.navigate(StaticRoutes.ContractManager));
   }
 
   saveDraft(): void {
@@ -681,12 +684,12 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
       });
   }
 
-  setEdit(){
+  setEdit() {
     this.setState({ review: false })
   }
 
 
-  scrollToSection(id: string){
+  scrollToSection(id: string) {
     var section_to_scroll_to = document.getElementById(id);
     section_to_scroll_to!.scrollIntoView();
   }
@@ -734,7 +737,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
           className={classes.section}
           style={{ paddingLeft: section.indent }}
         >
-          <FormattedMessage id={section.id! + 1} defaultMessage={sectionTitle} />
+          <FormattedMessage id={`${section.id! + 1}`} defaultMessage={sectionTitle} />
         </div>
       );
     });
@@ -893,7 +896,19 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 const styledComponent = withStyles(styles)(ContractFormComponent);
 
 // Inject i18n resources
-const localizedComponent = injectIntl(styledComponent);
+const LocalizedComponent = injectIntl(styledComponent);
 
-// Export localized component
-export default connector(localizedComponent);
+// Inject state
+const ConnectedComponent = connector(LocalizedComponent);
+
+const RoutedComponent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const params: RouteParams = useParams();
+
+  return (
+    <ConnectedComponent navigate={navigate} location={location} params={params} />
+  );
+}
+
+export default RoutedComponent;

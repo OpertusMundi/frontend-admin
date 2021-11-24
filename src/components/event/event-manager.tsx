@@ -2,7 +2,6 @@ import React from 'react';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
@@ -88,7 +87,7 @@ interface EventManagerState {
   event: Event | null,
 }
 
-interface EventManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
+interface EventManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
   intl: IntlShape,
 }
 

@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
 import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
@@ -70,8 +70,10 @@ interface ContractManagerState {
   record: MasterContractHistory | null
 }
 
-interface ContractManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
-  intl: IntlShape,
+interface ContractManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
+  intl: IntlShape;
+  navigate: NavigateFunction;
+  location: Location;
 }
 
 class ContractManager extends React.Component<ContractManagerProps, ContractManagerState> {
@@ -137,7 +139,7 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
       .then((response) => {
         if (response.data.success) {
           const url = buildPath(DynamicRoutes.ContractUpdate, [response.data.result!.id.toString()]);
-          this.props.history.push(url);
+          this.props.navigate(url);
         } else {
           const messages = localizeErrorCodes(this.props.intl, response.data, true);
           message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
@@ -207,13 +209,13 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
   }
 
   createRow(): void {
-    this.props.history.push(DynamicRoutes.ContractCreate);
+    this.props.navigate(DynamicRoutes.ContractCreate);
   }
 
   editDraft(contract: MasterContractHistory): void {
     const path = buildPath(DynamicRoutes.ContractUpdate, [contract.id.toString()]);
 
-    this.props.history.push(path);
+    this.props.navigate(path);
   }
 
   confirmDraftDelete(contract: MasterContractHistory): void {
@@ -356,7 +358,18 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 const styledComponent = withStyles(styles)(ContractManager);
 
 // Inject i18n resources
-const localizedComponent = injectIntl(styledComponent);
+const LocalizedComponent = injectIntl(styledComponent);
 
 // Inject state
-export default connector(localizedComponent);
+const ConnectedComponent = connector(LocalizedComponent);
+
+const RoutedComponent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <ConnectedComponent navigate={navigate} location={location} />
+  );
+}
+
+export default RoutedComponent;

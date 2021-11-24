@@ -9,7 +9,6 @@ import '@formatjs/intl-relativetimeformat/locale-data/el';
 
 import * as ReactIntl from 'react-intl';
 
-import { Route } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux'
 import { createTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
@@ -69,7 +68,7 @@ class App extends React.Component<PropsFromRedux> {
     return (
       <ReactIntl.IntlProvider locale={locale} key={locale} messages={messages}>
         <ThemeProvider theme={theme}>
-          <Route path="/" component={ContentRoot} />
+          <ContentRoot />
         </ThemeProvider>
       </ReactIntl.IntlProvider>
     );

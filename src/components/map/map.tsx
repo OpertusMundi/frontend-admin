@@ -177,7 +177,7 @@ class Map extends React.Component<MapProps> {
     }
 
     if (typeof this.props.pointerMove === 'function') {
-      map.on(['pointermove'], (e: BaseEvent) => {
+      map.on(['pointermove'], (e: Event | BaseEvent) => {
         if (this.props.pointerMove) {
           this.props.pointerMove(e as MapBrowserEvent<MouseEvent>, map);
         }
@@ -185,7 +185,7 @@ class Map extends React.Component<MapProps> {
     }
 
     if (typeof this.props.click === 'function') {
-      map.on(['click'], (e: BaseEvent) => {
+      map.on(['click'], (e: Event | BaseEvent) => {
         if (this.props.click) {
           this.props.click(e as MapBrowserEvent<MouseEvent>, map);
         }

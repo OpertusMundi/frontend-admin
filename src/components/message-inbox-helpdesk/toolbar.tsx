@@ -3,7 +3,7 @@ import React from 'react';
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
 import { injectIntl, IntlShape, FormattedMessage } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { useNavigate, useLocation, NavigateFunction, Location } from "react-router-dom";
 
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -39,9 +39,11 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-interface ToolbarProps extends PropsFromRedux, RouteComponentProps, WithStyles<typeof styles> {
-  intl: IntlShape,
-  route?: Route,
+interface ToolbarProps extends PropsFromRedux, WithStyles<typeof styles> {
+  intl: IntlShape;
+  route?: Route;
+  navigate: NavigateFunction;
+  location: Location;
 }
 
 class Toolbar extends React.Component<ToolbarProps> {
@@ -96,10 +98,18 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 const styledComponent = withStyles(styles)(Toolbar);
 
 // Inject i18n resources
-const localizedComponent = injectIntl(styledComponent);
-
-// Inject routing
-const routedComponent = withRouter(localizedComponent);
+const LocalizedComponent = injectIntl(styledComponent);
 
 // Inject state
-export default connector(routedComponent);
+const ConnectedComponent = connector(LocalizedComponent);
+
+const RoutedComponent = (props: { route: Route }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <ConnectedComponent route={props.route} navigate={navigate} location={location} />
+  );
+}
+
+export default RoutedComponent;

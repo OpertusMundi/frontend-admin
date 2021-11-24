@@ -2,7 +2,6 @@ import React from 'react';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
 import { injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
@@ -60,7 +59,7 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
-interface MessageManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
+interface MessageManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
   intl: IntlShape,
 }
 

@@ -2,7 +2,6 @@ import React from 'react';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
@@ -65,7 +64,7 @@ interface AccountManagerState {
   record: MarketplaceAccount | null
 }
 
-interface AccountManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
+interface AccountManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
   intl: IntlShape,
 }
 

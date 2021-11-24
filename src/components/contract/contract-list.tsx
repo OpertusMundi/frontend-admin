@@ -20,7 +20,7 @@ import { createStyles, Grid, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
 // State, routing and localization
-import { RouteComponentProps } from 'react-router-dom';
+import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
 
 // Store
@@ -33,9 +33,9 @@ import ContractApi from 'service/contract';
 import message from 'service/message';
 
 // Model
-import { buildPath, DynamicRoutes, StaticRoutes } from 'model/routes';
+import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting, SimpleResponse } from 'model/response';
-import { EnumContractStatus, EnumMasterContractSortField, MasterContract, MasterContractHistory } from 'model/contract';
+import { EnumContractStatus, EnumMasterContractSortField, MasterContractHistory } from 'model/contract';
 
 // Utilities
 import { localizeErrorCodes } from 'utils/error';
@@ -103,8 +103,10 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
-interface ContractListComponentProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
+interface ContractListComponentProps extends PropsFromRedux, WithStyles<typeof styles> {
   intl: IntlShape;
+  navigate: NavigateFunction;
+  location: Location;
 }
 
 interface ContractListComponentState {
@@ -148,7 +150,7 @@ class ContractListComponent extends React.Component<ContractListComponentProps, 
       .then((response) => {
         if (response.data.success) {
           const url = buildPath(DynamicRoutes.ContractUpdate, [response.data.result!.id.toString()]);
-          this.props.history.push(url);
+          this.props.navigate(url);
         } else {
           const messages = localizeErrorCodes(this.props.intl, response.data, true);
           message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
@@ -222,7 +224,7 @@ class ContractListComponent extends React.Component<ContractListComponentProps, 
       e.preventDefault();
     }
 
-    this.props.history.push(url);
+    this.props.navigate(url);
   }
 
   showConfirmDialog(record: MasterContractHistory): void {
@@ -403,7 +405,18 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 const styledComponent = withStyles(styles)(ContractListComponent);
 
 // Inject i18n resources
-const localizedComponent = injectIntl(styledComponent);
+const LocalizedComponent = injectIntl(styledComponent);
 
-// Export localized component
-export default connector(localizedComponent);
+// Inject state
+const ConnectedComponent = connector(LocalizedComponent);
+
+const RoutedComponent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <ConnectedComponent navigate={navigate} location={location} />
+  );
+}
+
+export default RoutedComponent;

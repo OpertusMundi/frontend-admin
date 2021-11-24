@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect, ConnectedProps } from 'react-redux';
 import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
-import { Redirect, Route, RouteComponentProps, Switch, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
 
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -68,41 +68,13 @@ import clsx from 'clsx';
 
 // Model
 import { EnumHelpdeskRole as EnumRole } from 'model/role';
-import { routes, DynamicRoutes, ErrorPages, getRoute, StaticRoutes } from 'model/routes';
+import { routes, getRoute, StaticRoutes } from 'model/routes';
 import { HelpdeskAccount } from 'model/account';
 
 // Components
-import AccountForm from 'components/account/account-form';
-import AssetDraftManager from 'components/draft/draft-grid';
 import Breadcrumb from './breadcrumb';
-import ContractForm from 'components/contract/contract-form';
-import ContractManager from 'components/contract/contract-grid';
-import DashboardComponent from 'components/dashboard';
-import EventManager from 'components/event/event-manager';
-import HelpdeskAccountManager from 'components/account/account-grid';
-import IncidentManager from 'components/workflow/incident-manager';
-import MaintenanceManager from 'components/system/maintenance-manager';
-import MapViewerComponent from 'components/map-viewer';
 import MapViewerConfigComponent from 'components/map-viewer-config';
-import MarketplaceAccountManager from 'components/account-marketplace/account-grid';
-import MarketplaceAccountView from 'components/account-marketplace/account-form';
-import MessageInboxHelpdesk from 'components/message-inbox-helpdesk/message-grid';
-import MessageInboxUser from 'components/message-inbox-user/message-grid';
-import PayInManager from 'components/payin/payin-grid';
-import PayOutManager from 'components/payout/payout-manager';
-import PlaceHolder from 'components/placeholder';
-import ProcessInstanceForm from 'components/workflow/process-instance-form';
-import ProcessInstanceHistoryForm from 'components/workflow/process-instance-history-form';
-import ProcessInstanceManager from 'components/workflow/process-instance-manager';
-import ProcessInstanceHistoryManager from 'components/workflow/process-instance-history-manager';
-import Profile from 'components/profile';
-import ProviderManager from 'components/provider/provider-grid';
-import OrderManager from 'components/order/order-manager';
-import OrderTimeline from 'components/order/order-timeline';
-import QueryEditor from './analytics/query-editor';
 import SecureContent from 'components/secure-content';
-import SecureRoute from 'components/secure-route';
-import TransferManager from 'components/transfer/transfer-grid';
 
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
@@ -258,8 +230,10 @@ interface HomeState {
   drawerInTransition: boolean;
 }
 
-interface HomeProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
-  intl: IntlShape,
+interface HomeProps extends PropsFromRedux, WithStyles<typeof styles> {
+  intl: IntlShape;
+  navigate: NavigateFunction;
+  location: Location;
 }
 
 const menuId = 'primary-search-account-menu';
@@ -379,7 +353,7 @@ class Home extends React.Component<HomeProps, HomeState> {
       e.preventDefault();
     }
 
-    this.props.history.push(url);
+    this.props.navigate(url);
   }
 
   onMenuOpen(event: React.MouseEvent<HTMLElement>) {
@@ -495,7 +469,7 @@ class Home extends React.Component<HomeProps, HomeState> {
               <Breadcrumb />
               <div>
                 {incidentCounter != null && incidentCounter > 0 &&
-                  <IconButton title="BPM Server Incidents" color="inherit" onClick={() => this.props.history.push(StaticRoutes.IncidentManager)}>
+                  <IconButton title="BPM Server Incidents" color="inherit" onClick={() => this.props.navigate(StaticRoutes.IncidentManager)}>
                     <Badge badgeContent={incidentCounter} color="secondary">
                       <Icon path={mdiCogSyncOutline} size="1.5rem" />
                     </Badge>
@@ -808,46 +782,7 @@ class Home extends React.Component<HomeProps, HomeState> {
           <div className={classes.appBarSpacer} />
           <PerfectScrollbar className={classes.containerWrapper}>
             <Container maxWidth={false} className={classes.container}>
-              <Switch>
-                <Redirect from="/" to={StaticRoutes.Dashboard} exact />
-                {/* Dynamic */}
-                <Route path={DynamicRoutes.AccountUpdate} component={AccountForm} />
-                <Route path={DynamicRoutes.AccountCreate} component={AccountForm} />
-                <Route path={DynamicRoutes.ContractCreate} component={ContractForm} />
-                <Route path={DynamicRoutes.ContractUpdate} component={ContractForm} />
-                <Route path={DynamicRoutes.OrderTimeline} component={OrderTimeline} />
-                <Route path={DynamicRoutes.OrderView} component={PlaceHolder} />
-                <Route path={DynamicRoutes.MarketplaceAccountView} component={MarketplaceAccountView} />
-                <Route path={DynamicRoutes.ProcessInstanceHistoryView} component={ProcessInstanceHistoryForm} />
-                <Route path={DynamicRoutes.ProcessInstanceView} component={ProcessInstanceForm} />
-                <Route path={DynamicRoutes.PayInView} component={PlaceHolder} />
-                <Route path={DynamicRoutes.PayOutView} component={PlaceHolder} />
-                {/* Static */}
-                <Route path={StaticRoutes.Analytics} component={QueryEditor} />
-                <Route path={StaticRoutes.Dashboard} component={DashboardComponent} />
-                <Route path={StaticRoutes.ContractManager} component={ContractManager} />
-                <Route path={StaticRoutes.DraftManager} component={AssetDraftManager} />
-                <Route path={StaticRoutes.EventManager} component={EventManager} />
-                <Route path={StaticRoutes.OrderManager} component={OrderManager} />
-                <Route path={StaticRoutes.PayInManager} component={PayInManager} />
-                <Route path={StaticRoutes.PayOutManager} component={PayOutManager} />
-                <Route path={StaticRoutes.ProviderManager} component={ProviderManager} />
-                <Route path={StaticRoutes.TransferManager} component={TransferManager} />
-                <Route path={StaticRoutes.MaintenanceManager} component={MaintenanceManager} />
-                <Route path={StaticRoutes.Map} component={MapViewerComponent} />
-                <Route path={StaticRoutes.MessageInboxHelpdesk} component={MessageInboxHelpdesk} />
-                <Route path={StaticRoutes.MessageInboxUser} component={MessageInboxUser} />
-                <Route path={StaticRoutes.Profile} component={Profile} />
-                <Route path={StaticRoutes.Settings} component={PlaceHolder} />
-                {/* Secured paths */}
-                <SecureRoute path={StaticRoutes.HelpdeskAccountManager} component={HelpdeskAccountManager} roles={[EnumRole.ADMIN]} />
-                <SecureRoute path={StaticRoutes.IncidentManager} component={IncidentManager} roles={[EnumRole.ADMIN]} />
-                <SecureRoute path={StaticRoutes.MarketplaceAccountManager} component={MarketplaceAccountManager} roles={[EnumRole.ADMIN]} />
-                <SecureRoute path={StaticRoutes.ProcessInstanceManager} component={ProcessInstanceManager} roles={[EnumRole.ADMIN]} />
-                <SecureRoute path={StaticRoutes.ProcessInstanceHistoryManager} component={ProcessInstanceHistoryManager} roles={[EnumRole.ADMIN]} />
-                {/* Default */}
-                <Redirect push={true} to={ErrorPages.NotFound} />
-              </Switch>
+              <Outlet />
             </Container>
           </PerfectScrollbar>
         </main>
@@ -891,7 +826,18 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 const styledComponent = withStyles(styles)(Home);
 
 // Inject i18n resources
-const localizedComponent = injectIntl(styledComponent);
+const LocalizedComponent = injectIntl(styledComponent);
 
 // Inject state
-export default connector(localizedComponent);
+const ConnectedComponent = connector(LocalizedComponent);
+
+const RoutedComponent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <ConnectedComponent navigate={navigate} location={location} />
+  );
+}
+
+export default RoutedComponent;

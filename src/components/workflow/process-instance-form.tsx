@@ -5,8 +5,8 @@ import { AxiosError } from 'axios';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
 import { injectIntl, IntlShape } from 'react-intl';
+import { useNavigate, useLocation, useParams, NavigateFunction, Location } from 'react-router-dom';
 
 // Components
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -82,8 +82,11 @@ interface ProcessInstanceState {
   initialized: boolean;
 }
 
-interface ProcessInstanceProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps<RouteParams> {
-  intl: IntlShape,
+interface ProcessInstanceProps extends PropsFromRedux, WithStyles<typeof styles> {
+  intl: IntlShape;
+  navigate: NavigateFunction;
+  location: Location;
+  params: RouteParams;
 }
 
 class ProcessInstance extends React.Component<ProcessInstanceProps, ProcessInstanceState> {
@@ -111,7 +114,7 @@ class ProcessInstance extends React.Component<ProcessInstanceProps, ProcessInsta
           if (!response.success && response.messages.some(m => m.code === BasicMessageCode.NotFound)) {
             // Record not found, redirect to history page
             const path = buildPath(DynamicRoutes.ProcessInstanceHistoryView, null, { businessKey, processInstance });
-            this.props.history.replace(path);
+            this.props.navigate(path, { replace: true });
           }
         })
         .catch((err: AxiosError) => {
@@ -276,7 +279,19 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 const styledComponent = withStyles(styles)(ProcessInstance);
 
 // Inject i18n resources
-const localizedComponent = injectIntl(styledComponent);
+const LocalizedComponent = injectIntl(styledComponent);
 
 // Inject state
-export default connector(localizedComponent);
+const ConnectedComponent = connector(LocalizedComponent);
+
+const RoutedComponent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const params: RouteParams = useParams();
+
+  return (
+    <ConnectedComponent navigate={navigate} location={location} params={params} />
+  );
+}
+
+export default RoutedComponent;

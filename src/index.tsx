@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import * as ReactRedux from 'react-redux';
 
-import { ConnectedRouter } from 'connected-react-router';
+import { BrowserRouter } from 'react-router-dom';
 
 import './index.scss';
 import App from './App';
@@ -16,7 +16,6 @@ import { changeLocale } from 'store/i18n/thunks';
 import { getConfiguration } from 'store/config/thunks';
 import { refreshProfile } from 'store/security/thunks';
 import { bindActionCreators } from 'redux';
-import { history } from 'routing';
 
 // TODO: read from non-HttpOnly "language" cookie
 const locale = 'en';
@@ -46,10 +45,10 @@ Promise.resolve()
   .then(() => {
     ReactDOM.render(
       <ReactRedux.Provider store={store}>
-        <ConnectedRouter history={history}>
+        <BrowserRouter basename={'/'}>
           <LoadingBar style={{ backgroundColor: '#d50000', height: '3px', zIndex: 10000 }} />
           <App />
-        </ConnectedRouter>
+        </BrowserRouter>
       </ReactRedux.Provider>,
       document.getElementById('root')
     );

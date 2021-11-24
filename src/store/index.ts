@@ -2,10 +2,7 @@ import * as Redux from 'redux';
 import * as ReduxLogger from 'redux-logger';
 import * as ReduxThunk from 'redux-thunk';
 
-import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { loadingBarReducer } from 'react-redux-loading-bar';
-
-import { history } from 'routing';
 
 import { analyticsReducer } from './analytics/reducer';
 import { configurationReducer } from './config/reducer';
@@ -62,8 +59,6 @@ export const rootReducer = Redux.combineReducers({
     }),
     incidents: incidentReducer,
   }),
-  // Syncs history and store
-  router: connectRouter(history),
   // Syncs loading bar and store
   loadingBar: loadingBarReducer,
 });
@@ -72,11 +67,9 @@ export const rootReducer = Redux.combineReducers({
 export type RootState = ReturnType<typeof rootReducer>;
 
 // Configure middleware components
-const middleware = [
+const middleware: Redux.Middleware<any, any, any>[] = [
   // Support dispatching of functions
   ReduxThunk.default,
-  // Intercept navigation actions
-  routerMiddleware(history),
 ];
 
 if ((process as any).env.REACT_APP_ENABLE_LOGGER === 'true') {

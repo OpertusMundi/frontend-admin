@@ -1,9 +1,11 @@
 // See: https://medium.com/@michaelchan_13570/using-react-router-v4-prompt-with-custom-modal-component-ca839f5faf39
 
+// See: https://github.com/remix-run/react-router/releases/tag/v6.0.0-beta.7
+
 import React from 'react';
 
-import { Location } from 'history';
-import { Prompt } from 'react-router-dom';
+import { Location } from 'react-router-dom';
+// import { Prompt } from 'react-router-dom';
 
 import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 
@@ -72,7 +74,7 @@ export class RouteGuard extends React.Component<RouteGuardProps, RouteGuardState
         this.setState({
           confirmedNavigation: true
         }, () => {
-          // Navigate to the previous blocked location with your navigate function     
+          // Navigate to the previous blocked location with your navigate function
           navigate(lastLocation.pathname);
         });
       }
@@ -98,10 +100,10 @@ export class RouteGuard extends React.Component<RouteGuardProps, RouteGuardState
 
     return (
       <>
-        <Prompt
+        {/* <Prompt
           when={when}
           message={(nextLocation: Location) => this.handleBlockedNavigation(nextLocation)}
-        />
+        /> */}
         <Dialog
           actions={[
             {

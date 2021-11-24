@@ -58,7 +58,7 @@ export function csrfRequestInterceptor(value: AxiosRequestConfig): AxiosRequestC
 
   const required = ['POST', 'PUT', 'DELETE'].includes((value.method as string).toUpperCase());
 
-  const csrfHeader = { 'X-CSRF-TOKEN': csrfToken };
+  const csrfHeader = { 'X-CSRF-TOKEN': csrfToken! };
 
   const result = csrfToken && required ?
     {

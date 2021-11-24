@@ -2,7 +2,7 @@ import { EnumHelpdeskRole as EnumRole } from 'model/role';
 import { ErrorPages, Pages } from 'model/routes';
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { Redirect, Route, RouteProps } from 'react-router-dom';
+import { Outlet, Navigate, RouteProps } from 'react-router-dom';
 import { RootState } from 'store';
 
 interface SecureRouteProps extends PropsFromRedux, RouteProps {
@@ -34,22 +34,14 @@ class SecureRoute extends React.Component<SecureRouteProps> {
   }
 
   render() {
-    let { roles, profile, ...rest } = this.props;
+    let { roles, profile } = this.props;
     let authenticated = (profile != null);
-
     if (!authenticated) {
       return (
-        <Redirect to={Pages.Login} />
+        <Navigate to={Pages.Login} />
       );
     }
-    if (this.hasAnyRole(roles)) {
-      return (
-        <Route {...rest} />
-      );
-    }
-    return (
-      <Redirect to={ErrorPages.Forbidden} />
-    );
+    return this.hasAnyRole(roles) ? <Outlet /> : <Navigate to={ErrorPages.Forbidden} />;
   }
 }
 

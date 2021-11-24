@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
 import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
@@ -66,8 +66,10 @@ interface AccountManagerState {
   reasonRequired: boolean,
 }
 
-interface AccountManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
-  intl: IntlShape,
+interface AccountManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
+  intl: IntlShape;
+  navigate: NavigateFunction;
+  location: Location;
 }
 
 class AssetDraftManager extends React.Component<AccountManagerProps, AccountManagerState> {
@@ -199,7 +201,7 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
     const url = status === EnumDraftStatus.PUBLISHED ?
       `${marketplaceUrl}${trailingSlash ? '/' : ''}catalogue/${assetPublished}` :
       `${marketplaceUrl}${trailingSlash ? '/' : ''}helpdesk-review/${assetDraft}`;
-    console.log(url);
+
     window.open(url, "_blank");
   }
 
@@ -207,7 +209,7 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
     const path = buildPath(
       completed ? DynamicRoutes.ProcessInstanceHistoryView : DynamicRoutes.ProcessInstanceView, null, { businessKey }
     );
-    this.props.history.push(path);
+    this.props.navigate(path);
   }
 
   setSorting(sorting: Sorting<EnumSortField>[]): void {
@@ -366,7 +368,18 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 const styledComponent = withStyles(styles)(AssetDraftManager);
 
 // Inject i18n resources
-const localizedComponent = injectIntl(styledComponent);
+const LocalizedComponent = injectIntl(styledComponent);
 
 // Inject state
-export default connector(localizedComponent);
+const ConnectedComponent = connector(LocalizedComponent);
+
+const RoutedComponent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <ConnectedComponent navigate={navigate} location={location} />
+  );
+}
+
+export default RoutedComponent;

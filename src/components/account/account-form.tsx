@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { useNavigate, useLocation, useParams, NavigateFunction, Location } from 'react-router-dom';
 import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 
 // 3rd party components
@@ -144,8 +144,11 @@ interface RouteParams {
   id?: string | undefined;
 }
 
-interface AccountFormProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps<RouteParams> {
-  intl: IntlShape,
+interface AccountFormProps extends PropsFromRedux, WithStyles<typeof styles> {
+  intl: IntlShape;
+  navigate: NavigateFunction;
+  location: Location;
+  params: RouteParams;
 }
 
 /*
@@ -186,7 +189,7 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
   }
 
   get id(): number | null {
-    const { id } = this.props.match.params;
+    const { id } = this.props.params;
 
     if (!id) {
       return null;
@@ -198,7 +201,7 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
   discardChanges(): void {
     this.setState({
       confirmOnNavigate: false,
-    }, () => this.props.history.push(StaticRoutes.HelpdeskAccountManager));
+    }, () => this.props.navigate(StaticRoutes.HelpdeskAccountManager));
   }
 
   showConfirmDialog(): void {
@@ -239,7 +242,7 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
           const messages = localizeErrorCodes(this.props.intl, response.data, false);
           message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
 
-          this.props.history.push(StaticRoutes.HelpdeskAccountManager);
+          this.props.navigate(StaticRoutes.HelpdeskAccountManager);
         }
         return null;
       });
@@ -261,8 +264,8 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
   }
 
   componentDidUpdate(prevProps: AccountFormProps) {
-    const { id: prevId } = prevProps.match.params;
-    const { id: currId } = this.props.match.params;
+    const { id: prevId } = prevProps.params;
+    const { id: currId } = this.props.params;
 
     if (prevId !== currId) {
       this.loadData().then((account: HelpdeskAccountCommand | null) => {
@@ -507,7 +510,7 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
         {this.renderConfirm()}
         <RouteGuard
           when={confirmOnNavigate}
-          navigate={(location: string): void => this.props.history.push(location)}
+          navigate={(location: string): void => this.props.navigate(location)}
         />
       </>
     );
@@ -572,7 +575,19 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 const styledComponent = withStyles(styles)(AccountForm);
 
 // Inject i18n resources
-const localizedComponent = injectIntl(styledComponent);
+const LocalizedComponent = injectIntl(styledComponent);
 
 // Inject state
-export default connector(localizedComponent);
+const ConnectedComponent = connector(LocalizedComponent);
+
+const RoutedComponent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const params: RouteParams = useParams();
+
+  return (
+    <ConnectedComponent navigate={navigate} location={location} params={params} />
+  );
+}
+
+export default RoutedComponent;

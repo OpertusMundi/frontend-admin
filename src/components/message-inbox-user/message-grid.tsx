@@ -2,7 +2,7 @@ import React from 'react';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
 import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 
 // 3rd party components
@@ -66,8 +66,10 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-interface MessageManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
-  intl: IntlShape,
+interface MessageManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
+  intl: IntlShape;
+  navigate: NavigateFunction;
+  location: Location;
 }
 
 class MessageManager extends React.Component<MessageManagerProps> {
@@ -256,7 +258,18 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 const styledComponent = withStyles(styles)(MessageManager);
 
 // Inject i18n resources
-const localizedComponent = injectIntl(styledComponent);
+const LocalizedComponent = injectIntl(styledComponent);
 
 // Inject state
-export default connector(localizedComponent);
+const ConnectedComponent = connector(LocalizedComponent);
+
+const RoutedComponent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <ConnectedComponent navigate={navigate} location={location} />
+  );
+}
+
+export default RoutedComponent;

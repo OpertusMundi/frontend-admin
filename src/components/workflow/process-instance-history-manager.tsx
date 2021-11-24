@@ -2,7 +2,7 @@ import React from 'react';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
 import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
@@ -74,8 +74,10 @@ interface WorkflowManagerState {
   instance: ProcessInstance | null,
 }
 
-interface WorkflowManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
-  intl: IntlShape,
+interface WorkflowManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
+  intl: IntlShape;
+  navigate: NavigateFunction;
+  location: Location;
 }
 
 class ProcessInstanceManager extends React.Component<WorkflowManagerProps, WorkflowManagerState> {
@@ -158,7 +160,7 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
       buildPath(DynamicRoutes.ProcessInstanceHistoryView, null, { processInstance })
       :
       buildPath(DynamicRoutes.ProcessInstanceView, null, { processInstance });
-    this.props.history.push(path);
+    this.props.navigate(path);
   }
 
   setSorting(sorting: Sorting<EnumProcessInstanceHistorySortField>[]): void {
@@ -300,7 +302,18 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 const styledComponent = withStyles(styles)(ProcessInstanceManager);
 
 // Inject i18n resources
-const localizedComponent = injectIntl(styledComponent);
+const LocalizedComponent = injectIntl(styledComponent);
 
 // Inject state
-export default connector(localizedComponent);
+const ConnectedComponent = connector(LocalizedComponent);
+
+const RoutedComponent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <ConnectedComponent navigate={navigate} location={location} />
+  );
+}
+
+export default RoutedComponent;

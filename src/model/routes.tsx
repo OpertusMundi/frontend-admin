@@ -178,7 +178,7 @@ export interface Route {
   defaultTitle?: string;
   links?: string[];
   roles?: ((roles: EnumRole[], state: RootState) => boolean) | EnumRole[];
-  toolbarComponent?: (route?: Route) => React.ReactNode;
+  toolbarComponent?: (route: Route) => React.ReactNode;
   params?: string[];
 }
 
@@ -222,11 +222,11 @@ export const routes: RouteRegistry = {
     title: 'links.analytics',
     defaultTitle: 'Analytics',
     links: [Dashboard],
-    toolbarComponent: (route?: Route): React.ReactNode => {
+    toolbarComponent: (route: Route): React.ReactNode => {
       return (
         <AnalyticsToolbar route={route} />
       );
-    }
+    },
   },
   [Map]: {
     icon: (className?: string) => (<Icon path={mdiMapOutline} size="1.5rem" className={className} />),
@@ -241,7 +241,7 @@ export const routes: RouteRegistry = {
     title: 'links.message-inbox-helpdesk',
     defaultTitle: 'Helpdesk Inbox',
     links: [Dashboard],
-    toolbarComponent: (route?: Route): React.ReactNode => {
+    toolbarComponent: (route: Route): React.ReactNode => {
       return (
         <MessageInboxHelpdeskToolbar route={route} />
       );
@@ -253,7 +253,7 @@ export const routes: RouteRegistry = {
     title: 'links.message-inbox-user',
     defaultTitle: 'User Inbox',
     links: [Dashboard],
-    toolbarComponent: (route?: Route): React.ReactNode => {
+    toolbarComponent: (route: Route): React.ReactNode => {
       return (
         <MessageInboxUserToolbar route={route} />
       );
@@ -315,7 +315,7 @@ export const routes: RouteRegistry = {
     defaultTitle: 'Helpdesk Account Management',
     roles: [EnumRole.ADMIN],
     links: [Dashboard],
-    toolbarComponent: (route?: Route): React.ReactNode => {
+    toolbarComponent: (route: Route): React.ReactNode => {
       return (
         <AccountManagerToolbar route={route} />
       )

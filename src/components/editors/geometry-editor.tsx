@@ -124,7 +124,7 @@ class GeometryEditor extends React.Component<GeometryEditorProps, GeometryEditor
     if (onChange && feature?.getGeometry()) {
       const format = new GeoJSON();
 
-      const geometry = feature.getGeometry();
+      const geometry = feature.getGeometry() as Geometry;
 
       if (geometry) {
         const geojson = format.writeGeometryObject(geometry, {

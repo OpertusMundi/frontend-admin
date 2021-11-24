@@ -5,8 +5,8 @@ import { AxiosError } from 'axios';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
 import { injectIntl, IntlShape } from 'react-intl';
+import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
 
 // Components
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -69,17 +69,14 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-interface RouteParams {
-  businessKey?: string | undefined;
-  processInstance?: string | undefined;
-}
-
 interface ProcessInstanceState {
   initialized: boolean;
 }
 
-interface ProcessInstanceHistoryProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps<RouteParams> {
-  intl: IntlShape,
+interface ProcessInstanceHistoryProps extends PropsFromRedux, WithStyles<typeof styles> {
+  intl: IntlShape;
+  navigate: NavigateFunction;
+  location: Location;
 }
 
 class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps, ProcessInstanceState> {
@@ -262,7 +259,18 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 const styledComponent = withStyles(styles)(ProcessInstanceHistory);
 
 // Inject i18n resources
-const localizedComponent = injectIntl(styledComponent);
+const LocalizedComponent = injectIntl(styledComponent);
 
 // Inject state
-export default connector(localizedComponent);
+const ConnectedComponent = connector(LocalizedComponent);
+
+const RoutedComponent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <ConnectedComponent navigate={navigate} location={location} />
+  );
+}
+
+export default RoutedComponent;

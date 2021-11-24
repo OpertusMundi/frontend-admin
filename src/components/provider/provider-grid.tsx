@@ -2,7 +2,6 @@ import React from 'react';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage, FormattedTime, FormattedNumber, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
@@ -130,7 +129,7 @@ interface ProviderManagerState {
   processing: boolean;
 }
 
-interface ProviderManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
+interface ProviderManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
   intl: IntlShape,
 }
 

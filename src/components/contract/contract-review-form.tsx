@@ -198,7 +198,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
 
       return (<div key={section.id} className={classes.section} style={{ paddingLeft: section.indent }}
               onClick={() => this.scrollToSection(section.id!.toString())}>
-        <FormattedMessage id={section.id! + 1} defaultMessage={sectionTitle} />
+        <FormattedMessage id={`${section.id! + 1}`} defaultMessage={sectionTitle} />
       </div>)
     });
 
@@ -305,7 +305,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
       }
       return (<div>
         <div id={section.id!.toString()}  key={section.id} className={classes.section && classes.columnTitle}>
-          <FormattedMessage id={section.id! + 1} defaultMessage={sectionTitle} />
+          <FormattedMessage id={`${section.id! + 1}`} defaultMessage={sectionTitle} />
         </div>
         <div>
               {body}

@@ -2,8 +2,8 @@ import React from 'react';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
 import { injectIntl, IntlShape } from 'react-intl';
+import { useNavigate, useLocation, useParams, NavigateFunction, Location } from 'react-router-dom';
 
 // Components
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -42,8 +42,11 @@ interface RouteParams {
   key?: string | undefined;
 }
 
-interface CustomerReviewProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps<RouteParams> {
-  intl: IntlShape,
+interface CustomerReviewProps extends PropsFromRedux, WithStyles<typeof styles> {
+  intl: IntlShape;
+  navigate: NavigateFunction;
+  location: Location;
+  params: RouteParams;
 }
 
 class CustomerReview extends React.Component<CustomerReviewProps> {
@@ -57,7 +60,7 @@ class CustomerReview extends React.Component<CustomerReviewProps> {
   }
 
   get key(): string | null {
-    const { key } = this.props.match.params;
+    const { key } = this.props.params;
 
     return key || null;
   }
@@ -111,7 +114,19 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 const styledComponent = withStyles(styles)(CustomerReview);
 
 // Inject i18n resources
-const localizedComponent = injectIntl(styledComponent);
+const LocalizedComponent = injectIntl(styledComponent);
 
 // Inject state
-export default connector(localizedComponent);
+const ConnectedComponent = connector(LocalizedComponent);
+
+const RoutedComponent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const params: RouteParams = useParams();
+
+  return (
+    <ConnectedComponent navigate={navigate} location={location} params={params} />
+  );
+}
+
+export default RoutedComponent;

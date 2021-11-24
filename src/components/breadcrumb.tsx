@@ -4,7 +4,7 @@ import { connect, ConnectedProps } from 'react-redux';
 
 import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { useNavigate, useLocation, NavigateFunction, Location } from "react-router-dom";
 
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -32,11 +32,17 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-interface BreadcrumbProps extends PropsFromRedux, RouteComponentProps, WithStyles<typeof styles> {
+interface BreadcrumbProps extends PropsFromRedux, WithStyles<typeof styles> {
   intl: IntlShape;
 }
 
-class Breadcrumb extends React.Component<BreadcrumbProps> {
+interface InnerBreadcrumbProps extends BreadcrumbProps {
+  intl: IntlShape;
+  navigate: NavigateFunction;
+  location: Location;
+}
+
+class Breadcrumb extends React.Component<InnerBreadcrumbProps> {
 
   private checkRoles(routeRoles: ((roles: EnumRole[], state: RootState) => boolean) | EnumRole[] | null, userRoles: EnumRole[], state: RootState): boolean {
     if (typeof routeRoles === 'function') {
@@ -75,7 +81,7 @@ class Breadcrumb extends React.Component<BreadcrumbProps> {
   render() {
     const { classes, location, profile, state } = this.props;
 
-    const match = matchRoute(this.props.location.pathname);
+    const match = matchRoute(location.pathname);
     const toolbarComponentFunc = match?.properties?.toolbarComponent;
 
     const roles = profile ? profile.roles : [];
@@ -92,7 +98,7 @@ class Breadcrumb extends React.Component<BreadcrumbProps> {
 
     return (
       <>
-        {toolbarComponentFunc && toolbarComponentFunc(match?.properties)}
+        {toolbarComponentFunc && toolbarComponentFunc(match?.properties!)}
         {!toolbarComponentFunc &&
           <Breadcrumbs separator="›" className={classes.breadcrumb}>
             {paths.map((path) => {
@@ -142,10 +148,19 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 const styledComponent = withStyles(styles)(Breadcrumb);
 
 // Inject i18n resources
-const localizedComponent = injectIntl(styledComponent);
-
-// Inject routing
-const routedComponent = withRouter(localizedComponent);
+const LocalizedComponent = injectIntl(styledComponent);
 
 // Inject state
-export default connector(routedComponent);
+const ConnectedComponent = connector(LocalizedComponent);
+
+// Inject routing
+const RoutedComponent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <ConnectedComponent navigate={navigate} location={location} />
+  );
+}
+
+export default RoutedComponent;

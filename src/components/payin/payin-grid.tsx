@@ -2,7 +2,7 @@ import React from 'react';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
 import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
@@ -60,8 +60,10 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
-interface PayInManagerProps extends PropsFromRedux, WithStyles<typeof styles>, RouteComponentProps {
-  intl: IntlShape,
+interface PayInManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
+  intl: IntlShape;
+  navigate: NavigateFunction;
+  location: Location;
 }
 
 class PayInManager extends React.Component<PayInManagerProps> {
@@ -87,7 +89,7 @@ class PayInManager extends React.Component<PayInManagerProps> {
 
   viewPayIn(key: string): void {
     const path = buildPath(DynamicRoutes.PayInView, [key]);
-    this.props.history.push(path);
+    this.props.navigate(path);
   }
 
   createTransfer(key: string): void {
@@ -211,7 +213,18 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 const styledComponent = withStyles(styles)(PayInManager);
 
 // Inject i18n resources
-const localizedComponent = injectIntl(styledComponent);
+const LocalizedComponent = injectIntl(styledComponent);
 
 // Inject state
-export default connector(localizedComponent);
+const ConnectedComponent = connector(LocalizedComponent);
+
+const RoutedComponent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <ConnectedComponent navigate={navigate} location={location} />
+  );
+}
+
+export default RoutedComponent;
