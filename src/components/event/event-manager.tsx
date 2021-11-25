@@ -220,7 +220,7 @@ class EventManager extends React.Component<EventManagerProps, EventManagerState>
                 </Typography>
                 <PerfectScrollbar className={classes.exception} options={{ suppressScrollX: true }}>
                   <Typography variant="caption" gutterBottom className={classes.title}>
-                    {event?.exception}
+                    {event?.exception.replaceAll('|', '\n').replaceAll('#011', '\t')}
                   </Typography>
                 </PerfectScrollbar>
               </>

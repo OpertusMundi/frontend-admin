@@ -9,7 +9,7 @@ export interface EventManagerState {
   loading: boolean;
   lastUpdated: Moment | null;
   pagination: PageRequest;
-  query: EventQuery;
+  query: Partial<EventQuery>;
   result: PageResult<Event> | null;
   selected: Event[];
   sorting: Sorting<EnumEventSortField>[];

@@ -19,7 +19,6 @@ export default class EventApi extends Api {
         if (!query[key]) {
           return result;
         }
-
         return [...result, `${key}=${Array.isArray(query[key]) ? (query[key] as any).join(',') : query[key]}`];
       }, []);
 

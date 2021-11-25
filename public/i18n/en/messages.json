@@ -422,11 +422,26 @@
   },
   "event": {
     "filter": {
+      "applications": "Applications",
       "user": "User",
-      "level": "Level"
+      "levels": "Level"
+    },
+    "application": {
+      "api-gateway": "API Gateway",
+      "admin-gateway": "Admin Gateway",
+      "bpm-engine": "BPM Engine",
+      "bpm-worker": "BPM Worker",
+      "catalogueapi": "Catalogue",
+      "ingest": "Ingest",
+      "keycloak": "Identity Server",
+      "mailer": "Mail Service",
+      "messenger": "Message Service",
+      "pid": "Persistent Identifier Service",
+      "profile": "Profile"
     },
     "header": {
       "actions": "Actions",
+      "application": "Application",
       "client-address": "Remote IP Address",
       "exception": "Exception",
       "message": "Message",

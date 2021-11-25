@@ -28,7 +28,7 @@ import {
 const initialState: EventManagerState = {
   loading: false,
   query: {
-    level: [EnumEventLevel.WARN, EnumEventLevel.ERROR],
+    levels: [EnumEventLevel.WARN, EnumEventLevel.ERROR],
   },
   pagination: {
     page: 0,

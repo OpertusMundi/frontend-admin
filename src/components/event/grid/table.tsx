@@ -15,9 +15,9 @@ import {
   mdiAlertOctagramOutline,
   mdiAlertOutline,
   mdiBugOutline,
+  mdiCogOutline,
   mdiContentCopy,
   mdiInformationOutline,
-  mdiSpiderThread,
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
@@ -61,14 +61,22 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
+function applicationToChip(value: string, classes: WithStyles<typeof styles>, intl: IntlShape): React.ReactElement | undefined {
+  return (
+    <Chip
+      avatar={<Avatar><Icon path={mdiCogOutline} className={classes.classes.chipIcon} /></Avatar>}
+      label={intl.formatMessage({ id: `event.application.${value}` })}
+      variant="outlined"
+      color={'primary'}
+    />
+  );
+}
+
 function levelToChip(value: EnumEventLevel, classes: WithStyles<typeof styles>, intl: IntlShape): React.ReactElement | undefined {
   let path: string;
   let color: 'default' | 'primary' | 'secondary' = 'default';
 
   switch (value) {
-    case EnumEventLevel.TRACE:
-      path = mdiSpiderThread;
-      break;
     case EnumEventLevel.DEBUG:
       path = mdiBugOutline;
       break;
@@ -127,11 +135,20 @@ function eventColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
         rowIndex: number, column: Column<Event, EnumEventSortField>, row: Event, handleAction?: cellActionHandler<Event, EnumEventSortField>
       ): React.ReactNode => levelToChip(row.level, classes, intl)
     }, {
+      header: intl.formatMessage({ id: 'event.header.application' }),
+      id: 'application',
+      width: 250,
+      sortable: true,
+      sortColumn: EnumEventSortField.APPLICATION,
+      cell: (
+        rowIndex: number, column: Column<Event, EnumEventSortField>, row: Event, handleAction?: cellActionHandler<Event, EnumEventSortField>
+      ): React.ReactNode => applicationToChip(row.application, classes, intl)
+    }, {
       header: intl.formatMessage({ id: 'event.header.user-name' }),
       id: 'userName',
       width: 250,
-      sortable: true,
-      sortColumn: EnumEventSortField.USER_NAME,
+      sortable: false,
+      hidden: true,
     }, {
       header: intl.formatMessage({ id: 'event.header.client-address' }),
       id: 'clientAddress',
@@ -140,7 +157,7 @@ function eventColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
       sortColumn: EnumEventSortField.CLIENT_ADDRESS,
     }, {
       header: intl.formatMessage({ id: 'event.header.timestamp' }),
-      id: 'createdOn',
+      id: 'timestamp',
       sortable: true,
       sortColumn: EnumEventSortField.TIMESTAMP,
       width: 160,
@@ -150,7 +167,7 @@ function eventColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
         row: Event,
         handleAction?: cellActionHandler<Event, EnumEventSortField>
       ): React.ReactNode => (
-        <FormattedTime value={row.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
+        <FormattedTime value={row.timestamp.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
     }, {
       header: intl.formatMessage({ id: 'event.header.message' }),
@@ -185,7 +202,7 @@ interface EventTableProps extends WithStyles<typeof styles> {
     pageRequest?: PageRequest, sorting?: Sorting<EnumEventSortField>[]
   ) => Promise<PageResult<Event> | null>,
   viewException: (event: Event | null) => void,
-  query: EventQuery,
+  query: Partial<EventQuery>,
   result: PageResult<Event> | null,
   pagination: PageRequest,
   selected: Event[],
@@ -213,7 +230,7 @@ class EventTable extends React.Component<EventTableProps> {
 
         if (element && document.queryCommandSupported(COPY)) {
           element.focus();
-          element.value = row.exception;
+          element.value = row.exception.replaceAll('|','\n').replaceAll('#011', '\t');
           element.select();
           document.execCommand(COPY);
         }

@@ -19,7 +19,7 @@ import { mdiCommentAlertOutline } from '@mdi/js';
 
 // Model
 import { PageRequest, PageResult, Sorting } from 'model/response';
-import { EnumEventSortField, EnumEventLevel, Event, EventQuery } from 'model/event';
+import { EnumEventSortField, EnumEventLevel, Event, EventQuery, ApplicationDeploymentNames } from 'model/event';
 
 // Services
 import message from 'service/message';
@@ -46,7 +46,7 @@ const styles = (theme: Theme) => createStyles({
 
 interface EventFiltersProps extends WithStyles<typeof styles> {
   intl: IntlShape,
-  query: EventQuery,
+  query: Partial<EventQuery>,
   setFilter: (query: Partial<EventQuery>) => void,
   resetFilter: () => void,
   find: (
@@ -65,13 +65,18 @@ class EventFilters extends React.Component<EventFiltersProps> {
     this.clear = this.clear.bind(this);
     this.search = this.search.bind(this);
 
+    this.applicationOptions = [];
     this.levelOptions = [];
 
+    ApplicationDeploymentNames.forEach((value: string) => {
+      this.applicationOptions.push({ value, label: _t({ id: `event.application.${value}` }) });
+    });
     for (const value in EnumEventLevel) {
       this.levelOptions.push({ value: value as EnumEventLevel, label: _t({ id: `event.level.${value}` }) });
     }
   }
 
+  applicationOptions: { value: string, label: string }[];
   levelOptions: { value: EnumEventLevel, label: string }[];
 
   find(): void {
@@ -100,36 +105,55 @@ class EventFilters extends React.Component<EventFiltersProps> {
     return (
       <form onSubmit={this.search} noValidate autoComplete="off">
         <Grid container spacing={3} justifyContent={'space-between'} alignItems={'flex-end'}>
-          <Grid item md={3} xs={12}>
+          {/* <Grid item md={3} xs={12}>
             <TextField
               label={_t({ id: 'event.filter.user' })}
-              value={query.userName}
+              value={query.userNames}
               fullWidth
               onChange={
-                (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => setFilter({ userName: event.target.value })
+                (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => setFilter({ userNames: [event.target.value] })
               }
             />
-          </Grid>
-          <Grid item sm={5} xs={12}>
+          </Grid> */}
+          <Grid item sm={6} xs={12}>
             <Autocomplete
               multiple
-              options={this.levelOptions}
+              options={this.applicationOptions}
               getOptionLabel={(option) => option.label}
-              value={this.levelOptions.filter(o => query.level.includes(o.value)) || null}
+              value={this.applicationOptions.filter(o => query.applications ? query.applications.includes(o.value) : null) || null}
               onChange={(event, value) => {
-                setFilter({ level: value.map(v => v.value) });
+                setFilter({ applications: value.map(v => v.value) });
                 this.search();
               }}
               renderInput={(params) => (
                 <TextField
                   {...params}
                   variant="standard"
-                  label={_t({ id: 'event.filter.level' })}
+                  label={_t({ id: 'event.filter.applications' })}
                 />
               )}
             />
           </Grid>
-          <Grid container item md={4} xs={12} justifyContent={'flex-end'}>
+          <Grid item sm={3} xs={12}>
+            <Autocomplete
+              multiple
+              options={this.levelOptions}
+              getOptionLabel={(option) => option.label}
+              value={this.levelOptions.filter(o => query.levels ? query.levels.includes(o.value) : null) || null}
+              onChange={(event, value) => {
+                setFilter({ levels: value.map(v => v.value) });
+                this.search();
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="standard"
+                  label={_t({ id: 'event.filter.levels' })}
+                />
+              )}
+            />
+          </Grid>
+          <Grid container item md={3} xs={12} justifyContent={'flex-end'}>
             <Button
               type="submit"
               variant="contained"
