@@ -1,4 +1,5 @@
 import { Moment } from 'moment';
+import { Order } from './response';
 
 export enum EnumEventLevel {
   DEBUG = 'DEBUG',
@@ -30,12 +31,15 @@ export const ApplicationDeploymentNames = [
 export interface EventQuery {
   applications: string[];
   clientAddresses: string[];
-  fromDate: Date;
+  fromDate: Moment | string | null;
   levels: EnumEventLevel[];
-  toDate: Date;
   loggers: string[];
+  order: Order;
+  orderBy: EnumEventSortField;
+  page: number;
+  size: number;
+  toDate: Moment | string | null;
   userNames: string[];
-  clientAddress?: string;
 }
 
 export interface Event {

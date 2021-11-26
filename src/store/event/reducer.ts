@@ -28,7 +28,10 @@ import {
 const initialState: EventManagerState = {
   loading: false,
   query: {
+    applications: [],
+    fromDate: moment().subtract(7, "days"),
     levels: [EnumEventLevel.WARN, EnumEventLevel.ERROR],
+    userNames: [],
   },
   pagination: {
     page: 0,

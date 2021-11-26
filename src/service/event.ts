@@ -1,3 +1,5 @@
+import { Moment } from 'moment';
+
 import { AxiosRequestConfig } from 'axios';
 
 import { Api } from 'utils/api';
@@ -14,17 +16,19 @@ export default class EventApi extends Api {
     const { page, size } = pageRequest;
     const { id: field, order } = sorting[0];
 
-    const queryString = (Object.keys(query) as Array<keyof EventQuery>)
-      .reduce((result: string[], key: keyof EventQuery) => {
-        if (!query[key]) {
-          return result;
-        }
-        return [...result, `${key}=${Array.isArray(query[key]) ? (query[key] as any).join(',') : query[key]}`];
-      }, []);
+    const payload: Partial<EventQuery> = {
+      ...query,
+      fromDate: query.fromDate ? (query.fromDate as Moment).format('YYYY-MM-DD') : '',
+      toDate: query.toDate ? (query.toDate as Moment).format('YYYY-MM-DD') : '',
+      page,
+      size,
+      orderBy: field,
+      order,
+    };
 
-    const url = `/action/events?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
+    const url = '/action/events';
 
-    return this.get<ObjectResponse<PageResult<Event>>>(url);
+    return this.post<Partial<EventQuery>, ObjectResponse<PageResult<Event>>>(url, payload);
   }
 
 }

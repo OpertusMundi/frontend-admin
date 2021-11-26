@@ -148,7 +148,6 @@ function eventColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
       id: 'userName',
       width: 250,
       sortable: false,
-      hidden: true,
     }, {
       header: intl.formatMessage({ id: 'event.header.client-address' }),
       id: 'clientAddress',
@@ -160,7 +159,7 @@ function eventColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
       id: 'timestamp',
       sortable: true,
       sortColumn: EnumEventSortField.TIMESTAMP,
-      width: 160,
+      width: 180,
       cell: (
         rowIndex: number,
         column: Column<Event, EnumEventSortField>,

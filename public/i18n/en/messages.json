@@ -423,8 +423,9 @@
   "event": {
     "filter": {
       "applications": "Applications",
-      "user": "User",
-      "levels": "Level"
+      "client-address": "Client Address",
+      "levels": "Level",
+      "user": "User"
     },
     "application": {
       "api-gateway": "API Gateway",
