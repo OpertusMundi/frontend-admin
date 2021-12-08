@@ -87,6 +87,7 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
 
     this.confirmDraftDelete = this.confirmDraftDelete.bind(this);
     this.createDraftFromTemplate = this.createDraftFromTemplate.bind(this);
+    this.createClonedDraftFromTemplate = this.createClonedDraftFromTemplate.bind(this);
     this.deactivateTemplate = this.deactivateTemplate.bind(this);
     this.editDraft = this.editDraft.bind(this);
     this.publishDraft = this.publishDraft.bind(this);
@@ -136,6 +137,23 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
 
   createDraftFromTemplate(contract: MasterContractHistory): void {
     this.api.createDraftFromTemplate(contract.id)
+      .then((response) => {
+        if (response.data.success) {
+          const url = buildPath(DynamicRoutes.ContractUpdate, [response.data.result!.id.toString()]);
+          this.props.navigate(url);
+        } else {
+          const messages = localizeErrorCodes(this.props.intl, response.data, true);
+          message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+        }
+      })
+      .catch((err: AxiosError<SimpleResponse>) => {
+        const messages = localizeErrorCodes(this.props.intl, err.response?.data, true);
+        message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+      });
+  }
+
+  createClonedDraftFromTemplate(contract: MasterContractHistory): void {
+    this.api.createClonedDraftFromTemplate(contract.id)
       .then((response) => {
         if (response.data.success) {
           const url = buildPath(DynamicRoutes.ContractUpdate, [response.data.result!.id.toString()]);
@@ -274,6 +292,7 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
               editDraft={this.editDraft}
               find={find}
               publishDraft={this.publishDraft}
+              createClonedDraftFromTemplate={this.createClonedDraftFromTemplate}
               setPager={setPager}
               setSorting={(sorting: Sorting<EnumMasterContractSortField>[]) => this.setSorting(sorting)}
               removeFromSelection={removeFromSelection}

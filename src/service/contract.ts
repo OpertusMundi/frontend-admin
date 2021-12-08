@@ -78,6 +78,12 @@ export default class ContractApi extends Api {
     return this.post<unknown, ObjectResponse<MasterContract>>(url, null);
   }
 
+  public async createClonedDraftFromTemplate(id: number): Promise<AxiosObjectResponse<MasterContract>> {
+    const url = `/action/contract/history/clone/${id}`;
+
+    return this.post<unknown, ObjectResponse<MasterContract>>(url, null);
+  }
+
   public async deactivateTemplate(id: number): Promise<AxiosSimpleResponse> {
     const url = `/action/contract/history/${id}`;
 

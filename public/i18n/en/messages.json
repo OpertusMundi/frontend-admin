@@ -234,7 +234,8 @@
       "create-version": "Create new version",
       "delete": "Delete",
       "deactivate": "Deactivate",
-      "publish": "Publish draft"
+      "publish": "Publish draft",
+      "clone": "Clone as draft"
     }
   },
   "draft": {
