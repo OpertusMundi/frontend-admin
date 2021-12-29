@@ -53,9 +53,10 @@ interface InputProps {
   min?: number;
 }
 
-interface NumberFormikProps extends FieldProps, Omit<NumberFormatProps, 'name' | 'value' | 'error'> {
+interface NumberFormikProps extends FieldProps, Omit<NumberFormatProps<unknown>, 'name' | 'value' | 'error'> {
   inputProps: InputProps;
   onChange?: (value: string) => void;
+  readOnly?: boolean;
 }
 
 class NumberFormik extends React.Component<NumberFormikProps> {
