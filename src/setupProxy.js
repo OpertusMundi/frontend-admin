@@ -23,13 +23,13 @@ module.exports = function (app) {
   );
 
   app.use(
-    '^\/login|\/logged-in|\/logout|\/logged-out$',
+    '^\/login|\/logged-in|\/logout|\/logged-out|\/oauth2/authorization/dev$',
     createProxyMiddleware({
       target: process.env.REACT_APP_ROXY_SERVER,
       changeOrigin: true,
       cookieDomainRewrite: '',
       /*
-       * Rewrites the location host/ port on (301 / 302 / 307 / 308) redirects based on requested host/ port.Default: false. 
+       * Rewrites the location host/ port on (301 / 302 / 307 / 308) redirects based on requested host/ port.Default: false.
        * Required for authentication logged-in redirect.
        */
       autoRewrite: true,
