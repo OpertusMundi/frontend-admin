@@ -3,7 +3,7 @@ import { ThunkAction } from 'redux-thunk'
 // Redux
 import { RootState } from 'store';
 import { AccountActions } from './types';
-import { searchInit, searchComplete, searchFailure, setSorting, setPager, loadAccountInit, loadAccountSuccess, loadAccountFailure, reviewAccountInit, reviewAccountSuccess, reviewAccountFailure } from './actions';
+import { searchInit, searchComplete, searchFailure, setSorting, setPager, loadAccountInit, loadAccountSuccess, loadAccountFailure, } from './actions';
 
 // Services
 import MarketplaceAccountApi from 'service/account-marketplace';
@@ -70,25 +70,5 @@ export const findOne = (key: string): ThunkResult<MarketplaceAccountDetails | nu
   }
 
   dispatch(loadAccountFailure());
-  return null;
-}
-
-export const review = (
-  key: string, acceptChanges: boolean, rejectReason?: string
-): ThunkResult<MarketplaceAccountDetails | null> => async (dispatch, getState) => {
-  dispatch(reviewAccountInit(key, acceptChanges, rejectReason));
-
-  // Get response
-  const api = new MarketplaceAccountApi();
-
-  const response = await api.review(key, acceptChanges, rejectReason);
-
-  // Update state
-  if (response.data.success) {
-    dispatch(reviewAccountSuccess(response.data.result!));
-    return response.data.result!;
-  }
-
-  dispatch(reviewAccountFailure());
   return null;
 }
