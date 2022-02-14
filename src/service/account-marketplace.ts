@@ -4,10 +4,10 @@ import { Api } from 'utils/api';
 import { ObjectResponse, PageRequest, Sorting, AxiosObjectResponse, AxiosPageResponse, PageResult } from 'model/response';
 import {
   EnumMarketplaceAccountSortField,
+  ExternalProviderCommand,
   MarketplaceAccount,
   MarketplaceAccountDetails,
   MarketplaceAccountQuery,
-  MarketplaceAccountReviewCommand,
 } from 'model/account-marketplace';
 
 enum EnumAccountType {
@@ -75,23 +75,18 @@ export default class MarketplaceAccountApi extends Api {
     return this.get<ObjectResponse<MarketplaceAccountDetails>>(url);
   }
 
-  public async review(
-    key: string, acceptChanges: boolean, rejectReason?: string
-  ): Promise<AxiosObjectResponse<MarketplaceAccountDetails>> {
-    const url = `/action/marketplace/accounts/${key}/review`;
-
-    const command: MarketplaceAccountReviewCommand = {
-      acceptChanges,
-      rejectReason,
-    };
-
-    return this.put<MarketplaceAccountReviewCommand, ObjectResponse<MarketplaceAccountDetails>>(url, command);
-  }
-
   public async refreshWallets(key: string): Promise<AxiosObjectResponse<MarketplaceAccountDetails>> {
     const url = `/action/billing/wallets/${key}`;
 
     return this.put<unknown, ObjectResponse<MarketplaceAccountDetails>>(url, null);
+  }
+
+  public async setExternalProvider(
+    key: string, command: ExternalProviderCommand,
+  ): Promise<AxiosObjectResponse<MarketplaceAccountDetails>> {
+    const url = `/action/marketplace/accounts/${key}/external-provider`;
+
+    return this.post<ExternalProviderCommand, ObjectResponse<MarketplaceAccountDetails>>(url, command);
   }
 
 }

@@ -1,5 +1,6 @@
 import { Moment } from 'moment';
 import { EnumTopicCategory } from './catalogue';
+import { EnumDataProvider } from './configuration';
 import { EnumAuthProvider } from './enum';
 import { EnumMarketplaceRole as EnumRole } from './role';
 
@@ -60,14 +61,6 @@ interface AddressBase {
 }
 
 /**
- * Address command
- */
-// eslint-disable-next-line
-export interface AddressCommand extends AddressBase {
-
-}
-
-/**
  * Address
  */
 // eslint-disable-next-line
@@ -82,13 +75,6 @@ export interface BankAccountBase {
   ownerName: string;
   iban: string;
   bic: string;
-}
-
-/**
- * Bank account command
- */
-export interface BankAccountCommand extends BankAccountBase {
-  ownerAddress: AddressCommand;
 }
 
 /**
@@ -124,93 +110,10 @@ export interface CustomerRepresentativeBase {
 }
 
 /**
- * Professional customer legal representative command
- */
-export interface CustomerRepresentativeCommand extends CustomerRepresentativeBase {
-  address: AddressCommand;
-}
-
-/**
  * Professional customer legal representative
  */
 export interface CustomerRepresentative extends CustomerRepresentativeBase {
   address: Address;
-}
-
-/**
- * Customer (Consumer/Provider) command base interface
- */
-interface CustomerCommand {
-  email: string;
-  /**
-   * Customer type
-   */
-  type: EnumMangopayUserType;
-}
-
-/**
- * Individual consumer customer command
- *
- * Property type value expected to be INDIVIDUAL
- */
-export interface ConsumerIndividualCommand extends CustomerCommand {
-  address: AddressCommand,
-  /**
-   * The customer's birth date with YYYY-MM-DD format
-   */
-  birthdate: string;
-  /**
-   * The customer country of residence. ISO 3166-1 alpha-2 format is expected
-   *
-   * https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-   */
-  countryOfResidence: string;
-  firstName: string;
-  lastName: string;
-  /**
-   * The customer nationality. ISO 3166-1 alpha-2 format is expected
-   *
-   * https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-   */
-  nationality: string;
-  occupation: string;
-}
-
-/**
- * Professional consumer customer command
- *
- * Property type value expected to be PROFESSIONAL
- */
-export interface ConsumerProfessionalCommand extends CustomerCommand {
-  additionalInfo: string;
-  /**
-   * VAT number
-   */
-  companyNumber: string;
-  companyType: string;
-  headquartersAddress: AddressCommand;
-  legalPersonType: EnumLegalPersonType;
-  representative: CustomerRepresentativeCommand;
-  /**
-   * Base64 encoded company logo image
-   */
-  logoImage: string;
-  /**
-   * Company logo image mime type (used with image property to create a data URL)
-   */
-  logoImageMimeType: string;
-  name: string;
-  phone: string;
-  siteUrl: string;
-}
-
-/**
- * Professional provider customer command
- *
- * Property type value expected to be PROFESSIONAL
- */
-export interface ProviderProfessionalCommand extends ConsumerProfessionalCommand {
-  bankAccount: BankAccountCommand;
 }
 
 /**
@@ -387,24 +290,6 @@ interface ProfileBase {
 }
 
 /**
- * Profile update command
- */
-export interface MarketplaceAccountProfileCommand extends ProfileBase {
-  /**
-   * First name
-   */
-  firstName: string;
-  /**
-   * Last name
-   */
-  lastName: string;
-  /**
-   * User mobile
-   */
-  mobile: string;
-}
-
-/**
  * Profile
  */
 export interface Profile extends ProfileBase {
@@ -436,28 +321,6 @@ export interface Profile extends ProfileBase {
    * Provider related data
    */
   provider: ProviderData;
-}
-
-/**
- * Account command
- */
-export interface MarketplaceAccountCommandDto {
-  /**
-   * User email. Must be unique
-   */
-  email: string;
-  /**
-   * Account password
-   */
-  password: string;
-  /**
-   * Account profile
-   */
-  profile: MarketplaceAccountProfileCommand;
-  /**
-   * Account password verification. Must match property password
-   */
-  verifyPassword: string;
 }
 
 /**
@@ -508,7 +371,7 @@ export interface MarketplaceAccountDetails {
   /**
    * Date of registration in ISO format
    */
-  registeredAt: string;
+  registeredAt: Moment;
   /**
    * User roles. Every authenticated user has at least role ROLE_USER
    */
@@ -559,11 +422,6 @@ export interface MarketplaceAccount {
   userName: string;
 }
 
-export interface MarketplaceAccountReviewCommand {
-  acceptChanges: boolean;
-  rejectReason?: string;
-}
-
 export enum EnumAssetPurchaseSource {
   PURCHASE = 'PURCHASE',
   UPDATE = 'UPDATE',
@@ -598,4 +456,8 @@ export interface MarketplaceAccountSubscription {
    * Subscription seller
    */
   provider?: Customer;
+}
+
+export interface ExternalProviderCommand {
+  provider: EnumDataProvider;
 }

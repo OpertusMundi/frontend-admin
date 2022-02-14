@@ -3,14 +3,30 @@ import { ThunkAction } from 'redux-thunk'
 // Redux
 import { RootState } from 'store';
 import { AccountActions } from './types';
-import { searchInit, searchComplete, searchFailure, setSorting, setPager, loadAccountInit, loadAccountSuccess, loadAccountFailure, reviewAccountInit, reviewAccountSuccess, reviewAccountFailure } from './actions';
+import {
+  searchInit,
+  searchComplete,
+  searchFailure,
+  setSorting,
+  setPager,
+  loadAccountInit,
+  loadAccountSuccess,
+  loadAccountFailure,
+  setExternalProviderInit,
+  setExternalProviderComplete,
+} from './actions';
 
 // Services
 import MarketplaceAccountApi from 'service/account-marketplace';
 
 // Model
-import { PageRequest, Sorting, PageResult } from 'model/response';
-import { EnumMarketplaceAccountSortField, MarketplaceAccount, MarketplaceAccountDetails } from 'model/account-marketplace';
+import { PageRequest, Sorting, PageResult, ObjectResponse } from 'model/response';
+import {
+  EnumMarketplaceAccountSortField,
+  ExternalProviderCommand,
+  MarketplaceAccount,
+  MarketplaceAccountDetails,
+} from 'model/account-marketplace';
 
 // Helper thunk result type
 type ThunkResult<R> = ThunkAction<Promise<R>, RootState, unknown, AccountActions>;
@@ -55,7 +71,7 @@ export const find = (
   return null;
 }
 
-export const findOne = (key: string): ThunkResult<MarketplaceAccountDetails | null> => async (dispatch, getState) => {
+export const findOne = (key: string): ThunkResult<ObjectResponse<MarketplaceAccountDetails>> => async (dispatch, getState) => {
   dispatch(loadAccountInit(key));
 
   // Get response
@@ -66,29 +82,24 @@ export const findOne = (key: string): ThunkResult<MarketplaceAccountDetails | nu
   // Update state
   if (response.data.success) {
     dispatch(loadAccountSuccess(response.data.result!));
-    return response.data.result!;
+  } else {
+    dispatch(loadAccountFailure());
   }
-
-  dispatch(loadAccountFailure());
-  return null;
+  return response.data;
 }
 
-export const review = (
-  key: string, acceptChanges: boolean, rejectReason?: string
-): ThunkResult<MarketplaceAccountDetails | null> => async (dispatch, getState) => {
-  dispatch(reviewAccountInit(key, acceptChanges, rejectReason));
+export const setExternalProvider = (
+  key: string, command: ExternalProviderCommand
+): ThunkResult<ObjectResponse<MarketplaceAccountDetails>> => async (dispatch, getState) => {
+  dispatch(setExternalProviderInit());
 
   // Get response
   const api = new MarketplaceAccountApi();
 
-  const response = await api.review(key, acceptChanges, rejectReason);
+  const response = await api.setExternalProvider(key, command);
 
   // Update state
-  if (response.data.success) {
-    dispatch(reviewAccountSuccess(response.data.result!));
-    return response.data.result!;
-  }
+  dispatch(setExternalProviderComplete(response.data));
 
-  dispatch(reviewAccountFailure());
-  return null;
+  return response.data;
 }

@@ -1,4 +1,4 @@
-import { PageResult, Sorting } from 'model/response';
+import { ObjectResponse, PageResult, Sorting } from 'model/response';
 import {
   EnumMarketplaceAccountSortField,
   MarketplaceAccount,
@@ -22,9 +22,8 @@ import {
   LOAD_ACCOUNT_INIT,
   LOAD_ACCOUNT_FAILURE,
   LOAD_ACCOUNT_SUCCESS,
-  REVIEW_ACCOUNT_INIT,
-  REVIEW_ACCOUNT_FAILURE,
-  REVIEW_ACCOUNT_SUCCESS,
+  SET_EXTERNAL_PROVIDER_INIT,
+  SET_EXTERNAL_PROVIDER_COMPLETE,
 } from './types';
 
 
@@ -122,23 +121,15 @@ export function loadAccountSuccess(account: MarketplaceAccountDetails): AccountA
   };
 }
 
-export function reviewAccountInit(key: string, acceptChanges: boolean, rejectReason?: string): AccountActions {
+export function setExternalProviderInit(): AccountActions {
   return {
-    type: REVIEW_ACCOUNT_INIT,
-    acceptChanges,
-    rejectReason,
+    type: SET_EXTERNAL_PROVIDER_INIT,
   };
 }
 
-export function reviewAccountFailure(): AccountActions {
+export function setExternalProviderComplete(response: ObjectResponse<MarketplaceAccountDetails>): AccountActions {
   return {
-    type: REVIEW_ACCOUNT_FAILURE,
-  };
-}
-
-export function reviewAccountSuccess(account: MarketplaceAccountDetails): AccountActions {
-  return {
-    type: REVIEW_ACCOUNT_SUCCESS,
-    account,
+    type: SET_EXTERNAL_PROVIDER_COMPLETE,
+    response,
   };
 }

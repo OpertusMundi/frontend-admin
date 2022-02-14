@@ -30,6 +30,7 @@ import { PageRequest, PageResult, Sorting } from 'model/response';
 
 // Utilities
 import clsx from 'clsx';
+import { ApplicationConfiguration } from 'model/configuration';
 
 enum EnumAction {
   ViewAssets = 'toggle-favorite',
@@ -40,7 +41,9 @@ enum EnumAction {
   VendorDetails = 'vendor-details',
 };
 
-function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<MarketplaceAccount, EnumMarketplaceAccountSortField>[] {
+function accountColumns(props: AccountTableProps): Column<MarketplaceAccount, EnumMarketplaceAccountSortField>[] {
+  const { intl, classes, config } = props;
+
   return (
     [{
       header: intl.formatMessage({ id: 'account.marketplace.header.actions' }),
@@ -56,7 +59,7 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
                 <i
                   onClick={() => handleAction ? handleAction(EnumAction.VendorDetails, rowIndex, column, row) : null}
                 >
-                  <Icon path={mdiDomain} className={classes.classes.rowIconAction} />
+                  <Icon path={mdiDomain} className={classes.rowIconAction} />
                 </i>
               </Tooltip>
             </div>
@@ -67,35 +70,35 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
                 <i
                   onClick={() => handleAction ? handleAction(EnumAction.ViewDetails, rowIndex, column, row) : null}
                 >
-                  <Icon path={mdiLink} className={classes.classes.rowIconAction} />
+                  <Icon path={mdiLink} className={classes.rowIconAction} />
                 </i>
               </Tooltip>
               <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.send-message' })}>
                 <i
                   onClick={() => handleAction ? handleAction(EnumAction.SendMessage, rowIndex, column, row) : null}
                 >
-                  <Icon path={mdiMessageTextOutline} className={classes.classes.rowIconAction} style={{ marginTop: 2 }} />
+                  <Icon path={mdiMessageTextOutline} className={classes.rowIconAction} style={{ marginTop: 2 }} />
                 </i>
               </Tooltip>
               <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-assets' })}>
                 <i
                   onClick={() => handleAction ? handleAction(EnumAction.ViewAssets, rowIndex, column, row) : null}
                 >
-                  <Icon path={mdiFolderOpenOutline} className={classes.classes.rowIconAction} />
+                  <Icon path={mdiFolderOpenOutline} className={classes.rowIconAction} />
                 </i>
               </Tooltip>
               <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-orders' })}>
                 <i
                   onClick={() => handleAction ? handleAction(EnumAction.ViewOrders, rowIndex, column, row) : null}
                 >
-                  <Icon path={mdiPackageVariantClosed} className={classes.classes.rowIconAction} />
+                  <Icon path={mdiPackageVariantClosed} className={classes.rowIconAction} />
                 </i>
               </Tooltip>
               <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-finance' })}>
                 <i
                   onClick={() => handleAction ? handleAction(EnumAction.ViewFinance, rowIndex, column, row) : null}
                 >
-                  <Icon path={mdiFinance} className={classes.classes.rowIconAction} />
+                  <Icon path={mdiFinance} className={classes.rowIconAction} />
                 </i>
               </Tooltip>
             </div>
@@ -112,7 +115,7 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
         if (row?.image && row?.imageMimeType) {
           const url = `data:${row.imageMimeType};base64,${row.image}`;
           return (
-            <Avatar alt={row.email} src={url || undefined} variant="circular" className={classes.classes.avatar} />
+            <Avatar alt={row.email} src={url || undefined} variant="circular" className={classes.avatar} />
           );
         }
         return null;
@@ -126,12 +129,12 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
       cell: (
         rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
       ): React.ReactNode => (
-        <div className={classes.classes.compositeLabel}>
-          <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [row.key + ''])} className={classes.classes.link}>
+        <div className={classes.compositeLabel}>
+          <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [row.key + ''])} className={classes.link}>
             {row.email}
           </Link>
           {!row.emailVerified &&
-            <Icon path={mdiEmailAlertOutline} className={clsx(classes.classes.rowIcon, classes.classes.marginLeft)} />
+            <Icon path={mdiEmailAlertOutline} className={clsx(classes.rowIcon, classes.marginLeft)} />
           }
         </div>
       ),
@@ -143,24 +146,24 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
         rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
       ): React.ReactNode => {
         return (
-          <div className={classes.classes.compositeLabel}>
-            <div className={classes.classes.marginRight}>{row.consumerName}</div>
+          <div className={classes.compositeLabel}>
+            <div className={classes.marginRight}>{row.consumerName}</div>
             {row.consumer &&
               <div
-                className={row.consumerKycLevel === EnumKycLevel.LIGHT ? classes.classes.statusLabelWarning : classes.classes.statusLabel}
+                className={row.consumerKycLevel === EnumKycLevel.LIGHT ? classes.statusLabelWarning : classes.statusLabel}
               >
-                <div className={classes.classes.statusLabelText}>{row.consumerKycLevel}</div>
+                <div className={classes.statusLabelTextWithMargin}>{row.consumerKycLevel}</div>
                 {row.consumerUpdatePending &&
-                  <Icon path={mdiCogSyncOutline} className={classes.classes.rowIcon} />
+                  <Icon path={mdiCogSyncOutline} className={classes.rowIcon} />
                 }
               </div>
             }
             {!row.consumer && row.consumerUpdatePending &&
               <div
-                className={classes.classes.statusLabelWarning}
+                className={classes.statusLabelWarning}
               >
-                <div className={classes.classes.statusLabelText}>{EnumKycLevel.LIGHT}</div>
-                <Icon path={mdiCogSyncOutline} className={classes.classes.rowIcon} />
+                <div className={classes.statusLabelTextWithMargin}>{EnumKycLevel.LIGHT}</div>
+                <Icon path={mdiCogSyncOutline} className={classes.rowIcon} />
               </div>
             }
           </div>
@@ -174,27 +177,46 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
         rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
       ): React.ReactNode => {
         return (
-          <div className={classes.classes.compositeLabel}>
-            <div className={classes.classes.marginRight}>{row.providerName}</div>
+          <div className={classes.compositeLabel}>
+            <div className={classes.marginRight}>{row.providerName}</div>
             {row.provider &&
               <div
-                className={row.providerKycLevel === EnumKycLevel.LIGHT ? classes.classes.statusLabelWarning : classes.classes.statusLabel}
+                className={row.providerKycLevel === EnumKycLevel.LIGHT ? classes.statusLabelWarning : classes.statusLabel}
               >
-                <div className={classes.classes.statusLabelText}>{row.providerKycLevel}</div>
+                <div className={classes.statusLabelTextWithMargin}>{row.providerKycLevel}</div>
                 {row.providerUpdatePending &&
-                  <Icon path={mdiCogSyncOutline} className={classes.classes.rowIcon} />
+                  <Icon path={mdiCogSyncOutline} className={classes.rowIcon} />
                 }
               </div>
             }
             {!row.provider && row.providerUpdatePending &&
               <div
-                className={classes.classes.statusLabelWarning}
+                className={classes.statusLabelWarning}
               >
-                <div className={classes.classes.statusLabelText}>{EnumKycLevel.LIGHT}</div>
-                <Icon path={mdiCogSyncOutline} className={classes.classes.rowIcon} />
+                <div className={classes.statusLabelTextWithMargin}>{EnumKycLevel.LIGHT}</div>
+                <Icon path={mdiCogSyncOutline} className={classes.rowIcon} />
               </div>
             }
           </div>
+        )
+      },
+    }, {
+      header: intl.formatMessage({ id: 'account.marketplace.header.external-provider' }),
+      id: 'external-provider',
+      sortable: false,
+      cell: (
+        rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
+      ): React.ReactNode => {
+        const providers = config.externalProviders.filter(p => row.roles.some(r => r === p.requiredRole));
+        if (providers.length !== 1) {
+          return null;
+        }
+        return (
+          <div className={classes.compositeLabel} >
+            <div className={classes.statusLabel}>
+              <div className={classes.statusLabelText}>{providers[0].name}</div>
+            </div>
+          </div >
         )
       },
     }, {
@@ -262,6 +284,8 @@ const styles = (theme: Theme) => createStyles({
     borderRadius: theme.spacing(0.5),
   },
   statusLabelText: {
+  },
+  statusLabelTextWithMargin: {
     marginRight: theme.spacing(1),
   },
   marginLeft: {
@@ -276,21 +300,23 @@ const styles = (theme: Theme) => createStyles({
 });
 
 interface AccountTableProps extends WithStyles<typeof styles> {
+  config: ApplicationConfiguration,
   intl: IntlShape,
+  loading?: boolean;
+  pagination: PageRequest,
+  query: MarketplaceAccountQuery,
+  result: PageResult<MarketplaceAccount> | null,
+  selected: MarketplaceAccount[],
+  sorting: Sorting<EnumMarketplaceAccountSortField>[];
+  addToSelection: (rows: MarketplaceAccount[]) => void,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumMarketplaceAccountSortField>[]
   ) => Promise<PageResult<MarketplaceAccount> | null>,
-  query: MarketplaceAccountQuery,
-  result: PageResult<MarketplaceAccount> | null,
-  pagination: PageRequest,
-  selected: MarketplaceAccount[],
-  setPager: (page: number, size: number) => void,
-  setSorting: (sorting: Sorting<EnumMarketplaceAccountSortField>[]) => void,
-  addToSelection: (rows: MarketplaceAccount[]) => void,
   removeFromSelection: (rows: MarketplaceAccount[]) => void,
   resetSelection: () => void;
-  sorting: Sorting<EnumMarketplaceAccountSortField>[];
-  loading?: boolean;
+  setPager: (page: number, size: number) => void,
+  setSorting: (sorting: Sorting<EnumMarketplaceAccountSortField>[]) => void,
+  view: (key: string) => void;
 }
 
 class AccountTable extends React.Component<AccountTableProps> {
@@ -304,6 +330,10 @@ class AccountTable extends React.Component<AccountTableProps> {
   handleAction(action: string, index: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount): void {
     if (row.key) {
       switch (action) {
+        case EnumAction.ViewDetails:
+          this.props.view(row.key);
+          break;
+
         default:
           // No action
           break;
@@ -312,12 +342,12 @@ class AccountTable extends React.Component<AccountTableProps> {
   }
 
   render() {
-    const { intl, classes, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
+    const { intl, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
 
     return (
       <MaterialTable<MarketplaceAccount, EnumMarketplaceAccountSortField>
         intl={intl}
-        columns={accountColumns(intl, { classes })}
+        columns={accountColumns(this.props)}
         rows={result ? result.items : []}
         pagination={{
           rowsPerPageOptions: [10, 20, 50],
