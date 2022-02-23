@@ -10,7 +10,7 @@ import { Theme, withStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import Icon from '@mdi/react';
-import { mdiPencilOutline, mdiSourceBranchCheck, mdiSourceBranchMinus, mdiSourceBranchPlus, mdiTrashCanOutline, mdiContentCopy } from '@mdi/js';
+import { mdiPencilOutline, mdiSourceBranchCheck, mdiSourceBranchMinus, mdiSourceBranchPlus, mdiTrashCanOutline, mdiContentCopy, mdiDownload } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
@@ -29,7 +29,8 @@ enum EnumAction {
   Delete = 'delete',
   Edit = 'edit',
   Publish = 'publish',
-  Clone = 'clone'
+  Clone = 'clone',
+  Download = 'download'
 };
 
 const styles = (theme: Theme) => createStyles({
@@ -152,6 +153,15 @@ function contractColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
               </i>
             </Tooltip>
           }
+          {row.status === EnumContractStatus.ACTIVE &&
+            <Tooltip title={intl.formatMessage({ id: 'contract.tooltip.download' })}>
+              <i
+                onClick={() => handleAction ? handleAction(EnumAction.Download, rowIndex, column, row) : null}
+              >
+                <Icon path={mdiDownload} className={classes.classes.rowIcon} />
+              </i>
+            </Tooltip>
+          }
         </div>
       ),
     }, {
@@ -231,6 +241,7 @@ interface ContractTableProps extends WithStyles<typeof styles> {
   addToSelection: (rows: MasterContractHistory[]) => void;
   createDraftFromTemplate: (contract: MasterContractHistory) => void;
   createClonedDraftFromTemplate: (contract: MasterContractHistory) => void;
+  downloadPublishedTemplate: (contract: MasterContractHistory) => void;
   deactivateTemplate: (contract: MasterContractHistory) => void;
   deleteDraft: (contract: MasterContractHistory) => void;
   editDraft: (contract: MasterContractHistory) => void;
@@ -278,6 +289,9 @@ class ContractTable extends React.Component<ContractTableProps> {
           break;
         case EnumAction.Clone:
           this.props.createClonedDraftFromTemplate(row);
+          break;
+        case EnumAction.Download:
+          this.props.downloadPublishedTemplate(row);
           break;
         default:
           // No action

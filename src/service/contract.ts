@@ -1,9 +1,9 @@
-import { AxiosRequestConfig } from 'axios';
-
+import { saveAs } from 'file-saver';
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Api } from 'utils/api';
 import {
   AxiosObjectResponse, AxiosPageResponse,
-  ObjectResponse, PageRequest, Sorting, PageResult, AxiosSimpleResponse,
+  ObjectResponse, PageRequest, Sorting, PageResult, AxiosSimpleResponse, SimpleResponse,
 } from 'model/response';
 import {
   MasterContractQuery,
@@ -109,6 +109,24 @@ export default class ContractApi extends Api {
     return this.get<ObjectResponse<MasterContract>>(url);
   }
 
+  public async downloadPublished(id: number, title: string): Promise<SimpleResponse> {
+    const url = `/action/contract/print/${id}`;
+
+    return this.get<Blob>(url, {
+      responseType: 'blob',
+    })
+      .then((response: AxiosResponse<Blob>) => {
+
+        saveAs(response.data, title + '.pdf');
+
+        return Promise.resolve({
+          success: true,
+          messages: [],
+        });
+      })
+      .catch((err: AxiosError) => this.blobToJson(err.response?.data));
+  }
+
   public async createDraft(command: MasterContractCommand): Promise<AxiosObjectResponse<MasterContract>> {
     const url = `/action/contract/drafts`;
 
@@ -146,5 +164,20 @@ export default class ContractApi extends Api {
     const url = `/action/contract/drafts/${id}`;
 
     return this.put<unknown, ObjectResponse<MasterContract>>(url, null);
+  }
+
+  private blobToJson<T>(blob: Blob): Promise<T> {
+    const reader = new FileReader();
+
+    const promise = new Promise((resolve: (data: T) => void) => {
+      reader.onload = () => {
+        const data: T = JSON.parse(<string>reader.result);
+        resolve(data);
+      };
+    });
+
+    reader.readAsText(blob);
+
+    return promise;
   }
 }

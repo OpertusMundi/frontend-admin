@@ -91,6 +91,7 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
     this.deactivateTemplate = this.deactivateTemplate.bind(this);
     this.editDraft = this.editDraft.bind(this);
     this.publishDraft = this.publishDraft.bind(this);
+    this.downloadPublishedTemplate = this.downloadPublishedTemplate.bind(this);
   }
 
   state: ContractManagerState = {
@@ -160,6 +161,20 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
           this.props.navigate(url);
         } else {
           const messages = localizeErrorCodes(this.props.intl, response.data, true);
+          message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+        }
+      })
+      .catch((err: AxiosError<SimpleResponse>) => {
+        const messages = localizeErrorCodes(this.props.intl, err.response?.data, true);
+        message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+      });
+  }
+
+  downloadPublishedTemplate(contract: MasterContractHistory): void {
+    this.api.downloadPublished(contract.id, contract.title)
+      .then((response) => {
+        if (!response.success) {
+          const messages = localizeErrorCodes(this.props.intl, response, true);
           message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
         }
       })
@@ -293,6 +308,7 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
               find={find}
               publishDraft={this.publishDraft}
               createClonedDraftFromTemplate={this.createClonedDraftFromTemplate}
+              downloadPublishedTemplate={this.downloadPublishedTemplate}
               setPager={setPager}
               setSorting={(sorting: Sorting<EnumMasterContractSortField>[]) => this.setSorting(sorting)}
               removeFromSelection={removeFromSelection}

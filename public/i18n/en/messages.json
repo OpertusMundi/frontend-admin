@@ -235,7 +235,8 @@
       "delete": "Delete",
       "deactivate": "Deactivate",
       "publish": "Publish draft",
-      "clone": "Clone as draft"
+      "clone": "Clone as draft",
+      "download": "Download contract"
     }
   },
   "draft": {
