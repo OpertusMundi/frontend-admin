@@ -15,7 +15,7 @@ import Icon from '@mdi/react';
 import { mdiCheck, mdiUndoVariant } from '@mdi/js';
 
 // Model
-import { HelpdeskAccount, HelpdeskAccountCommand } from 'model/account';
+import { HelpdeskAccountCommand } from 'model/account';
 
 export interface ToolbarProps extends PropsFromRedux {
   intl: IntlShape;

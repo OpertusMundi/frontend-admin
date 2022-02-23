@@ -42,6 +42,7 @@
       "header": {
         "actions": " ",
         "email": "Username",
+        "external-provider": "External Data Provider",
         "funds": "Wallet Funds",
         "consumer": "Consumer",
         "consumer-funds": "Consumer Funds",
@@ -71,6 +72,39 @@
     "filter": {
       "countries": "Filter by Country",
       "segments": "Filter by Segment"
+    }
+  },
+  "account-marketplace": {
+    "form": {
+      "section": {
+        "consumer": "Consumer",
+        "external-provider": "External Data Provider Configuration",
+        "provider": "Provider Information",
+        "registration": "Registration Status",
+        "user": "Personal Information"
+      },
+      "field": {
+        "email": "Email",
+        "firstName": "First name",
+        "lastName": "Last name",
+        "provider": {
+          "name": "Name",
+          "vat": "VAT"
+        },
+        "registeredAt": " Registered At",
+        "registration-status": "Status"
+      },
+      "tooltip": {
+        "view-workflow": "(Click to view workflow)"
+      },
+      "message": {
+        "set-external-provider-confirm": "Role for external data provider {provider} will be assigned to customer {company}. Would you like to continue?",
+        "reset-external-provider-confirm": "All external data provider roles will be revoked from customer {company}. Would you like to continue?",
+        "set-external-provider-warning": "Changing external provider roles will enable new features for users",
+        "reset-external-provider-warning": "Revoking external provider roles will disable certain features for users",
+        "external-provider-confirm": "Are you sure you want to update provider roles?",
+        "external-provider-notes": "To continue, type the company name in the text box below."
+      }
     }
   },
   "billing": {
@@ -382,6 +416,7 @@
     "BasicMessageCode.NotImplemented": "Operation is not implemented!",
     "BasicMessageCode.CannotDeleteSelf": "Cannot delete the current account",
     "BasicMessageCode.CannotRevokeLastAdmin": "You must assign a new administrator before changing user roles",
+    "AdminMessageCode.ExternalProviderAlreadyExists": "External provider is already assigned to another user",
     "validation": {
       "DecimalMin": "Value of field {field} must be greater than {min}"
     },
@@ -482,7 +517,7 @@
       },
       "marketplace": {
         "manager": "Marketplace Users",
-        "view": "Review"
+        "view": "View"
       }
     },
     "admin": "Admin",

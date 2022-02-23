@@ -2,6 +2,7 @@ import React from 'react';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
+import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
 import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
@@ -34,6 +35,7 @@ import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
 
 import AccountFilters from './grid/filter';
 import AccountTable from './grid/table';
+import { buildPath, DynamicRoutes } from 'model/routes';
 
 const styles = (theme: Theme) => createStyles({
   container: {
@@ -66,6 +68,8 @@ interface AccountManagerState {
 
 interface AccountManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
   intl: IntlShape,
+  navigate: NavigateFunction;
+  location: Location;
 }
 
 class AccountManager extends React.Component<AccountManagerProps, AccountManagerState> {
@@ -81,6 +85,12 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
   state: AccountManagerState = {
     confirm: false,
     record: null,
+  }
+
+  viewRow(key: string): void {
+    const path = buildPath(DynamicRoutes.MarketplaceAccountView, [key]);
+
+    this.props.navigate(path);
   }
 
   showConfirmDialog(record: MarketplaceAccount): void {
@@ -128,6 +138,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
     const {
       addToSelection,
       classes,
+      config,
       explorer: { query, result, pagination, loading, lastUpdated, selected, sorting },
       find,
       setPager,
@@ -161,18 +172,20 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
 
           <Paper className={classes.paperTable}>
             <AccountTable
-              find={this.props.find}
+              config={config}
+              loading={loading}
               query={query}
               result={result}
               pagination={pagination}
               selected={selected}
-              setPager={setPager}
-              setSorting={(sorting: Sorting<EnumMarketplaceAccountSortField>[]) => this.setSorting(sorting)}
+              sorting={sorting}
               addToSelection={addToSelection}
+              find={this.props.find}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
-              sorting={sorting}
-              loading={loading}
+              setPager={setPager}
+              setSorting={(sorting: Sorting<EnumMarketplaceAccountSortField>[]) => this.setSorting(sorting)}
+              view={(key: string) => this.viewRow(key)}
             />
           </Paper>
         </div >
@@ -244,10 +257,22 @@ const connector = connect(
 type PropsFromRedux = ConnectedProps<typeof connector>
 
 // Apply styles
-const styledComponent = withStyles(styles)(AccountManager);
+const StyledComponent = withStyles(styles)(AccountManager);
 
 // Inject i18n resources
-const localizedComponent = injectIntl(styledComponent);
+const LocalizedComponent = injectIntl(StyledComponent);
 
 // Inject state
-export default connector(localizedComponent);
+const ConnectedComponent = connector(LocalizedComponent);
+
+const RoutedComponent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <ConnectedComponent navigate={navigate} location={location} />
+  );
+}
+
+// Inject state
+export default RoutedComponent;

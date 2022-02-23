@@ -296,10 +296,10 @@ const connector = connect(
 type PropsFromRedux = ConnectedProps<typeof connector>
 
 // Apply styles
-const styledComponent = withStyles(styles)(AccountManager);
+const StyledComponent = withStyles(styles)(AccountManager);
 
 // Inject i18n resources
-const LocalizedComponent = injectIntl(styledComponent);
+const LocalizedComponent = injectIntl(StyledComponent);
 
 // Inject state
 const ConnectedComponent = connector(LocalizedComponent);
@@ -314,4 +314,3 @@ const RoutedComponent = () => {
 }
 
 export default RoutedComponent;
-

@@ -10,6 +10,7 @@ import * as pathToRegexp from 'path-to-regexp';
  */
 import AccountManagerToolbar from 'components/account/toolbar';
 import AnalyticsToolbar from 'components/analytics/toolbar';
+import MarketplaceAccountToolbar from 'components/account-marketplace/form/toolbar';
 import MessageInboxHelpdeskToolbar from 'components/message-inbox-helpdesk/toolbar';
 import MessageInboxUserToolbar from 'components/message-inbox-user/toolbar';
 import OrderTimelineToolbar from 'components/order/toolbar/order-timeline';
@@ -411,6 +412,11 @@ export const routes: RouteRegistry = {
     defaultTitle: 'Create Account',
     roles: [EnumRole.ADMIN],
     links: defaultLinks,
+    toolbarComponent: (route: Route): React.ReactNode => {
+      return (
+        <MarketplaceAccountToolbar route={route} />
+      );
+    }
   },
   [OrderTimeline]: {
     description: 'Order Timeline',

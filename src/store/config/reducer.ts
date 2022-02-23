@@ -9,6 +9,7 @@ import {
 } from 'store/config/types';
 
 const initialState: ConfigurationState = {
+  externalProviders: [],
   marketplaceUrl: '',
   processDefinitions: [],
   contractIcons: [],

@@ -43,10 +43,8 @@ export const LOAD_ACCOUNT_INIT = 'marketplace-account/manager/LOAD_ACCOUNT_INIT'
 export const LOAD_ACCOUNT_FAILURE = 'marketplace-account/manager/LOAD_ACCOUNT_FAILURE';
 export const LOAD_ACCOUNT_SUCCESS = 'marketplace-account/manager/LOAD_ACCOUNT_SUCCESS';
 
-export const REVIEW_ACCOUNT_INIT = 'marketplace-account/manager/REVIEW_ACCOUNT_INIT';
-export const REVIEW_ACCOUNT_FAILURE = 'marketplace-account/manager/REVIEW_ACCOUNT_FAILURE';
-export const REVIEW_ACCOUNT_SUCCESS = 'marketplace-account/manager/REVIEW_ACCOUNT_SUCCESS';
-
+export const SET_EXTERNAL_PROVIDER_INIT = 'marketplace-account/manager/SET_EXTERNAL_PROVIDER_INIT';
+export const SET_EXTERNAL_PROVIDER_COMPLETE = 'marketplace-account/manager/SET_EXTERNAL_PROVIDER_COMPLETE';
 
 export interface SetPagerAction {
   type: typeof SET_PAGER;
@@ -113,19 +111,13 @@ export interface LoadAccountFailureAction {
   type: typeof LOAD_ACCOUNT_FAILURE,
 }
 
-export interface AccountReviewInitAction {
-  type: typeof REVIEW_ACCOUNT_INIT,
-  acceptChanges: boolean;
-  rejectReason?: string;
+export interface setExternalProviderInitAction {
+  type: typeof SET_EXTERNAL_PROVIDER_INIT;
 }
 
-export interface AccountReviewSuccessAction {
-  type: typeof REVIEW_ACCOUNT_SUCCESS,
-  account: MarketplaceAccountDetails;
-}
-
-export interface ActionReviewFailureAction {
-  type: typeof REVIEW_ACCOUNT_FAILURE,
+export interface setExternalProviderCompleteAction {
+  type: typeof SET_EXTERNAL_PROVIDER_COMPLETE;
+  response: ObjectResponse<MarketplaceAccountDetails>;
 }
 
 export type AccountActions =
@@ -144,7 +136,6 @@ export type AccountActions =
   | LoadAccountInitAction
   | LoadAccountCompleteAction
   | LoadAccountFailureAction
-  | AccountReviewInitAction
-  | AccountReviewSuccessAction
-  | ActionReviewFailureAction
+  | setExternalProviderInitAction
+  | setExternalProviderCompleteAction
   ;

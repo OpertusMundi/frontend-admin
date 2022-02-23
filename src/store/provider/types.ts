@@ -43,10 +43,6 @@ export const LOAD_ACCOUNT_INIT = 'provider/manager/LOAD_ACCOUNT_INIT';
 export const LOAD_ACCOUNT_FAILURE = 'provider/manager/LOAD_ACCOUNT_FAILURE';
 export const LOAD_ACCOUNT_SUCCESS = 'provider/manager/LOAD_ACCOUNT_SUCCESS';
 
-export const REVIEW_ACCOUNT_INIT = 'provider/manager/REVIEW_ACCOUNT_INIT';
-export const REVIEW_ACCOUNT_FAILURE = 'provider/manager/REVIEW_ACCOUNT_FAILURE';
-export const REVIEW_ACCOUNT_SUCCESS = 'provider/manager/REVIEW_ACCOUNT_SUCCESS';
-
 export interface SetPagerAction {
   type: typeof SET_PAGER;
   page: number;
@@ -112,21 +108,6 @@ export interface LoadAccountFailureAction {
   type: typeof LOAD_ACCOUNT_FAILURE,
 }
 
-export interface AccountReviewInitAction {
-  type: typeof REVIEW_ACCOUNT_INIT,
-  acceptChanges: boolean;
-  rejectReason?: string;
-}
-
-export interface AccountReviewSuccessAction {
-  type: typeof REVIEW_ACCOUNT_SUCCESS,
-  account: MarketplaceAccountDetails;
-}
-
-export interface ActionReviewFailureAction {
-  type: typeof REVIEW_ACCOUNT_FAILURE,
-}
-
 export type AccountActions =
   | LogoutInitAction
   | SetPagerAction
@@ -143,7 +124,4 @@ export type AccountActions =
   | LoadAccountInitAction
   | LoadAccountCompleteAction
   | LoadAccountFailureAction
-  | AccountReviewInitAction
-  | AccountReviewSuccessAction
-  | ActionReviewFailureAction
   ;

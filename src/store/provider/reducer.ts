@@ -24,9 +24,6 @@ import {
   LOAD_ACCOUNT_INIT,
   LOAD_ACCOUNT_FAILURE,
   LOAD_ACCOUNT_SUCCESS,
-  REVIEW_ACCOUNT_INIT,
-  REVIEW_ACCOUNT_FAILURE,
-  REVIEW_ACCOUNT_SUCCESS,
   AccountActions,
   MarketplaceAccountManagerState,
 } from 'store/provider/types';
@@ -172,25 +169,6 @@ export function providerReducer(
       return {
         ...state,
         loading: true,
-        account: action.account,
-      };
-
-    case REVIEW_ACCOUNT_INIT:
-      return {
-        ...state,
-        loading: true,
-      };
-
-    case REVIEW_ACCOUNT_FAILURE:
-      return {
-        ...state,
-        loading: false,
-      };
-
-    case REVIEW_ACCOUNT_SUCCESS:
-      return {
-        ...state,
-        loading: false,
         account: action.account,
       };
 

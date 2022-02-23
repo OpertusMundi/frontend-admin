@@ -24,9 +24,8 @@ import {
   LOAD_ACCOUNT_INIT,
   LOAD_ACCOUNT_FAILURE,
   LOAD_ACCOUNT_SUCCESS,
-  REVIEW_ACCOUNT_INIT,
-  REVIEW_ACCOUNT_FAILURE,
-  REVIEW_ACCOUNT_SUCCESS,
+  SET_EXTERNAL_PROVIDER_INIT,
+  SET_EXTERNAL_PROVIDER_COMPLETE,
   AccountActions,
   MarketplaceAccountManagerState,
 } from 'store/account-marketplace/types';
@@ -171,27 +170,21 @@ export function marketplaceAccountReducer(
     case LOAD_ACCOUNT_SUCCESS:
       return {
         ...state,
-        loading: true,
+        loading: false,
         account: action.account,
       };
 
-    case REVIEW_ACCOUNT_INIT:
+    case SET_EXTERNAL_PROVIDER_INIT:
       return {
         ...state,
         loading: true,
       };
 
-    case REVIEW_ACCOUNT_FAILURE:
+    case SET_EXTERNAL_PROVIDER_COMPLETE:
       return {
         ...state,
         loading: false,
-      };
-
-    case REVIEW_ACCOUNT_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        account: action.account,
+        account: action.response.success ? action.response.result! : state.account,
       };
 
     default:
