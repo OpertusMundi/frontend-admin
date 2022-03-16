@@ -32,6 +32,7 @@ export interface ProcessInstance {
   processDefinitionName: string;
   processDefinitionKey: string;
   processDefinitionVersion: number;
+  processDefinitionVersionTag: string;
   processDefinitionDeployedOn: Moment;
   processInstanceId: string
   businessKey: string;
@@ -62,6 +63,7 @@ export interface BpmProcessInstance {
   processDefinitionKey: string;
   processDefinitionName: string;
   processDefinitionVersion: number;
+  processDefinitionVersionTag: string;
   startTime: Moment;
   endTime: Moment,
   removalTime: Moment;

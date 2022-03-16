@@ -77,6 +77,14 @@ function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
       header: intl.formatMessage({ id: 'workflow.header.incident.process-definition-version' }),
       id: 'processDefinitionVersion',
       sortable: false,
+      cell: (
+        rowIndex: number,
+        column: Column<Incident, EnumIncidentSortField>,
+        row: Incident,
+        handleAction?: cellActionHandler<Incident, EnumIncidentSortField>
+      ): React.ReactNode => (
+        <span>{row.processDefinitionVersionTag} / {row.processDefinitionVersion}</span>
+      ),
     }, {
       header: intl.formatMessage({ id: 'workflow.header.incident.reported-on' }),
       id: 'incidentDateTime',

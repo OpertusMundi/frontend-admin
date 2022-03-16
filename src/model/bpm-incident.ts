@@ -17,6 +17,7 @@ export interface Incident {
   processDefinitionName: string;
   processDefinitionKey: string;
   processDefinitionVersion: number;
+  processDefinitionVersionTag: string;
   processDefinitionDeployedOn: Moment;
   processInstanceId: string
   businessKey: string;
