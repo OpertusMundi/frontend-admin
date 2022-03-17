@@ -78,6 +78,7 @@ const styles = (theme: Theme) => createStyles({
   },
   exception: {
     maxHeight: 400,
+    whiteSpace: 'break-spaces',
   }
 });
 
