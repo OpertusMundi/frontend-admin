@@ -15,6 +15,7 @@ import AssetDraftManager from 'components/draft/draft-grid';
 import ContractForm from 'components/contract/contract-form';
 import ContractManager from 'components/contract/contract-grid';
 import DashboardComponent from 'components/dashboard';
+import DraftContractViewer from 'components/draft/contract-viewer/contract-viewer';
 import ErrorPage from 'components/error-page';
 import EventManager from 'components/event/event-manager';
 import HelpdeskAccountManager from 'components/account/account-grid';
@@ -94,6 +95,7 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             <Route path={DynamicRoutes.AccountCreate} element={<AccountForm />} />
             <Route path={DynamicRoutes.ContractCreate} element={<ContractForm />} />
             <Route path={DynamicRoutes.ContractUpdate} element={<ContractForm />} />
+            <Route path={DynamicRoutes.DraftContractViewer} element={<DraftContractViewer />} />
             <Route path={DynamicRoutes.OrderTimeline} element={<OrderTimeline />} />
             <Route path={DynamicRoutes.OrderView} element={<PlaceHolder />} />
             <Route path={DynamicRoutes.MarketplaceAccountView} element={<MarketplaceAccountView />} />

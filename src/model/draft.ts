@@ -13,11 +13,22 @@ export enum EnumDraftStatus {
   PUBLISHED = 'PUBLISHED',
 }
 
+export enum EnumContractType {
+  /**
+   * Provider contract derived from a MASTER template
+   */
+  MASTER_CONTRACT = 'MASTER_CONTRACT',
+  /**
+   * Custom contract template uploaded by the provider
+   */
+  UPLOADED_CONTRACT = 'UPLOADED_CONTRACT',
+}
+
 interface BaseCatalogueItem {
   /*
    * An abstract of the resource
    */
-  abstractText: string;
+  abstract: string;
   /*
    * Auxiliary files or additional resources to the dataset
    */
@@ -148,7 +159,18 @@ interface BaseCatalogueItem {
   version: string;
 }
 
+export interface ContractAnnex {
+  description: string;
+  fileName: string;
+  id: string;
+  modifiedOn: Moment;
+  size: number;
+}
+
 export interface CatalogueItemCommand extends BaseCatalogueItem {
+  contractAnnexes?: ContractAnnex[];
+  contractTemplateKey: string | null;
+  contractTemplateType: EnumContractType;
   ingested: boolean;
   pricingModels: BasePricingModelCommand[];
   source: string;
@@ -212,6 +234,7 @@ export interface AssetDraft {
   publisher: Publisher,
   source: string;
   title: string;
+  type: string;
   version: string;
 }
 

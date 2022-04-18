@@ -10,6 +10,8 @@ import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-in
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
@@ -34,7 +36,7 @@ import { localizeErrorCodes } from 'utils/error';
 // Model
 import { DynamicRoutes, buildPath } from 'model/routes';
 import { PageRequest, Sorting, SimpleResponse } from 'model/response';
-import { EnumSortField, AssetDraft, EnumDraftStatus } from 'model/draft';
+import { EnumSortField, AssetDraft, EnumDraftStatus, EnumContractType } from 'model/draft';
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
@@ -61,6 +63,7 @@ const styles = (theme: Theme) => createStyles({
 
 interface AccountManagerState {
   confirm: boolean;
+  contractValidated: boolean;
   draft: AssetDraft | null,
   reason: string,
   reasonRequired: boolean,
@@ -82,12 +85,14 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
     this.api = new DraftApi();
 
     this.reviewDraft = this.reviewDraft.bind(this);
+    this.viewContract = this.viewContract.bind(this);
     this.viewDraft = this.viewDraft.bind(this);
     this.viewProcessInstance = this.viewProcessInstance.bind(this);
   }
 
   state: AccountManagerState = {
     confirm: false,
+    contractValidated: false,
     draft: null,
     reason: '',
     reasonRequired: false,
@@ -95,6 +100,10 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
 
   handleReasonChange(reason: string) {
     this.setState({ reason, reasonRequired: false });
+  }
+
+  handleContractValidatedChange(contractValidated: boolean) {
+    this.setState({ contractValidated });
   }
 
   showConfirmDialog(draft: AssetDraft): void {
@@ -205,6 +214,11 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
     window.open(url, "_blank");
   }
 
+  viewContract(providerKey: string, draftKey: string): void {
+    const path = buildPath(DynamicRoutes.DraftContractViewer, { providerKey, draftKey });
+    this.props.navigate(path);
+  }
+
   viewProcessInstance(businessKey: string, completed: boolean): void {
     const path = buildPath(
       completed ? DynamicRoutes.ProcessInstanceHistoryView : DynamicRoutes.ProcessInstanceView, null, { businessKey }
@@ -265,6 +279,7 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
               reviewDraft={this.reviewDraft}
+              viewContract={this.viewContract}
               viewDraft={this.viewDraft}
               viewProcessInstance={this.viewProcessInstance}
               sorting={sorting}
@@ -280,11 +295,12 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
   renderReviewDialog() {
     const _t = this.props.intl.formatMessage;
 
-    const { confirm, draft: record, reason, reasonRequired } = this.state;
+    const { confirm, draft: record, reason, reasonRequired, contractValidated } = this.state;
 
     if (!confirm || !record) {
       return null;
     }
+    const contractValidationRequired = record.command.contractTemplateType === EnumContractType.UPLOADED_CONTRACT;
 
     return (
       <Dialog
@@ -294,6 +310,7 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
             label: _t({ id: 'view.shared.action.accept' }),
             iconClass: () => (<Icon path={mdiCheckOutline} size="1.5rem" />),
             color: 'primary',
+            disabled: contractValidationRequired && !contractValidated,
           }, {
             key: EnumDialogAction.Reject,
             label: _t({ id: 'view.shared.action.reject' }),
@@ -334,6 +351,23 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
               error={reasonRequired}
             />
           </Grid>
+          {contractValidationRequired &&
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={contractValidated}
+                    onChange={
+                      (event) => this.handleContractValidatedChange(event.target.checked)
+                    }
+                    name="checkedB"
+                    color="primary"
+                  />
+                }
+                label={_t({ id: 'draft.form-review.contract-validated' })}
+              />
+            </Grid>
+          }
         </Grid>
       </Dialog>
     );

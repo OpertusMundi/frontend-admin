@@ -302,8 +302,12 @@
         "view-process-instance": "View publish workflow instance",
         "preview": "Preview in Marketplace",
         "review": "Review Draft",
-        "view": "View in Marketplace"
+        "view": "View in Marketplace",
+        "view-contract": "View uploaded contract"
       }
+    },
+    "form-review": {
+      "contract-validated": "Contract files reviewed and validated"
     },
     "message": {
       "accept-success": "Draft has been accepted",
@@ -406,6 +410,7 @@
   "error": {
     "BasicMessageCode.InternalServerError": "Unknown error has occurred while execution the request",
     "BasicMessageCode.Unauthorized": "Access denied",
+    "BasicMessageCode.NotFound": "Record was not found",
     "BasicMessageCode.RecordNotFound": "Record was not found",
     "BasicMessageCode.ForeignKeyConstraint": "There are one or more references to this record from other records. Operation was cancelled",
     "BasicMessageCode.Validation": "One or more record fields are invalid",
@@ -537,6 +542,9 @@
       }
     },
     "dashboard": "Overview",
+    "draft": {
+      "contract-viewer": "Draft contract viewer"
+    },
     "draft-manager": "Asset Drafts",
     "event-manager": "System Events",
     "maintenance-manager": "Maintenance",
@@ -586,6 +594,9 @@
   "message": {
     "password-changed": "Password has been updated",
     "avatar-changed": "Profile image has been updated"
+  },
+  "pdf-viewer": {
+    "pagination": "Page {pageNumber} of {numPages}"
   },
   "profile": {
     "form": {

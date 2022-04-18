@@ -20,16 +20,18 @@ import {
   mdiLink,
   mdiDatabaseCogOutline,
   mdiShoppingOutline,
+  mdiFileSign,
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
-import { EnumSortField, AssetDraft, AssetDraftQuery, EnumDraftStatus } from 'model/draft';
+import { EnumSortField, AssetDraft, AssetDraftQuery, EnumDraftStatus, EnumContractType } from 'model/draft';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 enum EnumAction {
   Review = 'review',
   View = 'view',
+  ViewContract = 'contract',
   ViewProcessInstance = 'view-process-instance',
 };
 
@@ -118,6 +120,15 @@ function draftColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
                   <Icon path={mdiCommentTextOutline} className={classes.classes.rowIcon} />
                 </i>
               </Tooltip>
+              {row.command.contractTemplateType === EnumContractType.UPLOADED_CONTRACT &&
+                <Tooltip title={intl.formatMessage({ id: 'draft.manager.tooltip.view-contract' })}>
+                  <i
+                    onClick={() => handleAction ? handleAction(EnumAction.ViewContract, rowIndex, column, row) : null}
+                  >
+                    <Icon path={mdiFileSign} className={classes.classes.rowIcon} />
+                  </i>
+                </Tooltip>
+              }
             </>
           }
         </div>
@@ -195,6 +206,7 @@ interface AssetDraftTableProps extends WithStyles<typeof styles> {
   resetSelection: () => void;
   sorting: Sorting<EnumSortField>[];
   reviewDraft: (key: string) => void;
+  viewContract: (providerKey: string, draftKey: string) => void;
   viewDraft: (asset: AssetDraft) => void;
   viewProcessInstance: (businessKey: string, completed: boolean) => void;
   loading?: boolean;
@@ -222,6 +234,9 @@ class AssetDraftTable extends React.Component<AssetDraftTableProps> {
             row.assetDraft,
             [EnumDraftStatus.PUBLISHED, EnumDraftStatus.HELPDESK_REJECTED, EnumDraftStatus.PROVIDER_REJECTED].includes(row.status)
           );
+          break;
+        case EnumAction.ViewContract:
+          this.props.viewContract(row.publisher.id, row.key);
           break;
         default:
           // No action

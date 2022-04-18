@@ -1,9 +1,8 @@
-import { AxiosRequestConfig } from 'axios';
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { Api } from 'utils/api';
 
 import {
-  AxiosObjectResponse,
   AxiosPageResponse,
   AxiosSimpleResponse,
   ObjectResponse,
@@ -13,12 +12,16 @@ import {
   Sorting,
 } from 'model/response';
 
-import { 
-  AssetDraftQuery, 
-  AssetDraft, 
+import {
+  AssetDraftQuery,
+  AssetDraft,
   AssetDraftReviewCommand,
   EnumSortField,
 } from 'model/draft';
+
+import {
+  blobToJson,
+} from 'utils/file';
 
 export default class DraftApi extends Api {
 
@@ -40,11 +43,10 @@ export default class DraftApi extends Api {
     return this.get<ObjectResponse<PageResult<AssetDraft>>>(url);
   }
 
-  public async findOne(providerKey: string, draftKey: string): Promise<AxiosObjectResponse<AssetDraft>> {
+  public async findOne(providerKey: string, draftKey: string): Promise<ObjectResponse<AssetDraft>> {
     const url = `/action/provider/${providerKey}/drafts/${draftKey}`;
 
-
-    return this.get<ObjectResponse<AssetDraft>>(url);
+    return (await this.get<ObjectResponse<AssetDraft>>(url)).data;
   }
 
   public async accept(providerKey: string, draftKey: string): Promise<AxiosSimpleResponse> {
@@ -69,4 +71,37 @@ export default class DraftApi extends Api {
     return this.put<AssetDraftReviewCommand, SimpleResponse>(url, command);
   }
 
+  public async downloadContract(providerKey: string, draftKey: string): Promise<ObjectResponse<Blob>> {
+    const url = `/action/provider/${providerKey}/drafts/${draftKey}/contract`;
+
+    return this.get<Blob>(url, {
+      responseType: 'blob',
+    })
+      .then((response: AxiosResponse<Blob>) => {
+
+        return Promise.resolve({
+          success: true,
+          messages: [],
+          result: response.data,
+        });
+      })
+      .catch((err: AxiosError) => blobToJson(err.response?.data));
+  }
+
+  public async downloadContractAnnex(providerKey: string, draftKey: string, annexKey: string): Promise<ObjectResponse<Blob>> {
+    const url = `/action/provider/${providerKey}/drafts/${draftKey}/contract/annexes/${annexKey}`;
+
+    return this.get<Blob>(url, {
+      responseType: 'blob',
+    })
+      .then((response: AxiosResponse<Blob>) => {
+
+        return Promise.resolve({
+          success: true,
+          messages: [],
+          result: response.data,
+        });
+      })
+      .catch((err: AxiosError) => blobToJson(err.response?.data));
+  }
 }

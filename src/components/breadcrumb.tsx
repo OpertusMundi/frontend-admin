@@ -65,7 +65,7 @@ class Breadcrumb extends React.Component<InnerBreadcrumbProps> {
     return false;
   }
 
-  private renderItem(path: string, active: boolean, title: React.ReactNode, locked: boolean, icon?: iconFunc): React.ReactNode {
+  private renderItem(path: string, active: boolean, title: React.ReactNode, locked: boolean, icon: iconFunc | null): React.ReactNode {
     return (
       <div key={path} style={{ display: 'flex', alignItems: 'center' }}>
         {icon &&
@@ -96,12 +96,20 @@ class Breadcrumb extends React.Component<InnerBreadcrumbProps> {
         return res;
       }, ["/"]);
 
+    // Resolve icon
+    let iconRendered = false;
+    let effectiveIcon: iconFunc | null = null;
+    const lastMatch = matchRoute(paths[paths.length - 1]);
+    if (lastMatch && lastMatch.properties.icon !== null) {
+      effectiveIcon = lastMatch.properties.icon!;
+    }
+
     return (
       <>
         {toolbarComponentFunc && toolbarComponentFunc(match?.properties!)}
         {!toolbarComponentFunc &&
           <Breadcrumbs separator="›" className={classes.breadcrumb}>
-            {paths.map((path) => {
+            {paths.map((path, index) => {
               const active = location.pathname === path;
               const match = matchRoute(path);
               if (!match) {
@@ -114,7 +122,8 @@ class Breadcrumb extends React.Component<InnerBreadcrumbProps> {
               const title = (
                 <FormattedMessage id={match.properties.title} defaultMessage={match.properties.defaultTitle} />
               );
-              const icon = match.properties.icon;
+              const icon = !iconRendered ? effectiveIcon ? effectiveIcon : match.properties.icon || null : null;
+              iconRendered = true;
               const locked = !this.checkRoles(match.properties.roles || null, roles, state);
               return this.renderItem(path, active, title, locked, icon);
             })}

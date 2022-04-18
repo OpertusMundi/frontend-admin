@@ -10,6 +10,7 @@ export type FieldMapperFunc = (field: string) => string | null;
 const mapErrorCodeToText = (intl: IntlShape, message: Message, fieldMapper?: FieldMapperFunc) => {
   switch (message.code) {
     case 'BasicMessageCode.Unauthorized':
+    case 'BasicMessageCode.NotFound':
     case 'BasicMessageCode.RecordNotFound':
     case 'BasicMessageCode.ForeignKeyConstraint':
     case 'BasicMessageCode.CannotDeleteSelf':

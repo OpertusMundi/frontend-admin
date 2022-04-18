@@ -43,6 +43,7 @@ import {
   mdiViewDashboardOutline,
   mdiWalletOutline,
   mdiProgressWrench,
+  mdiFileSign,
 } from '@mdi/js';
 
 /**
@@ -125,6 +126,7 @@ const AccountCreate = '/helpdesk/users/record/create';
 const AccountUpdate = '/helpdesk/users/record/update/:id';
 const ContractCreate = '/contract/create';
 const ContractUpdate = '/contract/update/:id';
+const DraftContractViewer = '/drafts/provider/:providerKey/draft/:draftKey/contract';
 const OrderTimeline = '/billing/order/:key/timeline';
 const OrderView = '/billing/order/:key';
 const MarketplaceAccountView = '/marketplace/users/record/:key';
@@ -139,6 +141,7 @@ export const DynamicRoutes = {
   AccountUpdate,
   ContractCreate,
   ContractUpdate,
+  DraftContractViewer,
   MarketplaceAccountView,
   OrderTimeline,
   OrderView,
@@ -404,6 +407,15 @@ export const routes: RouteRegistry = {
     defaultTitle: 'Update master contract',
     roles: [EnumRole.ADMIN],
     links: defaultLinks,
+    progressBar: true,
+  },
+  [DraftContractViewer]: {
+    icon: (className?: string) => (<Icon path={mdiFileSign} size="1.5rem" className={className} />),
+    description: 'Draft contract viewer',
+    title: 'links.draft.contract-viewer',
+    defaultTitle: 'Draft contract viewer',
+    roles: [EnumRole.ADMIN],
+    links: [Dashboard, DraftManager],
     progressBar: true,
   },
   [MarketplaceAccountView]: {

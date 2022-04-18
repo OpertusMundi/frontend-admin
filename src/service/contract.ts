@@ -10,6 +10,9 @@ import {
   MasterContractCommand, MasterContract, MasterContractHistory,
   EnumMasterContractSortField
 } from 'model/contract';
+import {
+  blobToJson,
+} from 'utils/file';
 
 export default class ContractApi extends Api {
 
@@ -124,7 +127,7 @@ export default class ContractApi extends Api {
           messages: [],
         });
       })
-      .catch((err: AxiosError) => this.blobToJson(err.response?.data));
+      .catch((err: AxiosError) => blobToJson(err.response?.data));
   }
 
   public async createDraft(command: MasterContractCommand): Promise<AxiosObjectResponse<MasterContract>> {
@@ -166,18 +169,4 @@ export default class ContractApi extends Api {
     return this.put<unknown, ObjectResponse<MasterContract>>(url, null);
   }
 
-  private blobToJson<T>(blob: Blob): Promise<T> {
-    const reader = new FileReader();
-
-    const promise = new Promise((resolve: (data: T) => void) => {
-      reader.onload = () => {
-        const data: T = JSON.parse(<string>reader.result);
-        resolve(data);
-      };
-    });
-
-    reader.readAsText(blob);
-
-    return promise;
-  }
 }
