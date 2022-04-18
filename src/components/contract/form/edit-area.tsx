@@ -182,7 +182,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     }
     this.state = {
       section, editorState, title, option: 0, subOption: 0, editingOption: true, showEditor: show, summary,
-      descriptionOfChange, variable, optional, dynamic, icon, shortDescription, openAutoTextSelect: false, 
+      descriptionOfChange, variable, optional, dynamic, icon, shortDescription, openAutoTextSelect: false,
       openIconSelect: false, editField: this.props.editField, mutexSuboptions
     };
   }
@@ -264,7 +264,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     var editingOption = true
     this.setState({
       option: selection, editorState: EditorState.createWithContent(convertFromRaw(JSON.parse((this.state.section!.options[selection].body)))), summary: this.state.section!.options[selection].summary!,
-      icon: this.state.section!.options[selection].icon!, shortDescription: this.state.section!.options[selection].shortDescription!, 
+      icon: this.state.section!.options[selection].icon!, shortDescription: this.state.section!.options[selection].shortDescription!,
       editField: EditFieldEnum.Section, editingOption, mutexSuboptions: this.state.section!.options[selection].mutexSuboptions!
     });
   }
@@ -391,7 +391,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     else if (this.state.editField === EditFieldEnum.SubOption){
       section.options[this.state.option].subOptions![this.state.subOption].body = raw
       section.options[this.state.option].subOptions![this.state.subOption].bodyHtml = htmlContent
-    
+
     }
     this.setState({
       section
@@ -447,7 +447,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
   render() {
     const { editorState } = this.state;
     const { classes, config } = this.props;
-    let editor, iconSelector, type_buttons, options, subOptions, editOption, editSubOption, summary, descriptionOfChange,
+    let editor, iconSelector, type_buttons, options, subOptions, editOption, editSubOption, summary,
       shortDescription, editingOptionTitle , subOptionSize = 0, selectedIcon;
     if (this.state.variable) {
       var type = 'Option ', currentOption = this.state.option;
@@ -457,33 +457,28 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
       }
       const optionForEdit = type + String.fromCharCode(65 + parseInt('' + currentOption));
       editingOptionTitle = <h3 className={classes.title}> {optionForEdit}</h3>
-      
+
     }
 
     if (this.state.showEditor) {
-      editor = <div >
-
-        <Editor
-          toolbar={{
-            options: ['inline', 'list'],
-            inline: { inDropdown: false, options: ['bold', 'italic', 'underline'], },
-            list: { inDropdown: true },
-            textAlign: { inDropdown: true },
-          }}
-          toolbarCustomButtons={[this.Replacements()]}
-          editorState={editorState}
-          wrapperClassName={classes.wrapper}
-          editorClassName={classes.editor}
-          onEditorStateChange={this.onEditorStateChange.bind(this)}
-          customBlockRenderFunc={this.customBlockStyleFn}
-        />
-      </div>;
-      descriptionOfChange = <div className={classes.control}> <InputLabel className={classes.title}>Description of change (Optional)</InputLabel>
-        <TextField className={classes.title} id="filled-label" variant="standard" value={this.state.descriptionOfChange || ''}
-          suppressContentEditableWarning={true} contentEditable={true}
-          onChange={(e) => this.onDescriptionOfChangeSet(e)} />
-
-      </div>;
+      editor = (
+        <div>
+          <Editor
+            toolbar={{
+              options: ['inline', 'list'],
+              inline: { inDropdown: false, options: ['bold', 'italic', 'underline'], },
+              list: { inDropdown: true },
+              textAlign: { inDropdown: true },
+            }}
+            toolbarCustomButtons={[this.Replacements()]}
+            editorState={editorState}
+            wrapperClassName={classes.wrapper}
+            editorClassName={classes.editor}
+            onEditorStateChange={this.onEditorStateChange.bind(this)}
+            customBlockRenderFunc={this.customBlockStyleFn}
+          />
+        </div>
+      );
     }
 
     if (this.state.variable) {
@@ -514,7 +509,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
           <label>Suboptions</label>
           <input className={classes.options} type="number" value={subOptionSize}></input>
         </div>
-      var mutexCheckbox = 
+      var mutexCheckbox =
         <div>
           <input type="checkbox" id="mutexSuboptions" name="mutexSuboptions"
             checked={this.state.mutexSuboptions} onClick={(e) => this.onMutexSuboptionsChecked(e)}>
@@ -563,7 +558,6 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
           </div>
         </div>;
     }
-
 
     const openIconSelector = (): void => {
       this.setState({
@@ -621,7 +615,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
         </div>
       if (this.state.icon) {
         const enumIcon = config.contractIcons.find(c => c.icon === this.state.icon);
-        selectedIcon = <img className={classes.outerIcon} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
+        selectedIcon = <img alt="" className={classes.outerIcon} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
       }
     }
     return (
@@ -629,7 +623,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
         {type_buttons}
         {editOption}
         {editSubOption}
-        
+
         <TextField className={classes.title} id="filled-title" variant="standard" value={this.state.title} suppressContentEditableWarning={true} contentEditable={true} label='Title'
           onChange={(e) => this.setState({ title: e.target.value })}
         />
