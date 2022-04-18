@@ -6,6 +6,7 @@ import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
 import Geometry from 'ol/geom/Geometry';
 import GeoJSON from 'ol/format/GeoJSON';
+import Point from 'ol/geom/Point';
 import VectorSource from 'ol/source/Vector';
 
 import { Heatmap as HeatmapLayer } from 'ol/layer';
@@ -52,11 +53,14 @@ class HeatMapLayer extends React.Component<HeatMapLayerProps> {
     }
 
     const source = this._layer.getSource();
-    source.clear();
 
     if (!features) {
       return;
     }
+    if (!source) {
+      return;
+    }
+    source.clear();
 
     if (features instanceof Feature) {
       // Add a single OpenLayers feature
@@ -80,7 +84,7 @@ class HeatMapLayer extends React.Component<HeatMapLayerProps> {
     const { index = 0, map = null, features, blur = 15, radius = 5 } = this.props;
 
     if (map) {
-      const source = new VectorSource();
+      const source = new VectorSource<Point>();
 
       this._layer = new HeatmapLayer({
         source,

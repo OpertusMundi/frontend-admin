@@ -7,6 +7,7 @@ import Overlay from 'ol/Overlay';
 
 interface ReactOverlayProps {
   autoPan: boolean;
+  children?: React.ReactNode;
   closable: boolean;
   id: string;
   map?: OpenLayersMap;

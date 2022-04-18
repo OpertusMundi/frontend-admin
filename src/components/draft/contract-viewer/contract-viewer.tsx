@@ -167,7 +167,6 @@ class DraftContractViewer extends React.Component<AccountManagerProps, AccountMa
     request
       .then((response) => {
         if (download) {
-          console.log(fileName);
           saveAs(response.result!, fileName);
         } else {
           const nextDocument = window.URL.createObjectURL(response.result!);

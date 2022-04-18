@@ -45,7 +45,7 @@ function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
             <i
               onClick={() => handleAction ? handleAction(EnumAction.View, rowIndex, column, row) : null}
             >
-              <Badge color="secondary" variant="dot" invisible={row.incidentCount === 0}>
+              <Badge overlap="rectangular" color="secondary" variant="dot" invisible={row.incidentCount === 0}>
                 <Icon path={mdiDatabaseCogOutline} className={classes.classes.rowIconActionWithBadge} />
               </Badge>
             </i>
@@ -54,7 +54,7 @@ function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
             <i
               onClick={() => handleAction ? handleAction(EnumAction.Delete, rowIndex, column, row) : null}
             >
-              <Badge color="secondary" variant="dot" invisible={true}>
+              <Badge overlap="rectangular" color="secondary" variant="dot" invisible={true}>
                 <Icon path={mdiDeleteAlertOutline} className={classes.classes.rowIconAction} />
               </Badge>
             </i>

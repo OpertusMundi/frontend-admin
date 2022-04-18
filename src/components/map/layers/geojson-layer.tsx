@@ -50,11 +50,14 @@ class GeoJsonLayer extends React.Component<GeoJsonLayerProps> {
     }
 
     const source = this._layer.getSource();
-    source.clear();
 
     if (!features) {
       return;
     }
+    if (!source) {
+      return;
+    }
+    source.clear();
 
     if (features instanceof Feature) {
       // Add a single OpenLayers feature

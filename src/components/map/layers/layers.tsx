@@ -3,6 +3,7 @@ import * as React from 'react';
 import OpenLayersMap from 'ol/Map';
 
 interface LayersProps {
+  children?: React.ReactNode;
   map?: OpenLayersMap | undefined
 }
 

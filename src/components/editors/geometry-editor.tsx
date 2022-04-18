@@ -78,6 +78,7 @@ interface GeometryEditorState {
 
 
 interface GeometryEditorProps {
+  children: React.ReactNode;
   geometry?: GeoJSONGeometry | null;
   onChange?: (geometry: GeoJSONGeometry | null) => void;
   readOnly?: boolean;
@@ -247,8 +248,7 @@ class GeometryEditor extends React.Component<GeometryEditorProps, GeometryEditor
             style={{
               top: 5,
             }}
-          >
-          </OpenLayers.GeoLocation>
+          />
         </OpenLayers.Map>
       </div >
     );

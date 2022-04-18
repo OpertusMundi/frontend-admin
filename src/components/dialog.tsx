@@ -30,6 +30,7 @@ export interface DialogAction {
 
 interface DialogProps {
   actions?: DialogAction[];
+  children: React.ReactNode;
   className?: string;
   handleAction?: (key: DialogAction) => void;
   handleClose: () => void;

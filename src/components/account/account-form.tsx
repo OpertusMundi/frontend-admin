@@ -444,8 +444,7 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
                           minStrength={3}
                           thresholdLength={8}
                           password={values.password || ''}
-                        >
-                        </PasswordStrength>
+                        />
                       </Grid>
                       <Grid item xs={6} className={classes.item}>
                         <Field

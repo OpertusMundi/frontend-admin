@@ -6,7 +6,7 @@ import NumberFormat, { NumberFormatProps } from 'react-number-format';
 import { FieldProps } from 'formik';
 
 interface NumberFormatCustomProps {
-  inputRef: (instance: NumberFormat | null) => void;
+  inputRef: (instance: NumberFormat<unknown> | null) => void;
   onChange: (event: { target: { name: string; value: string } }) => void;
   name: string;
   thousandSeparator?: string;
@@ -53,7 +53,7 @@ interface InputProps {
   min?: number;
 }
 
-interface NumberFormikProps extends FieldProps, Omit<NumberFormatProps<unknown>, 'name' | 'value' | 'error'> {
+interface NumberFormikProps extends FieldProps, Omit<NumberFormatProps<any>, 'name' | 'value' | 'error'> {
   inputProps: InputProps;
   onChange?: (value: string) => void;
   readOnly?: boolean;

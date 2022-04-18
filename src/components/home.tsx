@@ -470,7 +470,7 @@ class Home extends React.Component<HomeProps, HomeState> {
               <div>
                 {incidentCounter != null && incidentCounter > 0 &&
                   <IconButton title="BPM Server Incidents" color="inherit" onClick={() => this.props.navigate(StaticRoutes.IncidentManager)}>
-                    <Badge badgeContent={incidentCounter} color="secondary">
+                    <Badge overlap="rectangular" badgeContent={incidentCounter} color="secondary">
                       <Icon path={mdiCogSyncOutline} size="1.5rem" />
                     </Badge>
                   </IconButton>
@@ -635,6 +635,7 @@ class Home extends React.Component<HomeProps, HomeState> {
               <ListItem button onClick={() => this.onSectionToggle(EnumSection.Message)}>
                 <ListItemIcon>
                   <Badge
+                    overlap="rectangular"
                     badgeContent={total}
                     color={unassigned === 0 ? "primary" : "secondary"}
                     invisible={total === 0 || open[EnumSection.Message]}
@@ -652,7 +653,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                   <ListItem button
                     onClick={(e) => this.onNavigate(e, StaticRoutes.MessageInboxHelpdesk)}>
                     <ListItemIcon>
-                      <Badge badgeContent={unassigned} color="secondary" invisible={unassigned === 0 || !open[EnumSection.Message]}>
+                      <Badge overlap="rectangular" badgeContent={unassigned} color="secondary" invisible={unassigned === 0 || !open[EnumSection.Message]}>
                         <Icon path={mdiTrayFull} size="1.5rem" />
                       </Badge>
                     </ListItemIcon>
@@ -662,7 +663,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                   <ListItem button
                     onClick={(e) => this.onNavigate(e, StaticRoutes.MessageInboxUser)}>
                     <ListItemIcon>
-                      <Badge badgeContent={unread} color="primary" invisible={unread === 0 || !open[EnumSection.Message]}>
+                      <Badge overlap="rectangular" badgeContent={unread} color="primary" invisible={unread === 0 || !open[EnumSection.Message]}>
                         <Icon path={mdiTray} size="1.5rem" />
                       </Badge>
                     </ListItemIcon>
