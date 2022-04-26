@@ -329,6 +329,20 @@ export enum EnumOrderStatus {
    */
   PROVIDER_ACCEPTED = 'PROVIDER_ACCEPTED',
   /**
+   * If the order is related to a custom contract
+   * the provider should fill in the contract with the consumer's info
+   */
+  PENDING_PROVIDER_CONTRACT_UPLOAD = 'PENDING_PROVIDER_CONTRACT_UPLOAD',
+  /**
+   * If the order is related to a custom contract
+   * the consumer should accept the terms of the contract
+   */
+  PENDING_CONSUMER_CONTRACT_ACCEPTANCE = 'PENDING_CONSUMER_CONTRACT_ACCEPTANCE',
+  /**
+   * Custom contract is signed on behalf of all parties by the marketplace
+   */
+  CONTRACT_IS_SIGNED = 'CONTRACT_IS_SIGNED',
+  /**
    * PayIn created (order previous status must be either CREATED or
    * PROVIDER_ACCEPTED)
    */
