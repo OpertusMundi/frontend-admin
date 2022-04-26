@@ -1,5 +1,4 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from "react-dom/client";
 import * as ReactRedux from 'react-redux';
 
 import { BrowserRouter } from 'react-router-dom';
@@ -43,14 +42,13 @@ Promise.resolve()
     // Ignore an "Unauthorized" error
   })
   .then(() => {
-    ReactDOM.render(
+    ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <ReactRedux.Provider store={store}>
         <BrowserRouter basename={'/'}>
           <LoadingBar style={{ backgroundColor: '#d50000', height: '3px', zIndex: 10000 }} />
           <App />
         </BrowserRouter>
-      </ReactRedux.Provider>,
-      document.getElementById('root')
+      </ReactRedux.Provider>
     );
   });
 
