@@ -140,6 +140,9 @@
           "PENDING_PROVIDER_APPROVAL": "Provider approval is required",
           "PROVIDER_REJECTED": "Provider has rejected the order",
           "PROVIDER_ACCEPTED": "Provider has accepted the order",
+          "PENDING_PROVIDER_CONTRACT_UPLOAD": "Waiting for provider to upload contract",
+          "PENDING_CONSUMER_CONTRACT_ACCEPTANCE": "Waiting for consumer to accept contract",
+          "CONTRACT_IS_SIGNED": "Uploaded contract is signed",
           "CHARGED": "PayIn has been created",
           "PENDING_PROVIDER_SEND_CONFIRMATION": "Pending order shipping",
           "PENDING_CONSUMER_RECEIVE_CONFIRMATION": "Pending order delivery",
@@ -378,10 +381,13 @@
       "PENDING_PROVIDER_APPROVAL": "Provider approval is required",
       "PROVIDER_REJECTED": "Provider has rejected the order",
       "PROVIDER_ACCEPTED": "Provider has accepted the order",
+      "PENDING_PROVIDER_CONTRACT_UPLOAD": "Pending contract upload",
+      "PENDING_CONSUMER_CONTRACT_ACCEPTANCE": "Pending contract acceptance",
+      "CONTRACT_IS_SIGNED": "Uploaded contract is signed",
       "CHARGED": "Charged",
       "PENDING_PROVIDER_SEND_CONFIRMATION": "Pending order shipping",
       "PENDING_CONSUMER_RECEIVE_CONFIRMATION": "Pending order delivery",
-      "ASSET_REGISTRATION": "Pending",
+      "ASSET_REGISTRATION": "Asset registration",
       "CANCELLED": "Cancelled",
       "REFUNDED": "Refunded",
       "SUCCEEDED": "Completed"
@@ -547,7 +553,7 @@
     },
     "draft-manager": "Asset Drafts",
     "event-manager": "System Events",
-    "maintenance-manager": "Maintenance",
+    "settings-manager": "Settings",
     "map": "Map",
     "message-inbox": "Messages",
     "message-inbox-helpdesk": "Helpdesk Inbox",
@@ -592,8 +598,9 @@
     "settings": "Settings"
   },
   "message": {
-    "password-changed": "Password has been updated",
-    "avatar-changed": "Profile image has been updated"
+    "avatar-changed": "Profile image has been updated",
+    "settings-changed": "Settings has been updated",
+    "password-changed": "Password has been updated"
   },
   "pdf-viewer": {
     "pagination": "Page {pageNumber} of {numPages}"
@@ -605,6 +612,17 @@
     }
   },
   "provider-manager": {},
+  "settings": {
+    "marketplace": {
+      "announcement": {
+        "content": "Content",
+        "enabled": "Display announcement in Topio site",
+        "preview": "Preview",
+        "title": "Topio Market Announcement",
+        "warning": "By selecting this option, the content will be visible to all Marketplace users. You can preview your changes in the Marketplace web site by signing-in using a Helpdesk account"
+      }
+    }
+  },
   "table": {
     "previous-page": "Previous page",
     "next-page": "Next page",
