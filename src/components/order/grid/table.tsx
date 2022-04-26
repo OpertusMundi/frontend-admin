@@ -270,8 +270,8 @@ const styles = (theme: Theme) => createStyles({
     color: '#ffffff',
     padding: theme.spacing(0.5),
     borderRadius: theme.spacing(0.5),
-    minWidth: 80,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    width: '100%',
   },
   labelDeliveryMethod: {
     display: 'flex',
@@ -306,9 +306,9 @@ const statusToBackGround = (status: EnumOrderStatus): string => {
     case EnumOrderStatus.CANCELLED:
       return '#f44336';
     case EnumOrderStatus.REFUNDED:
-      return '#616161';
+      return '#FBC02D';
   }
-  return '#0277BD';
+  return '#616161';
 };
 
 interface OrderTableProps extends WithStyles<typeof styles> {

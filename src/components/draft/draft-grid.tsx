@@ -342,7 +342,7 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
               id="outlined-multiline-static"
               label="Rejection reason for Provider"
               multiline
-              rows={4}
+              minRows={4}
               value={reason}
               fullWidth
               onChange={

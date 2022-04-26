@@ -112,7 +112,7 @@ class MessageSend extends React.Component<MessageSendProps, MessageSendState> {
             id="outlined-multiline-static"
             label={text.length === 0 ? 'Write response ...' : 'Response'}
             multiline
-            rows={4}
+            minRows={4}
             variant="outlined"
             value={text}
             fullWidth

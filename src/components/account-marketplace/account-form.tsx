@@ -241,7 +241,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
             const messages = localizeErrorCodes(this.props.intl, response, false);
             message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
 
-            this.props.navigate(StaticRoutes.MaintenanceManager);
+            this.props.navigate(StaticRoutes.MarketplaceAccountManager);
           }
         })
     } else {
