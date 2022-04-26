@@ -78,7 +78,7 @@ const DraftManager = '/drafts';
 const EventManager = '/events';
 const HelpdeskAccountManager = '/helpdesk/users';
 const IncidentManager = '/workflow/incidents'
-const MaintenanceManager = '/maintenance';
+const SettingsManager = '/settings';
 const Map = '/map';
 const MarketplaceAccountManager = '/marketplace/users'
 const MessageInboxHelpdesk = '/messages/inbox/helpdesk';
@@ -114,8 +114,8 @@ export const StaticRoutes = {
   EventManager,
   ProcessInstanceManager,
   ProcessInstanceHistoryManager,
+  SettingsManager,
   TransferManager,
-  MaintenanceManager,
 };
 
 /**
@@ -371,11 +371,11 @@ export const routes: RouteRegistry = {
     defaultTitle: 'System Events',
     links: [Dashboard],
   },
-  [MaintenanceManager]: {
+  [SettingsManager]: {
     icon: (className?: string) => (<Icon path={mdiProgressWrench} size="1.5rem" className={className} />),
-    description: 'Maintenance Tasks',
-    title: 'links.maintenance-manager',
-    defaultTitle: 'Maintenance Tasks',
+    description: 'Settings',
+    title: 'links.settings-manager',
+    defaultTitle: 'Settings',
     links: [Dashboard],
   },
   // Dynamic

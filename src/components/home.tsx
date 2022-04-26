@@ -763,11 +763,11 @@ class Home extends React.Component<HomeProps, HomeState> {
                       <SecureContent roles={[EnumRole.ADMIN]}>
                         <ListItem button
                           className={open[EnumSection.Drawer] ? classes.nested : ''}
-                          onClick={(e) => this.onNavigate(e, StaticRoutes.MaintenanceManager)}>
+                          onClick={(e) => this.onNavigate(e, StaticRoutes.SettingsManager)}>
                           <ListItemIcon>
                             <Icon path={mdiProgressWrench} size="1.5rem" />
                           </ListItemIcon>
-                          <ListItemText primary={_t({ id: routes[StaticRoutes.MaintenanceManager].title })} />
+                          <ListItemText primary={_t({ id: routes[StaticRoutes.SettingsManager].title })} />
                         </ListItem>
                       </SecureContent>
 

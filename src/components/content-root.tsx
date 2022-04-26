@@ -22,7 +22,7 @@ import HelpdeskAccountManager from 'components/account/account-grid';
 import Home from 'components/home';
 import IncidentManager from 'components/workflow/incident-manager';
 import Login from 'components/login';
-import MaintenanceManager from 'components/system/maintenance-manager';
+import SettingsManager from 'components/system/settings-manager';
 import MapViewerComponent from 'components/map-viewer';
 import MarketplaceAccountManager from 'components/account-marketplace/account-grid';
 import MarketplaceAccountView from 'components/account-marketplace/account-form';
@@ -114,7 +114,7 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             <Route path={StaticRoutes.PayOutManager} element={<PayOutManager />} />
             <Route path={StaticRoutes.ProviderManager} element={<ProviderManager />} />
             <Route path={StaticRoutes.TransferManager} element={<TransferManager />} />
-            <Route path={StaticRoutes.MaintenanceManager} element={<MaintenanceManager />} />
+            <Route path={StaticRoutes.SettingsManager} element={<SettingsManager />} />
             <Route path={StaticRoutes.Map} element={<MapViewerComponent />} />
             <Route path={StaticRoutes.MessageInboxHelpdesk} element={<MessageInboxHelpdesk />} />
             <Route path={StaticRoutes.MessageInboxUser} element={<MessageInboxUser />} />
