@@ -79,6 +79,7 @@
       "section": {
         "consumer": "Consumer",
         "external-provider": "External Data Provider Configuration",
+        "open-dataset-provider": "Open Dataset Provider",
         "provider": "Provider Information",
         "registration": "Registration Status",
         "user": "Personal Information"
@@ -87,6 +88,7 @@
         "email": "Email",
         "firstName": "First name",
         "lastName": "Last name",
+        "open-dataset-provider": "Enable publishing of Open Datasets",
         "provider": {
           "name": "Name",
           "vat": "VAT"
@@ -99,9 +101,13 @@
       },
       "message": {
         "set-external-provider-confirm": "Role for external data provider {provider} will be assigned to customer {company}. Would you like to continue?",
+        "set-open-dataset-provider-confirm": "Role for Open Dataset provider with be assigned to customer {company}. Would you like to continue?",
         "reset-external-provider-confirm": "All external data provider roles will be revoked from customer {company}. Would you like to continue?",
+        "reset-open-dataset-provider-confirm": "Role for Open Dataset providers will be revoked from customer {company}. Would you like to continue?",
         "set-external-provider-warning": "Changing external provider roles will enable new features for users",
+        "set-open-dataset-provider-warning": "Adding the role will enable the publishing of Open Datasets for the selected vendor",
         "reset-external-provider-warning": "Revoking external provider roles will disable certain features for users",
+        "reset-open-dataset-provider-warning": "Revoking the role will disable the publishing of Open Datasets for the selected vendor",
         "external-provider-confirm": "Are you sure you want to update provider roles?",
         "external-provider-notes": "To continue, type the company name in the text box below."
       }
@@ -428,6 +434,7 @@
     "BasicMessageCode.CannotDeleteSelf": "Cannot delete the current account",
     "BasicMessageCode.CannotRevokeLastAdmin": "You must assign a new administrator before changing user roles",
     "AdminMessageCode.ExternalProviderAlreadyExists": "External provider is already assigned to another user",
+    "AdminMessageCode.OpenDatasetProviderAlreadyExists": "Open Dataset provider is already assigned to another user",
     "validation": {
       "DecimalMin": "Value of field {field} must be greater than {min}"
     },

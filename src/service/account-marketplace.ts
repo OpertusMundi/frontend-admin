@@ -89,4 +89,16 @@ export default class MarketplaceAccountApi extends Api {
     return this.post<ExternalProviderCommand, ObjectResponse<MarketplaceAccountDetails>>(url, command);
   }
 
+  public async grantOpenDatasetProvider(key: string): Promise<AxiosObjectResponse<MarketplaceAccountDetails>> {
+    const url = `/action/marketplace/accounts/${key}/open-dataset-provider`;
+
+    return this.put<unknown, ObjectResponse<MarketplaceAccountDetails>>(url, null);
+  }
+
+  public async revokeOpenDatasetProvider(key: string): Promise<AxiosObjectResponse<MarketplaceAccountDetails>> {
+    const url = `/action/marketplace/accounts/${key}/open-dataset-provider`;
+
+    return this.delete<ObjectResponse<MarketplaceAccountDetails>>(url);
+  }
+
 }
