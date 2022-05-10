@@ -61,13 +61,13 @@ export const find = (
   return null;
 }
 
-export const getThreadMessages = (key: string): ThunkResult<ClientMessageThreadResponse | null> => async (dispatch, getState) => {
-  dispatch(loadThreadInit(key));
+export const getThreadMessages = (messageKey: string, threadKey: string): ThunkResult<ClientMessageThreadResponse | null> => async (dispatch, getState) => {
+  dispatch(loadThreadInit(messageKey, threadKey));
 
   // Get response
   const api = new MessageApi();
 
-  const response = await api.getThreadMessages(key);
+  const response = await api.getThreadMessages(threadKey);
 
   // Update state
   if (response.data.success) {

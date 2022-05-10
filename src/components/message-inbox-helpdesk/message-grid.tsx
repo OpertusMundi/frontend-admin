@@ -9,6 +9,7 @@ import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
 import Alert from '@material-ui/lab/Alert';
+import Grid from '@material-ui/core/Grid';
 
 // Icons
 import Icon from '@mdi/react';
@@ -36,27 +37,6 @@ import { EnumMessageSortField, ClientMessage } from 'model/chat';
 import Message from 'components/message/message';
 
 const styles = (theme: Theme) => createStyles({
-  container: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  paper: {
-    padding: theme.spacing(1),
-    margin: theme.spacing(1),
-    color: theme.palette.text.secondary,
-    borderRadius: 0,
-  },
-  paperTable: {
-    padding: theme.spacing(1),
-    margin: theme.spacing(1),
-    color: theme.palette.text.secondary,
-    borderRadius: 0,
-    overflowX: 'auto',
-  },
-  caption: {
-    paddingLeft: 8,
-    fontSize: '0.7rem',
-  }
 });
 
 interface MessageManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
@@ -106,45 +86,22 @@ class MessageManager extends React.Component<MessageManagerProps> {
   }
 
   render() {
-    const {
-      inbox: { messages, loading },
-    } = this.props;
+    const { inbox: { messages } } = this.props;
 
     const items = messages?.result?.items || [];
 
     return (
-      <>
-        <div>
-          {/* <Paper className={classes.paper}>
-            <MessageFilters
-              query={query}
-              setFilter={setFilter}
-              resetFilter={resetFilter}
-              find={find}
-              disabled={loading}
-            />
-            {lastUpdated &&
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <Typography variant="caption" display="block" gutterBottom className={classes.caption}>
-                    <FormattedMessage id="account.marketplace.last-update" />
-                    <FormattedTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
-                  </Typography>
-                </Grid>
-              </Grid>
-            }
-          </Paper> */}
+      <Grid container direction="row" spacing={1}>
+        {items.map((m) => (
+          <Message message={m} key={m.id} assign={(id: string) => this.assign(id)} />
+        ))}
 
-          {items.map((m) => (
-            <Message message={m} key={m.id} assign={(id: string) => this.assign(id)} />
-          ))}
-
-          {!loading && items.length === 0 &&
+        {items.length === 0 &&
+          <Grid item xs={12}>
             <Alert severity="info">No new messages found</Alert>
-          }
-
-        </div >
-      </>
+          </Grid>
+        }
+      </Grid>
     );
   }
 

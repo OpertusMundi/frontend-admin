@@ -106,23 +106,31 @@ class MessageManager extends React.Component<MessageManagerProps> {
   }
 
   readMessage(messageKey: string): void {
-    this.props.readMessage(messageKey);
+    this.props.readMessage(messageKey).then(() => {
+      this.props.countNewMessages();
+    });
   }
 
-  sendMessage(userKey: string, threadKey: string, text: string): void {
+  sendMessage(userKey: string, messageKey: string, threadKey: string, text: string): Promise<ClientMessage | null> {
     if (threadKey) {
-      this.props.replyToMessage(threadKey, { text })
+      return this.props.replyToMessage(threadKey, { text })
         .then((m) => {
           message.infoHtml(
             <FormattedMessage id="inbox.user.message-sent" />,
             () => (<Icon path={mdiSendOutline} size="2rem" />)
           );
+
+          return m;
         })
-        .then(() => {
+        .then((m) => {
           this.find();
-          this.props.getThreadMessages(threadKey);
-        })
+          this.props.getThreadMessages(messageKey, threadKey);
+
+          return m;
+        });
     }
+
+    return Promise.resolve(null);
   }
 
   selectMessage(message: ClientMessage): void {
@@ -134,11 +142,11 @@ class MessageManager extends React.Component<MessageManagerProps> {
     }
     if (!message.read) {
       this.readTimer = window.setTimeout(() => {
-        this.props.readMessage(message.id);
+        this.readMessage(message.id);
       }, 3000);
     }
 
-    this.props.getThreadMessages(message.thread);
+    this.props.getThreadMessages(message.id, message.thread);
   }
 
   render() {
@@ -156,7 +164,7 @@ class MessageManager extends React.Component<MessageManagerProps> {
     const page = (messages?.result?.pageRequest.page || 0) + 1;
     const size = messages?.result?.pageRequest.size || 10;
 
-    if (!loading && items.length === 0) {
+    if (items.length === 0) {
       return (
         <Alert severity="info">Inbox is empty</Alert>
       );
@@ -244,7 +252,7 @@ const mapDispatch = {
   setFilter,
   setPager,
   setSorting,
-  getThreadMessages: (threadKey: string) => getThreadMessages(threadKey),
+  getThreadMessages: (messageKey: string, threadKey: string) => getThreadMessages(messageKey, threadKey),
 };
 
 const connector = connect(

@@ -65,7 +65,7 @@ interface MessageSendProps extends WithStyles<typeof styles> {
   message?: ClientMessage;
   readOnly: boolean;
   recipient?: ClientContact;
-  send: (userKey: string, threadKey: string, text: string) => void,
+  send: (userKey: string, messageKey: string, threadKey: string, text: string) => Promise<ClientMessage | null>,
 }
 
 interface MessageSendState {
@@ -91,7 +91,11 @@ class MessageSend extends React.Component<MessageSendProps, MessageSendState> {
     const { text } = this.state;
     const { message, send } = this.props;
 
-    send(message!.senderId, message!.thread, text);
+    send(message!.senderId, message!.id, message!.thread, text).then(() => {
+      this.setState({
+        text: '',
+      });
+    });
   }
 
   render() {

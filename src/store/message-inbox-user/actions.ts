@@ -110,10 +110,11 @@ export function resetSelection(): MessageActions {
   };
 }
 
-export function loadThreadInit(key: string): MessageActions {
+export function loadThreadInit(messageKey: string, threadKey: string): MessageActions {
   return {
     type: LOAD_THREAD_INIT,
-    key,
+    messageKey,
+    threadKey,
   };
 }
 

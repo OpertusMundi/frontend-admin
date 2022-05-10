@@ -13,6 +13,7 @@ import {
 
 // State
 export interface MessageManagerState {
+  activeMessage: string | null;
   count: number;
   lastUpdated: Moment | null;
   loading: boolean;
@@ -111,7 +112,8 @@ export interface ResetSelectionAction {
 
 export interface LoadThreadInitAction {
   type: typeof LOAD_THREAD_INIT;
-  key: string;
+  messageKey: string;
+  threadKey: string;
 }
 
 export interface LoadThreadCompleteAction {

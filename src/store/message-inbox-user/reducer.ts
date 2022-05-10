@@ -36,6 +36,7 @@ import {
 } from './types';
 
 const initialState: MessageManagerState = {
+  activeMessage: null,
   count: 0,
   lastUpdated: null,
   loading: false,
@@ -125,19 +126,26 @@ export function userInboxReducer(
         loading: false,
       };
 
-    case SEARCH_COMPLETE:
+    case SEARCH_COMPLETE: {
+      const messages = action.response.result?.items || [];
+      const activeMessage = messages.find(m => m.id === state.activeMessage) || null;
+
       return {
         ...state,
+        activeMessage: activeMessage?.id || null,
         messages: action.response,
         pagination: {
           page: action.response.result!.pageRequest.page,
           size: action.response.result!.pageRequest.size,
         },
         // Preserve selection if message exists in the result
-        selectedMessages: state.selectedMessages.filter(m1 => !!action.response.result!.items.find(m2 => m1.id === m2.id)),
+        selectedMessages: state.selectedMessages.filter(m1 => !!messages.find(m2 => m1.id === m2.id)),
+        selectedThread: activeMessage === null ? null : state.selectedThread,
+        thread: activeMessage === null ? null : state.thread,
         lastUpdated: moment(),
         loading: false,
       };
+    }
 
     case ADD_SELECTED:
       return {
@@ -160,14 +168,18 @@ export function userInboxReducer(
     case LOAD_THREAD_INIT:
       return {
         ...state,
+        activeMessage: action.messageKey,
         loading: true,
-        thread: null,
+        selectedThread: action.threadKey,
+        thread: state.selectedThread === action.threadKey ? state.thread : null,
       };
 
     case LOAD_THREAD_FAILURE:
       return {
         ...state,
         loading: false,
+        selectedThread: null,
+        thread: null,
       };
 
     case LOAD_THREAD_SUCCESS:
@@ -198,7 +210,6 @@ export function userInboxReducer(
     case READ_SUCCESS:
       return {
         ...state,
-        count: state.count - 1,
         loading: false,
         messages: state.messages ? {
           ...state.messages,

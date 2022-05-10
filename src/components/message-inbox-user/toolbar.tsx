@@ -19,7 +19,7 @@ import {
 
 // Store
 import { RootState } from 'store';
-import { find } from 'store/message-inbox-user/thunks';
+import { find, getThreadMessages } from 'store/message-inbox-user/thunks';
 
 // Model
 import { PageRequest, Sorting } from 'model/response';
@@ -49,9 +49,15 @@ interface ToolbarProps extends PropsFromRedux, WithStyles<typeof styles> {
 class Toolbar extends React.Component<ToolbarProps> {
 
   refresh(): void {
-    this.props.find();
-  }
+    this.props.find().then(() => {
+      // Refresh existing thread if still in view
+      const { activeMessage, selectedThread } = this.props;
 
+      if (activeMessage && selectedThread) {
+        this.props.getThreadMessages(activeMessage, selectedThread);
+      }
+    });
+  }
 
   render() {
     const { classes, route } = this.props;
@@ -77,14 +83,16 @@ class Toolbar extends React.Component<ToolbarProps> {
       </div>
     );
   }
-
 }
 
 const mapState = (state: RootState) => ({
+  activeMessage: state.message.userInbox.activeMessage,
+  selectedThread: state.message.userInbox.selectedThread,
 });
 
 const mapDispatch = {
   find: (pageRequest?: PageRequest, sorting?: Sorting<EnumMessageSortField>[]) => find(pageRequest, sorting),
+  getThreadMessages: (messageKey: string, threadKey: string) => getThreadMessages(messageKey, threadKey),
 };
 
 const connector = connect(
