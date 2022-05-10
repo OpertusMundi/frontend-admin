@@ -225,7 +225,7 @@ class EventFilters extends React.Component<EventFiltersProps> {
                   this.search();
                 }}
               >
-                <FormattedMessage id="view.shared.action.reset" />
+                <FormattedMessage id="view.shared.action.clear" />
               </Button>
             </Grid>
           </Grid>

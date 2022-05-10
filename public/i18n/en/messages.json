@@ -654,12 +654,13 @@
       "action": {
         "accept": "Accept",
         "cancel": "Cancel",
+        "clear": "Clear",
         "close": "Close",
         "create": "Create",
         "delete": "Delete",
         "no": "No",
         "reject": "Reject",
-        "reset": "Clear",
+        "reset": "Reset",
         "save": "Save",
         "search": "Search",
         "yes": "Yes"

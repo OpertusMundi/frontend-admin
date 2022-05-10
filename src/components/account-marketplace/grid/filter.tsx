@@ -23,13 +23,6 @@ import { EnumMarketplaceAccountSortField, MarketplaceAccount, MarketplaceAccount
 import message from 'service/message';
 
 const styles = (theme: Theme) => createStyles({
-  root: {
-    padding: 5,
-  },
-  container: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
   button: {
     margin: theme.spacing(3, 0, 2, 2),
     borderRadius: 0,
@@ -109,6 +102,19 @@ class AccountFilters extends React.Component<AccountFiltersProps> {
               disabled={disabled}
             >
               <FormattedMessage id="view.shared.action.search" />
+            </Button>
+            <Button
+              type="button"
+              variant="contained"
+              color="default"
+              className={classes.button}
+              disabled={disabled}
+              onClick={() => {
+                this.props.resetFilter();
+                this.find();
+              }}
+            >
+              <FormattedMessage id="view.shared.action.clear" />
             </Button>
           </Grid>
         </Grid>

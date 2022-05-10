@@ -25,22 +25,10 @@ import { EnumSortField, EnumDraftStatus, AssetDraft, AssetDraftQuery } from 'mod
 import message from 'service/message';
 
 const styles = (theme: Theme) => createStyles({
-  root: {
-    padding: 5,
-  },
-  container: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
   button: {
     margin: theme.spacing(3, 0, 2, 2),
     borderRadius: 0,
     textTransform: 'none',
-  },
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 200,
   },
 });
 
@@ -139,6 +127,19 @@ class AssetDraftFilters extends React.Component<AssetDraftFiltersProps> {
               disabled={disabled}
             >
               <FormattedMessage id="view.shared.action.search" />
+            </Button>
+            <Button
+              type="button"
+              variant="contained"
+              color="default"
+              className={classes.button}
+              disabled={disabled}
+              onClick={() => {
+                this.props.resetFilter();
+                this.find();
+              }}
+            >
+              <FormattedMessage id="view.shared.action.reset" />
             </Button>
           </Grid>
         </Grid>
