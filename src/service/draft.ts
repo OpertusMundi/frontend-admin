@@ -85,7 +85,7 @@ export default class DraftApi extends Api {
           result: response.data,
         });
       })
-      .catch((err: AxiosError) => blobToJson(err.response?.data));
+      .catch((err: AxiosError) => blobToJson(err.response?.data as Blob));
   }
 
   public async downloadContractAnnex(providerKey: string, draftKey: string, annexKey: string): Promise<ObjectResponse<Blob>> {
@@ -102,6 +102,6 @@ export default class DraftApi extends Api {
           result: response.data,
         });
       })
-      .catch((err: AxiosError) => blobToJson(err.response?.data));
+      .catch((err: AxiosError) => blobToJson(err.response?.data as Blob));
   }
 }

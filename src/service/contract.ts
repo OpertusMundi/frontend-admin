@@ -127,7 +127,7 @@ export default class ContractApi extends Api {
           messages: [],
         });
       })
-      .catch((err: AxiosError) => blobToJson(err.response?.data));
+      .catch((err: AxiosError) => blobToJson(err.response?.data as Blob));
   }
 
   public async createDraft(command: MasterContractCommand): Promise<AxiosObjectResponse<MasterContract>> {
