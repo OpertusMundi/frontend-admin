@@ -6,6 +6,7 @@ import { loadingBarReducer } from 'react-redux-loading-bar';
 
 import { analyticsReducer } from './analytics/reducer';
 import { configurationReducer } from './config/reducer';
+import { consumerReducer } from './consumer/reducer';
 import { contractReducer } from './contract/reducer';
 import { draftReducer } from './draft/reducer';
 import { eventReducer } from './event/reducer';
@@ -29,6 +30,7 @@ import { viewportReducer } from './viewport/reducer';
 // Combine reducers
 export const rootReducer = Redux.combineReducers({
   account: Redux.combineReducers({
+    consumer: consumerReducer,
     helpdesk: helpdeskAccountReducer,
     marketplace: marketplaceAccountReducer,
     provider: providerReducer,

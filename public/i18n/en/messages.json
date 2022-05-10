@@ -545,7 +545,7 @@
         "timeline": "Order Timeline"
       }
     },
-    "consumer-manager": "Manage Consumers",
+    "consumer-manager": "Consumers",
     "contract": {
       "master": {
         "title": "Master Contract"
@@ -571,7 +571,7 @@
     "payout-manager": "Pay Outs",
     "transfer-manager": "Transfers",
     "profile": "Profile",
-    "provider-manager": "Manage Providers",
+    "provider-manager": "Providers",
     "settings": "Settings",
     "workflow": {
       "incident": {

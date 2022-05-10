@@ -558,6 +558,15 @@ class Home extends React.Component<HomeProps, HomeState> {
                 </ListItemIcon>
                 <ListItemText primary={_t({ id: 'links.contract.master.title' })} />
               </ListItem>
+
+              <ListItem button
+                onClick={(e) => this.onNavigate(e, StaticRoutes.ConsumerManager)}>
+                <ListItemIcon>
+                  <Icon path={mdiFaceAgent} size="1.5rem" />
+                </ListItemIcon>
+                <ListItemText primary={_t({ id: 'links.consumer-manager' })} />
+              </ListItem>
+
               <ListItem button
                 onClick={(e) => this.onNavigate(e, StaticRoutes.ProviderManager)}>
                 <ListItemIcon>
@@ -572,14 +581,6 @@ class Home extends React.Component<HomeProps, HomeState> {
                   <Icon path={mdiTextBoxCheckOutline} size="1.5rem" />
                 </ListItemIcon>
                 <ListItemText primary={_t({ id: 'links.draft-manager' })} />
-              </ListItem>
-
-              <ListItem button
-                onClick={(e) => this.onNavigate(e, StaticRoutes.ConsumerManager)}>
-                <ListItemIcon>
-                  <Icon path={mdiFaceAgent} size="1.5rem" />
-                </ListItemIcon>
-                <ListItemText primary={_t({ id: 'links.consumer-manager' })} />
               </ListItem>
 
               <ListItem button onClick={() => this.onSectionToggle(EnumSection.Billing)}>

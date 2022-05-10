@@ -12,6 +12,7 @@ import { RootState } from 'store';
 // Components
 import AccountForm from 'components/account/account-form';
 import AssetDraftManager from 'components/draft/draft-grid';
+import ConsumerManager from 'components/consumer/consumer-grid';
 import ContractForm from 'components/contract/contract-form';
 import ContractManager from 'components/contract/contract-grid';
 import DashboardComponent from 'components/dashboard';
@@ -106,6 +107,7 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             {/* Static */}
             <Route path={StaticRoutes.Analytics} element={<QueryEditor />} />
             <Route path={StaticRoutes.Dashboard} element={<DashboardComponent />} />
+            <Route path={StaticRoutes.ConsumerManager} element={<ConsumerManager />} />
             <Route path={StaticRoutes.ContractManager} element={<ContractManager />} />
             <Route path={StaticRoutes.DraftManager} element={<AssetDraftManager />} />
             <Route path={StaticRoutes.EventManager} element={<EventManager />} />
