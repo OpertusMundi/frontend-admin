@@ -8,7 +8,7 @@ import { injectIntl, IntlShape } from 'react-intl';
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
-import { red } from '@material-ui/core/colors';
+import { grey, red } from '@material-ui/core/colors';
 
 import Avatar from '@material-ui/core/Avatar';
 import Card from '@material-ui/core/Card';
@@ -20,6 +20,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import Typography from '@material-ui/core/Typography';
 
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
@@ -48,7 +49,11 @@ const styles = (theme: Theme) => createStyles({
     margin: theme.spacing(1),
   },
   listItem: {
+    alignItems: 'flex-start',
     padding: theme.spacing(1, 0),
+  },
+  listAvatar: {
+    paddingTop: theme.spacing(1),
   },
   small: {
     width: theme.spacing(4),
@@ -58,6 +63,23 @@ const styles = (theme: Theme) => createStyles({
     overflowY: 'scroll',
     maxHeight: '400px',
   },
+  secondaryAction: {
+    top: theme.spacing(3),
+  },
+  text: {
+    marginRight: theme.spacing(6),
+    wordBreak: 'break-word',
+  },
+  errorDetailsTitle: {
+    marginTop: theme.spacing(2),
+  },
+  null: {
+    background: grey[700],
+    color: '#ffffff',
+    padding: theme.spacing(0.5),
+    margin: theme.spacing(0.5, 0),
+    borderRadius: theme.spacing(0.5),
+  }
 });
 
 interface ProcessInstanceVariablesProps extends WithStyles<typeof styles> {
@@ -101,6 +123,29 @@ class ProcessInstanceVariables extends React.Component<ProcessInstanceVariablesP
     }
   }
 
+  renderVariableValue(v: BpmVariable) {
+    const { classes } = this.props;
+
+    switch (v.name) {
+      case 'bpmnBusinessErrorDetails': {
+        const details = (v.value as string)?.split('||') || null;
+        return (
+          <ListItemText className={classes.text} primary={v.name}
+            secondary={details.map((text, index) => (
+              <Typography key={`detail-line-${index}`} variant="body2" gutterBottom className={classes.errorDetailsTitle}>
+                {text}
+              </Typography>
+            ))}
+          >
+          </ListItemText>
+        );
+      }
+    }
+    return (
+      <ListItemText className={classes.text} primary={v.name} secondary={v.value ? v.value : ''} />
+    );
+  }
+
   render() {
     const _t = this.props.intl.formatMessage;
     const { classes, variables = [] } = this.props;
@@ -128,7 +173,7 @@ class ProcessInstanceVariables extends React.Component<ProcessInstanceVariablesP
                 return (
                   <div key={`variable-${v.name}`}>
                     <ListItem className={classes.listItem}>
-                      <ListItemAvatar>
+                      <ListItemAvatar className={classes.listAvatar}>
                         <Avatar className={classes.small}>
                           {this.mapVariableTypeToIcon(v.type)}
                         </Avatar>
@@ -136,16 +181,19 @@ class ProcessInstanceVariables extends React.Component<ProcessInstanceVariablesP
                       {typeof value === 'boolean' &&
                         <ListItemText primary={v.name} secondary={value === true ? 'True' : 'False'} />
                       }
-                      {typeof value !== 'boolean' &&
-                        <ListItemText primary={v.name} secondary={value} />
+                      {typeof value !== 'boolean' && !v.value &&
+                        <ListItemText primary={v.name} secondary={
+                          <span className={classes.null}>null</span>
+                        } />
                       }
                       {typeof value !== 'boolean' && v.value &&
-                        <ListItemSecondaryAction>
-                          <IconButton edge="end" aria-label="delete" onClick={() => this.copyValueToClipboard(v.value)}>
-                            <Icon path={mdiContentCopy} size="1.2rem" />
-                          </IconButton>
-                        </ListItemSecondaryAction>
+                        this.renderVariableValue(v)
                       }
+                      <ListItemSecondaryAction className={classes.secondaryAction}>
+                        <IconButton edge="end" aria-label="delete" onClick={() => this.copyValueToClipboard(v.value)}>
+                          <Icon path={mdiContentCopy} size="1.2rem" />
+                        </IconButton>
+                      </ListItemSecondaryAction>
                     </ListItem>
                   </div>
                 );
