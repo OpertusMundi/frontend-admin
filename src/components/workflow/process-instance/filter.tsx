@@ -32,22 +32,10 @@ import {
 import message from 'service/message';
 
 const styles = (theme: Theme) => createStyles({
-  root: {
-    padding: 5,
-  },
-  container: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
   button: {
     margin: theme.spacing(3, 0, 2, 2),
     borderRadius: 0,
     textTransform: 'none',
-  },
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 200,
   },
   formControl: {
     minWidth: 240,
@@ -71,7 +59,6 @@ class ProcessInstanceFilters extends React.Component<WorkflowInstanceProps> {
   constructor(props: WorkflowInstanceProps) {
     super(props);
 
-    this.clear = this.clear.bind(this);
     this.search = this.search.bind(this);
   }
 
@@ -81,11 +68,6 @@ class ProcessInstanceFilters extends React.Component<WorkflowInstanceProps> {
         message.errorHtml("Find operation has failed", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
       }
     });
-  }
-
-  clear(): void {
-    this.props.resetFilter();
-    this.find();
   }
 
   search(e: React.FormEvent | null = null): void {
