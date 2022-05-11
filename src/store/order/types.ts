@@ -1,7 +1,7 @@
 import { Moment } from 'moment';
 
 import { LogoutInitAction } from 'store/security/types';
-import { PageResult, PageRequest, Sorting, ObjectResponse } from 'model/response';
+import { PageResult, PageRequest, Sorting } from 'model/response';
 import { EnumOrderSortField, Order, OrderQuery } from 'model/order';
 
 // State
@@ -13,7 +13,6 @@ export interface OrderManagerState {
   result: PageResult<Order> | null;
   selected: Order[];
   sorting: Sorting<EnumOrderSortField>[];
-  response: ObjectResponse<Order> | null;
   timeline: {
     order: Order | null,
   }

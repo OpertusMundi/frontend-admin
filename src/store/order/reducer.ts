@@ -45,7 +45,6 @@ const initialState: OrderManagerState = {
   result: null,
   selected: [],
   lastUpdated: null,
-  response: null,
   timeline: {
     order: null,
   }
@@ -109,7 +108,6 @@ export function orderReducer(
       return {
         ...state,
         selected: [],
-        response: null,
         loading: true,
       };
 
