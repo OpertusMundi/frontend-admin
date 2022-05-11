@@ -82,14 +82,22 @@ export enum EnumPricingModel {
    * Pay per row, optional define reverse block rate pricing
    */
   PER_ROW_WITH_BLOCK_RATE = 'PER_ROW_WITH_BLOCK_RATE',
+  /**
+   * Sentinel Hub open data collections {@link https://www.sentinel-hub.com/}
+   */
+  SENTINEL_HUB_SUBSCRIPTION = 'SENTINEL_HUB_SUBSCRIPTION',
+  /**
+   * Sentinel Hub commercial data {@link https://www.sentinel-hub.com/}
+   */
+  SENTINEL_HUB_IMAGES = 'SENTINEL_HUB_IMAGES',
 }
 
 export interface BasePricingModelCommand {
-  /*
-   *
+  /**
+   * Pricing model unique key
    */
   key?: string,
-  /*
+  /**
    * Discriminator field used for deserializing the model to the appropriate data type
    */
   type: EnumPricingModel;
@@ -122,14 +130,14 @@ export interface BasePricingModelCommand {
 }
 
 export interface FreePricingModelCommand extends BasePricingModelCommand {
-  /*
+  /**
    * Discriminator field used for deserializing the model to the appropriate data type
    */
   type: EnumPricingModel.FREE;
 }
 
 export interface FixedPricingModelCommand extends BasePricingModelCommand {
-  /*
+  /**
    * Discriminator field used for deserializing the model to the appropriate data type
    */
   type: EnumPricingModel.FIXED;
@@ -144,7 +152,7 @@ export interface FixedPricingModelCommand extends BasePricingModelCommand {
 }
 
 export interface FixedRowPricingModelCommand extends BasePricingModelCommand {
-  /*
+  /**
    * Discriminator field used for deserializing the model to the appropriate data type
    */
   type: EnumPricingModel.FIXED_PER_ROWS;
@@ -164,7 +172,7 @@ export interface FixedRowPricingModelCommand extends BasePricingModelCommand {
 }
 
 export interface FixedPopulationPricingModelCommand extends BasePricingModelCommand {
-  /*
+  /**
    * Discriminator field used for deserializing the model to the appropriate data type
    */
   type: EnumPricingModel.FIXED_FOR_POPULATION;
@@ -185,7 +193,7 @@ export interface FixedPopulationPricingModelCommand extends BasePricingModelComm
 }
 
 export interface CallPrePaidPricingModelCommand extends BasePricingModelCommand {
-  /*
+  /**
    * Discriminator field used for deserializing the model to the appropriate data type
    */
   type: EnumPricingModel.PER_CALL_WITH_PREPAID;
@@ -201,7 +209,7 @@ export interface CallPrePaidPricingModelCommand extends BasePricingModelCommand 
 }
 
 export interface CallBlockRatePricingModelCommand extends BasePricingModelCommand {
-  /*
+  /**
    * Discriminator field used for deserializing the model to the appropriate data type
    */
   type: EnumPricingModel.PER_CALL_WITH_BLOCK_RATE;
@@ -217,7 +225,7 @@ export interface CallBlockRatePricingModelCommand extends BasePricingModelComman
 }
 
 export interface RowPrePaidPricingModelCommand extends BasePricingModelCommand {
-  /*
+  /**
    * Discriminator field used for deserializing the model to the appropriate data type
    */
   type: EnumPricingModel.PER_ROW_WITH_PREPAID;
@@ -233,7 +241,7 @@ export interface RowPrePaidPricingModelCommand extends BasePricingModelCommand {
 }
 
 export interface RowBlockRatePricingModelCommand extends BasePricingModelCommand {
-  /*
+  /**
    * Discriminator field used for deserializing the model to the appropriate data type
    */
   type: EnumPricingModel.PER_ROW_WITH_BLOCK_RATE;
@@ -248,7 +256,34 @@ export interface RowBlockRatePricingModelCommand extends BasePricingModelCommand
   discountRates: DiscountRate[];
 }
 
-export interface SystemParameters {
+export interface SHSubscriptionPricingModelCommand extends BasePricingModelCommand {
+  /**
+   * Discriminator field used for deserializing the model to the appropriate data type
+   */
+  type: EnumPricingModel.SENTINEL_HUB_SUBSCRIPTION;
+}
+
+export interface SHImagePricingModelCommand extends BasePricingModelCommand {
+  /**
+   * Discriminator field used for deserializing the model to the appropriate data type
+   */
+  type: EnumPricingModel.SENTINEL_HUB_IMAGES;
+}
+
+export type PricingModelCommand =
+  | FreePricingModelCommand
+  | FixedPricingModelCommand
+  | FixedRowPricingModelCommand
+  | FixedPopulationPricingModelCommand
+  | CallPrePaidPricingModelCommand
+  | CallBlockRatePricingModelCommand
+  | RowPrePaidPricingModelCommand
+  | RowBlockRatePricingModelCommand
+  | SHSubscriptionPricingModelCommand
+  | SHImagePricingModelCommand
+  ;
+
+export interface SystemQuotationParameters {
   /**
    * System-defined parameter of the size of selected population. If the pricing model does not
    * support population size parameter, this property is not set
@@ -264,54 +299,75 @@ export interface SystemParameters {
    * number of rows parameter, this property is not set
    */
   rows?: number;
+  /**
+   * Tax applied based on the billing region
+   */
+  taxPercent: number;
 }
 
 /**
  * User-defined quotation parameters
  */
-export interface QuotationParametersCommand {
-  /**
-   * User-defined array of NUTS codes. The codes are used for computing asset coverage and population
-   */
-  nuts?: string[];
-  /**
-   * Selected prepaid tier index if the feature is supported. If a tier is selected and the pricing
-   * model does not support prepaid tiers, the quotation service will return a validation error
-   */
-  prePaidTier?: number | null;
-  /**
-   * Dynamic system-defined parameters set during the creation of a quotation such as the
-   * selected number of rows or population
-   */
-  systemParams?: SystemParameters;
+export interface QuotationParameters {
+  type: EnumPricingModel;
 }
 
-/**
- * Quotation parameters bag with all user and system defined parameters
- */
-export interface QuotationParameters extends QuotationParametersCommand {
-  /**
-   * Dynamic system-defined parameters set during the creation of a quotation such as the
-   * selected number of rows or population
-   */
-  systemParams?: SystemParameters;
+export interface EmptyQuotationParameters extends QuotationParameters {
+  type: EnumPricingModel.UNDEFINED;
 }
 
-export interface QuotationCommand {
+export interface FixedRowQuotationParameters extends QuotationParameters {
+  type: EnumPricingModel.FIXED_PER_ROWS;
   /**
-   * Asset unique PID
+   * User-defined parameter of array of NUTS codes. The codes are used for computing asset coverage and population
    */
-  assetId: string;
-  /**
-   * Pricing model unique key (must exist in the pricing models specified in the
-   * asset selected by the `assetId`)
-   */
-  pricingModelKey: string;
-  /**
-   * Quotation parameters
-   */
-  parameters: QuotationParametersCommand;
+  nuts: string[];
 }
+
+export interface FixedPopulationQuotationParameters extends QuotationParameters {
+  type: EnumPricingModel.FIXED_FOR_POPULATION;
+  /**
+   * User-defined parameter of array of NUTS codes. The codes are used for computing asset coverage and population
+   */
+  nuts: string[];
+}
+
+export interface CallPrePaidQuotationParameters extends QuotationParameters {
+  type: EnumPricingModel.PER_CALL_WITH_PREPAID;
+  /**
+   * Selected prepaid tier index if feature is supported. If a tier is selected and the pricing
+   * model does not support prepaid tiers, quotation service will return a validation error
+   */
+  prePaidTier: number;
+}
+
+export interface RowPrePaidQuotationParameters extends QuotationParameters {
+  type: EnumPricingModel.PER_ROW_WITH_PREPAID;
+  /**
+   * Selected prepaid tier index if feature is supported. If a tier is selected and the pricing
+   * model does not support prepaid tiers, quotation service will return a validation error
+   */
+  prePaidTier: number;
+}
+
+export interface SHSubscriptionQuotationParameters extends QuotationParameters {
+  type: EnumPricingModel.SENTINEL_HUB_SUBSCRIPTION;
+}
+
+export interface SHImageQuotationParameters extends QuotationParameters {
+  type: EnumPricingModel.SENTINEL_HUB_IMAGES;
+  query: any;
+}
+
+export type QuotationParametersType =
+  | EmptyQuotationParameters
+  | FixedRowQuotationParameters
+  | FixedPopulationQuotationParameters
+  | CallPrePaidQuotationParameters
+  | RowPrePaidQuotationParameters
+  | SHSubscriptionQuotationParameters
+  | SHImageQuotationParameters
+  ;
 
 export interface Quotation {
   /**
@@ -353,14 +409,18 @@ export interface EffectivePricingModel {
   /**
    * The pricing model
    */
-  model: FreePricingModelCommand | FixedPricingModelCommand | FixedRowPricingModelCommand | FixedPopulationPricingModelCommand | CallPrePaidPricingModelCommand | CallBlockRatePricingModelCommand | RowPrePaidPricingModelCommand | RowBlockRatePricingModelCommand;
-  /**
-   * Parameters applied to the pricing model for computing the effective pricing model
-   */
-  parameters: QuotationParameters;
+  model: PricingModelCommand;
   /**
    * Quotation data. May be null if the pricing model is dynamic i.e. `FIXED_FOR_POPULATION`
    * and parameters are missing
    */
   quotation: Quotation;
+  /**
+   * System-defined parameters applied to the pricing model for computing the effective pricing model
+   */
+  systemParameters: SystemQuotationParameters;
+  /**
+   * User-defined parameters applied to the pricing model for computing the effective pricing model
+   */
+  userParameters: QuotationParametersType;
 }

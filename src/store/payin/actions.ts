@@ -1,5 +1,5 @@
 import { PageResult, Sorting } from 'model/response';
-import { EnumPayInSortField, PayIn, PayInQuery } from 'model/order';
+import { EnumPayInSortField, PayIn, PayInQuery, PayInType } from 'model/order';
 
 import {
   PayInActions,
@@ -101,10 +101,10 @@ export function loadPayInInit(key: string): PayInActions {
   };
 }
 
-export function loadPayInSuccess(order: PayIn): PayInActions {
+export function loadPayInSuccess(record: PayInType): PayInActions {
   return {
     type: LOAD_ORDER_SUCCESS,
-    order,
+    record,
   };
 }
 

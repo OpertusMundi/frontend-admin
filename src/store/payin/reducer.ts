@@ -29,6 +29,7 @@ import {
 } from 'store/payin/types';
 
 const initialState: PayInManagerState = {
+  items: null,
   loading: false,
   query: {
     email: '',
@@ -39,17 +40,13 @@ const initialState: PayInManagerState = {
     page: 0,
     size: 10,
   },
+  record: null,
   sorting: [{
     id: EnumPayInSortField.MODIFIED_ON,
     order: Order.DESC,
   }],
-  result: null,
   selected: [],
   lastUpdated: null,
-  response: null,
-  timeline: {
-    order: null,
-  }
 };
 
 export function payInReducer(
@@ -109,33 +106,34 @@ export function payInReducer(
     case SEARCH_INIT:
       return {
         ...state,
+        items: null,
+        record: null,
         selected: [],
-        response: null,
         loading: true,
       };
 
     case SEARCH_FAILURE:
       return {
         ...state,
-        result: null,
+        items: null,
+        lastUpdated: moment(),
+        loading: false,
         pagination: {
           page: 0,
           size: state.pagination.size,
         },
-        lastUpdated: moment(),
-        loading: false,
       };
 
     case SEARCH_COMPLETE:
       return {
         ...state,
-        result: action.result,
+        items: action.result,
+        lastUpdated: moment(),
+        loading: false,
         pagination: {
           page: action.result.pageRequest.page,
           size: action.result.pageRequest.size,
         },
-        lastUpdated: moment(),
-        loading: false,
       };
 
     case ADD_SELECTED:
@@ -160,17 +158,13 @@ export function payInReducer(
     case LOAD_ORDER_FAILURE:
       return {
         ...state,
-        timeline: {
-          order: null,
-        },
+        record: null
       };
 
     case LOAD_ORDER_SUCCESS:
       return {
         ...state,
-        timeline: {
-          order: action.order,
-        },
+        record: action.record,
       };
 
     default:

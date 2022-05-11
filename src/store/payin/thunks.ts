@@ -13,7 +13,7 @@ import PayInApi from 'service/payin';
 
 // Model
 import { PageRequest, Sorting, PageResult } from 'model/response';
-import { EnumPayInSortField, PayIn } from 'model/order';
+import { EnumPayInSortField, PayIn, PayInType } from 'model/order';
 
 // Helper thunk result type
 type ThunkResult<R> = ThunkAction<Promise<R>, RootState, unknown, PayInActions>;
@@ -58,7 +58,7 @@ export const find = (
   return null;
 }
 
-export const findOne = (key: string): ThunkResult<PayIn | null> => async (dispatch, getState) => {
+export const findOne = (key: string): ThunkResult<PayInType | null> => async (dispatch, getState) => {
   dispatch(loadPayInInit(key));
 
   // Get response

@@ -46,6 +46,23 @@ export enum EnumPaymentMethod {
   BANKWIRE = 'BANKWIRE',
 }
 
+export enum EnumRecurringPaymentType {
+  /**
+   * Simple PayIn record
+   */
+  NONE = 'NONE',
+  /**
+   * Customer-initiated transaction for initializing or authenticating a
+   * recurring payment
+   */
+  CIT = 'CIT',
+  /**
+   * Merchant-initiated transaction for an in-progress recurring payment
+   * registration
+   */
+  MIT = 'MIT',
+}
+
 export enum EnumDeliveryMethod {
   NONE = 'NONE',
   DIGITAL_PLATFORM = 'DIGITAL_PLATFORM',

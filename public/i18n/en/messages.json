@@ -172,15 +172,11 @@
             "FAILED": "Card transaction has been declined",
             "SUCCEEDED": "Card has been successfully debited"
           }
-        },
-        "payment-method": {
-          "FREE": "Free",
-          "BANKWIRE": "Bank transfer",
-          "CARD_DIRECT": "Credit Card"
         }
       }
     },
     "payin": {
+      "route": "Pay In {referenceNumber}",
       "filter": {
         "email": "User",
         "reference-number": "Reference Number",
@@ -203,7 +199,24 @@
       "tooltip": {
         "transfer-funds": "Transfer funds to provider wallet",
         "transfer-funds-completed": "Funds have been transferred",
-        "view-details": "View PayIn"
+        "view-details": "View PayIn",
+        "view-mangopay": "View transaction in MANGOPAY dashboard"
+      },
+      "details": {
+        "sections": {
+          "consumer": "Consumer",
+          "consumer-address": "Address",
+          "headquarters-address": "Headquarters address",
+          "billing-address": "Billing Address",
+          "shipping-address": "Shipping Address",
+          "items": "Payment Items",
+          "bankwire": {
+            "status": "Status",
+            "bank-account": "Bank Account",
+            "bank-account-owner": "Owner"
+          },
+          "transaction": "Transaction Details"
+        }
       }
     },
     "payout": {
@@ -363,10 +376,17 @@
       "PHYSICAL_PROVIDER": "Provider Physical"
     },
     "effective-pricing-model": {
+      "UNDEFINED": "-",
       "FREE": "Free",
       "FIXED": "Fixed price. {years} years of updates included.",
       "FIXED_PER_ROWS": "{rows} rows included.",
-      "FIXED_FOR_POPULATION": "{population}% of the population is covered."
+      "FIXED_FOR_POPULATION": "{population}% of the population is covered.",
+      "PER_CALL_WITH_PREPAID": "Per service call. Selected tier: {count} rows for {discount} discount",
+      "PER_CALL_WITH_BLOCK_RATE": "Per service call with block rate",
+      "PER_ROW_WITH_PREPAID": "Per service data row. Selected tier: {count} rows for {discount} discount",
+      "PER_ROW_WITH_BLOCK_RATE": "Per service data row with block rate",
+      "SENTINEL_HUB_SUBSCRIPTION": "Sentinel Hub subscription",
+      "SENTINEL_HUB_IMAGES": "Sentinel Hub images"
     },
     "month": {
       "1": "Jan",

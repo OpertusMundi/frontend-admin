@@ -17,13 +17,9 @@ import MaterialTable, { cellActionHandler, Column } from 'components/material-ta
 // Icons
 import Icon from '@mdi/react';
 import {
-  mdiBankTransfer,
   mdiClockFast,
   mdiContentCopy,
-  mdiCreditCardOutline,
-  mdiLink,
   mdiPackageVariantClosed,
-  mdiPiggyBankOutline,
   mdiWalletPlusOutline,
 } from '@mdi/js';
 
@@ -34,12 +30,14 @@ import { EnumPayInItemType, EnumPayInSortField, EnumTransactionStatus, PayIn, Pa
 import { PageRequest, PageResult, Sorting } from 'model/response';
 import { EnumPaymentMethod } from 'model/enum';
 
+// Helper methods
+import { mapPaymentMethodToIcon } from 'components/billing/common';
+
 const COPY = 'copy';
 
 enum EnumAction {
   CopyReferenceNumber = 'copy-reference-number',
   TransferFunds = 'transfer-funds',
-  View = 'view',
 };
 
 const getCustomerName = (payin: PayIn): string => {
@@ -52,17 +50,6 @@ const getCustomerName = (payin: PayIn): string => {
     return c.name;
   }
   return '';
-}
-
-function mapStatusToIcon(payin: PayIn) {
-  switch (payin.paymentMethod) {
-    case EnumPaymentMethod.FREE:
-      return (<Icon path={mdiPiggyBankOutline} size="1.5rem" />);
-    case EnumPaymentMethod.BANKWIRE:
-      return (<Icon path={mdiBankTransfer} size="1.5rem" />);
-    case EnumPaymentMethod.CARD_DIRECT:
-      return (<Icon path={mdiCreditCardOutline} size="1.5rem" />);
-  }
 }
 
 function mapStatusToColor(payin: PayIn) {
@@ -251,13 +238,6 @@ function payinColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
         rowIndex: number, column: Column<PayIn, EnumPayInSortField>, row: PayIn, handleAction?: cellActionHandler<PayIn, EnumPayInSortField>
       ): React.ReactNode => (
         <div className={classes.classes.compositeLabelLeft}>
-          <Tooltip title={intl.formatMessage({ id: 'billing.payin.tooltip.view-details' })}>
-            <i
-              onClick={() => handleAction ? handleAction(EnumAction.View, rowIndex, column, row) : null}
-            >
-              <Icon path={mdiLink} className={classes.classes.rowIconAction} />
-            </i>
-          </Tooltip>
           {row.status === EnumTransactionStatus.SUCCEEDED && !hasTransfer(row) && row.paymentMethod !== EnumPaymentMethod.FREE &&
             <Tooltip title={intl.formatMessage({ id: 'billing.payin.tooltip.transfer-funds' })}>
               <i
@@ -285,7 +265,7 @@ function payinColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
       ): React.ReactNode => {
         return (
           <Avatar style={{ background: mapStatusToColor(row) }}>
-            {mapStatusToIcon(row)}
+            {mapPaymentMethodToIcon(row)}
           </Avatar>
         );
       },
@@ -450,11 +430,6 @@ class PayInTable extends React.Component<PayInTableProps> {
             element.select();
             document.execCommand(COPY);
           }
-          break;
-        case EnumAction.View:
-          this.props.addToSelection([row]);
-
-          this.props.viewPayIn(row.key);
           break;
         case EnumAction.TransferFunds:
           this.props.createTransfer(row.key);

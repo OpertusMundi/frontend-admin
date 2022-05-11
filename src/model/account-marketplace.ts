@@ -168,14 +168,12 @@ export interface CustomerDraftProfessional extends CustomerDraft {
  * Customer (Consumer/Processional) base interface
  */
 export interface Customer {
-  /**
-   * Contract reference
-   */
   contract: string;
   createdAt: string;
   email: string;
   emailVerified: boolean;
   emailVerifiedAt: string;
+  key: string;
   kycLevel: EnumKycLevel;
   modifiedAt: string;
   /**

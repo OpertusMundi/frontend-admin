@@ -29,7 +29,8 @@ import MarketplaceAccountManager from 'components/account-marketplace/account-gr
 import MarketplaceAccountView from 'components/account-marketplace/account-form';
 import MessageInboxHelpdesk from 'components/message-inbox-helpdesk/message-grid';
 import MessageInboxUser from 'components/message-inbox-user/message-grid';
-import PayInManager from 'components/payin/payin-grid';
+import PayInDetails from 'components/payin/payin-details';
+import PayInManager from 'components/payin/payin-manager';
 import PayOutManager from 'components/payout/payout-manager';
 import PlaceHolder from 'components/placeholder';
 import ProcessInstanceForm from 'components/workflow/process-instance-form';
@@ -98,11 +99,10 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             <Route path={DynamicRoutes.ContractUpdate} element={<ContractForm />} />
             <Route path={DynamicRoutes.DraftContractViewer} element={<DraftContractViewer />} />
             <Route path={DynamicRoutes.OrderTimeline} element={<OrderTimeline />} />
-            <Route path={DynamicRoutes.OrderView} element={<PlaceHolder />} />
             <Route path={DynamicRoutes.MarketplaceAccountView} element={<MarketplaceAccountView />} />
             <Route path={DynamicRoutes.ProcessInstanceHistoryView} element={<ProcessInstanceHistoryForm />} />
             <Route path={DynamicRoutes.ProcessInstanceView} element={<ProcessInstanceForm />} />
-            <Route path={DynamicRoutes.PayInView} element={<PlaceHolder />} />
+            <Route path={DynamicRoutes.PayInView} element={<PayInDetails />} />
             <Route path={DynamicRoutes.PayOutView} element={<PlaceHolder />} />
             {/* Static */}
             <Route path={StaticRoutes.Analytics} element={<QueryEditor />} />

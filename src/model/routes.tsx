@@ -13,7 +13,8 @@ import AnalyticsToolbar from 'components/analytics/toolbar';
 import MarketplaceAccountToolbar from 'components/account-marketplace/form/toolbar';
 import MessageInboxHelpdeskToolbar from 'components/message-inbox-helpdesk/toolbar';
 import MessageInboxUserToolbar from 'components/message-inbox-user/toolbar';
-import OrderTimelineToolbar from 'components/order/toolbar/order-timeline';
+import OrderToolbar from 'components/order/toolbar/order-toolbar';
+import PayInToolbar from 'components/payin/toolbar/payin-toolbar';
 import ProcessInstanceToolbar from 'components/workflow/toolbar/process-instance';
 import ProcessInstanceHistoryToolbar from 'components/workflow/toolbar/process-instance-history';
 /**
@@ -128,7 +129,6 @@ const ContractCreate = '/contract/create';
 const ContractUpdate = '/contract/update/:id';
 const DraftContractViewer = '/drafts/provider/:providerKey/draft/:draftKey/contract';
 const OrderTimeline = '/billing/order/:key/timeline';
-const OrderView = '/billing/order/:key';
 const MarketplaceAccountView = '/marketplace/users/record/:key';
 const PayInView = '/billing/payin/:key';
 const PayOutView = '/billing/payout/:key';
@@ -144,7 +144,6 @@ export const DynamicRoutes = {
   DraftContractViewer,
   MarketplaceAccountView,
   OrderTimeline,
-  OrderView,
   PayInView,
   PayOutView,
   ProcessInstanceView,
@@ -437,21 +436,20 @@ export const routes: RouteRegistry = {
     links: defaultLinks,
     toolbarComponent: (): React.ReactNode => {
       return (
-        <OrderTimelineToolbar />
+        <OrderToolbar />
       );
     }
-  },
-  [OrderView]: {
-    description: 'Order',
-    title: 'links.billing.order.record',
-    defaultTitle: 'Order',
-    links: defaultLinks
   },
   [PayInView]: {
     description: 'PayIn',
     title: 'links.billing.payin.record',
     defaultTitle: 'PayIn',
-    links: defaultLinks
+    links: defaultLinks,
+    toolbarComponent: (): React.ReactNode => {
+      return (
+        <PayInToolbar />
+      );
+    }
   },
   [PayOutView]: {
     description: 'PayOut',

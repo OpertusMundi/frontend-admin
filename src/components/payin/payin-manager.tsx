@@ -129,7 +129,7 @@ class PayInManager extends React.Component<PayInManagerProps> {
     const {
       addToSelection,
       classes,
-      explorer: { query, result, pagination, loading, lastUpdated, selected, sorting },
+      explorer: { query, items, pagination, loading, lastUpdated, selected, sorting },
       find,
       setPager,
       setFilter,
@@ -173,7 +173,7 @@ class PayInManager extends React.Component<PayInManagerProps> {
               selected={selected}
               setPager={setPager}
               setSorting={(sorting: Sorting<EnumPayInSortField>[]) => this.setSorting(sorting)}
-              result={result}
+              result={items}
               sorting={sorting}
               viewPayIn={this.viewPayIn}
             />

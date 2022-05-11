@@ -1,22 +1,19 @@
 import { Moment } from 'moment';
 
 import { LogoutInitAction } from 'store/security/types';
-import { PageResult, PageRequest, Sorting, ObjectResponse } from 'model/response';
-import { EnumPayInSortField, PayIn, PayInQuery } from 'model/order';
+import { PageResult, PageRequest, Sorting } from 'model/response';
+import { EnumPayInSortField, PayIn, PayInQuery, PayInType } from 'model/order';
 
 // State
 export interface PayInManagerState {
-  loading: boolean;
+  items: PageResult<PayIn> | null;
   lastUpdated: Moment | null;
+  loading: boolean;
   pagination: PageRequest;
   query: PayInQuery;
-  result: PageResult<PayIn> | null;
+  record: PayInType | null,
   selected: PayIn[];
   sorting: Sorting<EnumPayInSortField>[];
-  response: ObjectResponse<PayIn> | null;
-  timeline: {
-    order: PayIn | null,
-  }
 }
 
 // Actions
@@ -98,7 +95,7 @@ export interface LoadPayInInitAction {
 
 export interface LoadPayInSuccessAction {
   type: typeof LOAD_ORDER_SUCCESS;
-  order: PayIn;
+  record: PayInType;
 }
 
 export interface LoadPayInFailureAction {

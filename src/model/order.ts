@@ -1,6 +1,7 @@
 import { Moment } from 'moment';
-import { EnumPaymentMethod, EnumDeliveryMethod } from 'model/enum';
+import { EnumPaymentMethod, EnumDeliveryMethod, EnumRecurringPaymentType } from 'model/enum';
 import {
+  Address,
   BankAccount,
   Customer,
   CustomerProfessional,
@@ -51,6 +52,22 @@ export enum EnumTransactionStatus {
   FAILED = 'FAILED',
 }
 
+export interface BrowserInfo {
+  colorDepth: number;
+  javaEnabled: boolean;
+  javaScriptEnabled: boolean;
+  language: string;
+  screenHeight: number;
+  screenWidth: number;
+  timeZoneOffset: number;
+  userAgent: string;
+}
+
+export interface PayInAddress extends Address {
+  firstName: string;
+  lastName: string;
+}
+
 export interface Transfer {
   /**
    * Transfer unique key
@@ -88,13 +105,13 @@ export interface Transfer {
 
 export interface SubscriptionBilling {
   /**
-   * Account subscription
-   */
-  subscription?: MarketplaceAccountSubscription;
-  /**
    * Service unique PID
    */
   service: string;
+  /**
+   * Account subscription
+   */
+  subscription?: MarketplaceAccountSubscription;
   /**
    * Service description
    */
@@ -123,17 +140,29 @@ export interface SubscriptionBilling {
    * Total calls used by purchased SKUs. This field is exclusive with field `skuTotalRows`
    */
   skuTotalCalls: number;
+  /**
+   * Item total price
+   */
+  totalPrice: number;
+  /**
+   * Item price excluding tax
+   */
+  totalPriceExcludingTax: number;
+  /**
+   * Item tax
+   */
+  totalTax: number;
 }
 
 export interface PayInItem {
   /**
-   * Invoice line number
-   */
-  index: number;
-  /**
    * Payment item type
    */
   type: EnumPayInItemType;
+  /**
+   * Invoice line number
+   */
+  index: number;
   /**
    * Transfer of funds from the buyer's to the seller's wallet
    */
@@ -163,7 +192,31 @@ export interface PayInQuery {
   status: EnumTransactionStatus[];
 }
 
+export interface PayInStatusHistory {
+  status: EnumTransactionStatus;
+  updatedOn: Moment;
+}
+
+export interface RecurringRegistration {
+  key: string;
+}
+
+export interface PayInStatus {
+  /**
+   * Transaction status
+   */
+  status: EnumTransactionStatus;
+  /**
+   * Date of update in ISO format
+   */
+  updatedOn: Moment;
+}
+
 export interface PayIn {
+  /**
+   * Payment method
+   */
+  paymentMethod: EnumPaymentMethod;
   /**
    * PayIn unique key
    */
@@ -201,13 +254,13 @@ export interface PayIn {
    */
   status: EnumTransactionStatus;
   /**
+   * PayIn status history
+   */
+  statusHistory?: PayInStatusHistory[];
+  /**
    * Date of transaction status last update in ISO format
    */
   statusUpdatedOn: Moment;
-  /**
-   * Payment method
-   */
-  paymentMethod: EnumPaymentMethod;
   /**
    * Platform reference number
    */
@@ -234,18 +287,18 @@ export interface PayIn {
   providerResultMessage?: string;
 }
 
-export interface PayInStatus {
+export interface FreePayIn extends PayIn {
   /**
-   * Transaction status
+   * Payment method
    */
-  status: EnumTransactionStatus;
-  /**
-   * Date of update in ISO format
-   */
-  updatedOn: Moment;
+  paymentMethod: EnumPaymentMethod.FREE;
 }
 
 export interface BankwirePayIn extends PayIn {
+  /**
+   * Payment method
+   */
+  paymentMethod: EnumPaymentMethod.BANKWIRE;
   /**
    * The user has to proceed a Bank wire with this reference
    */
@@ -258,19 +311,52 @@ export interface BankwirePayIn extends PayIn {
 
 export interface CardDirectPayIn extends PayIn {
   /**
+   * Payment method
+   */
+  paymentMethod: EnumPaymentMethod.CARD_DIRECT;
+  /**
    * A partially obfuscated version of the credit card number
    */
   alias?: string;
   /**
+   * Applied 3DS version
+   */
+  applied3dsVersion: string;
+  /**
+   * Billing address
+   */
+  billing: PayInAddress;
+  /**
+   * Browser information required by 3DS2 integration
+   */
+  browserInfo: BrowserInfo;
+  /**
+   * Recurring payment information
+   */
+  recurringPayment: RecurringRegistration;
+  /**
+   * Recurring payment type
+   */
+  recurringPaymentType: EnumRecurringPaymentType;
+  /**
+   * Request 3DS version
+   */
+  requested3dsVersion: string;
+  /**
+   * Shipping address
+   */
+  shipping: PayInAddress;
+  /**
    * A custom description to appear on the user's bank statement
    */
   statementDescriptor: string;
-  /**
-   * Redirect URL if 3-D Secure validation is required. If not empty, the client
-   * must initiate the 3-D Secure validation process.
-   */
-  secureModeRedirectURL?: string;
 }
+
+export type PayInType =
+  | FreePayIn
+  | BankwirePayIn
+  | CardDirectPayIn
+  ;
 
 export interface Card {
   /**

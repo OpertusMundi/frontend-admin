@@ -50,12 +50,14 @@ import { findOne } from 'store/order/thunks';
 
 // Model
 import { EnumPaymentMethod } from 'model/enum';
-import { EnumPricingModel, FixedPricingModelCommand } from 'model/pricing-model';
 import { EnumMangopayUserType, Address, CustomerIndividual, CustomerProfessional } from 'model/account-marketplace';
-import { EnumOrderStatus, Order, OrderItem, BankwirePayIn, EnumTransactionStatus } from 'model/order';
+import { EnumOrderStatus, Order, BankwirePayIn, EnumTransactionStatus } from 'model/order';
 
 // Service
 import OrderApi from 'service/order';
+
+// Helper methods
+import { renderPricingModel } from 'components/billing/common';
 
 const styles = (theme: Theme) => createStyles({
   root: {
@@ -181,7 +183,7 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
       <>
         <Grid item xs={12}>
           <Typography gutterBottom>
-            <FormattedMessage id={`billing.order.timeline.payment-method.${order.paymentMethod}`} />
+            <FormattedMessage id={`enum.payment-method.${order.paymentMethod}`} />
           </Typography>
         </Grid>
       </>
@@ -195,7 +197,7 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
       <>
         <Grid item xs={12}>
           <Typography gutterBottom>
-            <FormattedMessage id={`billing.order.timeline.payment-method.${order.paymentMethod}`} />
+            <FormattedMessage id={`enum.payment-method.${order.paymentMethod}`} />
           </Typography>
         </Grid>
         <Grid item xs={12}>
@@ -209,61 +211,10 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
     return (
       <Grid item xs={12}>
         <Typography gutterBottom>
-          <FormattedMessage id={`billing.order.timeline.payment-method.${order.paymentMethod}`} />
+          <FormattedMessage id={`enum.payment-method.${order.paymentMethod}`} />
         </Typography>
       </Grid>
     )
-  }
-
-  renderPricingModel(item: OrderItem): React.ReactNode {
-    const model = item.pricingModel.model;
-    const parameters = item.pricingModel.parameters;
-
-    switch (model.type) {
-      case EnumPricingModel.FREE:
-        return (
-          <FormattedMessage id={`enum.effective-pricing-model.${model.type}`} />
-        );
-
-      case EnumPricingModel.FIXED: {
-        const typedModel = model as FixedPricingModelCommand;
-
-        return (
-          <FormattedMessage
-            id={`enum.effective-pricing-model.${model.type}`}
-            values={{ years: typedModel.yearsOfUpdates }}
-          />
-        );
-      }
-
-      case EnumPricingModel.FIXED_PER_ROWS: {
-        return (
-          <FormattedMessage
-            id={`enum.effective-pricing-model.${model.type}`}
-            values={{ years: parameters?.systemParams?.rows }}
-          />
-        );
-      }
-
-      case EnumPricingModel.FIXED_FOR_POPULATION: {
-        return (
-          <FormattedMessage
-            id={`enum.effective-pricing-model.${model.type}`}
-            values={{ population: parameters?.systemParams?.populationPercent }}
-          />
-        );
-      }
-
-      case EnumPricingModel.PER_CALL_WITH_PREPAID:
-        break;
-      case EnumPricingModel.PER_CALL_WITH_BLOCK_RATE:
-        break;
-      case EnumPricingModel.PER_ROW_WITH_PREPAID:
-        break;
-      case EnumPricingModel.PER_ROW_WITH_BLOCK_RATE:
-        break;
-    }
-    return null;
   }
 
   renderDeliveryDetails(order: Order): React.ReactNode {
@@ -425,7 +376,7 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
                   </a>
                   <ListItem className={classes.listItem}>
                     <Typography variant="caption">
-                      {this.renderPricingModel(item)}
+                      {renderPricingModel(item)}
                     </Typography>
                   </ListItem>
                 </div>
