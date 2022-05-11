@@ -51,7 +51,6 @@ class Toolbar extends React.Component<ToolbarProps> {
     this.props.navigate(path);
   }
 
-
   render() {
     const { classes, route, profile } = this.props;
 

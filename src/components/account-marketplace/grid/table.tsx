@@ -17,7 +17,6 @@ import {
   mdiEmailAlertOutline,
   mdiFinance,
   mdiFolderOpenOutline,
-  mdiLink,
   mdiMessageTextOutline,
   mdiPackageVariantClosed,
 } from '@mdi/js';
@@ -35,7 +34,6 @@ import { ApplicationConfiguration } from 'model/configuration';
 enum EnumAction {
   ViewAssets = 'toggle-favorite',
   SendMessage = 'send-message',
-  ViewDetails = 'view-details',
   ViewFinance = 'view-finance',
   ViewOrders = 'view-orders',
   VendorDetails = 'vendor-details',
@@ -66,13 +64,6 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccount, En
           }
           {row.type === EnumAccountType.OPERTUSMUNDI &&
             <div style={{ display: 'flex', justifyContent: 'start' }}>
-              <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-details' })}>
-                <i
-                  onClick={() => handleAction ? handleAction(EnumAction.ViewDetails, rowIndex, column, row) : null}
-                >
-                  <Icon path={mdiLink} className={classes.rowIconAction} />
-                </i>
-              </Tooltip>
               <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.send-message' })}>
                 <i
                   onClick={() => handleAction ? handleAction(EnumAction.SendMessage, rowIndex, column, row) : null}
@@ -330,10 +321,6 @@ class AccountTable extends React.Component<AccountTableProps> {
   handleAction(action: string, index: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount): void {
     if (row.key) {
       switch (action) {
-        case EnumAction.ViewDetails:
-          this.props.view(row.key);
-          break;
-
         default:
           // No action
           break;
