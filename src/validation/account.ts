@@ -29,9 +29,6 @@ export function accountValidator(intl: IntlShape, values: HelpdeskAccountCommand
   if (!values.lastName) {
     errors.lastName = _t({ id: 'validation.required' });
   }
-  if (!values.mobile) {
-    errors.mobile = _t({ id: 'validation.required' });
-  }
   if (values.id) {
     if (values.password) {
       if (!values.passwordMatch) {
