@@ -26,7 +26,6 @@ import { resetFilter, setFilter, setPager, setSorting } from 'store/transfer/act
 import { find } from 'store/transfer/thunks';
 
 // Model
-import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
 import { EnumTransferSortField } from 'model/order';
 
@@ -66,12 +65,6 @@ interface TransferManagerProps extends PropsFromRedux, WithStyles<typeof styles>
 
 class TransferManager extends React.Component<TransferManagerProps> {
 
-  constructor(props: TransferManagerProps) {
-    super(props);
-
-    this.viewTransfer = this.viewTransfer.bind(this);
-  }
-
   componentDidMount() {
     this.find();
   }
@@ -82,11 +75,6 @@ class TransferManager extends React.Component<TransferManagerProps> {
         message.errorHtml("Find operation has failed", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
       }
     });
-  }
-
-  viewTransfer(key: string): void {
-    const path = buildPath(DynamicRoutes.TransferView, [key]);
-    this.props.navigate(path);
   }
 
   setSorting(sorting: Sorting<EnumTransferSortField>[]): void {
@@ -137,7 +125,6 @@ class TransferManager extends React.Component<TransferManagerProps> {
               setSorting={(sorting: Sorting<EnumTransferSortField>[]) => this.setSorting(sorting)}
               result={result}
               sorting={sorting}
-              viewTransfer={this.viewTransfer}
             />
           </Paper>
         </div >

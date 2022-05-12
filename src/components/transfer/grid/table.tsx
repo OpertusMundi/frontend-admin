@@ -8,15 +8,12 @@ import { injectIntl, IntlShape, FormattedNumber, FormattedTime } from 'react-int
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
-import Tooltip from '@material-ui/core/Tooltip';
-
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
 // Icons
 import Icon from '@mdi/react';
 import {
   mdiContentCopy,
-  mdiLink,
   mdiTransferRight,
 } from '@mdi/js';
 
@@ -39,11 +36,11 @@ import {
   CustomerProfessional,
 } from 'model/account-marketplace';
 
-const COPY = 'copy';
+// Helper methods
+import { copyToClipboard } from 'utils/clipboard';
 
 enum EnumAction {
   CopyReferenceNumber = 'copy-reference-number',
-  View = 'view',
 };
 
 function getPayIn(item: PayInItem): PayIn | null {
@@ -199,17 +196,12 @@ function transferColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
       header: intl.formatMessage({ id: 'billing.transfer.header.actions' }),
       id: 'actions',
       width: 80,
+      hidden: true,
       cell: (
         rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
       ): React.ReactNode => (
         <div className={classes.classes.compositeLabelLeft}>
-          <Tooltip title={intl.formatMessage({ id: 'billing.transfer.tooltip.view-details' })}>
-            <i
-              onClick={() => handleAction ? handleAction(EnumAction.View, rowIndex, column, row) : null}
-            >
-              <Icon path={mdiLink} className={classes.classes.rowIconAction} style={{ marginTop: 2 }} />
-            </i>
-          </Tooltip>
+
         </div>
       ),
     }, {
@@ -377,7 +369,6 @@ interface TransferTableProps extends WithStyles<typeof styles> {
   setPager: (page: number, size: number) => void,
   setSorting: (sorting: Sorting<EnumTransferSortField>[]) => void,
   sorting: Sorting<EnumTransferSortField>[];
-  viewTransfer: (key: string) => void;
   loading?: boolean;
 }
 
@@ -393,18 +384,11 @@ class AccountTable extends React.Component<TransferTableProps> {
     if (row) {
       switch (action) {
         case EnumAction.CopyReferenceNumber:
-          const element: HTMLInputElement = document.getElementById('copy-to-clipboard') as HTMLInputElement;
+          const value = getPayIn(row)?.referenceNumber || '';
 
-          if (element && document.queryCommandSupported(COPY)) {
-            element.focus();
-            element.value = getPayIn(row)?.referenceNumber || '';
-            element.select();
-            document.execCommand(COPY);
-          }
+          copyToClipboard(value);
           break;
-        case EnumAction.View:
-          this.props.viewTransfer(getPayIn(row)?.key || '');
-          break;
+
         default:
           // No action
           break;
