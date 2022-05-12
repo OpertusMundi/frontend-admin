@@ -37,7 +37,8 @@ import {
 // Service
 import { BpmVariable } from 'model/bpm-process-instance';
 
-const COPY = 'copy';
+// Helper methods
+import { copyToClipboard } from 'utils/clipboard';
 
 const styles = (theme: Theme) => createStyles({
   avatar: {
@@ -113,14 +114,10 @@ class ProcessInstanceVariables extends React.Component<ProcessInstanceVariablesP
     if (!value || typeof value === 'boolean') {
       return;
     }
-    const element: HTMLInputElement = document.getElementById('copy-to-clipboard') as HTMLInputElement;
 
-    if (element && document.queryCommandSupported(COPY)) {
-      element.focus();
-      element.value = typeof value === 'number' ? '' + value : value;
-      element.select();
-      document.execCommand(COPY);
-    }
+    const copiedValue = typeof value === 'number' ? '' + value : value;
+
+    copyToClipboard(copiedValue);
   }
 
   renderVariableValue(v: BpmVariable) {

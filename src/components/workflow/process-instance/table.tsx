@@ -20,7 +20,8 @@ import MaterialTable, { cellActionHandler, Column } from 'components/material-ta
 import { EnumProcessInstanceSortField, ProcessInstance, ProcessInstanceQuery } from 'model/bpm-process-instance';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
-const COPY = 'copy';
+// Helper methods
+import { copyToClipboard } from 'utils/clipboard';
 
 enum EnumAction {
   CopyBusinessKey = 'copy-business-key',
@@ -192,14 +193,9 @@ class ProcessInstanceTable extends React.Component<ProcessInstanceTableProps> {
   handleAction(action: string, index: number, column: Column<ProcessInstance, EnumProcessInstanceSortField>, row: ProcessInstance): void {
     switch (action) {
       case EnumAction.CopyBusinessKey:
-        const element: HTMLInputElement = document.getElementById('copy-to-clipboard') as HTMLInputElement;
+        const value = row.businessKey;
 
-        if (element && document.queryCommandSupported(COPY)) {
-          element.focus();
-          element.value = row.businessKey;
-          element.select();
-          document.execCommand(COPY);
-        }
+        copyToClipboard(value);
         break;
 
       case EnumAction.View:

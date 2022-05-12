@@ -25,7 +25,8 @@ import MaterialTable, { cellActionHandler, Column } from 'components/material-ta
 import { EnumEventLevel, EnumEventSortField, Event, EventQuery } from 'model/event';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
-const COPY = 'copy';
+// Helper methods
+import { copyToClipboard } from 'utils/clipboard';
 
 enum EnumAction {
   CopyException = 'copy-business-key',
@@ -225,14 +226,9 @@ class EventTable extends React.Component<EventTableProps> {
   handleAction(action: string, index: number, column: Column<Event, EnumEventSortField>, row: Event): void {
     switch (action) {
       case EnumAction.CopyException:
-        const element: HTMLInputElement = document.getElementById('copy-to-clipboard') as HTMLInputElement;
+        const value = row.exception.replaceAll('|', '\n').replaceAll('#011', '\t');
 
-        if (element && document.queryCommandSupported(COPY)) {
-          element.focus();
-          element.value = row.exception.replaceAll('|','\n').replaceAll('#011', '\t');
-          element.select();
-          document.execCommand(COPY);
-        }
+        copyToClipboard(value);
         break;
 
       case EnumAction.ViewErrorDetails:

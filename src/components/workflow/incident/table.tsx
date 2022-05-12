@@ -20,7 +20,8 @@ import MaterialTable, { cellActionHandler, Column } from 'components/material-ta
 import { EnumIncidentSortField, Incident, IncidentQuery } from 'model/bpm-incident';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
-const COPY = 'copy';
+// Helper methods
+import { copyToClipboard } from 'utils/clipboard';
 
 enum EnumAction {
   CopyBusinessKey = 'copy-business-key',
@@ -188,14 +189,9 @@ class IncidentTable extends React.Component<IncidentTableProps> {
   handleAction(action: string, index: number, column: Column<Incident, EnumIncidentSortField>, row: Incident): void {
     switch (action) {
       case EnumAction.CopyBusinessKey:
-        const element: HTMLInputElement = document.getElementById('copy-to-clipboard') as HTMLInputElement;
+        const value = row.businessKey;
 
-        if (element && document.queryCommandSupported(COPY)) {
-          element.focus();
-          element.value = row.businessKey;
-          element.select();
-          document.execCommand(COPY);
-        }
+        copyToClipboard(value);
         break;
 
       case EnumAction.ViewErrorDetails:

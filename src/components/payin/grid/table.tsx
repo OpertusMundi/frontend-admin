@@ -33,7 +33,8 @@ import { EnumPaymentMethod } from 'model/enum';
 // Helper methods
 import { mapPaymentMethodToIcon } from 'components/billing/common';
 
-const COPY = 'copy';
+// Helper methods
+import { copyToClipboard } from 'utils/clipboard';
 
 enum EnumAction {
   CopyReferenceNumber = 'copy-reference-number',
@@ -422,14 +423,9 @@ class PayInTable extends React.Component<PayInTableProps> {
     if (row.key) {
       switch (action) {
         case EnumAction.CopyReferenceNumber:
-          const element: HTMLInputElement = document.getElementById('copy-to-clipboard') as HTMLInputElement;
+          const value = row.referenceNumber;
 
-          if (element && document.queryCommandSupported(COPY)) {
-            element.focus();
-            element.value = row.referenceNumber;
-            element.select();
-            document.execCommand(COPY);
-          }
+          copyToClipboard(value);
           break;
         case EnumAction.TransferFunds:
           this.props.createTransfer(row.key);

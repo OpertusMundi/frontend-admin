@@ -26,7 +26,8 @@ import { EnumKycLevel, CustomerProfessional } from 'model/account-marketplace';
 import { EnumPayOutSortField, EnumTransactionStatus, PayOut, PayOutQuery } from 'model/order';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
-const COPY = 'copy';
+// Helper methods
+import { copyToClipboard } from 'utils/clipboard';
 
 enum EnumAction {
   CopyReferenceNumber = 'copy-bankwire-ref',
@@ -315,15 +316,11 @@ class AccountTable extends React.Component<PayOutTableProps> {
     if (row.key) {
       switch (action) {
         case EnumAction.CopyReferenceNumber:
-          const element: HTMLInputElement = document.getElementById('copy-to-clipboard') as HTMLInputElement;
+          const value = row.bankwireRef;
 
-          if (element && document.queryCommandSupported(COPY)) {
-            element.focus();
-            element.value = row.bankwireRef;
-            element.select();
-            document.execCommand(COPY);
-          }
+          copyToClipboard(value);
           break;
+
         case EnumAction.View:
           this.props.addToSelection([row]);
 
@@ -335,6 +332,7 @@ class AccountTable extends React.Component<PayOutTableProps> {
             this.props.viewProcessInstance(row.processInstance);
           }
           break;
+
         default:
           // No action
           break;

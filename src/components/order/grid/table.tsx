@@ -27,7 +27,8 @@ import { EnumKycLevel, EnumMangopayUserType, CustomerIndividual, CustomerProfess
 import { EnumOrderSortField, EnumOrderStatus, Order, OrderQuery } from 'model/order';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
-const COPY = 'copy';
+// Helper methods
+import { copyToClipboard } from 'utils/clipboard';
 
 enum EnumAction {
   CopyReferenceNumber = 'copy-reference-number',
@@ -343,14 +344,10 @@ class OrderTable extends React.Component<OrderTableProps> {
     if (row.key) {
       switch (action) {
         case EnumAction.CopyReferenceNumber:
-          const element: HTMLInputElement = document.getElementById('copy-to-clipboard') as HTMLInputElement;
+          const value = row.referenceNumber;
 
-          if (element && document.queryCommandSupported(COPY)) {
-            element.focus();
-            element.value = row.referenceNumber;
-            element.select();
-            document.execCommand(COPY);
-          }
+          copyToClipboard(value);
+
           break;
         case EnumAction.ViewTimeline:
           this.props.addToSelection([row]);
