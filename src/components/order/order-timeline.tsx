@@ -42,6 +42,7 @@ import {
   mdiCreditCardRefundOutline,
   mdiCheckOutline,
   mdiPiggyBankOutline,
+  mdiLinkVariant,
 } from '@mdi/js';
 
 // Store
@@ -58,14 +59,11 @@ import OrderApi from 'service/order';
 
 // Helper methods
 import { renderPricingModel } from 'components/billing/common';
+import { buildPath, DynamicRoutes } from 'model/routes';
 
 const styles = (theme: Theme) => createStyles({
-  root: {
-    display: 'flex',
-    padding: 0,
-  },
-  paper: {
-    padding: '6px 16px',
+  avatar: {
+    backgroundColor: red[500],
   },
   card: {
     minWidth: 480,
@@ -77,11 +75,11 @@ const styles = (theme: Theme) => createStyles({
   cardActions: {
     justifyContent: 'flex-end',
   },
-  avatar: {
-    backgroundColor: red[500],
-  },
   listItem: {
     padding: theme.spacing(1, 0),
+  },
+  paper: {
+    padding: '6px 16px',
   },
   total: {
     fontWeight: 700,
@@ -92,6 +90,12 @@ const styles = (theme: Theme) => createStyles({
   link: {
     textDecoration: 'none',
     color: 'inherit',
+  },
+  linkIcon: {
+    color: 'inherit',
+    cursor: 'pointer',
+    display: 'inline',
+    marginLeft: theme.spacing(1),
   }
 });
 
@@ -133,6 +137,13 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
     }
   }
 
+  showPayIn(e: React.MouseEvent, order: Order) {
+    e.preventDefault();
+
+    const path = buildPath(DynamicRoutes.PayInView, [order.payIn!.key]);
+
+    this.props.navigate(path)
+  }
   getCustomerName(order: Order): string {
     if (order.consumer && order.consumer.type === EnumMangopayUserType.INDIVIDUAL) {
       const c = order?.consumer as CustomerIndividual;
@@ -399,6 +410,11 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
               <Grid item container direction="column" xs={12} sm={6}>
                 <Typography variant="h6" gutterBottom className={classes.title}>
                   <FormattedMessage id={'billing.order.timeline.payment-details'} />
+                  {order.payIn &&
+                    <a href="/" onClick={(e) => this.showPayIn(e, order)} className={classes.linkIcon} title="Show Pay In">
+                      <Icon path={mdiLinkVariant} size="1rem" />
+                    </a>
+                  }
                 </Typography>
                 <Grid container>
                   {this.renderPaymentDetails(order)}
