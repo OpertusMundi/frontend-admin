@@ -87,22 +87,10 @@ function getCustomerName(customer: Customer): string {
 }
 
 const styles = (theme: Theme) => createStyles({
-  root: {
-    display: 'flex',
-    padding: 0,
-  },
-  rowIcon: {
-    width: 18,
-    marginRight: 8,
-  },
   rowIconAction: {
     width: 18,
     marginRight: 8,
     cursor: 'pointer',
-  },
-  avatar: {
-    width: theme.spacing(4),
-    height: theme.spacing(4),
   },
   link: {
     color: 'inherit',
@@ -110,11 +98,6 @@ const styles = (theme: Theme) => createStyles({
   compositeLabel: {
     display: 'flex',
     alignItems: 'center',
-  },
-  compositeLabelCenter: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   compositeLabelJustified: {
     display: 'flex',
@@ -124,22 +107,6 @@ const styles = (theme: Theme) => createStyles({
   compositeLabelLeft: {
     display: 'flex',
     alignItems: 'baseline',
-  },
-  statusLabel: {
-    display: 'flex',
-    marginRight: theme.spacing(2),
-    background: '#4CAF50',
-    color: '#ffffff',
-    padding: theme.spacing(0.5),
-    borderRadius: theme.spacing(0.5),
-  },
-  statusLabelWarning: {
-    display: 'flex',
-    marginRight: theme.spacing(2),
-    background: '#F4511E',
-    color: '#ffffff',
-    padding: theme.spacing(0.5),
-    borderRadius: theme.spacing(0.5),
   },
   labelPayInContainer: {
     display: 'flex',
@@ -159,38 +126,14 @@ const styles = (theme: Theme) => createStyles({
     color: '#424242',
     marginTop: theme.spacing(0.5),
   },
-  labelDeliveryMethod: {
-    display: 'flex',
-    background: '#0277BD',
-    color: '#ffffff',
-    padding: theme.spacing(0.5),
-    borderRadius: theme.spacing(0.5),
-    minWidth: 120,
-    justifyContent: 'center'
-  },
-  labelCustomer: {
-    display: 'flex',
-    background: '#0277BD',
-    color: '#ffffff',
-    padding: theme.spacing(0.5),
-    borderRadius: theme.spacing(0.5),
-    minWidth: 100,
-    justifyContent: 'center'
-  },
-  statusLabelText: {
-  },
-  marginLeft: {
-    marginLeft: theme.spacing(1),
-  },
-  marginRight: {
-    marginRight: theme.spacing(1),
-  },
   alightRight: {
     textAlign: 'right',
   }
 });
 
-function transferColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<PayInItem, EnumTransferSortField>[] {
+function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTransferSortField>[] {
+  const { intl, classes } = props;
+
   return (
     [{
       header: intl.formatMessage({ id: 'billing.transfer.header.actions' }),
@@ -200,7 +143,7 @@ function transferColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
       cell: (
         rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
       ): React.ReactNode => (
-        <div className={classes.classes.compositeLabelLeft}>
+        <div className={classes.compositeLabelLeft}>
 
         </div>
       ),
@@ -215,14 +158,14 @@ function transferColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
       ): React.ReactNode => {
         const payIn = getPayIn(row);
         return (
-          <div className={classes.classes.compositeLabelJustified}>
-            <Link to={buildPath(DynamicRoutes.PayInView, [payIn?.key || ''])} className={classes.classes.link}>
+          <div className={classes.compositeLabelJustified}>
+            <Link to={buildPath(DynamicRoutes.PayInView, [payIn?.key || ''])} className={classes.link}>
               {payIn?.referenceNumber || 'Not Implemented'}
             </Link>
             <i
               onClick={() => handleAction ? handleAction(EnumAction.CopyReferenceNumber, rowIndex, column, row) : null}
             >
-              <Icon path={mdiContentCopy} className={classes.classes.rowIconAction} />
+              <Icon path={mdiContentCopy} className={classes.rowIconAction} />
             </i>
           </div>
         );
@@ -240,17 +183,17 @@ function transferColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
         const providerName = provider ? getCustomerName(provider) : '';
 
         return (
-          <div className={classes.classes.compositeLabel}>
-            <div className={classes.classes.labelPayInContainer}>
-              <div className={classes.classes.labelCustomer}>
+          <div className={classes.compositeLabel}>
+            <div className={classes.labelPayInContainer}>
+              <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [consumer!.key])} className={classes.link}>
                 {consumerName}
-              </div>
+              </Link>
             </div>
             <Icon path={mdiTransferRight} size={'1.2rem'} style={{ margin: '0 10' }} />
-            <div className={classes.classes.labelPayInContainer}>
-              <div className={classes.classes.labelCustomer}>
+            <div className={classes.labelPayInContainer}>
+              <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [provider!.key])} className={classes.link}>
                 {providerName}
-              </div>
+              </Link>
             </div>
           </div>
         )
@@ -260,7 +203,7 @@ function transferColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
       id: 'totalPrice',
       headerStyle: { textAlign: 'right' },
       sortable: false,
-      className: classes.classes.alightRight,
+      className: classes.alightRight,
       cell: (
         rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
       ): React.ReactNode => {
@@ -276,7 +219,7 @@ function transferColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
       headerStyle: { textAlign: 'right' },
       sortable: true,
       sortColumn: EnumTransferSortField.FUNDS,
-      className: classes.classes.alightRight,
+      className: classes.alightRight,
       cell: (
         rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
       ): React.ReactNode => {
@@ -292,7 +235,7 @@ function transferColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
       headerStyle: { textAlign: 'right' },
       sortable: true,
       sortColumn: EnumTransferSortField.FEES,
-      className: classes.classes.alightRight,
+      className: classes.alightRight,
       cell: (
         rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
       ): React.ReactNode => {
@@ -328,17 +271,17 @@ function transferColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
       ): React.ReactNode => {
 
         return (
-          <div className={classes.classes.labelPayInContainer}>
+          <div className={classes.labelPayInContainer}>
             {row.transfer?.status &&
               <div
-                className={classes.classes.labelPayInStatus}
+                className={classes.labelPayInStatus}
                 style={{ background: statusToBackGround(row.transfer!.status) }}
               >
                 {intl.formatMessage({ id: `enum.transaction-status.${row.transfer!.status}` })}
               </div>
             }
             {row.transfer?.status === EnumTransactionStatus.FAILED &&
-              <div className={classes.classes.labelPayInMessage}>
+              <div className={classes.labelPayInMessage}>
                 {`${row?.transfer?.resultCode} - ${row?.transfer?.resultMessage}`}
               </div>
             }
@@ -397,13 +340,13 @@ class AccountTable extends React.Component<TransferTableProps> {
   }
 
   render() {
-    const { intl, classes, result, setPager, pagination, find, sorting, setSorting, loading } = this.props;
+    const { intl, result, setPager, pagination, find, sorting, setSorting, loading } = this.props;
 
     return (
       <>
         <MaterialTable<PayInItem, EnumTransferSortField>
           intl={intl}
-          columns={transferColumns(intl, { classes })}
+          columns={transferColumns(this.props)}
           rows={result ? result.items : []}
           pagination={{
             rowsPerPageOptions: [10, 20, 50],
