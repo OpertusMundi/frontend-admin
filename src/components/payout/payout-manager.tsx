@@ -15,7 +15,7 @@ import Typography from '@material-ui/core/Typography';
 
 // Icons
 import Icon from '@mdi/react';
-import { mdiCommentAlertOutline, mdiWalletOutline } from '@mdi/js';
+import { mdiCommentAlertOutline } from '@mdi/js';
 
 // Services
 import message from 'service/message';
@@ -24,8 +24,6 @@ import message from 'service/message';
 import { RootState } from 'store';
 import { addToSelection, removeFromSelection, resetFilter, resetSelection, setFilter, setPager, setSorting } from 'store/payout/actions';
 import { find } from 'store/payout/thunks';
-import { createTransfer } from 'store/transfer/thunks';
-
 
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
@@ -71,7 +69,6 @@ class PayOutManager extends React.Component<PayOutManagerProps> {
   constructor(props: PayOutManagerProps) {
     super(props);
 
-    this.createTransfer = this.createTransfer.bind(this);
     this.viewPayOut = this.viewPayOut.bind(this);
     this.viewProcessInstance = this.viewProcessInstance.bind(this);
   }
@@ -96,32 +93,6 @@ class PayOutManager extends React.Component<PayOutManagerProps> {
   viewProcessInstance(processInstance: string): void {
     const path = buildPath(DynamicRoutes.ProcessInstanceView, null, { processInstance });
     this.props.navigate(path);
-  }
-
-  createTransfer(key: string): void {
-    const _t = this.props.intl.formatNumber;
-
-    this.props.createTransfer(key)
-      .then((response) => {
-        if (response && response!.success) {
-          const creditedFunds = response!.result!.reduce((total, transfer) => total + transfer.creditedFunds, 0);
-          const fees = response!.result!.reduce((total, transfer) => total + transfer.fees, 0);
-          message.infoHtml(
-            <FormattedMessage
-              id={'billing.payout.message.transfer-success'}
-              values={{
-                count: response!.result!.length,
-                creditedFunds: _t(creditedFunds, { currency: 'EUR', style: 'currency', currencyDisplay: 'symbol' }),
-                fees: _t(fees, { currency: 'EUR', style: 'currency', currencyDisplay: 'symbol' }),
-              }}
-            />,
-            () => (<Icon path={mdiWalletOutline} size="3rem" />),
-          );
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   }
 
   setSorting(sorting: Sorting<EnumPayOutSortField>[]): void {
@@ -167,7 +138,6 @@ class PayOutManager extends React.Component<PayOutManagerProps> {
           <Paper className={classes.paperTable}>
             <PayOutTable
               addToSelection={addToSelection}
-              createTransfer={this.createTransfer}
               find={this.props.find}
               loading={loading}
               pagination={pagination}
@@ -197,7 +167,6 @@ const mapState = (state: RootState) => ({
 
 const mapDispatch = {
   addToSelection,
-  createTransfer: (key: string) => createTransfer(key),
   find: (pageRequest?: PageRequest, sorting?: Sorting<EnumPayOutSortField>[]) => find(pageRequest, sorting),
   removeFromSelection,
   resetFilter,

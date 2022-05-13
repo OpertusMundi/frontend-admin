@@ -284,7 +284,6 @@ const statusToBackGround = (status: EnumTransactionStatus): string => {
 };
 
 interface PayOutTableProps extends WithStyles<typeof styles> {
-  createTransfer: (key: string) => void;
   intl: IntlShape,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumPayOutSortField>[]
