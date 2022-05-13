@@ -69,9 +69,9 @@ export const createTransfer = (key: string): ThunkResult<ObjectResponse<Transfer
   // Update state
   if (response.data.success) {
     dispatch(createTransferSuccess(response.data.result!));
-    return response.data;
+  } else {
+    dispatch(createTransferFailure());
   }
 
-  dispatch(createTransferFailure());
-  return null;
+  return response.data;
 }

@@ -131,8 +131,8 @@
       "last-update": "Last updated: ",
       "tooltip": {
         "send-message": "Send message",
-        "view-process-instance": "View order fulfillment process instance",
-        "view-timeline": "View order timeline"
+        "view-process-instance": "View process instance",
+        "view-timeline": "View timeline"
       },
       "timeline": {
         "billing-address": "Billing Address",
@@ -194,7 +194,8 @@
       "last-update": "Last updated: ",
       "message": {
         "transfer-success": "Transfer has been completed successfully. {count} record(s) have been created. Total credited funds {creditedFunds}. Total platform fees {fees}.",
-        "transfer-failure": ""
+        "transfer-failure": "Transfer has failed",
+        "transfer-pending": "Cannot create transfer. Order {referenceNumber} is pending with status {status}"
       },
       "tooltip": {
         "transfer-funds": "Transfer funds to provider wallet",
@@ -249,8 +250,9 @@
       },
       "header": {
         "actions": " ",
-        "customer": "Customers",
+        "consumer": "Consumer",
         "executed-on": "Executed On",
+        "provider": "Provider",
         "reference-number": "Reference Number",
         "status": "Status",
         "total-price": "Total",

@@ -30,7 +30,7 @@ import { createTransfer } from 'store/transfer/thunks';
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
-import { EnumPayInSortField } from 'model/order';
+import { EnumOrderStatus, EnumPayInItemType, EnumPayInSortField, OrderPayInItem, PayIn } from 'model/order';
 
 // Components
 import PayInFilters from './grid/filter';
@@ -92,10 +92,43 @@ class PayInManager extends React.Component<PayInManagerProps> {
     this.props.navigate(path);
   }
 
-  createTransfer(key: string): void {
-    const _t = this.props.intl.formatNumber;
+  createTransfer(payIn: PayIn): void {
+    const _t = this.props.intl.formatMessage;
+    const _n = this.props.intl.formatNumber;
 
-    this.props.createTransfer(key)
+    const pending = payIn.items!.find(i => {
+      switch (i.type) {
+        case EnumPayInItemType.SUBSCRIPTION_BILLING:
+          return false;
+
+        case EnumPayInItemType.ORDER:
+          return i.order.status !== EnumOrderStatus.SUCCEEDED;
+      }
+
+      return false;
+    }) || null;
+
+    if (pending) {
+      const order = (pending as OrderPayInItem).order;
+
+      message.warnHtml(
+        <FormattedMessage
+          id={'billing.payin.message.transfer-pending'}
+          values={{
+            referenceNumber: (
+              <b>{order.referenceNumber}</b>
+            ),
+            status: (
+              <b>{_t({ id: `enum.order-status.${order.status}` })}</b>
+            )
+          }}
+        />,
+        () => (<Icon path={mdiWalletOutline} size="3rem" />),
+      );
+      return;
+    }
+
+    this.props.createTransfer(payIn.key)
       .then((response) => {
         if (response && response!.success) {
           const creditedFunds = response!.result!.reduce((total, transfer) => total + transfer.creditedFunds, 0);
@@ -105,14 +138,21 @@ class PayInManager extends React.Component<PayInManagerProps> {
               id={'billing.payin.message.transfer-success'}
               values={{
                 count: response!.result!.length,
-                creditedFunds: _t(creditedFunds, { currency: 'EUR', style: 'currency', currencyDisplay: 'symbol' }),
-                fees: _t(fees, { currency: 'EUR', style: 'currency', currencyDisplay: 'symbol' }),
+                creditedFunds: _n(creditedFunds, { currency: 'EUR', style: 'currency', currencyDisplay: 'symbol' }),
+                fees: _n(fees, { currency: 'EUR', style: 'currency', currencyDisplay: 'symbol' }),
               }}
             />,
             () => (<Icon path={mdiWalletOutline} size="3rem" />),
           );
 
           this.find();
+        } else {
+          message.errorHtml(
+            <FormattedMessage
+              id={'billing.payin.message.transfer-failure'}
+            />,
+            () => (<Icon path={mdiWalletOutline} size="3rem" />),
+          );
         }
       })
       .catch((err) => {

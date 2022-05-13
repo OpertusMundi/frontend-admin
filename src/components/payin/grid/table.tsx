@@ -392,7 +392,7 @@ const statusToBackGround = (status: EnumTransactionStatus): string => {
 };
 
 interface PayInTableProps extends WithStyles<typeof styles> {
-  createTransfer: (key: string) => void;
+  createTransfer: (payIn: PayIn) => void;
   intl: IntlShape,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumPayInSortField>[]
@@ -428,7 +428,7 @@ class PayInTable extends React.Component<PayInTableProps> {
           copyToClipboard(value);
           break;
         case EnumAction.TransferFunds:
-          this.props.createTransfer(row.key);
+          this.props.createTransfer(row);
           break;
         default:
           // No action

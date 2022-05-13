@@ -171,16 +171,14 @@ function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTrans
         );
       }
     }, {
-      header: intl.formatMessage({ id: 'billing.transfer.header.customer' }),
-      id: 'customer',
+      header: intl.formatMessage({ id: 'billing.transfer.header.consumer' }),
+      id: 'consumer',
       sortable: false,
       cell: (
         rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
       ): React.ReactNode => {
         const consumer = getConsumer(row);
-        const provider = getProvider(row);
         const consumerName = consumer ? getCustomerName(consumer) : '';
-        const providerName = provider ? getCustomerName(provider) : '';
 
         return (
           <div className={classes.compositeLabel}>
@@ -189,7 +187,30 @@ function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTrans
                 {consumerName}
               </Link>
             </div>
-            <Icon path={mdiTransferRight} size={'1.2rem'} style={{ margin: '0 10' }} />
+          </div>
+        )
+      },
+    }, {
+      header: '',
+      id: 'separator',
+      sortable: false,
+      cell: (
+        rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
+      ): React.ReactNode => {
+        return (<Icon path={mdiTransferRight} size={'1.2rem'} style={{ margin: '0 10' }} />);
+      }
+    }, {
+      header: intl.formatMessage({ id: 'billing.transfer.header.provider' }),
+      id: 'provider',
+      sortable: false,
+      cell: (
+        rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
+      ): React.ReactNode => {
+        const provider = getProvider(row);
+        const providerName = provider ? getCustomerName(provider) : '';
+
+        return (
+          <div className={classes.compositeLabel}>
             <div className={classes.labelPayInContainer}>
               <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [provider!.key])} className={classes.link}>
                 {providerName}

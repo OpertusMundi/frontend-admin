@@ -171,6 +171,10 @@ export interface PayInItem {
 
 export interface SubscriptionBillingPayInItem extends PayInItem {
   /**
+   * Payment item type
+   */
+  type: EnumPayInItemType.SUBSCRIPTION_BILLING;
+  /**
    * PayIn subscription billing record
    */
   subscriptionBilling: SubscriptionBilling;
@@ -224,7 +228,7 @@ export interface PayIn {
   /**
    * PayIn payments. A PayIn may include a single order or multiple subscription billing records
    */
-  items?: PayInItem[];
+  items?: PayInItemType[];
   /**
    * The total price of all PayIn items (the debited funds of the PayIn)
    */
@@ -551,10 +555,19 @@ export interface Order {
 
 export interface OrderPayInItem extends PayInItem {
   /**
+   * Payment item type
+   */
+  type: EnumPayInItemType.ORDER;
+  /**
    * PayIn order
    */
   order: Order;
 }
+
+export type PayInItemType =
+  | OrderPayInItem
+  | SubscriptionBillingPayInItem
+  ;
 
 export enum EnumTransferSortField {
   CREATED_ON = 'CREATED_ON',
