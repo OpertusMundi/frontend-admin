@@ -316,33 +316,35 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
       return null;
     }
 
-    const steps = history.map((h, index) => (
-      <TimelineItem key={`status-${index}`}>
-        <TimelineOppositeContent>
-          <Typography variant="body2" color="textSecondary">
-            <FormattedTime value={h.statusUpdatedOn.toDate()} day='numeric' month='numeric' year='numeric' />
-          </Typography>
-        </TimelineOppositeContent>
-        <TimelineSeparator>
-          <TimelineDot style={{ background: this.mapStatusToColor(order, h.status) }}>
-            {this.mapStatusToIcon(order, h.status)}
-          </TimelineDot>
-          {history.length - 1 !== index &&
-            <TimelineConnector />
-          }
-        </TimelineSeparator>
-        <TimelineContent>
-          <Paper elevation={3} className={classes.paper}>
-            <Typography variant="h6" component="h1">
-              <FormattedMessage id={`enum.order-status.${h.status}`} />
+    const steps = history
+      .sort((a, b) => a.statusUpdatedOn.isBefore(b.statusUpdatedOn) ? -1 : 1)
+      .map((h, index) => (
+        <TimelineItem key={`status-${index}`}>
+          <TimelineOppositeContent>
+            <Typography variant="body2" color="textSecondary">
+              <FormattedTime value={h.statusUpdatedOn.toDate()} day='numeric' month='numeric' year='numeric' />
             </Typography>
-            <Typography>
-              {this.mapStatusToMessage(order, h.status)}
-            </Typography>
-          </Paper>
-        </TimelineContent>
-      </TimelineItem>
-    ));
+          </TimelineOppositeContent>
+          <TimelineSeparator>
+            <TimelineDot style={{ background: this.mapStatusToColor(order, h.status) }}>
+              {this.mapStatusToIcon(order, h.status)}
+            </TimelineDot>
+            {history.length - 1 !== index &&
+              <TimelineConnector />
+            }
+          </TimelineSeparator>
+          <TimelineContent>
+            <Paper elevation={3} className={classes.paper}>
+              <Typography variant="h6" component="h1">
+                <FormattedMessage id={`enum.order-status.${h.status}`} />
+              </Typography>
+              <Typography>
+                {this.mapStatusToMessage(order, h.status)}
+              </Typography>
+            </Paper>
+          </TimelineContent>
+        </TimelineItem>
+      ));
 
     return (
       <Timeline align="alternate">
