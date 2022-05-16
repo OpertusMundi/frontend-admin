@@ -16,6 +16,8 @@ import {
   RESET_SELECTED,
   SAVE_INIT,
   SAVE_COMPLETE,
+  REGISTER_IDP_INIT,
+  REGISTER_IDP_COMPLETE,
 } from './types';
 
 
@@ -83,6 +85,18 @@ export function saveComplete(response: ObjectResponse<HelpdeskAccount>): Account
   return {
     type: SAVE_COMPLETE,
     response,
+  };
+}
+
+export function registerToIdpInit(): AccountActions {
+  return {
+    type: REGISTER_IDP_INIT,
+  };
+}
+
+export function registerToIdpComplete(): AccountActions {
+  return {
+    type: REGISTER_IDP_COMPLETE,
   };
 }
 

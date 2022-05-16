@@ -25,6 +25,8 @@ import {
   SAVE_COMPLETE,
   SAVE_INIT,
   SEARCH_FAILURE,
+  REGISTER_IDP_INIT,
+  REGISTER_IDP_COMPLETE,
 } from 'store/account/types';
 
 const initialState: HelpdeskAccountManagerState = {
@@ -160,6 +162,18 @@ export function helpdeskAccountReducer(
       return {
         ...state,
         response: action.response,
+        loading: false,
+      }
+
+    case REGISTER_IDP_INIT:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case REGISTER_IDP_COMPLETE:
+      return {
+        ...state,
         loading: false,
       }
 

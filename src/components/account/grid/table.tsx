@@ -11,7 +11,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import Icon from '@mdi/react';
-import { mdiPencilOutline, mdiTrashCanOutline } from '@mdi/js';
+import { mdiFormTextboxPassword, mdiPencilOutline, mdiSecurity, mdiTrashCanOutline } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
@@ -22,6 +22,8 @@ import { PageRequest, PageResult, Sorting } from 'model/response';
 enum EnumAction {
   Delete = 'delete',
   Edit = 'edit',
+  RegisterToIdp = 'register-to-idp',
+  ResetPassword = 'reset-password',
 };
 
 function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<HelpdeskAccount, EnumHelpdeskAccountSortField>[] {
@@ -33,7 +35,7 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
       cell: (
         rowIndex: number, column: Column<HelpdeskAccount, EnumHelpdeskAccountSortField>, row: HelpdeskAccount, handleAction?: cellActionHandler<HelpdeskAccount, EnumHelpdeskAccountSortField>
       ): React.ReactNode => (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
           <Tooltip title={intl.formatMessage({ id: 'account.helpdesk.tooltip.edit' })}>
             <i
               onClick={() => handleAction ? handleAction(EnumAction.Edit, rowIndex, column, row) : null}
@@ -48,6 +50,22 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
               <Icon path={mdiTrashCanOutline} className={classes.classes.rowIcon} />
             </i>
           </Tooltip>
+          <Tooltip title={intl.formatMessage({ id: 'account.helpdesk.tooltip.reset-password' })}>
+            <i
+              onClick={() => handleAction ? handleAction(EnumAction.ResetPassword, rowIndex, column, row) : null}
+            >
+              <Icon path={mdiFormTextboxPassword} className={classes.classes.rowIcon} />
+            </i>
+          </Tooltip>
+          {!row.registeredToIdp &&
+            <Tooltip title={intl.formatMessage({ id: 'account.helpdesk.tooltip.register-to-idp' })}>
+              <i
+                onClick={() => handleAction ? handleAction(EnumAction.RegisterToIdp, rowIndex, column, row) : null}
+              >
+                <Icon path={mdiSecurity} className={classes.classes.rowIcon} />
+              </i>
+            </Tooltip>
+          }
         </div>
       ),
     }, {
@@ -152,22 +170,24 @@ const styles = (theme: Theme) => createStyles({
 
 interface AccountTableProps extends WithStyles<typeof styles> {
   intl: IntlShape,
+  loading?: boolean;
+  pagination: PageRequest,
+  query: HelpdeskAccountQuery,
+  result: PageResult<HelpdeskAccount> | null,
+  selected: HelpdeskAccount[],
+  sorting: Sorting<EnumHelpdeskAccountSortField>[];
+  addToSelection: (rows: HelpdeskAccount[]) => void,
   deleteRow: (id: number) => void,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumHelpdeskAccountSortField>[]
   ) => Promise<PageResult<HelpdeskAccount> | null>,
-  query: HelpdeskAccountQuery,
-  result: PageResult<HelpdeskAccount> | null,
-  pagination: PageRequest,
-  selected: HelpdeskAccount[],
-  setPager: (page: number, size: number) => void,
-  setSorting: (sorting: Sorting<EnumHelpdeskAccountSortField>[]) => void,
-  addToSelection: (rows: HelpdeskAccount[]) => void,
+  registerToIdp: (id: number) => void;
+  resetPassword: (id: number) => void;
   removeFromSelection: (rows: HelpdeskAccount[]) => void,
   resetSelection: () => void;
-  sorting: Sorting<EnumHelpdeskAccountSortField>[];
+  setPager: (page: number, size: number) => void,
+  setSorting: (sorting: Sorting<EnumHelpdeskAccountSortField>[]) => void,
   updateRow: (id: number) => void;
-  loading?: boolean;
 }
 
 class AccountTable extends React.Component<AccountTableProps> {
@@ -186,6 +206,12 @@ class AccountTable extends React.Component<AccountTableProps> {
           break;
         case EnumAction.Edit:
           this.props.updateRow(row.id);
+          break;
+        case EnumAction.RegisterToIdp:
+          this.props.registerToIdp(row.id);
+          break;
+        case EnumAction.ResetPassword:
+          this.props.resetPassword(row.id);
           break;
         default:
           // No action

@@ -13,13 +13,28 @@ const mapErrorCodeToText = (intl: IntlShape, message: Message, fieldMapper?: Fie
     case 'BasicMessageCode.NotFound':
     case 'BasicMessageCode.RecordNotFound':
     case 'BasicMessageCode.ForeignKeyConstraint':
-    case 'BasicMessageCode.CannotDeleteSelf':
+    case 'AdminMessageCode.CannotDeleteSelf':
+      return intl.formatMessage({ id: `error.${message.code}` });
+
+    case 'AdminMessageCode.IdpAccountAlreadyExists':
+      return intl.formatMessage({ id: `error.${message.code}` });
+
+    case 'AdminMessageCode.IdpAccountCreateFailed':
+      return intl.formatMessage({ id: `error.${message.code}` }, { email: (<b>{message.value}</b>) });
+
+    case 'AdminMessageCode.IdpAccountDeleteFailed':
       return intl.formatMessage({ id: `error.${message.code}` });
 
     case 'BasicMessageCode.Validation':
       switch (message.description) {
-        case 'BasicMessageCode.CannotRevokeLastAdmin':
+        case 'AdminMessageCode.CannotRevokeLastAdmin':
           return intl.formatMessage({ id: `error.${message.description}` });
+
+        case 'AdminMessageCode.CannotUpdatePassword':
+          return intl.formatMessage({ id: `error.${message.description}` });
+
+        case 'AdminMessageCode.MarketplaceAccountExists':
+          return intl.formatMessage({ id: `error.${message.description}` }, { email: (<b>{message.value}</b>) });
 
         case 'BasicMessageCode.ValidationRequired':
           if (message.field && fieldMapper) {
@@ -49,7 +64,7 @@ const mapErrorCodeToText = (intl: IntlShape, message: Message, fieldMapper?: Fie
             const key = fieldMapper(message.field);
             if (key) {
               const field = intl.formatMessage({ id: key });
-              return intl.formatMessage({ id: `error.${message.code}.UniqueNameConstraint` }, { field, value: message.value });
+              return intl.formatMessage({ id: `error.${message.code}.UniqueNameConstraint` }, { field: (<b>{field}</b>), value: message.value });
             }
           }
           return intl.formatMessage({ id: `error.${message.code}.UniqueNameConstraint` });
@@ -72,7 +87,7 @@ const mapErrorCodeToText = (intl: IntlShape, message: Message, fieldMapper?: Fie
 
 export const localizeErrorCodes = (
   intl: IntlShape, response?: SimpleResponse, header: boolean = true, fieldMapper?: FieldMapperFunc,
-  customerErrorMapper?: (intl: IntlShape, message: Message, fieldMapper?: FieldMapperFunc) => string | null,
+  customerErrorMapper?: (intl: IntlShape, message: Message, fieldMapper?: FieldMapperFunc) => React.ReactNode | null,
 ) => {
   const messages: React.ReactNode[] = [];
 

@@ -11,12 +11,13 @@ import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
 import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 // Icons
 import Icon from '@mdi/react';
-import { mdiCommentAlertOutline, mdiTrashCan, mdiUndoVariant } from '@mdi/js';
+import { mdiClipboardOutline, mdiCommentAlertOutline, mdiContentCopy, mdiTrashCan, mdiUndoVariant } from '@mdi/js';
 
 // Services
 import message from 'service/message';
@@ -41,6 +42,9 @@ import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
 import AccountFilters from './grid/filter';
 import AccountTable from './grid/table';
 
+// Helper methods
+import { copyToClipboard } from 'utils/clipboard';
+
 const styles = (theme: Theme) => createStyles({
   container: {
     display: 'flex',
@@ -62,12 +66,22 @@ const styles = (theme: Theme) => createStyles({
   caption: {
     paddingLeft: 8,
     fontSize: '0.7rem',
-  }
+  },
+  otp: {
+    padding: theme.spacing(2, 0),
+  },
 });
 
+enum EnumDialog {
+  Delete = 'Delete',
+  RegisterToIdp = 'RegisterToIdp',
+  ResetPassword = 'ResetPassword',
+}
+
 interface AccountManagerState {
-  confirm: boolean;
-  record: HelpdeskAccount | null
+  dialog: EnumDialog | null;
+  otp: string | undefined | null;
+  record: HelpdeskAccount | null;
 }
 
 interface AccountManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
@@ -86,28 +100,49 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
     this.api = new HelpdeskAccountApi();
 
     this.deleteRow = this.deleteRow.bind(this);
+    this.registerToIdp = this.registerToIdp.bind(this);
+    this.resetPassword = this.resetPassword.bind(this);
+    this.updateRow = this.updateRow.bind(this);
   }
 
   state: AccountManagerState = {
-    confirm: false,
+    dialog: null,
+    otp: null,
     record: null,
   }
 
-  showConfirmDialog(record: HelpdeskAccount): void {
+  showDialog(dialog: EnumDialog, record: HelpdeskAccount): void {
     this.setState({
-      confirm: true,
+      dialog,
+      otp: null,
       record,
     });
   }
 
-  hideConfirmDialog(): void {
+  hideDialog(): void {
     this.setState({
-      confirm: false,
+      dialog: null,
+      otp: null,
       record: null,
     });
   }
 
   confirmDialogHandler(action: DialogAction): void {
+    const { dialog } = this.state;
+
+    switch (dialog) {
+      case EnumDialog.Delete:
+        this.handleDeleteAction(action);
+        break;
+      case EnumDialog.RegisterToIdp:
+        this.handleRegisterToIdpAction(action);
+        break;
+      case EnumDialog.ResetPassword:
+        this.handleResetPasswordAction(action);
+    }
+  }
+
+  handleDeleteAction(action: DialogAction) {
     switch (action.key) {
       case EnumDialogAction.Yes: {
         const { record } = this.state;
@@ -118,7 +153,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
               if (response.data.success) {
                 this.find();
 
-                message.info('error.delete-success');
+                message.info('message.delete-success');
               } else {
                 const messages = localizeErrorCodes(this.props.intl, response.data);
                 message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
@@ -133,7 +168,81 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
       }
     }
 
-    this.hideConfirmDialog();
+    this.hideDialog();
+  }
+
+  handleRegisterToIdpAction(action: DialogAction) {
+    switch (action.key) {
+      case EnumDialogAction.Yes: {
+        const { record } = this.state;
+
+        if (record && record.id) {
+          this.api.registerToIdp(record.id)
+            .then((response) => {
+              if (response.data.success) {
+                this.setState({
+                  otp: response.data.result,
+                });
+
+                if (response.data.result) {
+                  message.info('message.idp-registration-success');
+                }
+              } else {
+                const messages = localizeErrorCodes(this.props.intl, response.data);
+                message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+              }
+            })
+            .catch((err: AxiosError<SimpleResponse>) => {
+              const messages = localizeErrorCodes(this.props.intl, err.response?.data);
+              message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+            });
+        }
+        break;
+      }
+
+      case EnumDialogAction.No: {
+        this.hideDialog();
+        this.find();
+        break;
+      }
+    }
+  }
+
+  handleResetPasswordAction(action: DialogAction) {
+    switch (action.key) {
+      case EnumDialogAction.Yes: {
+        const { record } = this.state;
+
+        if (record && record.id) {
+          this.api.resetPassword(record.id)
+            .then((response) => {
+              if (response.data.success) {
+                this.setState({
+                  otp: response.data.result,
+                });
+
+                if (response.data.result) {
+                  message.info('message.password-reset-success');
+                }
+              } else {
+                const messages = localizeErrorCodes(this.props.intl, response.data);
+                message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+              }
+            })
+            .catch((err: AxiosError<SimpleResponse>) => {
+              const messages = localizeErrorCodes(this.props.intl, err.response?.data);
+              message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+            });
+        }
+        break;
+      }
+
+      case EnumDialogAction.No: {
+        this.hideDialog();
+
+        break;
+      }
+    }
   }
 
   componentDidMount() {
@@ -158,13 +267,33 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
     this.props.navigate(path);
   }
 
+  registerToIdp(id: number): void {
+    const { explorer: { result } } = this.props;
+
+    const record = result?.items.find(o => o.id === id);
+
+    if (record) {
+      this.showDialog(EnumDialog.RegisterToIdp, record);
+    }
+  }
+
+  resetPassword(id: number): void {
+    const { explorer: { result } } = this.props;
+
+    const record = result?.items.find(o => o.id === id);
+
+    if (record) {
+      this.showDialog(EnumDialog.ResetPassword, record);
+    }
+  }
+
   deleteRow(id: number): void {
     const { explorer: { result } } = this.props;
 
     const record = result?.items.find(o => o.id === id);
 
     if (record) {
-      this.showConfirmDialog(record);
+      this.showDialog(EnumDialog.Delete, record);
     }
   }
 
@@ -211,34 +340,38 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
 
           <Paper className={classes.paperTable}>
             <AccountTable
-              deleteRow={this.deleteRow}
-              find={this.props.find}
+              loading={loading}
+              pagination={pagination}
               query={query}
               result={result}
-              pagination={pagination}
               selected={selected}
+              sorting={sorting}
+              deleteRow={this.deleteRow}
+              find={this.props.find}
               setPager={setPager}
               setSorting={(sorting: Sorting<EnumHelpdeskAccountSortField>[]) => this.setSorting(sorting)}
               addToSelection={addToSelection}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
-              sorting={sorting}
-              updateRow={(id: number) => this.updateRow(id)}
-              loading={loading}
+              registerToIdp={(id: number) => this.registerToIdp(id)}
+              resetPassword={(id: number) => this.resetPassword(id)}
+              updateRow={this.updateRow}
             />
           </Paper>
         </div >
-        {this.renderConfirm()}
+        {this.renderDeleteConfirm()}
+        {this.renderIdpConfirm()}
+        {this.renderResetPasswordDialog()}
       </>
     );
   }
 
-  renderConfirm() {
+  renderDeleteConfirm() {
     const _t = this.props.intl.formatMessage;
 
-    const { confirm, record } = this.state;
+    const { dialog, record } = this.state;
 
-    if (!confirm || !record) {
+    if (dialog !== EnumDialog.Delete || !record) {
       return null;
     }
 
@@ -256,7 +389,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
             iconClass: () => (<Icon path={mdiUndoVariant} size="1.5rem" />)
           }
         ]}
-        handleClose={() => this.hideConfirmDialog()}
+        handleClose={() => this.hideDialog()}
         handleAction={(action) => this.confirmDialogHandler(action)}
         header={
           <span>
@@ -264,9 +397,195 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
             <FormattedMessage id="view.shared.dialog.title" />
           </span>
         }
-        open={confirm}
+        open={dialog === EnumDialog.Delete}
       >
         <FormattedMessage id="view.shared.message.delete-confirm" values={{ name: record.email }} />
+      </Dialog>
+    );
+  }
+
+  renderIdpConfirm() {
+    const _t = this.props.intl.formatMessage;
+
+    const { classes } = this.props;
+    const { dialog, otp, record } = this.state;
+
+    if (dialog !== EnumDialog.RegisterToIdp || !record) {
+      return null;
+    }
+
+    const actions: DialogAction[] = otp === null
+      ? [{
+        key: EnumDialogAction.Yes,
+        label: _t({ id: 'view.shared.action.yes' }),
+        iconClass: () => (<Icon path={mdiTrashCan} size="1.5rem" />),
+        color: 'primary',
+      }, {
+        key: EnumDialogAction.No,
+        label: _t({ id: 'view.shared.action.no' }),
+        iconClass: () => (<Icon path={mdiUndoVariant} size="1.5rem" />)
+      }]
+      : [{
+        key: EnumDialogAction.No,
+        label: _t({ id: 'view.shared.action.close' }),
+        iconClass: () => (<Icon path={mdiUndoVariant} size="1.5rem" />)
+      }];
+
+    return (
+      <Dialog
+        actions={actions}
+        handleClose={() => this.hideDialog()}
+        handleAction={(action) => this.confirmDialogHandler(action)}
+        header={
+          <span>
+            <i className={'mdi mdi-comment-question-outline mr-2'}></i>
+            <FormattedMessage id="view.shared.dialog.title" />
+          </span>
+        }
+        open={dialog === EnumDialog.RegisterToIdp}
+      >
+        {otp === null &&
+          <FormattedMessage id="account.helpdesk.message.register-to-idp-confirm" values={{ email: (<b>{record.email}</b>) }} />
+        }
+        {otp === undefined &&
+          <FormattedMessage id="account.helpdesk.message.register-to-idp-invalid-request" values={{ email: (<b>{record.email}</b>) }} />
+        }
+        {otp &&
+          <>
+            <FormattedMessage
+              id="account.helpdesk.message.otp-created"
+              tagName={'p'}
+              values={{ email: <b>{record.email}</b> }}
+            />
+            <Grid container alignItems='center' justifyContent='center' spacing={4} className={classes.otp}>
+              <Grid item >
+                <Typography variant="h6" display="block" >
+                  {otp}
+                </Typography>
+              </Grid>
+              <Grid>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  onClick={() => {
+                    copyToClipboard(otp);
+
+                    message.infoHtml(
+                      <FormattedMessage
+                        id={'account.helpdesk.message.otp-copied'}
+                      />,
+                      () => (<Icon path={mdiClipboardOutline} size="3rem" />),
+                    );
+                  }}
+                  title="Copy to clipboard"
+                >
+                  <Icon path={mdiContentCopy} size="1.5rem" />
+                </IconButton>
+              </Grid>
+            </Grid>
+            <Typography variant="h5" display="block" gutterBottom color="secondary">
+              <FormattedMessage
+                id="account.helpdesk.message.otp-warning"
+                tagName={'p'}
+              />
+            </Typography>
+            <input type="text" id="copy-to-clipboard" defaultValue="" style={{ position: 'absolute', left: -1000 }} />
+          </>
+        }
+
+      </Dialog>
+    );
+  }
+
+  renderResetPasswordDialog() {
+    const _t = this.props.intl.formatMessage;
+
+    const { classes } = this.props;
+    const { dialog, otp, record } = this.state;
+
+    if (dialog !== EnumDialog.ResetPassword || !record) {
+      return null;
+    }
+
+    const actions: DialogAction[] = otp === null
+      ? [{
+        key: EnumDialogAction.Yes,
+        label: _t({ id: 'view.shared.action.yes' }),
+        iconClass: () => (<Icon path={mdiTrashCan} size="1.5rem" />),
+        color: 'primary',
+      }, {
+        key: EnumDialogAction.No,
+        label: _t({ id: 'view.shared.action.no' }),
+        iconClass: () => (<Icon path={mdiUndoVariant} size="1.5rem" />)
+      }]
+      : [{
+        key: EnumDialogAction.No,
+        label: _t({ id: 'view.shared.action.close' }),
+        iconClass: () => (<Icon path={mdiUndoVariant} size="1.5rem" />)
+      }];
+
+    return (
+      <Dialog
+        actions={actions}
+        handleClose={() => this.hideDialog()}
+        handleAction={(action) => this.confirmDialogHandler(action)}
+        header={
+          <span>
+            <i className={'mdi mdi-comment-question-outline mr-2'}></i>
+            <FormattedMessage id="view.shared.dialog.title" />
+          </span>
+        }
+        open={dialog === EnumDialog.ResetPassword}
+      >
+        {otp === null &&
+          <FormattedMessage id="account.helpdesk.message.reset-password-confirm" values={{ email: (<b>{record.email}</b>) }} />
+        }
+        {otp === undefined &&
+          <FormattedMessage id="account.helpdesk.message.reset-password-invalid-request" values={{ email: (<b>{record.email}</b>) }} />
+        }
+        {otp &&
+          <>
+            <FormattedMessage
+              id="account.helpdesk.message.otp-created"
+              tagName={'p'}
+              values={{ email: <b>{record.email}</b> }}
+            />
+            <Grid container alignItems='center' justifyContent='center' spacing={4} className={classes.otp}>
+              <Grid item >
+                <Typography variant="h6" display="block" >
+                  {otp}
+                </Typography>
+              </Grid>
+              <Grid>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  onClick={() => {
+                    copyToClipboard(otp);
+
+                    message.infoHtml(
+                      <FormattedMessage
+                        id={'account.helpdesk.message.otp-copied'}
+                      />,
+                      () => (<Icon path={mdiClipboardOutline} size="3rem" />),
+                    );
+                  }}
+                  title="Copy to clipboard"
+                >
+                  <Icon path={mdiContentCopy} size="1.5rem" />
+                </IconButton>
+              </Grid>
+            </Grid>
+            <Typography variant="h5" display="block" gutterBottom color="secondary">
+              <FormattedMessage
+                id="account.helpdesk.message.otp-warning"
+                tagName={'p'}
+              />
+            </Typography>
+            <input type="text" id="copy-to-clipboard" defaultValue="" style={{ position: 'absolute', left: -1000 }} />
+          </>
+        }
+
       </Dialog>
     );
   }

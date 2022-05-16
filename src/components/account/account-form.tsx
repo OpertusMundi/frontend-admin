@@ -426,39 +426,43 @@ class AccountForm extends React.Component<AccountFormProps, AccountState> {
                           fullWidth
                         />
                       </Grid>
-                      <Grid item xs={6} className={`${classes.item} ${classes.password}`}>
-                        <Field
-                          component={TextField}
-                          name="password"
-                          type="password"
-                          inputProps={{
-                            id: 'password',
-                            maxLength: 30,
-                            autoComplete: 'new-password'
-                          }}
-                          label={_t({ id: 'account.form.field.password' })}
-                          fullWidth
-                        />
-                        <PasswordStrength
-                          className={classes.passwordStrength}
-                          minStrength={3}
-                          thresholdLength={8}
-                          password={values.password || ''}
-                        />
-                      </Grid>
-                      <Grid item xs={6} className={classes.item}>
-                        <Field
-                          component={TextField}
-                          name="passwordMatch"
-                          type="password"
-                          inputProps={{
-                            id: 'passwordMatch',
-                            maxLength: 30,
-                          }}
-                          label={_t({ id: 'account.form.field.passwordMatch' })}
-                          fullWidth
-                        />
-                      </Grid>
+                      {!id &&
+                        <>
+                          <Grid item xs={6} className={`${classes.item} ${classes.password}`}>
+                            <Field
+                              component={TextField}
+                              name="password"
+                              type="password"
+                              inputProps={{
+                                id: 'password',
+                                maxLength: 30,
+                                autoComplete: 'new-password'
+                              }}
+                              label={_t({ id: 'account.form.field.password' })}
+                              fullWidth
+                            />
+                            <PasswordStrength
+                              className={classes.passwordStrength}
+                              minStrength={3}
+                              thresholdLength={8}
+                              password={values.password || ''}
+                            />
+                          </Grid>
+                          <Grid item xs={6} className={classes.item}>
+                            <Field
+                              component={TextField}
+                              name="passwordMatch"
+                              type="password"
+                              inputProps={{
+                                id: 'passwordMatch',
+                                maxLength: 30,
+                              }}
+                              label={_t({ id: 'account.form.field.passwordMatch' })}
+                              fullWidth
+                            />
+                          </Grid>
+                        </>
+                      }
                       <Grid container item xs={12} className={classes.item} alignItems="center" justifyContent="flex-end" >
                         <FormControlLabel
                           control={

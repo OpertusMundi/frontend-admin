@@ -1,8 +1,25 @@
 import { AxiosRequestConfig } from 'axios';
 
 import { Api } from 'utils/api';
-import { ObjectResponse, PageRequest, Sorting, AxiosObjectResponse, AxiosPageResponse, PageResult, AxiosSimpleResponse } from 'model/response';
-import { EnumHelpdeskAccountSortField, HelpdeskAccount, HelpdeskAccountQuery, HelpdeskAccountFormData, HelpdeskAccountCommand, SetPasswordCommand, ProfileCommand } from 'model/account';
+import {
+  AxiosObjectResponse,
+  AxiosPageResponse,
+  AxiosSimpleResponse,
+  ObjectResponse,
+  PageRequest,
+  PageResult,
+  SimpleResponse,
+  Sorting,
+} from 'model/response';
+import {
+  EnumHelpdeskAccountSortField,
+  HelpdeskAccount,
+  HelpdeskAccountCommand,
+  HelpdeskAccountFormData,
+  HelpdeskAccountQuery,
+  ProfileCommand,
+  SetPasswordCommand,
+} from 'model/account';
 
 export default class HelpdeskAccountApi extends Api {
 
@@ -67,10 +84,22 @@ export default class HelpdeskAccountApi extends Api {
     return this.delete(url);
   }
 
-  public async setPassword(command: SetPasswordCommand): Promise<AxiosObjectResponse<HelpdeskAccount>> {
+  public async registerToIdp(id: number): Promise<AxiosObjectResponse<string>> {
+    const url = `/action/helpdesk/accounts/${id}/idp`;
+
+    return this.post<unknown, ObjectResponse<string>>(url, null);
+  }
+
+  public async resetPassword(id: number): Promise<AxiosObjectResponse<string>> {
+    const url = `/action/helpdesk/accounts/${id}/password`;
+
+    return this.post<unknown, ObjectResponse<string>>(url, null);
+  }
+
+  public async setPassword(command: SetPasswordCommand): Promise<AxiosSimpleResponse> {
     const url = `/action/user/password`;
 
-    return this.post<SetPasswordCommand, ObjectResponse<HelpdeskAccount>>(url, command);
+    return this.post<SetPasswordCommand, SimpleResponse>(url, command);
   }
 
   public async getProfile(): Promise<AxiosObjectResponse<HelpdeskAccount>> {

@@ -35,6 +35,7 @@ export interface HelpdeskAccount extends HelpdeskAccountBase {
   id: number;
   key: string;
   modifiedOn: Moment | null;
+  registeredToIdp: boolean;
 }
 
 export interface SimpleHelpdeskAccount {

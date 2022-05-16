@@ -32,6 +32,9 @@ export const SEARCH_COMPLETE = 'helpdesk-account/manager/SEARCH_COMPLETE';
 export const SAVE_INIT = 'helpdesk-account/manager/SAVE_INIT';
 export const SAVE_COMPLETE = 'helpdesk-account/manager/SAVE_COMPLETE';
 
+export const REGISTER_IDP_INIT = 'helpdesk-account/manager/REGISTER_IDP_INIT';
+export const REGISTER_IDP_COMPLETE = 'helpdesk-account/manager/REGISTER_IDP_COMPLETE';
+
 export const ADD_SELECTED = 'helpdesk-account/manager/ADD_SELECTED';
 export const REMOVE_SELECTED = 'helpdesk-account/manager/REMOVE_SELECTED';
 export const RESET_SELECTED = 'helpdesk-account/manager/RESET_SELECTED';
@@ -83,6 +86,14 @@ export interface SaveCompleteAction {
   response: ObjectResponse<HelpdeskAccount>;
 }
 
+export interface RegisterIdpInitAction {
+  type: typeof REGISTER_IDP_INIT;
+}
+
+export interface RegisterIdpCompleteAction {
+  type: typeof REGISTER_IDP_COMPLETE;
+}
+
 export interface SetSelectedAction {
   type: typeof ADD_SELECTED;
   selected: HelpdeskAccount[];
@@ -112,4 +123,6 @@ export type AccountActions =
   | ResetSelectionAction
   | SaveInitAction
   | SaveCompleteAction
+  | RegisterIdpInitAction
+  | RegisterIdpCompleteAction
   ;

@@ -260,7 +260,6 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
 
               this.hideOpenDatasetProviderConfirmDialog();
             } else {
-              console.log(response.data);
               const messages = localizeErrorCodes(this.props.intl, response.data, undefined, undefined, customerErrorMapper);
               message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
             }

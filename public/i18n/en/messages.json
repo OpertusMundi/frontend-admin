@@ -30,9 +30,19 @@
         "modified-on": "Updated On"
       },
       "last-update": "Last updated: ",
+      "message": {
+        "otp-copied": "OTP has been copied to the clipboard",
+        "otp-created": "Save the OTP displayed below for account {email}. The user will have to change her password after the first successful login.",
+        "otp-warning": "Once the dialog is closed, there is no way to retrieve the new password.",
+        "register-to-idp-confirm": "Account {email} will be registered to the IDP and its password will be reset. Do you want to continue?",
+        "register-to-idp-invalid-request": "Account {email} is already registered to the IDP! No changes have been applied to the account.",
+        "reset-password-confirm": "The password for account {email} will be reset. Do you want to continue?"
+      },
       "tooltip": {
         "delete": "Delete",
-        "edit": "Edit"
+        "edit": "Edit",
+        "register-to-idp": "Register account to IDP",
+        "reset-password": "Reset password"
       }
     },
     "marketplace": {
@@ -453,16 +463,20 @@
     "BasicMessageCode.Validation.Required": "Field {field} is required",
     "BasicMessageCode.Validation.PasswordMismatch": "Field {field} must have the same value with field Password",
     "BasicMessageCode.NotImplemented": "Operation is not implemented!",
-    "BasicMessageCode.CannotDeleteSelf": "Cannot delete the current account",
-    "BasicMessageCode.CannotRevokeLastAdmin": "You must assign a new administrator before changing user roles",
+    "AdminMessageCode.CannotDeleteSelf": "Cannot delete the current account",
+    "AdminMessageCode.CannotRevokeLastAdmin": "You must assign a new administrator before changing user roles",
+    "AdminMessageCode.CannotUpdatePassword": "Password is not updatable",
     "AdminMessageCode.ExternalProviderAlreadyExists": "External provider is already assigned to another user",
+    "AdminMessageCode.IdpAccountAlreadyExists": "Email is already registered at the IDP",
+    "AdminMessageCode.IdpAccountCreateFailed": "Failed to create IDP account",
+    "AdminMessageCode.IdpAccountDeleteFailed": "Failed to delete IDP account",
+    "AdminMessageCode.MarketplaceAccountExists": "Email {email} is already used by a marketplace account",
     "AdminMessageCode.OpenDatasetProviderAlreadyExists": "Open Dataset provider is already assigned to another user",
     "validation": {
       "DecimalMin": "Value of field {field} must be greater than {min}"
     },
     "insert-success": "Record has been saved",
     "delete-failure": "Delete operation has failed",
-    "delete-success": "Record has been deleted",
     "update-failure": "Update operation has failed",
     "geolocation-cancel": "The operation has been cancelled by the user",
     "geolocation-error": "Location detection has failed",
@@ -628,8 +642,11 @@
   },
   "message": {
     "avatar-changed": "Profile image has been updated",
-    "settings-changed": "Settings has been updated",
-    "password-changed": "Password has been updated"
+    "delete-success": "Record has been deleted",
+    "idp-registration-success": "IDP registration was successful.",
+    "password-changed": "Password has been updated",
+    "password-reset-success": "Password has been reset",
+    "settings-changed": "Settings has been updated"
   },
   "pdf-viewer": {
     "pagination": "Page {pageNumber} of {numPages}"

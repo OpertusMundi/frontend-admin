@@ -3,7 +3,11 @@ import { ThunkAction } from 'redux-thunk'
 // Redux
 import { RootState } from 'store';
 import { AccountActions } from './types';
-import { searchInit, searchComplete, searchFailure, setSorting, setPager, saveInit, saveComplete } from './actions';
+import {
+  searchInit, searchComplete, searchFailure, setSorting, setPager,
+  saveInit, saveComplete,
+  registerToIdpInit, registerToIdpComplete,
+} from './actions';
 
 // Services
 import HelpdeskAccountApi from 'service/account';
@@ -70,3 +74,18 @@ export const update = (
 
   return response.data;
 }
+
+export const registerToIdp = (id: number): ThunkResult<ObjectResponse<string>> => async (dispatch, getState) => {
+  dispatch(registerToIdpInit());
+
+  // Get response
+  const api = new HelpdeskAccountApi();
+
+  const response = await api.registerToIdp(id);
+
+  // Update state
+  dispatch(registerToIdpComplete());
+
+  return response.data;
+}
+
