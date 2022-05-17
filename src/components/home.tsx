@@ -109,8 +109,11 @@ const styles = (theme: Theme) => createStyles({
     width: theme.spacing(6),
     height: theme.spacing(6),
   },
-  containerWrapper: {
+  outletContainerWrapper: {
     height: 'calc(100vh - 64px)',
+  },
+  menuListWrapper: {
+    height: 'calc(100vh - 170px)',
   },
   container: {
     padding: theme.spacing(1),
@@ -533,256 +536,257 @@ class Home extends React.Component<HomeProps, HomeState> {
             }
           </Grid>
           <Divider light />
-          <List>
-            <div>
-              <ListItem button
-                onClick={(e) => this.onNavigate(e, StaticRoutes.Dashboard)}>
-                <ListItemIcon>
-                  <Icon path={mdiViewDashboardOutline} size="1.5rem" />
-                </ListItemIcon>
-                <ListItemText primary={_t({ id: 'links.dashboard' })} />
-              </ListItem>
+          <PerfectScrollbar className={classes.menuListWrapper}>
+            <List>
+              <div>
+                <ListItem button
+                  onClick={(e) => this.onNavigate(e, StaticRoutes.Dashboard)}>
+                  <ListItemIcon>
+                    <Icon path={mdiViewDashboardOutline} size="1.5rem" />
+                  </ListItemIcon>
+                  <ListItemText primary={_t({ id: 'links.dashboard' })} />
+                </ListItem>
 
-              <ListItem button
-                onClick={(e) => this.onNavigate(e, StaticRoutes.Analytics)}>
-                <ListItemIcon>
-                  <Icon path={mdiChartBarStacked} size="1.5rem" />
-                </ListItemIcon>
-                <ListItemText primary={_t({ id: 'links.analytics' })} />
-              </ListItem>
+                <ListItem button
+                  onClick={(e) => this.onNavigate(e, StaticRoutes.Analytics)}>
+                  <ListItemIcon>
+                    <Icon path={mdiChartBarStacked} size="1.5rem" />
+                  </ListItemIcon>
+                  <ListItemText primary={_t({ id: 'links.analytics' })} />
+                </ListItem>
 
-              <ListItem button
-                onClick={(e) => this.onNavigate(e, StaticRoutes.ContractManager)}>
-                <ListItemIcon>
-                  <Icon path={mdiSignatureFreehand} size="1.5rem" />
-                </ListItemIcon>
-                <ListItemText primary={_t({ id: 'links.contract.master.title' })} />
-              </ListItem>
+                <ListItem button
+                  onClick={(e) => this.onNavigate(e, StaticRoutes.ContractManager)}>
+                  <ListItemIcon>
+                    <Icon path={mdiSignatureFreehand} size="1.5rem" />
+                  </ListItemIcon>
+                  <ListItemText primary={_t({ id: 'links.contract.master.title' })} />
+                </ListItem>
 
-              <ListItem button
-                onClick={(e) => this.onNavigate(e, StaticRoutes.ConsumerManager)}>
-                <ListItemIcon>
-                  <Icon path={mdiFaceAgent} size="1.5rem" />
-                </ListItemIcon>
-                <ListItemText primary={_t({ id: 'links.consumer-manager' })} />
-              </ListItem>
+                <ListItem button
+                  onClick={(e) => this.onNavigate(e, StaticRoutes.ConsumerManager)}>
+                  <ListItemIcon>
+                    <Icon path={mdiFaceAgent} size="1.5rem" />
+                  </ListItemIcon>
+                  <ListItemText primary={_t({ id: 'links.consumer-manager' })} />
+                </ListItem>
 
-              <ListItem button
-                onClick={(e) => this.onNavigate(e, StaticRoutes.ProviderManager)}>
-                <ListItemIcon>
-                  <Icon path={mdiHandshakeOutline} size="1.5rem" />
-                </ListItemIcon>
-                <ListItemText primary={_t({ id: 'links.provider-manager' })} />
-              </ListItem>
+                <ListItem button
+                  onClick={(e) => this.onNavigate(e, StaticRoutes.ProviderManager)}>
+                  <ListItemIcon>
+                    <Icon path={mdiHandshakeOutline} size="1.5rem" />
+                  </ListItemIcon>
+                  <ListItemText primary={_t({ id: 'links.provider-manager' })} />
+                </ListItem>
 
-              <ListItem button
-                onClick={(e) => this.onNavigate(e, StaticRoutes.DraftManager)}>
-                <ListItemIcon>
-                  <Icon path={mdiTextBoxCheckOutline} size="1.5rem" />
-                </ListItemIcon>
-                <ListItemText primary={_t({ id: 'links.draft-manager' })} />
-              </ListItem>
+                <ListItem button
+                  onClick={(e) => this.onNavigate(e, StaticRoutes.DraftManager)}>
+                  <ListItemIcon>
+                    <Icon path={mdiTextBoxCheckOutline} size="1.5rem" />
+                  </ListItemIcon>
+                  <ListItemText primary={_t({ id: 'links.draft-manager' })} />
+                </ListItem>
 
-              <ListItem button onClick={() => this.onSectionToggle(EnumSection.Billing)}>
-                <ListItemIcon>
-                  <Icon path={mdiFinance} size="1.5rem" />
-                </ListItemIcon>
-                <ListItemText primary={_t({ id: 'links.orders-billing' })} />
-                {open[EnumSection.Billing] ? <ExpandLess /> : <ExpandMore />}
-              </ListItem>
+                <ListItem button onClick={() => this.onSectionToggle(EnumSection.Billing)}>
+                  <ListItemIcon>
+                    <Icon path={mdiFinance} size="1.5rem" />
+                  </ListItemIcon>
+                  <ListItemText primary={_t({ id: 'links.orders-billing' })} />
+                  {open[EnumSection.Billing] ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
 
-              <Collapse in={open[EnumSection.Billing]} timeout="auto" unmountOnExit className={classes.collapse}>
-                <List component="div" disablePadding className={open[EnumSection.Drawer] ? '' : classes.childMenu}>
+                <Collapse in={open[EnumSection.Billing]} timeout="auto" unmountOnExit className={classes.collapse}>
+                  <List component="div" disablePadding className={open[EnumSection.Drawer] ? '' : classes.childMenu}>
 
-                  <ListItem button
-                    className={open[EnumSection.Drawer] ? classes.nested : ''}
-                    onClick={(e) => this.onNavigate(e, StaticRoutes.OrderManager)}>
-                    <ListItemIcon>
-                      <Icon path={mdiPackageVariantClosed} size="1.5rem" />
-                    </ListItemIcon>
-                    <ListItemText primary={_t({ id: 'links.order-manager' })} />
-                  </ListItem>
+                    <ListItem button
+                      className={open[EnumSection.Drawer] ? classes.nested : ''}
+                      onClick={(e) => this.onNavigate(e, StaticRoutes.OrderManager)}>
+                      <ListItemIcon>
+                        <Icon path={mdiPackageVariantClosed} size="1.5rem" />
+                      </ListItemIcon>
+                      <ListItemText primary={_t({ id: 'links.order-manager' })} />
+                    </ListItem>
 
-                  <ListItem button
-                    className={open[EnumSection.Drawer] ? classes.nested : ''}
-                    onClick={(e) => this.onNavigate(e, StaticRoutes.PayInManager)}>
-                    <ListItemIcon>
-                      <Icon path={mdiBankTransferIn} size="1.5rem" />
-                    </ListItemIcon>
-                    <ListItemText primary={_t({ id: 'links.payin-manager' })} />
-                  </ListItem>
+                    <ListItem button
+                      className={open[EnumSection.Drawer] ? classes.nested : ''}
+                      onClick={(e) => this.onNavigate(e, StaticRoutes.PayInManager)}>
+                      <ListItemIcon>
+                        <Icon path={mdiBankTransferIn} size="1.5rem" />
+                      </ListItemIcon>
+                      <ListItemText primary={_t({ id: 'links.payin-manager' })} />
+                    </ListItem>
 
-                  <ListItem button
-                    className={open[EnumSection.Drawer] ? classes.nested : ''}
-                    onClick={(e) => this.onNavigate(e, StaticRoutes.TransferManager)}>
-                    <ListItemIcon>
-                      <Icon path={mdiWalletOutline} size="1.5rem" />
-                    </ListItemIcon>
-                    <ListItemText primary={_t({ id: 'links.transfer-manager' })} />
-                  </ListItem>
+                    <ListItem button
+                      className={open[EnumSection.Drawer] ? classes.nested : ''}
+                      onClick={(e) => this.onNavigate(e, StaticRoutes.TransferManager)}>
+                      <ListItemIcon>
+                        <Icon path={mdiWalletOutline} size="1.5rem" />
+                      </ListItemIcon>
+                      <ListItemText primary={_t({ id: 'links.transfer-manager' })} />
+                    </ListItem>
 
-                  <ListItem button
-                    className={open[EnumSection.Drawer] ? classes.nested : ''}
-                    onClick={(e) => this.onNavigate(e, StaticRoutes.PayOutManager)}>
-                    <ListItemIcon>
-                      <Icon path={mdiBankTransferOut} size="1.5rem" />
-                    </ListItemIcon>
-                    <ListItemText primary={_t({ id: 'links.payout-manager' })} />
-                  </ListItem>
+                    <ListItem button
+                      className={open[EnumSection.Drawer] ? classes.nested : ''}
+                      onClick={(e) => this.onNavigate(e, StaticRoutes.PayOutManager)}>
+                      <ListItemIcon>
+                        <Icon path={mdiBankTransferOut} size="1.5rem" />
+                      </ListItemIcon>
+                      <ListItemText primary={_t({ id: 'links.payout-manager' })} />
+                    </ListItem>
 
-                </List>
-              </Collapse>
+                  </List>
+                </Collapse>
 
-              <ListItem button onClick={() => this.onSectionToggle(EnumSection.Message)}>
-                <ListItemIcon>
-                  <Badge
-                    overlap="rectangular"
-                    badgeContent={total}
-                    color={unassigned === 0 ? "primary" : "secondary"}
-                    invisible={total === 0 || open[EnumSection.Message]}
-                  >
-                    <Icon path={mdiForumOutline} size="1.5rem" />
-                  </Badge>
-                </ListItemIcon>
-                <ListItemText primary={_t({ id: 'links.message-inbox' })} />
-                {open[EnumSection.Message] ? <ExpandLess /> : <ExpandMore />}
-              </ListItem>
+                <ListItem button onClick={() => this.onSectionToggle(EnumSection.Message)}>
+                  <ListItemIcon>
+                    <Badge
+                      overlap="rectangular"
+                      badgeContent={total}
+                      color={unassigned === 0 ? "primary" : "secondary"}
+                      invisible={total === 0 || open[EnumSection.Message]}
+                    >
+                      <Icon path={mdiForumOutline} size="1.5rem" />
+                    </Badge>
+                  </ListItemIcon>
+                  <ListItemText primary={_t({ id: 'links.message-inbox' })} />
+                  {open[EnumSection.Message] ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
 
-              <Collapse in={open[EnumSection.Message]} timeout="auto" unmountOnExit className={classes.collapse}>
-                <List component="div" disablePadding className={open[EnumSection.Drawer] ? '' : classes.childMenu}>
+                <Collapse in={open[EnumSection.Message]} timeout="auto" unmountOnExit className={classes.collapse}>
+                  <List component="div" disablePadding className={open[EnumSection.Drawer] ? '' : classes.childMenu}>
 
-                  <ListItem button
-                    onClick={(e) => this.onNavigate(e, StaticRoutes.MessageInboxHelpdesk)}>
-                    <ListItemIcon>
-                      <Badge overlap="rectangular" badgeContent={unassigned} color="secondary" invisible={unassigned === 0 || !open[EnumSection.Message]}>
-                        <Icon path={mdiTrayFull} size="1.5rem" />
-                      </Badge>
-                    </ListItemIcon>
-                    <ListItemText primary={_t({ id: 'links.message-inbox-helpdesk' })} />
-                  </ListItem>
+                    <ListItem button
+                      onClick={(e) => this.onNavigate(e, StaticRoutes.MessageInboxHelpdesk)}>
+                      <ListItemIcon>
+                        <Badge overlap="rectangular" badgeContent={unassigned} color="secondary" invisible={unassigned === 0 || !open[EnumSection.Message]}>
+                          <Icon path={mdiTrayFull} size="1.5rem" />
+                        </Badge>
+                      </ListItemIcon>
+                      <ListItemText primary={_t({ id: 'links.message-inbox-helpdesk' })} />
+                    </ListItem>
 
-                  <ListItem button
-                    onClick={(e) => this.onNavigate(e, StaticRoutes.MessageInboxUser)}>
-                    <ListItemIcon>
-                      <Badge overlap="rectangular" badgeContent={unread} color="primary" invisible={unread === 0 || !open[EnumSection.Message]}>
-                        <Icon path={mdiTray} size="1.5rem" />
-                      </Badge>
-                    </ListItemIcon>
-                    <ListItemText primary={_t({ id: 'links.message-inbox-user' })} />
-                  </ListItem>
+                    <ListItem button
+                      onClick={(e) => this.onNavigate(e, StaticRoutes.MessageInboxUser)}>
+                      <ListItemIcon>
+                        <Badge overlap="rectangular" badgeContent={unread} color="primary" invisible={unread === 0 || !open[EnumSection.Message]}>
+                          <Icon path={mdiTray} size="1.5rem" />
+                        </Badge>
+                      </ListItemIcon>
+                      <ListItemText primary={_t({ id: 'links.message-inbox-user' })} />
+                    </ListItem>
 
-                </List>
-              </Collapse>
+                  </List>
+                </Collapse>
 
-              <ListItem button
-                onClick={(e) => this.onNavigate(e, StaticRoutes.Map)}>
-                <ListItemIcon>
-                  <Icon path={mdiMapOutline} size="1.5rem" />
-                </ListItemIcon>
-                <ListItemText primary={_t({ id: 'links.map' })} />
-              </ListItem>
+                <ListItem button
+                  onClick={(e) => this.onNavigate(e, StaticRoutes.Map)}>
+                  <ListItemIcon>
+                    <Icon path={mdiMapOutline} size="1.5rem" />
+                  </ListItemIcon>
+                  <ListItemText primary={_t({ id: 'links.map' })} />
+                </ListItem>
 
-              <SecureContent roles={[EnumRole.ADMIN]}>
-                <>
-                  <ListItem button onClick={() => this.onSectionToggle(EnumSection.Admin)}>
-                    <ListItemIcon>
-                      <Icon path={mdiTools} size="1.5rem" />
-                    </ListItemIcon>
-                    <ListItemText primary={_t({ id: 'links.admin' })} />
-                    {open[EnumSection.Admin] ? <ExpandLess /> : <ExpandMore />}
-                  </ListItem>
+                <SecureContent roles={[EnumRole.ADMIN]}>
+                  <>
+                    <ListItem button onClick={() => this.onSectionToggle(EnumSection.Admin)}>
+                      <ListItemIcon>
+                        <Icon path={mdiTools} size="1.5rem" />
+                      </ListItemIcon>
+                      <ListItemText primary={_t({ id: 'links.admin' })} />
+                      {open[EnumSection.Admin] ? <ExpandLess /> : <ExpandMore />}
+                    </ListItem>
 
-                  <Collapse in={open[EnumSection.Admin]} timeout="auto" unmountOnExit className={classes.collapse}>
-                    <List component="div" disablePadding className={open[EnumSection.Drawer] ? '' : classes.childMenu}>
+                    <Collapse in={open[EnumSection.Admin]} timeout="auto" unmountOnExit className={classes.collapse}>
+                      <List component="div" disablePadding className={open[EnumSection.Drawer] ? '' : classes.childMenu}>
 
-                      <SecureContent roles={[EnumRole.ADMIN]}>
-                        <ListItem button
-                          className={open[EnumSection.Drawer] ? classes.nested : ''}
-                          onClick={(e) => this.onNavigate(e, StaticRoutes.ProcessInstanceManager)}>
-                          <ListItemIcon>
-                            <Icon path={mdiCogSyncOutline} size="1.5rem" />
-                          </ListItemIcon>
-                          <ListItemText primary={_t({ id: 'links.workflow.process-instance.manager.runtime' })} />
-                        </ListItem>
-                      </SecureContent>
+                        <SecureContent roles={[EnumRole.ADMIN]}>
+                          <ListItem button
+                            className={open[EnumSection.Drawer] ? classes.nested : ''}
+                            onClick={(e) => this.onNavigate(e, StaticRoutes.ProcessInstanceManager)}>
+                            <ListItemIcon>
+                              <Icon path={mdiCogSyncOutline} size="1.5rem" />
+                            </ListItemIcon>
+                            <ListItemText primary={_t({ id: 'links.workflow.process-instance.manager.runtime' })} />
+                          </ListItem>
+                        </SecureContent>
 
-                      <SecureContent roles={[EnumRole.ADMIN]}>
-                        <ListItem button
-                          className={open[EnumSection.Drawer] ? classes.nested : ''}
-                          onClick={(e) => this.onNavigate(e, StaticRoutes.ProcessInstanceHistoryManager)}>
-                          <ListItemIcon>
-                            <Icon path={mdiCogClockwise} size="1.5rem" />
-                          </ListItemIcon>
-                          <ListItemText primary={_t({ id: 'links.workflow.process-instance.manager.history' })} />
-                        </ListItem>
-                      </SecureContent>
+                        <SecureContent roles={[EnumRole.ADMIN]}>
+                          <ListItem button
+                            className={open[EnumSection.Drawer] ? classes.nested : ''}
+                            onClick={(e) => this.onNavigate(e, StaticRoutes.ProcessInstanceHistoryManager)}>
+                            <ListItemIcon>
+                              <Icon path={mdiCogClockwise} size="1.5rem" />
+                            </ListItemIcon>
+                            <ListItemText primary={_t({ id: 'links.workflow.process-instance.manager.history' })} />
+                          </ListItem>
+                        </SecureContent>
 
-                      <SecureContent roles={[EnumRole.ADMIN]}>
-                        <ListItem button
-                          className={open[EnumSection.Drawer] ? classes.nested : ''}
-                          onClick={(e) => this.onNavigate(e, StaticRoutes.IncidentManager)}>
-                          <ListItemIcon>
-                            <Icon path={mdiBellAlertOutline} size="1.5rem" />
-                          </ListItemIcon>
-                          <ListItemText primary={_t({ id: 'links.workflow.incident.manager' })} />
-                        </ListItem>
-                      </SecureContent>
+                        <SecureContent roles={[EnumRole.ADMIN]}>
+                          <ListItem button
+                            className={open[EnumSection.Drawer] ? classes.nested : ''}
+                            onClick={(e) => this.onNavigate(e, StaticRoutes.IncidentManager)}>
+                            <ListItemIcon>
+                              <Icon path={mdiBellAlertOutline} size="1.5rem" />
+                            </ListItemIcon>
+                            <ListItemText primary={_t({ id: 'links.workflow.incident.manager' })} />
+                          </ListItem>
+                        </SecureContent>
 
-                      <SecureContent roles={[EnumRole.ADMIN]}>
-                        <ListItem button
-                          className={open[EnumSection.Drawer] ? classes.nested : ''}
-                          onClick={(e) => this.onNavigate(e, StaticRoutes.HelpdeskAccountManager)}>
-                          <ListItemIcon>
-                            <Icon path={mdiFaceAgent} size="1.5rem" />
-                          </ListItemIcon>
-                          <ListItemText primary={_t({ id: routes[StaticRoutes.HelpdeskAccountManager].title })} />
-                        </ListItem>
-                      </SecureContent>
+                        <SecureContent roles={[EnumRole.ADMIN]}>
+                          <ListItem button
+                            className={open[EnumSection.Drawer] ? classes.nested : ''}
+                            onClick={(e) => this.onNavigate(e, StaticRoutes.HelpdeskAccountManager)}>
+                            <ListItemIcon>
+                              <Icon path={mdiFaceAgent} size="1.5rem" />
+                            </ListItemIcon>
+                            <ListItemText primary={_t({ id: routes[StaticRoutes.HelpdeskAccountManager].title })} />
+                          </ListItem>
+                        </SecureContent>
 
-                      <SecureContent roles={[EnumRole.ADMIN]}>
-                        <ListItem button
-                          className={open[EnumSection.Drawer] ? classes.nested : ''}
-                          onClick={(e) => this.onNavigate(e, StaticRoutes.MarketplaceAccountManager)}>
-                          <ListItemIcon>
-                            <Icon path={mdiAccountMultiple} size="1.5rem" />
-                          </ListItemIcon>
-                          <ListItemText primary={_t({ id: routes[StaticRoutes.MarketplaceAccountManager].title })} />
-                        </ListItem>
-                      </SecureContent>
+                        <SecureContent roles={[EnumRole.ADMIN]}>
+                          <ListItem button
+                            className={open[EnumSection.Drawer] ? classes.nested : ''}
+                            onClick={(e) => this.onNavigate(e, StaticRoutes.MarketplaceAccountManager)}>
+                            <ListItemIcon>
+                              <Icon path={mdiAccountMultiple} size="1.5rem" />
+                            </ListItemIcon>
+                            <ListItemText primary={_t({ id: routes[StaticRoutes.MarketplaceAccountManager].title })} />
+                          </ListItem>
+                        </SecureContent>
 
-                      <SecureContent roles={[EnumRole.ADMIN]}>
-                        <ListItem button
-                          className={open[EnumSection.Drawer] ? classes.nested : ''}
-                          onClick={(e) => this.onNavigate(e, StaticRoutes.EventManager)}>
-                          <ListItemIcon>
-                            <Icon path={mdiBugOutline} size="1.5rem" />
-                          </ListItemIcon>
-                          <ListItemText primary={_t({ id: routes[StaticRoutes.EventManager].title })} />
-                        </ListItem>
-                      </SecureContent>
+                        <SecureContent roles={[EnumRole.ADMIN]}>
+                          <ListItem button
+                            className={open[EnumSection.Drawer] ? classes.nested : ''}
+                            onClick={(e) => this.onNavigate(e, StaticRoutes.EventManager)}>
+                            <ListItemIcon>
+                              <Icon path={mdiBugOutline} size="1.5rem" />
+                            </ListItemIcon>
+                            <ListItemText primary={_t({ id: routes[StaticRoutes.EventManager].title })} />
+                          </ListItem>
+                        </SecureContent>
 
-                      <SecureContent roles={[EnumRole.ADMIN]}>
-                        <ListItem button
-                          className={open[EnumSection.Drawer] ? classes.nested : ''}
-                          onClick={(e) => this.onNavigate(e, StaticRoutes.SettingsManager)}>
-                          <ListItemIcon>
-                            <Icon path={mdiProgressWrench} size="1.5rem" />
-                          </ListItemIcon>
-                          <ListItemText primary={_t({ id: routes[StaticRoutes.SettingsManager].title })} />
-                        </ListItem>
-                      </SecureContent>
+                        <SecureContent roles={[EnumRole.ADMIN]}>
+                          <ListItem button
+                            className={open[EnumSection.Drawer] ? classes.nested : ''}
+                            onClick={(e) => this.onNavigate(e, StaticRoutes.SettingsManager)}>
+                            <ListItemIcon>
+                              <Icon path={mdiProgressWrench} size="1.5rem" />
+                            </ListItemIcon>
+                            <ListItemText primary={_t({ id: routes[StaticRoutes.SettingsManager].title })} />
+                          </ListItem>
+                        </SecureContent>
 
-                    </List>
-                  </Collapse>
-                </>
-              </SecureContent>
-
-            </div>
-          </List>
+                      </List>
+                    </Collapse>
+                  </>
+                </SecureContent>
+              </div>
+            </List>
+          </PerfectScrollbar>
         </Drawer>
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          <PerfectScrollbar className={classes.containerWrapper}>
+          <PerfectScrollbar className={classes.outletContainerWrapper}>
             <Container maxWidth={false} className={classes.container}>
               <Outlet />
             </Container>
