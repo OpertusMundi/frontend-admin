@@ -3,6 +3,7 @@ import { Moment } from 'moment';
 import { SimpleHelpdeskAccount } from './account';
 import { ProcessDefinition } from './bpm-process-instance';
 import { ContractIcon } from './contract';
+import { EnumAuthProvider } from './enum';
 import { EnumMarketplaceRole } from './role';
 
 interface OsmConfiguration {
@@ -29,13 +30,14 @@ export interface ExternalDataProvider {
 }
 
 export interface ApplicationConfiguration {
+  authProviders: EnumAuthProvider[];
   bingMaps?: BingMapsConfiguration;
-  externalProviders: ExternalDataProvider[];
+  externalProviders?: ExternalDataProvider[];
   map?: MapConfiguration;
   marketplaceUrl: string;
   osm?: OsmConfiguration;
-  processDefinitions: ProcessDefinition[];
-  contractIcons: ContractIcon[];
+  processDefinitions?: ProcessDefinition[];
+  contractIcons?: ContractIcon[];
 }
 
 export enum EnumService {

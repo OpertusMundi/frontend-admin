@@ -211,7 +211,7 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
               resetFilter={resetFilter}
               find={find}
               disabled={loading}
-              processDefinitions={processDefinitions}
+              processDefinitions={processDefinitions!}
             />
             {lastUpdated &&
               <Grid container spacing={3}>

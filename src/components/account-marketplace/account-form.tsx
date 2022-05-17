@@ -301,7 +301,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
         .then((response: ObjectResponse<MarketplaceAccountDetails>) => {
           if (response.success) {
             const account = response.result!;
-            const providers = config.externalProviders.filter(p => account?.roles.some(r => r === p.requiredRole));
+            const providers = config.externalProviders!.filter(p => account?.roles.some(r => r === p.requiredRole));
             const provider = providers[0] ? providers[0].id : EnumDataProvider.UNDEFINED;
             const openDatasetProvider = account.roles.includes(EnumMarketplaceRole.ROLE_PROVIDER_OPEN_DATASET);
             this.setState({
@@ -328,7 +328,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     const { confirmExternalProviderUpdate, confirmCompanyName, externalProvider } = this.state;
     const { account, classes, config } = this.props;
 
-    const providers = config.externalProviders.filter(p => p.id === externalProvider);
+    const providers = config.externalProviders!.filter(p => p.id === externalProvider);
     const provider = providers[0];
 
     if (!confirmExternalProviderUpdate || !account || !provider) {
@@ -640,7 +640,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
                           name="external-provider-group"
                           onChange={(e) => this.setState({ externalProvider: e.target.value as EnumDataProvider })}
                         >
-                          {config.externalProviders.map((p) => (
+                          {config.externalProviders!.map((p) => (
                             <FormControlLabel key={p.id} value={p.id} control={<Radio />} label={p.name} />
                           ))}
                         </RadioGroup>

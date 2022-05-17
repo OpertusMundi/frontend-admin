@@ -630,6 +630,7 @@
     "failure": "Username or password is wrong",
     "forgot-password": "Forgot your password?",
     "login": "Login",
+    "login-idp": "Connect with Topio",
     "password": "Password",
     "subtitle": "Sign into my account",
     "title": "Sign-in",

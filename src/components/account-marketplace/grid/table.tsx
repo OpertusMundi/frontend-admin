@@ -198,7 +198,7 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccount, En
       cell: (
         rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
       ): React.ReactNode => {
-        const providers = config.externalProviders.filter(p => row.roles.some(r => r === p.requiredRole));
+        const providers = config.externalProviders!.filter(p => row.roles.some(r => r === p.requiredRole));
         if (providers.length !== 1) {
           return null;
         }

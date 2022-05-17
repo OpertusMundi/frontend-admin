@@ -234,7 +234,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
 
           };
           if (section.options[index].icon){
-            const enumIcon = config.contractIcons.find(c => c.icon === section.options[index].icon);
+            const enumIcon = config.contractIcons!.find(c => c.icon === section.options[index].icon);
             icon = <img alt="" className={classes.logoImage} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
           }
           if (section.options[index].shortDescription){
@@ -283,7 +283,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
             });
           }
           if (section.options[0].icon){
-            const enumIcon = config.contractIcons.find(c => c.icon === section.options[0].icon);
+            const enumIcon = config.contractIcons!.find(c => c.icon === section.options[0].icon);
             icon = <img  alt="" className={classes.logoImage} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
           }
           if (section.options[0].shortDescription){

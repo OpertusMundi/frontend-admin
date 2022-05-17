@@ -592,7 +592,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
               <div className={`rdw-dropdown-caretto${this.state.openIconSelect ? 'close' : 'open'}`} />
             </div>
             <ul className={`rdw-dropdown-optionwrapper ${this.state.openIconSelect ? classes.open : classes.close}`} >
-              {config.contractIcons.map(icon => (
+              {config.contractIcons!.map(icon => (
                 <li
                   onClick={() => selectIcon(icon.icon)}
                   key={icon.icon}
@@ -614,7 +614,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
           </div>
         </div>
       if (this.state.icon) {
-        const enumIcon = config.contractIcons.find(c => c.icon === this.state.icon);
+        const enumIcon = config.contractIcons!.find(c => c.icon === this.state.icon);
         selectedIcon = <img alt="" className={classes.outerIcon} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
       }
     }

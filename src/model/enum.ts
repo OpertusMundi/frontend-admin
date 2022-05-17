@@ -1,7 +1,5 @@
 export enum EnumAuthProvider {
   Forms = 'Forms',
-  Google = 'Google',
-  GitHub = 'GitHub',
   OpertusMundi = 'OpertusMundi',
 }
 

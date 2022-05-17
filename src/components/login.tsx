@@ -8,6 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import { Theme, withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import { EnumAuthProvider } from 'model/enum';
 import React from 'react';
 import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 import { connect, ConnectedProps } from 'react-redux';
@@ -20,8 +21,30 @@ const styles = (theme: Theme) => createStyles({
   root: {
     height: '100vh',
   },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  buttonIdP: {
+    maxWidth: '272px',
+    margin: theme.spacing(1, 0, 2),
+    borderRadius: 0,
+    textTransform: 'none',
+  },
+  buttonSubmit: {
+    margin: theme.spacing(3, 0, 2),
+    borderRadius: 0,
+    textTransform: 'none',
+  },
   logoImage: {
     width: '275px',
+  },
+  form: {
+    maxWidth: '272px',
+    marginTop: theme.spacing(1),
+  },
+  header: {
+    margin: theme.spacing(2, 0),
   },
   image: {
     backgroundImage: 'url(/images/login-background.jpg)',
@@ -34,19 +57,6 @@ const styles = (theme: Theme) => createStyles({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    maxWidth: '272px',
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    borderRadius: 0,
-    textTransform: 'none',
   },
 });
 
@@ -73,7 +83,7 @@ interface LoginState {
 }
 
 interface LoginProps extends PropsFromRedux, WithStyles<typeof styles> {
-  intl: IntlShape,
+  intl: IntlShape;
 }
 
 class Login extends React.Component<LoginProps, LoginState> {
@@ -101,9 +111,10 @@ class Login extends React.Component<LoginProps, LoginState> {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, config: { authProviders } } = this.props;
     const _t = this.props.intl.formatMessage;
 
+    const formsEnabled = authProviders.includes(EnumAuthProvider.Forms);
 
     return (
       <Grid container component="main" className={classes.root}>
@@ -112,46 +123,61 @@ class Login extends React.Component<LoginProps, LoginState> {
         <Grid item xs={12} sm={7} md={4} lg={3} component={Paper} elevation={6} square>
           <div className={classes.paper}>
             <img className={classes.logoImage} src="/images/logo-black.svg" alt="" />
-            <Typography component="h1" variant="h6">
+            <Typography component="h1" variant="h6" className={classes.header}>
               <FormattedMessage id="login.subtitle" />
             </Typography>
-            <form className={classes.form} autoComplete="off" noValidate onSubmit={(e) => this.submit(e)}>
-              <TextField
-                variant="standard"
-                margin="normal"
-                fullWidth
-                id="username"
-                label={_t({ id: 'login.username' })}
-                name="username"
-                autoFocus
-                defaultValue={this.state.username}
-                onChange={(e) => this.setState({ username: e.target.value })}
-              />
-              <TextField
-                variant="standard"
-                margin="normal"
-                fullWidth
-                name="password"
-                label={_t({ id: 'login.password' })}
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                defaultValue={this.state.password}
-                onChange={(e) => this.setState({ password: e.target.value })}
-              />
+            {formsEnabled &&
+              <form className={classes.form} autoComplete="off" noValidate onSubmit={(e) => this.submit(e)}>
+                <TextField
+                  variant="standard"
+                  margin="normal"
+                  fullWidth
+                  id="username"
+                  label={_t({ id: 'login.username' })}
+                  name="username"
+                  autoFocus
+                  defaultValue={this.state.username}
+                  onChange={(e) => this.setState({ username: e.target.value })}
+                />
+                <TextField
+                  variant="standard"
+                  margin="normal"
+                  fullWidth
+                  name="password"
+                  label={_t({ id: 'login.password' })}
+                  type="password"
+                  id="password"
+                  autoComplete="new-password"
+                  defaultValue={this.state.password}
+                  onChange={(e) => this.setState({ password: e.target.value })}
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.buttonSubmit}
+                >
+                  <FormattedMessage id="login.login" />
+                </Button>
+              </form>
+            }
+            <br />
+            {authProviders.includes(EnumAuthProvider.OpertusMundi) &&
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
-                color="primary"
-                className={classes.submit}
+                color={formsEnabled ? "default" : "primary"}
+                className={classes.buttonIdP}
+                href="/oauth2/authorization/dev"
               >
-                <FormattedMessage id="login.login" />
+                <FormattedMessage id={formsEnabled ? "login.login-idp" : "login.login"} />
               </Button>
-              <Box mt={5}>
-                <Copyright title={_t({ id: 'company.title' })} link={_t({ id: 'company.website' })} />
-              </Box>
-            </form>
+            }
+            <Box mt={5}>
+              <Copyright title={_t({ id: 'company.title' })} link={_t({ id: 'company.website' })} />
+            </Box>
           </div>
         </Grid>
       </Grid>
@@ -164,6 +190,7 @@ class Login extends React.Component<LoginProps, LoginState> {
 //
 
 const mapState = (state: RootState) => ({
+  config: state.config,
 });
 
 const mapDispatch = {

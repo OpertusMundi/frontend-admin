@@ -9,10 +9,8 @@ import {
 } from 'store/config/types';
 
 const initialState: ConfigurationState = {
-  externalProviders: [],
+  authProviders: [],
   marketplaceUrl: '',
-  processDefinitions: [],
-  contractIcons: [],
 };
 
 export function configurationReducer(
@@ -23,7 +21,9 @@ export function configurationReducer(
   switch (action.type) {
     case LOGOUT_INIT:
       return {
-        ...initialState
+        ...initialState,
+        authProviders: state.authProviders,
+        marketplaceUrl: state.marketplaceUrl,
       };
 
     case CONFIG_LOAD_COMPLETE:
