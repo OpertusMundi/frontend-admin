@@ -84,11 +84,6 @@ class OrderManager extends React.Component<OrderManagerProps> {
     });
   }
 
-  viewOrderTimeline(key: string): void {
-    const path = buildPath(DynamicRoutes.OrderTimeline, [key]);
-    this.props.navigate(path);
-  }
-
   viewProcessInstance(processInstance: string): void {
     const path = buildPath(DynamicRoutes.ProcessInstanceView, null, { processInstance });
     this.props.navigate(path);
@@ -148,7 +143,6 @@ class OrderManager extends React.Component<OrderManagerProps> {
               setSorting={(sorting: Sorting<EnumOrderSortField>[]) => this.setSorting(sorting)}
               result={result}
               sorting={sorting}
-              viewOrderTimeline={(key: string) => this.viewOrderTimeline(key)}
               viewProcessInstance={this.viewProcessInstance}
             />
           </Paper>

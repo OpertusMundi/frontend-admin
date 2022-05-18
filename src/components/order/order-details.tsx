@@ -43,6 +43,7 @@ import {
   mdiCheckOutline,
   mdiPiggyBankOutline,
   mdiLinkVariant,
+  mdiFaceAgent,
 } from '@mdi/js';
 
 // Store
@@ -58,8 +59,10 @@ import { EnumOrderStatus, Order, BankwirePayIn, EnumTransactionStatus } from 'mo
 import OrderApi from 'service/order';
 
 // Helper methods
-import { renderPricingModel } from 'components/billing/common';
 import { buildPath, DynamicRoutes } from 'model/routes';
+
+// Shared components
+import { CustomerDetails, PricingModelDetails } from 'components/common';
 
 const styles = (theme: Theme) => createStyles({
   avatar: {
@@ -88,7 +91,6 @@ const styles = (theme: Theme) => createStyles({
     marginTop: theme.spacing(2),
   },
   link: {
-    textDecoration: 'none',
     color: 'inherit',
   },
   linkIcon: {
@@ -110,7 +112,7 @@ interface OrderTimelineProps extends PropsFromRedux, WithStyles<typeof styles> {
   params: RouteParams;
 }
 
-class OrderTimeline extends React.Component<OrderTimelineProps> {
+class OrderDetails extends React.Component<OrderTimelineProps> {
 
   api: OrderApi;
 
@@ -144,6 +146,7 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
 
     this.props.navigate(path)
   }
+
   getCustomerName(order: Order): string {
     if (order.consumer && order.consumer.type === EnumMangopayUserType.INDIVIDUAL) {
       const c = order?.consumer as CustomerIndividual;
@@ -248,12 +251,12 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
             return order.payIn!.providerResultMessage;
           default:
             return (
-              <FormattedMessage id={`billing.order.timeline.payment.${order.paymentMethod}.${order.payIn!.status}`} />
+              <FormattedMessage id={`billing.order.details.payment.${order.paymentMethod}.${order.payIn!.status}`} />
             );
         }
       default:
         return (
-          <FormattedMessage id={`billing.order.timeline.status.${status}`} />
+          <FormattedMessage id={`billing.order.details.status.${status}`} />
         );
     }
   }
@@ -362,7 +365,20 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
     }
 
     return (
-      <Grid container item xs={12} justifyContent="center">
+      <Grid container item xs={12} justifyContent="flex-start">
+        <Card className={classes.card}>
+          <CardHeader
+            avatar={
+              <Avatar className={classes.avatar}>
+                <Icon path={mdiFaceAgent} size="1.5rem" />
+              </Avatar>
+            }
+            title={_t({ id: 'billing.order.details.consumer-header' })}
+          ></CardHeader>
+          <CardContent>
+            <CustomerDetails customer={order.consumer!} />
+          </CardContent>
+        </Card >
         <Card className={classes.card}>
           <CardHeader
             avatar={
@@ -370,26 +386,29 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
                 <Icon path={mdiPackageVariantClosed} size="1.5rem" />
               </Avatar>
             }
-            title={_t({ id: 'billing.order.timeline.order-details-header' }, { referenceNumber: order.referenceNumber })}
+            title={_t({ id: 'billing.order.details.order-details-header' }, { referenceNumber: order.referenceNumber })}
           ></CardHeader>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              <FormattedMessage id={'billing.order.timeline.order-summary'} />
+              <FormattedMessage id={'billing.order.details.order-summary'} />
             </Typography>
             <List disablePadding>
               {order.items!.map((item, index) => (
                 <div key={`order-item-${index}`}>
-                  <a className={classes.link} href={`${config.marketplaceUrl}/catalogue/${item.assetId}`} target="_blank" rel="noreferrer">
-                    <ListItem className={classes.listItem}>
-                      <ListItemText secondary={item.description} />
-                      <Typography variant="body2">
-                        <FormattedNumber value={item.totalPrice} style={'currency'} currency={order.currency} />
-                      </Typography>
-                    </ListItem>
-                  </a>
+
+                  <ListItem className={classes.listItem}>
+                    <ListItemText secondary={
+                      <a className={classes.link} href={`${config.marketplaceUrl}/catalogue/${item.assetId}`} target="_blank" rel="noreferrer">
+                        {item.description}
+                      </a>
+                    } />
+                    <Typography variant="body2">
+                      <FormattedNumber value={item.totalPrice} style={'currency'} currency={order.currency} />
+                    </Typography>
+                  </ListItem>
                   <ListItem className={classes.listItem}>
                     <Typography variant="caption">
-                      {renderPricingModel(item)}
+                      <PricingModelDetails item={item} />
                     </Typography>
                   </ListItem>
                 </div>
@@ -404,14 +423,14 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <Typography variant="h6" gutterBottom className={classes.title}>
-                  <FormattedMessage id={'billing.order.timeline.billing-address'} />
+                  <FormattedMessage id={'billing.order.details.billing-address'} />
                 </Typography>
                 <Typography gutterBottom>{this.getCustomerName(order)}</Typography>
                 {this.renderCustomerAddress(order)}
               </Grid>
               <Grid item container direction="column" xs={12} sm={6}>
                 <Typography variant="h6" gutterBottom className={classes.title}>
-                  <FormattedMessage id={'billing.order.timeline.payment-details'} />
+                  <FormattedMessage id={'billing.order.details.payment-details'} />
                   {order.payIn &&
                     <a href="/" onClick={(e) => this.showPayIn(e, order)} className={classes.linkIcon} title="Show Pay In">
                       <Icon path={mdiLinkVariant} size="1rem" />
@@ -424,7 +443,7 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
               </Grid>
               <Grid item container direction="column" xs={12} sm={6}>
                 <Typography variant="h6" gutterBottom className={classes.title}>
-                  <FormattedMessage id={'billing.order.timeline.delivery-details'} />
+                  <FormattedMessage id={'billing.order.details.delivery-details'} />
                 </Typography>
                 <Grid container>
                   {this.renderDeliveryDetails(order)}
@@ -440,7 +459,7 @@ class OrderTimeline extends React.Component<OrderTimelineProps> {
                 <Icon path={mdiTimelineClockOutline} size="1.5rem" />
               </Avatar>
             }
-            title={_t({ id: 'billing.order.timeline.timeline-header' })}
+            title={_t({ id: 'billing.order.details.timeline-header' })}
           ></CardHeader>
           <CardContent>
             {this.buildTimeline(order)}
@@ -469,7 +488,7 @@ const connector = connect(
 type PropsFromRedux = ConnectedProps<typeof connector>
 
 // Apply styles
-const styledComponent = withStyles(styles)(OrderTimeline);
+const styledComponent = withStyles(styles)(OrderDetails);
 
 // Inject i18n resources
 const LocalizedComponent = injectIntl(styledComponent);

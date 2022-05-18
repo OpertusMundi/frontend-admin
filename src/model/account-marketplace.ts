@@ -198,6 +198,7 @@ export interface CustomerIndividual extends Customer {
   lastName: string;
   nationality: string;
   occupation: string;
+  type: EnumMangopayUserType.INDIVIDUAL;
   walletFunds: number;
   walletFundsUpdatedOn: Moment | null;
 }
@@ -225,9 +226,12 @@ export interface CustomerProfessional extends Customer {
   rating: number | null;
   representative: CustomerRepresentative;
   siteUrl: string;
+  type: EnumMangopayUserType.PROFESSIONAL;
   walletFunds: number;
   walletFundsUpdatedOn: Moment | null;
 }
+
+export type CustomerType = CustomerIndividual | CustomerProfessional;
 
 /**
  * Profile consumer related data

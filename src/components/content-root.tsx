@@ -39,8 +39,8 @@ import ProcessInstanceManager from 'components/workflow/process-instance-manager
 import ProcessInstanceHistoryManager from 'components/workflow/process-instance-history-manager';
 import Profile from 'components/profile';
 import ProviderManager from 'components/provider/provider-grid';
+import OrderDetails from 'components/order/order-details';
 import OrderManager from 'components/order/order-manager';
-import OrderTimeline from 'components/order/order-timeline';
 import QueryEditor from './analytics/query-editor';
 import SecureRoute from 'components/secure-route';
 import TransferManager from 'components/transfer/transfer-grid';
@@ -98,7 +98,7 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             <Route path={DynamicRoutes.ContractCreate} element={<ContractForm />} />
             <Route path={DynamicRoutes.ContractUpdate} element={<ContractForm />} />
             <Route path={DynamicRoutes.DraftContractViewer} element={<DraftContractViewer />} />
-            <Route path={DynamicRoutes.OrderTimeline} element={<OrderTimeline />} />
+            <Route path={DynamicRoutes.OrderTimeline} element={<OrderDetails />} />
             <Route path={DynamicRoutes.MarketplaceAccountView} element={<MarketplaceAccountView />} />
             <Route path={DynamicRoutes.ProcessInstanceHistoryView} element={<ProcessInstanceHistoryForm />} />
             <Route path={DynamicRoutes.ProcessInstanceView} element={<ProcessInstanceForm />} />

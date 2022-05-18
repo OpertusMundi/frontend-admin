@@ -16,7 +16,6 @@ import MaterialTable, { cellActionHandler, Column } from 'components/material-ta
 import Icon from '@mdi/react';
 import {
   mdiContentCopy,
-  mdiTimelineClockOutline,
   mdiDatabaseCogOutline,
 } from '@mdi/js';
 
@@ -31,7 +30,6 @@ import { copyToClipboard } from 'utils/clipboard';
 
 enum EnumAction {
   CopyReferenceNumber = 'copy-bankwire-ref',
-  View = 'view',
   ViewProcessInstance = 'view-process-instance',
 };
 
@@ -153,13 +151,6 @@ function payoutColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Col
         rowIndex: number, column: Column<PayOut, EnumPayOutSortField>, row: PayOut, handleAction?: cellActionHandler<PayOut, EnumPayOutSortField>
       ): React.ReactNode => (
         <div className={classes.classes.compositeLabelLeft}>
-          <Tooltip title={intl.formatMessage({ id: 'billing.payout.tooltip.view-details' })}>
-            <i
-              onClick={() => handleAction ? handleAction(EnumAction.View, rowIndex, column, row) : null}
-            >
-              <Icon path={mdiTimelineClockOutline} className={classes.classes.rowIconAction} style={{ marginTop: 2 }} />
-            </i>
-          </Tooltip>
           {row.processInstance &&
             <Tooltip title={intl.formatMessage({ id: 'billing.order.tooltip.view-process-instance' })}>
               <i
@@ -298,7 +289,6 @@ interface PayOutTableProps extends WithStyles<typeof styles> {
   removeFromSelection: (rows: PayOut[]) => void,
   resetSelection: () => void;
   sorting: Sorting<EnumPayOutSortField>[];
-  viewPayOut: (key: string) => void;
   viewProcessInstance: (processInstance: string) => void;
   loading?: boolean;
 }
@@ -318,12 +308,6 @@ class AccountTable extends React.Component<PayOutTableProps> {
           const value = row.bankwireRef;
 
           copyToClipboard(value);
-          break;
-
-        case EnumAction.View:
-          this.props.addToSelection([row]);
-
-          this.props.viewPayOut(row.key);
           break;
 
         case EnumAction.ViewProcessInstance:

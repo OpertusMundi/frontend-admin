@@ -30,6 +30,7 @@ import Icon from '@mdi/react';
 import {
   mdiPackageVariantClosed,
   mdiFaceAgent,
+  mdiBankTransfer,
 } from '@mdi/js';
 
 // Store
@@ -57,7 +58,8 @@ import {
 import PayInApi from 'service/payin';
 
 // Helper methods
-import { mapPaymentMethodToIcon, renderPricingModel } from 'components/billing/common';
+import { mapPaymentMethodToIcon } from 'components/billing/common';
+import { CustomerDetails, PricingModelDetails } from 'components/common';
 
 const styles = (theme: Theme) => createStyles({
   alignCenter: {
@@ -124,6 +126,11 @@ interface RouteParams {
   key?: string | undefined;
 }
 
+interface PayInDetailsState {
+  transferFunds: number;
+  transferFees: number;
+}
+
 interface PayInDetailsProps extends PropsFromRedux, WithStyles<typeof styles> {
   intl: IntlShape;
   navigate: NavigateFunction;
@@ -131,7 +138,7 @@ interface PayInDetailsProps extends PropsFromRedux, WithStyles<typeof styles> {
   params: RouteParams;
 }
 
-class PayInDetails extends React.Component<PayInDetailsProps> {
+class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState> {
 
   api: PayInApi;
 
@@ -139,6 +146,11 @@ class PayInDetails extends React.Component<PayInDetailsProps> {
     super(props);
 
     this.api = new PayInApi();
+
+    this.state = {
+      transferFunds: 0,
+      transferFees: 0,
+    };
   }
 
   get key(): string | null {
@@ -150,6 +162,21 @@ class PayInDetails extends React.Component<PayInDetailsProps> {
   componentDidMount() {
     if (this.key) {
       this.props.findOne(this.key)
+        .then((payin) => {
+          if (payin != null) {
+            let transferFunds = 0, transferFees = 0;
+
+            payin.items!.forEach(i => {
+              transferFunds += i.transfer ? i.transfer!.creditedFunds : 0;
+              transferFees += i.transfer ? i.transfer!.fees : 0;
+            });
+
+            this.setState({
+              transferFunds,
+              transferFees,
+            });
+          }
+        })
         .catch((err) => {
           // TODO: Redirect to grid view?
         });
@@ -464,32 +491,7 @@ class PayInDetails extends React.Component<PayInDetailsProps> {
           }
         ></CardHeader>
         <CardContent className={classes.cardContent}>
-          <Typography variant="body1" gutterBottom>
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Typography variant="h6" gutterBottom className={classes.title}>
-                <FormattedMessage id={payin?.consumer?.type === EnumMangopayUserType.INDIVIDUAL
-                  ? 'billing.payin.details.sections.consumer-address'
-                  : 'billing.payin.details.sections.headquarters-address'}
-                />
-              </Typography>
-              <Typography gutterBottom>{this.getCustomerName(payin?.consumer)}</Typography>
-              {this.renderCustomerAddress(payin)}
-            </Grid>
-            <Grid item container direction="column" xs={12} sm={6}>
-              <Typography variant="h6" gutterBottom className={classes.title}>
-                <FormattedMessage id={'billing.payin.details.sections.billing-address'} />
-              </Typography>
-              {this.renderBillingAddress(payin)}
-            </Grid>
-            <Grid item container direction="column" xs={12} sm={6}>
-              <Typography variant="h6" gutterBottom className={classes.title}>
-                <FormattedMessage id={'billing.payin.details.sections.shipping-address'} />
-              </Typography>
-              {this.renderShippingAddress(payin)}
-            </Grid>
-          </Grid>
+          <CustomerDetails customer={payin!.consumer!} />
         </CardContent>
       </Card>
     );
@@ -511,6 +513,20 @@ class PayInDetails extends React.Component<PayInDetailsProps> {
         ></CardHeader>
         <CardContent className={classes.cardContent}>
           {this.renderPaymentDetails(payin)}
+          <Grid container spacing={2}>
+            <Grid item container direction="column" xs={12} sm={6}>
+              <Typography variant="h6" gutterBottom className={classes.title}>
+                <FormattedMessage id={'billing.payin.details.sections.billing-address'} />
+              </Typography>
+              {this.renderBillingAddress(payin)}
+            </Grid>
+            <Grid item container direction="column" xs={12} sm={6}>
+              <Typography variant="h6" gutterBottom className={classes.title}>
+                <FormattedMessage id={'billing.payin.details.sections.shipping-address'} />
+              </Typography>
+              {this.renderShippingAddress(payin)}
+            </Grid>
+          </Grid>
         </CardContent>
       </Card>
     );
@@ -554,7 +570,7 @@ class PayInDetails extends React.Component<PayInDetailsProps> {
               </a>
             </Typography>
             <Typography variant="caption">
-              {renderPricingModel(orderItem)}
+              <PricingModelDetails item={orderItem} />
             </Typography>
           </Grid>
           <Grid item xs={4}>
@@ -583,19 +599,88 @@ class PayInDetails extends React.Component<PayInDetailsProps> {
     return null;
   }
 
+  renderTransferItem(index: number, item: PayInItem) {
+    switch (item.type) {
+      case EnumPayInItemType.ORDER:
+        return this.renderTransferOrderItem(index, item as OrderPayInItem);
+      case EnumPayInItemType.SUBSCRIPTION_BILLING:
+        return this.renderTransferSubscriptionItem(index, item as SubscriptionBillingPayInItem);
+    }
+  }
+
+  renderTransferOrderItem(itemIndex: number, payInItem: OrderPayInItem) {
+    const { classes, config } = this.props;
+    const order = payInItem.order;
+    const transfer = payInItem.transfer;
+
+    return order.items!.map((orderItem, orderItemIndex) => (
+      <div key={`order-${itemIndex}-item-${orderItemIndex}`}>
+        <Grid container>
+          <Grid item xs={2}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              {transfer
+                ? <FormattedTime value={transfer.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
+                : <span>-</span>
+              }
+            </Typography>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              <a className={classes.link} href={`${config.marketplaceUrl}/catalogue/${orderItem.assetId}`} target="_blank" rel="noreferrer">
+                {orderItem.description}
+              </a>
+            </Typography>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [orderItem.provider!.key])} className={classes.link}>
+                {(orderItem.provider! as CustomerProfessional).name}
+              </Link>
+            </Typography>
+          </Grid>
+          <Grid container item xs={2} justifyContent={"flex-end"}>
+            <Typography variant="body2" className={classes.alignCenter}>
+              {transfer
+                ? <FormattedNumber value={transfer.fees} style={'currency'} currency={order.currency} />
+                : <span>-</span>
+              }
+            </Typography>
+          </Grid>
+          <Grid container item xs={2} justifyContent={"flex-end"}>
+            <Typography variant="body2" className={classes.alignCenter}>
+              {transfer
+                ? <FormattedNumber value={transfer.creditedFunds} style={'currency'} currency={order.currency} />
+                : <span>-</span>
+              }
+            </Typography>
+          </Grid>
+        </Grid>
+        <Divider className={classes.divider} />
+      </div >
+    ));
+  }
+
+  renderTransferSubscriptionItem(index: number, item: SubscriptionBillingPayInItem) {
+    return null;
+  }
+
   renderPayInItems() {
+    const { transferFunds, transferFees } = this.state;
     const { classes, payin = null } = this.props;
     const _t = this.props.intl.formatMessage;
 
     if (!payin) {
       return null;
     }
-
-    let funds = 0, fees = 0;
-    payin.items!.forEach(i => {
-      funds += i.transfer ? i.transfer!.creditedFunds : 0;
-      fees += i.transfer ? i.transfer!.fees : 0;
-    });
 
     return (
       <Card className={classes.card}>
@@ -618,7 +703,7 @@ class PayInDetails extends React.Component<PayInDetailsProps> {
                 <FormattedNumber value={payin.totalPrice} style={'currency'} currency={payin.currency} />
               </Typography>
             </ListItem>
-            {payin.status === EnumTransactionStatus.SUCCEEDED && payin.paymentMethod !== EnumPaymentMethod.FREE && funds === 0 &&
+            {payin.status === EnumTransactionStatus.SUCCEEDED && payin.paymentMethod !== EnumPaymentMethod.FREE && transferFunds === 0 &&
               <>
                 <Divider />
                 <ListItem className={classes.listItemTotalDetails}>
@@ -630,19 +715,19 @@ class PayInDetails extends React.Component<PayInDetailsProps> {
                 </ListItem>
               </>
             }
-            {funds > 0 &&
+            {transferFunds > 0 &&
               <>
                 <Divider />
                 <ListItem className={classes.listItemTotalDetails}>
                   <ListItemText primary="Funds" />
                   <Typography variant="subtitle1" className={classes.total}>
-                    <FormattedNumber value={funds} style={'currency'} currency={payin.currency} />
+                    <FormattedNumber value={transferFunds} style={'currency'} currency={payin.currency} />
                   </Typography>
                 </ListItem>
                 <ListItem className={classes.listItemTotalDetails}>
                   <ListItemText primary="Platform Fees" />
                   <Typography variant="subtitle1" className={classes.total}>
-                    <FormattedNumber value={fees} style={'currency'} currency={payin.currency} />
+                    <FormattedNumber value={transferFees} style={'currency'} currency={payin.currency} />
                   </Typography>
                 </ListItem>
               </>
@@ -653,7 +738,69 @@ class PayInDetails extends React.Component<PayInDetailsProps> {
     );
   }
 
+  renderTransferItems() {
+    const { transferFees, transferFunds } = this.state;
+    const { classes, payin = null } = this.props;
+    const _t = this.props.intl.formatMessage;
+
+    if (!payin) {
+      return null;
+    }
+
+    return (
+      <Card className={classes.card}>
+        <CardHeader
+          avatar={
+            <Avatar className={classes.avatar}>
+              <Icon path={mdiBankTransfer} size="1.5rem" />
+            </Avatar>
+          }
+          title={_t({ id: 'billing.payin.details.sections.transfer-items' })}
+        ></CardHeader>
+        <CardContent className={classes.cardContent}>
+          <List disablePadding>
+            <Grid container>
+              <Grid item xs={2}>
+                <Typography variant="caption">Date</Typography>
+              </Grid>
+              <Grid item xs={3}>
+                <Typography variant="caption">Asset</Typography>
+              </Grid>
+              <Grid item xs={3}>
+                <Typography variant="caption">Provider</Typography>
+              </Grid>
+              <Grid container item xs={2} justifyContent={"flex-end"}>
+                <Typography variant="caption">Fees</Typography>
+              </Grid>
+              <Grid container item xs={2} justifyContent={"flex-end"}>
+                <Typography variant="caption">Credited Funds</Typography>
+              </Grid>
+            </Grid>
+            {payin.items!.map((item, index) => (
+              this.renderTransferItem(index, item)
+            ))}
+          </List>
+          <Grid container>
+            <Grid item xs={8}>
+            </Grid>
+            <Grid container item xs={2} justifyContent="flex-end">
+              <Typography variant="subtitle1" className={classes.total}>
+                <FormattedNumber value={transferFees} style={'currency'} currency={payin.currency} />
+              </Typography>
+            </Grid>
+            <Grid container item xs={2} justifyContent="flex-end">
+              <Typography variant="subtitle1" className={classes.total}>
+                <FormattedNumber value={transferFunds} style={'currency'} currency={payin.currency} />
+              </Typography>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+    )
+  }
+
   render() {
+    const { transferFunds } = this.state;
     const { payin = null } = this.props;
 
     if (!payin) {
@@ -673,6 +820,11 @@ class PayInDetails extends React.Component<PayInDetailsProps> {
         <Grid item xs={12}>
           {this.renderPayInItems()}
         </Grid>
+        {transferFunds > 0 &&
+          <Grid item xs={12}>
+            {this.renderTransferItems()}
+          </Grid>
+        }
       </Grid >
     );
   }

@@ -18,7 +18,6 @@ import {
   mdiContentCopy,
   mdiDatabaseCogOutline,
   mdiMessageTextOutline,
-  mdiTimelineClockOutline,
 } from '@mdi/js';
 
 // Model
@@ -34,7 +33,6 @@ enum EnumAction {
   CopyReferenceNumber = 'copy-reference-number',
   SendMessage = 'send-message',
   ViewProcessInstance = 'view-process-instance',
-  ViewTimeline = 'view-timeline',
 };
 
 const getCustomerName = (order: Order): string => {
@@ -64,13 +62,6 @@ function orderColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
               onClick={() => handleAction ? handleAction(EnumAction.SendMessage, rowIndex, column, row) : null}
             >
               <Icon path={mdiMessageTextOutline} className={classes.classes.rowIconAction} style={{ marginTop: 2 }} />
-            </i>
-          </Tooltip>
-          <Tooltip title={intl.formatMessage({ id: 'billing.order.tooltip.view-timeline' })}>
-            <i
-              onClick={() => handleAction ? handleAction(EnumAction.ViewTimeline, rowIndex, column, row) : null}
-            >
-              <Icon path={mdiTimelineClockOutline} className={classes.classes.rowIconAction} style={{ marginTop: 2 }} />
             </i>
           </Tooltip>
           {row.payIn?.processInstance &&
@@ -327,7 +318,6 @@ interface OrderTableProps extends WithStyles<typeof styles> {
   removeFromSelection: (rows: Order[]) => void,
   resetSelection: () => void;
   sorting: Sorting<EnumOrderSortField>[];
-  viewOrderTimeline: (key: string) => void;
   viewProcessInstance: (processInstance: string) => void;
   loading?: boolean;
 }
@@ -348,11 +338,6 @@ class OrderTable extends React.Component<OrderTableProps> {
 
           copyToClipboard(value);
 
-          break;
-        case EnumAction.ViewTimeline:
-          this.props.addToSelection([row]);
-
-          this.props.viewOrderTimeline(row.key);
           break;
 
         case EnumAction.ViewProcessInstance:

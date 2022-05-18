@@ -69,7 +69,6 @@ class PayOutManager extends React.Component<PayOutManagerProps> {
   constructor(props: PayOutManagerProps) {
     super(props);
 
-    this.viewPayOut = this.viewPayOut.bind(this);
     this.viewProcessInstance = this.viewProcessInstance.bind(this);
   }
 
@@ -83,11 +82,6 @@ class PayOutManager extends React.Component<PayOutManagerProps> {
         message.errorHtml("Find operation has failed", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
       }
     });
-  }
-
-  viewPayOut(key: string): void {
-    const path = buildPath(DynamicRoutes.PayOutView, [key]);
-    this.props.navigate(path);
   }
 
   viewProcessInstance(processInstance: string): void {
@@ -149,7 +143,6 @@ class PayOutManager extends React.Component<PayOutManagerProps> {
               setSorting={(sorting: Sorting<EnumPayOutSortField>[]) => this.setSorting(sorting)}
               result={result}
               sorting={sorting}
-              viewPayOut={this.viewPayOut}
               viewProcessInstance={this.viewProcessInstance}
             />
           </Paper>

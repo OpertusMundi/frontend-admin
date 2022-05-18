@@ -3,8 +3,8 @@ import { EnumPaymentMethod, EnumDeliveryMethod, EnumRecurringPaymentType } from 
 import {
   Address,
   BankAccount,
-  Customer,
   CustomerProfessional,
+  CustomerType,
   MarketplaceAccountSubscription,
 } from 'model/account-marketplace';
 import { EffectivePricingModel } from 'model/pricing-model';
@@ -272,7 +272,7 @@ export interface PayIn {
   /**
    * Customer (consumer)
    */
-  consumer?: Customer;
+  consumer?: CustomerType;
   /**
    * Process instance
    */
@@ -532,13 +532,13 @@ export interface OrderItem {
   /**
    * Item seller
    */
-  provider?: Customer;
+  provider?: CustomerProfessional;
 }
 
 export interface Order {
   createdOn: Moment;
   currency: string;
-  consumer?: Customer;
+  consumer?: CustomerType;
   deliveryMethod: EnumDeliveryMethod;
   items?: OrderItem[];
   key: string;

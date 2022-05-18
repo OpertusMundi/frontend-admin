@@ -124,6 +124,16 @@
     }
   },
   "billing": {
+    "customer": {
+      "sections": {
+        "address": "Address",
+        "address-headquarters": "Headquarters",
+        "company": "Company Details",
+        "representative": "Representative",
+        "user": "User",
+        "wallet": "Wallet"
+      }
+    },
     "order": {
       "filter": {
         "reference-number": "Reference Number",
@@ -144,8 +154,9 @@
         "view-process-instance": "View process instance",
         "view-timeline": "View timeline"
       },
-      "timeline": {
+      "details": {
         "billing-address": "Billing Address",
+        "consumer-header": "Consumer",
         "delivery-details": "Delivery",
         "order-summary": "Order Details",
         "payment-details": "Payment details",
@@ -226,7 +237,8 @@
             "bank-account": "Bank Account",
             "bank-account-owner": "Owner"
           },
-          "transaction": "Transaction Details"
+          "transaction": "Transaction Details",
+          "transfer-items": "Fund Transfers"
         }
       }
     },

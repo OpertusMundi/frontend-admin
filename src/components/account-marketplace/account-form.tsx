@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { AxiosError } from 'axios';
+
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
 import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
@@ -33,12 +35,14 @@ import {
   mdiCheckDecagramOutline,
   mdiCommentAlertOutline,
   mdiCreativeCommons,
-  mdiHandshake, mdiListStatus,
+  mdiFaceAgent,
+  mdiListStatus,
   mdiTransitConnectionVariant,
   mdiUndoVariant,
 } from '@mdi/js';
 
 // Components
+import { CustomerDetails } from 'components/common';
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
 
 // Store
@@ -49,13 +53,14 @@ import { findOne } from 'store/account-marketplace/thunks';
 import message from 'service/message';
 import AccountApi from 'service/account-marketplace';
 import { ObjectResponse, SimpleResponse } from 'model/response';
-import { EnumActivationStatus, MarketplaceAccountDetails } from 'model/account-marketplace';
+import { CustomerType, EnumActivationStatus, EnumMangopayUserType, MarketplaceAccountDetails } from 'model/account-marketplace';
 
 // Utilities
 import { FieldMapperFunc, localizeErrorCodes } from 'utils/error';
+
+// Model
 import { StaticRoutes } from 'model/routes';
 import { EnumDataProvider } from 'model/configuration';
-import { AxiosError } from 'axios';
 import { Message } from 'model/message';
 import { EnumMarketplaceRole } from 'model/role';
 
@@ -481,6 +486,36 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     );
   }
 
+  getCustomerName(customer: CustomerType): string {
+    switch (customer.type) {
+      case EnumMangopayUserType.INDIVIDUAL:
+        return [customer.firstName, customer.lastName].join(' ');
+
+      case EnumMangopayUserType.PROFESSIONAL:
+        return customer.name;
+    }
+  }
+
+  renderConsumer(consumer: CustomerType) {
+    const { classes } = this.props;
+
+    return (
+      <Card className={classes.card}>
+        <CardHeader
+          avatar={
+            <Avatar className={classes.avatar}>
+              <Icon path={mdiFaceAgent} size="1.5rem" />
+            </Avatar>
+          }
+          title={this.getCustomerName(consumer)}
+        ></CardHeader>
+        <CardContent>
+          <CustomerDetails customer={consumer} />
+        </CardContent>
+      </Card>
+    );
+  }
+
   render() {
     const { account = null, classes, config, loading } = this.props;
     const { externalProvider, openDatasetProvider } = this.state;
@@ -491,220 +526,202 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     }
 
     const provider = account.profile.provider.current;
+    const consumer = account.profile.consumer.current;
 
     return (
       <>
-        <Grid container justifyContent="center">
-          <Grid container item lg={6} justifyContent="center">
-            <Card className={classes.card}>
-              <CardHeader
-                avatar={
-                  <Avatar className={classes.avatar}>
-                    <Icon path={mdiAccount} size="1.5rem" />
-                  </Avatar>
-                }
-                title={_t({ id: 'account-marketplace.form.section.user' })}
-              ></CardHeader>
-              <CardContent>
-                <Grid container spacing={2}>
-                  <Grid item xs={4}>
-                    <Typography variant="caption">
-                      <FormattedMessage id={'account-marketplace.form.field.firstName'} />
-                    </Typography>
-                    <Typography gutterBottom>{account.profile.firstName}</Typography>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Typography variant="caption">
-                      <FormattedMessage id={'account-marketplace.form.field.lastName'} />
-                    </Typography>
-                    <Typography gutterBottom>{account.profile.lastName}</Typography>
-                  </Grid>
-                </Grid>
-                <Grid container alignItems="center">
-                  <Grid item>
-                    <Typography variant="caption">
-                      <FormattedMessage id={'account-marketplace.form.field.email'} />
-                    </Typography>
-                    <Grid container item justifyContent="flex-start" spacing={1}>
-                      <Grid item>
-                        <Typography gutterBottom>{account.email}</Typography>
-                      </Grid>
-                      <Grid item>
-                        {account.emailVerified &&
-                          <Icon color={'#4CAF50'} path={mdiCheckDecagramOutline} size="1.5rem" />
-                        }
-                        {!account.emailVerified &&
-                          <Icon color={'#FF5722'} path={mdiAlertDecagramOutline} size="1.5rem" />
-                        }
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-            <Card className={classes.card}>
-              <CardHeader
-                avatar={
-                  <Avatar className={classes.avatar}>
-                    <Icon path={mdiListStatus} size="1.5rem" />
-                  </Avatar>
-                }
-                title={
-                  <a className={classes.link} href={`/workflows/process-instances/record?businessKey=${account.key}`}>
-                    <FormattedMessage id={'account-marketplace.form.section.registration'} />
-                  </a>
-                }
-              ></CardHeader>
-              <CardContent>
-                <Grid container spacing={2}>
-                  <Grid item xs={8}>
-                    <Typography variant="caption">
-                      <FormattedMessage id={'account-marketplace.form.field.registeredAt'} />
-                    </Typography>
-                    <Typography gutterBottom>
-                      <FormattedTime value={account.registeredAt.toDate()} day='numeric' month='numeric' year='numeric' />
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Typography variant="caption">
-                      <FormattedMessage id={'account-marketplace.form.field.registration-status'} />
-                    </Typography>
-                    {account.activationStatus === EnumActivationStatus.COMPLETED &&
-                      <div className={classes.statusLabel}>
-                        <div className={classes.statusLabelText}>{account.activationStatus}</div>
-                      </div>
-                    }
-                    {account.activationStatus === EnumActivationStatus.PENDING &&
-                      <div className={classes.statusLabelWarning}>
-                        <div className={classes.statusLabelText}>{account.activationStatus}</div>
-                      </div>
-                    }
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-            {provider &&
+        <Grid container>
+          <Grid container item xs={6}>
+            <Grid item xs={12}>
               <Card className={classes.card}>
                 <CardHeader
                   avatar={
                     <Avatar className={classes.avatar}>
-                      <Icon path={mdiHandshake} size="1.5rem" />
+                      <Icon path={mdiAccount} size="1.5rem" />
+                    </Avatar>
+                  }
+                  title={_t({ id: 'account-marketplace.form.section.user' })}
+                ></CardHeader>
+                <CardContent>
+                  <Grid container spacing={2}>
+                    <Grid item xs={4}>
+                      <Typography variant="caption">
+                        <FormattedMessage id={'account-marketplace.form.field.firstName'} />
+                      </Typography>
+                      <Typography gutterBottom>{account.profile.firstName}</Typography>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Typography variant="caption">
+                        <FormattedMessage id={'account-marketplace.form.field.lastName'} />
+                      </Typography>
+                      <Typography gutterBottom>{account.profile.lastName}</Typography>
+                    </Grid>
+                  </Grid>
+                  <Grid container alignItems="center">
+                    <Grid item>
+                      <Typography variant="caption">
+                        <FormattedMessage id={'account-marketplace.form.field.email'} />
+                      </Typography>
+                      <Grid container item justifyContent="flex-start" spacing={1}>
+                        <Grid item>
+                          <Typography gutterBottom>{account.email}</Typography>
+                        </Grid>
+                        <Grid item>
+                          {account.emailVerified &&
+                            <Icon color={'#4CAF50'} path={mdiCheckDecagramOutline} size="1.5rem" />
+                          }
+                          {!account.emailVerified &&
+                            <Icon color={'#FF5722'} path={mdiAlertDecagramOutline} size="1.5rem" />
+                          }
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12}>
+              <Card className={classes.card}>
+                <CardHeader
+                  avatar={
+                    <Avatar className={classes.avatar}>
+                      <Icon path={mdiListStatus} size="1.5rem" />
                     </Avatar>
                   }
                   title={
-                    <FormattedMessage id={'account-marketplace.form.section.provider'} />
+                    <a className={classes.link} href={`/workflows/process-instances/record?businessKey=${account.key}`}>
+                      <FormattedMessage id={'account-marketplace.form.section.registration'} />
+                    </a>
                   }
                 ></CardHeader>
                 <CardContent>
                   <Grid container spacing={2}>
                     <Grid item xs={8}>
                       <Typography variant="caption">
-                        <FormattedMessage id={'account-marketplace.form.field.provider.name'} />
+                        <FormattedMessage id={'account-marketplace.form.field.registeredAt'} />
                       </Typography>
                       <Typography gutterBottom>
-                        {provider.name}
+                        <FormattedTime value={account.registeredAt.toDate()} day='numeric' month='numeric' year='numeric' />
                       </Typography>
                     </Grid>
                     <Grid item xs={4}>
                       <Typography variant="caption">
-                        <FormattedMessage id={'account-marketplace.form.field.provider.vat'} />
+                        <FormattedMessage id={'account-marketplace.form.field.registration-status'} />
                       </Typography>
-                      <Typography gutterBottom>
-                        {provider.companyNumber}
-                      </Typography>
+                      {account.activationStatus === EnumActivationStatus.COMPLETED &&
+                        <div className={classes.statusLabel}>
+                          <div className={classes.statusLabelText}>{account.activationStatus}</div>
+                        </div>
+                      }
+                      {account.activationStatus === EnumActivationStatus.PENDING &&
+                        <div className={classes.statusLabelWarning}>
+                          <div className={classes.statusLabelText}>{account.activationStatus}</div>
+                        </div>
+                      }
                     </Grid>
                   </Grid>
                 </CardContent>
               </Card>
+            </Grid>
+            {consumer &&
+              <Grid item>
+                {this.renderConsumer(consumer)}
+              </Grid>
+            }
+            {provider &&
+              <Grid item>
+                {this.renderConsumer(provider)}
+              </Grid>
             }
           </Grid>
-          {provider &&
-            <>
-              <Grid container item lg={6} justifyContent="center">
-                <Card className={classes.card}>
-                  <CardHeader
-                    avatar={
-                      <Avatar className={classes.avatar}>
-                        <Icon path={mdiTransitConnectionVariant} size="1.5rem" />
-                      </Avatar>
-                    }
-                    title={
-                      <FormattedMessage id={'account-marketplace.form.section.external-provider'} />
-                    }
-                  ></CardHeader>
-                  <CardContent>
-                    <Grid container spacing={1}>
-                      <Grid item xs={8}>
-                        <RadioGroup
-                          value={externalProvider}
-                          name="external-provider-group"
-                          onChange={(e) => this.setState({ externalProvider: e.target.value as EnumDataProvider })}
-                        >
-                          {config.externalProviders!.map((p) => (
-                            <FormControlLabel key={p.id} value={p.id} control={<Radio />} label={p.name} />
-                          ))}
-                        </RadioGroup>
+          <Grid container item xs={6}>
+            {provider &&
+              <>
+                <Grid container item>
+                  <Card className={classes.card}>
+                    <CardHeader
+                      avatar={
+                        <Avatar className={classes.avatar}>
+                          <Icon path={mdiTransitConnectionVariant} size="1.5rem" />
+                        </Avatar>
+                      }
+                      title={
+                        <FormattedMessage id={'account-marketplace.form.section.external-provider'} />
+                      }
+                    ></CardHeader>
+                    <CardContent>
+                      <Grid container spacing={1}>
+                        <Grid item xs={8}>
+                          <RadioGroup
+                            value={externalProvider}
+                            name="external-provider-group"
+                            onChange={(e) => this.setState({ externalProvider: e.target.value as EnumDataProvider })}
+                          >
+                            {config.externalProviders!.map((p) => (
+                              <FormControlLabel key={p.id} value={p.id} control={<Radio />} label={p.name} />
+                            ))}
+                          </RadioGroup>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                  </CardContent>
-                  <CardActions disableSpacing className={classes.cardActions}>
-                    <Button
-                      size="small"
-                      color="primary"
-                      className={classes.button}
-                      disabled={loading || this.state.initialExternalProvider === this.state.externalProvider}
-                      onClick={(e) => this.onAssignExternalProvider(e)}
-                    >
-                      <FormattedMessage id="view.shared.action.save"></FormattedMessage>
-                    </Button>
-                  </CardActions>
-                </Card>
-                <Card className={classes.card}>
-                  <CardHeader
-                    avatar={
-                      <Avatar className={classes.avatar}>
-                        <Icon path={mdiCreativeCommons} size="1.5rem" />
-                      </Avatar>
-                    }
-                    title={
-                      <FormattedMessage id={'account-marketplace.form.section.open-dataset-provider'} />
-                    }
-                  ></CardHeader>
-                  <CardContent>
-                    <Grid container spacing={1}>
-                      <Grid item xs={8}>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              checked={openDatasetProvider}
-                              onChange={
-                                (event) => this.onOpenDatasetProviderChange(event)
-                              }
-                              name="enabled"
-                              color="primary"
-                            />
-                          }
-                          label={_t({ id: 'account-marketplace.form.field.open-dataset-provider' })}
-                        />
+                    </CardContent>
+                    <CardActions disableSpacing className={classes.cardActions}>
+                      <Button
+                        size="small"
+                        color="primary"
+                        className={classes.button}
+                        disabled={loading || this.state.initialExternalProvider === this.state.externalProvider}
+                        onClick={(e) => this.onAssignExternalProvider(e)}
+                      >
+                        <FormattedMessage id="view.shared.action.save"></FormattedMessage>
+                      </Button>
+                    </CardActions>
+                  </Card>
+                  <Card className={classes.card}>
+                    <CardHeader
+                      avatar={
+                        <Avatar className={classes.avatar}>
+                          <Icon path={mdiCreativeCommons} size="1.5rem" />
+                        </Avatar>
+                      }
+                      title={
+                        <FormattedMessage id={'account-marketplace.form.section.open-dataset-provider'} />
+                      }
+                    ></CardHeader>
+                    <CardContent>
+                      <Grid container spacing={1}>
+                        <Grid item xs={8}>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={openDatasetProvider}
+                                onChange={
+                                  (event) => this.onOpenDatasetProviderChange(event)
+                                }
+                                name="enabled"
+                                color="primary"
+                              />
+                            }
+                            label={_t({ id: 'account-marketplace.form.field.open-dataset-provider' })}
+                          />
+                        </Grid>
                       </Grid>
-                    </Grid>
-                  </CardContent>
-                  <CardActions disableSpacing className={classes.cardActions}>
-                    <Button
-                      size="small"
-                      color="primary"
-                      className={classes.button}
-                      disabled={loading || this.state.initialOpenDatasetProvider === this.state.openDatasetProvider}
-                      onClick={(e) => this.onAssignOpenDatasetProvider(e)}
-                    >
-                      <FormattedMessage id="view.shared.action.save"></FormattedMessage>
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            </>
-          }
-
+                    </CardContent>
+                    <CardActions disableSpacing className={classes.cardActions}>
+                      <Button
+                        size="small"
+                        color="primary"
+                        className={classes.button}
+                        disabled={loading || this.state.initialOpenDatasetProvider === this.state.openDatasetProvider}
+                        onClick={(e) => this.onAssignOpenDatasetProvider(e)}
+                      >
+                        <FormattedMessage id="view.shared.action.save"></FormattedMessage>
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              </>
+            }
+          </Grid>
         </Grid>
         {this.renderExternalProviderDialog()}
         {this.renderOpenDatasetProviderDialog()}
