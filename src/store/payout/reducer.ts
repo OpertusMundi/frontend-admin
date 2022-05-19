@@ -21,35 +21,32 @@ import {
   RESET_SELECTED,
   SET_SORTING,
   SEARCH_FAILURE,
-  LOAD_ORDER_INIT,
-  LOAD_ORDER_SUCCESS,
-  LOAD_ORDER_FAILURE,
+  LOAD_PAYOUT_INIT,
+  LOAD_PAYOUT_SUCCESS,
+  LOAD_PAYOUT_FAILURE,
   PayOutActions,
   PayOutManagerState,
 } from 'store/payout/types';
 
 const initialState: PayOutManagerState = {
+  lastUpdated: null,
   loading: false,
+  pagination: {
+    page: 0,
+    size: 10,
+  },
   query: {
     bankwireRef: '',
     email: '',
     status: [],
   },
-  pagination: {
-    page: 0,
-    size: 10,
-  },
+  record: null,
+  result: null,
+  selected: [],
   sorting: [{
     id: EnumPayOutSortField.MODIFIED_ON,
     order: Order.DESC,
   }],
-  result: null,
-  selected: [],
-  lastUpdated: null,
-  response: null,
-  timeline: {
-    order: null,
-  }
 };
 
 export function payOutReducer(
@@ -110,7 +107,7 @@ export function payOutReducer(
       return {
         ...state,
         selected: [],
-        response: null,
+        record: null,
         loading: true,
       };
 
@@ -156,21 +153,17 @@ export function payOutReducer(
         selected: [],
       };
 
-    case LOAD_ORDER_INIT:
-    case LOAD_ORDER_FAILURE:
+    case LOAD_PAYOUT_INIT:
+    case LOAD_PAYOUT_FAILURE:
       return {
         ...state,
-        timeline: {
-          order: null,
-        },
+        record: null,
       };
 
-    case LOAD_ORDER_SUCCESS:
+    case LOAD_PAYOUT_SUCCESS:
       return {
         ...state,
-        timeline: {
-          order: action.order,
-        },
+        record: action.record,
       };
 
     default:

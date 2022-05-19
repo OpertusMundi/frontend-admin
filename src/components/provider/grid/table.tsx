@@ -188,6 +188,22 @@ function providerColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
           </b>
         )
       },
+    }, {
+      header: intl.formatMessage({ id: 'account.marketplace.header.pending-payout-finds' }),
+      id: 'pendingPayoutFunds',
+      headerStyle: { textAlign: 'right' },
+      sortable: true,
+      sortColumn: EnumMarketplaceAccountSortField.PROVIDER_PENDING_PAYOUT_FUNDS,
+      className: classes.classes.alightRight,
+      cell: (
+        rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
+      ): React.ReactNode => {
+        return (
+          <b>
+            <FormattedNumber value={row.pendingPayoutFunds} style={'currency'} currency={'EUR'} />
+          </b>
+        )
+      },
     }]);
 }
 

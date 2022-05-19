@@ -56,6 +56,7 @@
         "funds": "Wallet Funds",
         "consumer": "Consumer",
         "consumer-funds": "Consumer Funds",
+        "pending-payout-finds": "Pending Payout Funds",
         "provider": "Provider",
         "provider-funds": "Provider Funds",
         "registered-on": "Registered On"
@@ -243,6 +244,23 @@
       }
     },
     "payout": {
+      "details": {
+        "sections": {
+          "provider": "Provider",
+          "consumer-address": "Address",
+          "headquarters-address": "Headquarters address",
+          "billing-address": "Billing Address",
+          "shipping-address": "Shipping Address",
+          "items": "Payment Items",
+          "bankwire": {
+            "status": "Status",
+            "bank-account": "Bank Account",
+            "bank-account-owner": "Owner"
+          },
+          "transaction": "Transaction Details",
+          "transfer-items": "Fund Transfers"
+        }
+      },
       "filter": {
         "email": "User",
         "bankwire-ref": "Bankwire Reference",

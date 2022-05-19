@@ -31,6 +31,7 @@ import MessageInboxHelpdesk from 'components/message-inbox-helpdesk/message-grid
 import MessageInboxUser from 'components/message-inbox-user/message-grid';
 import PayInDetails from 'components/payin/payin-details';
 import PayInManager from 'components/payin/payin-manager';
+import PayOutDetails from 'components/payout/payout-details';
 import PayOutManager from 'components/payout/payout-manager';
 import PlaceHolder from 'components/placeholder';
 import ProcessInstanceForm from 'components/workflow/process-instance-form';
@@ -103,7 +104,7 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             <Route path={DynamicRoutes.ProcessInstanceHistoryView} element={<ProcessInstanceHistoryForm />} />
             <Route path={DynamicRoutes.ProcessInstanceView} element={<ProcessInstanceForm />} />
             <Route path={DynamicRoutes.PayInView} element={<PayInDetails />} />
-            <Route path={DynamicRoutes.PayOutView} element={<PlaceHolder />} />
+            <Route path={DynamicRoutes.PayOutView} element={<PayOutDetails />} />
             {/* Static */}
             <Route path={StaticRoutes.Analytics} element={<QueryEditor />} />
             <Route path={StaticRoutes.Dashboard} element={<DashboardComponent />} />

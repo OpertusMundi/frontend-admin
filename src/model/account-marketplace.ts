@@ -388,6 +388,7 @@ export enum EnumMarketplaceAccountSortField {
   EMAIL = 'EMAIL',
   CONSUMER_FUNDS = 'CONSUMER_FUNDS',
   PROVIDER_FUNDS = 'PROVIDER_FUNDS',
+  PROVIDER_PENDING_PAYOUT_FUNDS = 'PROVIDER_PENDING_PAYOUT_FUNDS',
 }
 
 export interface MarketplaceAccountQuery {
@@ -413,6 +414,8 @@ export interface MarketplaceAccount {
   imageMimeType: string;
   key: string;
   locale: string;
+  pendingPayoutFunds: number;
+  pendingPayoutFundsUpdatedOn: Moment | null;
   provider: boolean;
   providerFunds: number;
   providerKycLevel: EnumKycLevel;

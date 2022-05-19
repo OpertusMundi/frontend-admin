@@ -1,22 +1,19 @@
 import { Moment } from 'moment';
 
 import { LogoutInitAction } from 'store/security/types';
-import { PageResult, PageRequest, Sorting, ObjectResponse } from 'model/response';
+import { PageResult, PageRequest, Sorting } from 'model/response';
 import { EnumPayOutSortField, PayOut, PayOutQuery } from 'model/order';
 
 // State
 export interface PayOutManagerState {
-  loading: boolean;
   lastUpdated: Moment | null;
+  loading: boolean;
   pagination: PageRequest;
   query: PayOutQuery;
+  record: PayOut | null;
   result: PageResult<PayOut> | null;
   selected: PayOut[];
   sorting: Sorting<EnumPayOutSortField>[];
-  response: ObjectResponse<PayOut> | null;
-  timeline: {
-    order: PayOut | null,
-  }
 }
 
 // Actions
@@ -36,9 +33,9 @@ export const ADD_SELECTED = 'payout/manager/ADD_SELECTED';
 export const REMOVE_SELECTED = 'payout/manager/REMOVE_SELECTED';
 export const RESET_SELECTED = 'payout/manager/RESET_SELECTED';
 
-export const LOAD_ORDER_INIT = 'payout/manager/LOAD_ORDER_INIT';
-export const LOAD_ORDER_SUCCESS = 'payout/manager/LOAD_ORDER_SUCCESS';
-export const LOAD_ORDER_FAILURE = 'payout/manager/LOAD_ORDER_FAILURE';
+export const LOAD_PAYOUT_INIT = 'payout/manager/LOAD_PAYOUT_INIT';
+export const LOAD_PAYOUT_SUCCESS = 'payout/manager/LOAD_PAYOUT_SUCCESS';
+export const LOAD_PAYOUT_FAILURE = 'payout/manager/LOAD_PAYOUT_FAILURE';
 
 export interface SetPagerAction {
   type: typeof SET_PAGER;
@@ -92,17 +89,17 @@ export interface ResetSelectionAction {
 }
 
 export interface LoadPayOutInitAction {
-  type: typeof LOAD_ORDER_INIT;
+  type: typeof LOAD_PAYOUT_INIT;
   key: string;
 }
 
 export interface LoadPayOutSuccessAction {
-  type: typeof LOAD_ORDER_SUCCESS;
-  order: PayOut;
+  type: typeof LOAD_PAYOUT_SUCCESS;
+  record: PayOut;
 }
 
 export interface LoadPayOutFailureAction {
-  type: typeof LOAD_ORDER_FAILURE;
+  type: typeof LOAD_PAYOUT_FAILURE;
 }
 
 export type PayOutActions =

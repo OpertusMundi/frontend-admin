@@ -14,9 +14,9 @@ import {
   REMOVE_SELECTED,
   SET_SORTING,
   RESET_SELECTED,
-  LOAD_ORDER_INIT,
-  LOAD_ORDER_SUCCESS,
-  LOAD_ORDER_FAILURE,
+  LOAD_PAYOUT_INIT,
+  LOAD_PAYOUT_SUCCESS,
+  LOAD_PAYOUT_FAILURE,
 } from './types';
 
 
@@ -96,20 +96,20 @@ export function resetSelection(): PayOutActions {
 
 export function loadPayOutInit(key: string): PayOutActions {
   return {
-    type: LOAD_ORDER_INIT,
+    type: LOAD_PAYOUT_INIT,
     key,
   };
 }
 
-export function loadPayOutSuccess(order: PayOut): PayOutActions {
+export function loadPayOutSuccess(record: PayOut): PayOutActions {
   return {
-    type: LOAD_ORDER_SUCCESS,
-    order,
+    type: LOAD_PAYOUT_SUCCESS,
+    record,
   };
 }
 
 export function loadPayOutFailure(): PayOutActions {
   return {
-    type: LOAD_ORDER_FAILURE,
+    type: LOAD_PAYOUT_FAILURE,
   };
 }
