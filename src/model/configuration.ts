@@ -32,6 +32,7 @@ export interface ExternalDataProvider {
 export interface ApplicationConfiguration {
   authProviders: EnumAuthProvider[];
   bingMaps?: BingMapsConfiguration;
+  clientId?: string;
   externalProviders?: ExternalDataProvider[];
   map?: MapConfiguration;
   marketplaceUrl: string;

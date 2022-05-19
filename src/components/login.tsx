@@ -1,21 +1,29 @@
+import React from 'react';
+
+import { connect, ConnectedProps } from 'react-redux';
+import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
+import { toast } from 'react-toastify';
+
+// Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
+import { Theme, withStyles } from '@material-ui/core/styles';
+
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
-import { Theme, withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import { EnumAuthProvider } from 'model/enum';
-import React from 'react';
-import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
-import { connect, ConnectedProps } from 'react-redux';
-import { toast } from 'react-toastify';
+
+// Store
 import { RootState } from 'store';
 import { getConfiguration } from 'store/config/thunks';
 import { login, refreshProfile } from 'store/security/thunks';
+
+// Model
+import { EnumAuthProvider } from 'model/enum';
 
 const styles = (theme: Theme) => createStyles({
   root: {
@@ -111,7 +119,7 @@ class Login extends React.Component<LoginProps, LoginState> {
   }
 
   render() {
-    const { classes, config: { authProviders } } = this.props;
+    const { classes, config: { authProviders, clientId } } = this.props;
     const _t = this.props.intl.formatMessage;
 
     const formsEnabled = authProviders.includes(EnumAuthProvider.Forms);
@@ -163,14 +171,14 @@ class Login extends React.Component<LoginProps, LoginState> {
               </form>
             }
             <br />
-            {authProviders.includes(EnumAuthProvider.OpertusMundi) &&
+            {authProviders.includes(EnumAuthProvider.OpertusMundi) && clientId &&
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 color={formsEnabled ? "default" : "primary"}
                 className={classes.buttonIdP}
-                href="/oauth2/authorization/dev"
+                href={`/oauth2/authorization/${clientId}`}
               >
                 <FormattedMessage id={formsEnabled ? "login.login-idp" : "login.login"} />
               </Button>
