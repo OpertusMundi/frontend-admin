@@ -23,6 +23,7 @@ export function configurationReducer(
       return {
         ...initialState,
         authProviders: state.authProviders,
+        clientId: state.clientId,
         marketplaceUrl: state.marketplaceUrl,
       };
 
