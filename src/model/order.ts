@@ -94,6 +94,10 @@ export interface Transfer {
    */
   executedOn: Moment;
   /**
+   * Provider identifier
+   */
+  providerId: string;
+  /**
    * Provider error code
    */
   resultCode: string;
@@ -201,8 +205,45 @@ export interface PayInStatusHistory {
   updatedOn: Moment;
 }
 
+export enum EnumRecurringPaymentFrequency {
+  ANNUAL = 'ANNUAL',
+  MONTHLY = 'MONTHLY',
+}
+
+export enum EnumRecurringPaymentStatus {
+  /**
+   * The registration has been created but not yet used for a recurring pay-in
+   */
+  CREATED = 'CREATED',
+  /**
+   * The recurring payment is in progress
+   */
+  IN_PROGRESS = 'IN_PROGRESS',
+  /**
+   * An attempted pay-in was unsuccessfully authorized, and the end user must
+   * authenticate. If the object has this status, you are obliged to notify
+   * the end user and execute a CIT which they authenticate.
+   */
+  AUTHENTICATION_NEEDED = 'AUTHENTICATION_NEEDED',
+  /**
+   * The recurrence is ended. The object can no longer be modified or re-used.
+   */
+  ENDED = 'ENDED',
+}
+
 export interface RecurringRegistration {
+  createdOn: Moment;
+  currency: string;
+  endDate: Moment | null;
+  firstTransactionDebitedFunds: number;
+  fixedNextAmount: boolean;
+  fractionedPayment: boolean;
+  frequency: EnumRecurringPaymentFrequency;
   key: string;
+  nextTransactionDebitedFunds: number;
+  providerCard: string;
+  status: EnumRecurringPaymentStatus;
+  statusUpdatedOn: Moment;
 }
 
 export interface PayInStatus {

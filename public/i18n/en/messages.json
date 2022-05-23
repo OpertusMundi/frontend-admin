@@ -239,10 +239,11 @@
           "shipping-address": "Shipping Address",
           "items": "Payment Items",
           "bankwire": {
-            "status": "Status",
             "bank-account": "Bank Account",
             "bank-account-owner": "Owner"
           },
+          "recurring": "Recurring Payment Registration",
+          "status": "Status",
           "transaction": "Transaction Details",
           "transfer-items": "Fund Transfers"
         }
@@ -473,6 +474,12 @@
       "FREE": "Free",
       "CARD_DIRECT": "Card",
       "BANKWIRE": "Bank Transfer"
+    },
+    "recurring-payment-status": {
+      "CREATED": "New",
+      "IN_PROGRESS": "In Progress",
+      "AUTHENTICATION_NEEDED": "Authentication Needed",
+      "ENDED": "Ended"
     },
     "role": {
       "ADMIN": "Administrator",

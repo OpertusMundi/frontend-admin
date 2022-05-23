@@ -52,6 +52,8 @@ import {
   SubscriptionBillingPayInItem,
   PayInType,
   CardDirectPayIn,
+  Transfer,
+  FreePayIn,
 } from 'model/order';
 
 // Service
@@ -189,6 +191,10 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     window.open(`https://dashboard.sandbox.mangopay.com/PayIn/${payin.providerPayIn}`);
   }
 
+  showMangopayTransferPage(transfer: Transfer) {
+    window.open(`https://dashboard.sandbox.mangopay.com/Transfer/${transfer.providerId}`);
+  }
+
   showPayInManager(e: React.MouseEvent, payin: PayInType) {
     e.preventDefault();
 
@@ -277,7 +283,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     );
   }
 
-  renderPaymentDetails(payin: PayIn): React.ReactNode {
+  renderPaymentDetails(payin: PayInType): React.ReactNode {
     switch (payin.paymentMethod) {
       case EnumPaymentMethod.FREE:
         return this.renderFreePaymentDetails(payin);
@@ -288,14 +294,14 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     }
   }
 
-  renderFreePaymentDetails(payin: PayIn): React.ReactNode {
+  renderFreePaymentDetails(payin: FreePayIn): React.ReactNode {
     const { classes } = this.props;
 
     return (
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="h6" gutterBottom className={classes.title}>
-            <FormattedMessage id={'billing.payin.details.sections.bankwire.status'} />
+            <FormattedMessage id={'billing.payin.details.sections.status'} />
           </Typography>
         </Grid>
         <Grid item xs={4}>
@@ -323,17 +329,15 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     )
   }
 
-  renderBankwirePaymentDetails(payin: PayIn): React.ReactNode {
-    const p = payin as BankwirePayIn;
-
+  renderBankwirePaymentDetails(payin: BankwirePayIn): React.ReactNode {
     const { classes } = this.props;
-    const { bankAccount, wireReference } = p;
+    const { bankAccount, wireReference } = payin;
 
     return (
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="h6" gutterBottom className={classes.title}>
-            <FormattedMessage id={'billing.payin.details.sections.bankwire.status'} />
+            <FormattedMessage id={'billing.payin.details.sections.status'} />
           </Typography>
         </Grid>
         <Grid item xs={4}>
@@ -365,13 +369,13 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Provider Transaction</Typography>
           <Typography gutterBottom>
-            <span className={classes.underline} onClick={() => this.showMangopayPage(p)}>{p.providerPayIn}</span>
+            <span className={classes.underline} onClick={() => this.showMangopayPage(payin)}>{payin.providerPayIn}</span>
           </Typography>
         </Grid>
         <Grid item xs={8}>
           <Typography className={classes.inline} variant="caption">Provider Result</Typography>
           <Typography gutterBottom>
-            {p.providerResultCode ? `${p.providerResultCode} - ${p.providerResultMessage}` : '-'}
+            {payin.providerResultCode ? `${payin.providerResultCode} - ${payin.providerResultMessage}` : '-'}
           </Typography>
         </Grid>
         <Grid item xs={6}>
@@ -396,16 +400,14 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     )
   }
 
-  renderCardPaymentDetails(payin: PayIn): React.ReactNode {
-    const p = payin as CardDirectPayIn;
-
+  renderCardPaymentDetails(payin: CardDirectPayIn): React.ReactNode {
     const { classes } = this.props;
 
     return (
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="h6" gutterBottom className={classes.title}>
-            <FormattedMessage id={'billing.payin.details.sections.bankwire.status'} />
+            <FormattedMessage id={'billing.payin.details.sections.status'} />
           </Typography>
         </Grid>
         <Grid item xs={4}>
@@ -437,27 +439,57 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Provider Transaction</Typography>
           <Typography gutterBottom>
-            <span className={classes.underline} onClick={() => this.showMangopayPage(p)}>{p.providerPayIn}</span>
+            <span className={classes.underline} onClick={() => this.showMangopayPage(payin)}>{payin.providerPayIn}</span>
           </Typography>
         </Grid>
         <Grid item xs={8}>
           <Typography className={classes.inline} variant="caption">Provider Result</Typography>
           <Typography gutterBottom>
-            {p.providerResultCode ? `${p.providerResultCode} - ${p.providerResultMessage}` : '-'}
+            {payin.providerResultCode ? `${payin.providerResultCode} - ${payin.providerResultMessage}` : '-'}
           </Typography>
         </Grid>
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Requested 3DS version</Typography>
           <Typography gutterBottom>
-            {p.providerResultCode ? `${p.requested3dsVersion}` : '-'}
+            {payin.requested3dsVersion ? `${payin.requested3dsVersion}` : '-'}
           </Typography>
         </Grid>
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Applied 3DS version</Typography>
           <Typography gutterBottom>
-            {p.providerResultCode ? `${p.applied3dsVersion}` : '-'}
+            {payin.applied3dsVersion ? `${payin.applied3dsVersion}` : '-'}
           </Typography>
         </Grid>
+        {payin.recurringPayment &&
+          <>
+            <Grid item xs={12}>
+              <Typography variant="h6" gutterBottom className={classes.title}>
+                <FormattedMessage id={'billing.payin.details.sections.recurring'} />
+              </Typography>
+            </Grid>
+            <Grid item xs={4}>
+              <Typography className={classes.inline} variant="caption">Created On</Typography>
+              <Typography gutterBottom>
+                <FormattedTime value={payin.recurringPayment.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
+              </Typography>
+            </Grid>
+            <Grid item xs={4}>
+              <Typography className={classes.inline} variant="caption">Status</Typography>
+              <Typography gutterBottom>
+                <FormattedMessage id={`enum.recurring-payment-status.${payin.recurringPayment.status}`} />
+              </Typography>
+            </Grid>
+            <Grid item xs={4}>
+              <Typography className={classes.inline} variant="caption">Ended On</Typography>
+              <Typography gutterBottom>
+                {payin.recurringPayment.endDate
+                  ? <FormattedTime value={payin.recurringPayment.endDate.toDate()} day='numeric' month='numeric' year='numeric' />
+                  : <span>-</span>
+                }
+              </Typography>
+            </Grid>
+          </>
+        }
       </Grid>
     )
   }
@@ -621,13 +653,21 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
               variant="body2"
               color="textSecondary"
             >
+              <span className={classes.underline} onClick={() => this.showMangopayTransferPage(transfer!)}>{transfer?.providerId}</span>
+            </Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
               {transfer
                 ? <FormattedTime value={transfer.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
                 : <span>-</span>
               }
             </Typography>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={2}>
             <Typography
               variant="body2"
               color="textSecondary"
@@ -637,7 +677,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
               </a>
             </Typography>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={2}>
             <Typography
               variant="body2"
               color="textSecondary"
@@ -719,7 +759,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
               <>
                 <Divider />
                 <ListItem className={classes.listItemTotalDetails}>
-                  <ListItemText primary="Funds" />
+                  <ListItemText primary="Provider Credited Funds" />
                   <Typography variant="subtitle1" className={classes.total}>
                     <FormattedNumber value={transferFunds} style={'currency'} currency={payin.currency} />
                   </Typography>
@@ -761,12 +801,15 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
           <List disablePadding>
             <Grid container>
               <Grid item xs={2}>
+                <Typography variant="caption">Provider Transfer</Typography>
+              </Grid>
+              <Grid item xs={2}>
                 <Typography variant="caption">Date</Typography>
               </Grid>
-              <Grid item xs={3}>
-                <Typography variant="caption">Asset</Typography>
+              <Grid item xs={2}>
+                <Typography variant="caption">Item</Typography>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={2}>
                 <Typography variant="caption">Provider</Typography>
               </Grid>
               <Grid container item xs={2} justifyContent={"flex-end"}>
