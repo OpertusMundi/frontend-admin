@@ -15,7 +15,7 @@ import Typography from '@material-ui/core/Typography';
 
 // Icons
 import Icon from '@mdi/react';
-import { mdiCommentAlertOutline, mdiTrashCan, mdiUndoVariant } from '@mdi/js';
+import { mdiCommentAlertOutline, mdiShieldRefreshOutline, mdiTrashCan, mdiUndoVariant } from '@mdi/js';
 
 // Services
 import message from 'service/message';
@@ -27,6 +27,7 @@ import { addToSelection, removeFromSelection, resetFilter, resetSelection, setFi
 import { find } from 'store/account-marketplace/thunks';
 
 // Model
+import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
 import { EnumMarketplaceAccountSortField, MarketplaceAccount } from 'model/account-marketplace';
 
@@ -35,7 +36,6 @@ import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
 
 import AccountFilters from './grid/filter';
 import AccountTable from './grid/table';
-import { buildPath, DynamicRoutes } from 'model/routes';
 
 const styles = (theme: Theme) => createStyles({
   container: {
@@ -80,6 +80,8 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
     super(props);
 
     this.api = new MarketplaceAccountApi();
+
+    this.refreshKycStatus = this.refreshKycStatus.bind(this);
   }
 
   state: AccountManagerState = {
@@ -134,6 +136,26 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
     this.find();
   }
 
+  refreshKycStatus(row: MarketplaceAccount): void {
+    this.api.refreshKycStatus(row.key)
+      .then((response) => {
+        if (response.data!.success) {
+          message.infoHtml(
+            <FormattedMessage
+              id={'account.message.kyc-refresh-success'}
+            />,
+            () => (<Icon path={mdiShieldRefreshOutline} size="3rem" />),
+          );
+          this.find();
+        } else {
+          message.error('account.message.kyc-refresh-failure');
+        }
+      })
+      .catch(() => {
+        message.error('account.message.kyc-refresh-failure');
+      });
+  }
+
   render() {
     const {
       addToSelection,
@@ -181,6 +203,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
               sorting={sorting}
               addToSelection={addToSelection}
               find={this.props.find}
+              refreshKycStatus={this.refreshKycStatus}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
               setPager={setPager}

@@ -19,6 +19,7 @@ import {
   mdiFolderOpenOutline,
   mdiMessageTextOutline,
   mdiPackageVariantClosed,
+  mdiShieldRefreshOutline,
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
@@ -32,8 +33,9 @@ import clsx from 'clsx';
 import { ApplicationConfiguration } from 'model/configuration';
 
 enum EnumAction {
-  ViewAssets = 'toggle-favorite',
+  KycRefresh = 'kyc-refresh',
   SendMessage = 'send-message',
+  ViewAssets = 'toggle-favorite',
   ViewFinance = 'view-finance',
   ViewOrders = 'view-orders',
   VendorDetails = 'vendor-details',
@@ -92,6 +94,15 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccount, En
                   <Icon path={mdiFinance} className={classes.rowIconAction} />
                 </i>
               </Tooltip>
+              {(row.consumer || row.provider) &&
+                <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.kyc-refresh' })}>
+                  <i
+                    onClick={() => handleAction ? handleAction(EnumAction.KycRefresh, rowIndex, column, row) : null}
+                  >
+                    <Icon path={mdiShieldRefreshOutline} className={classes.rowIconAction} />
+                  </i>
+                </Tooltip>
+              }
             </div>
           }
         </>
@@ -249,6 +260,7 @@ const styles = (theme: Theme) => createStyles({
   compositeLabel: {
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   statusLabel: {
     display: 'flex',
@@ -303,6 +315,7 @@ interface AccountTableProps extends WithStyles<typeof styles> {
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumMarketplaceAccountSortField>[]
   ) => Promise<PageResult<MarketplaceAccount> | null>,
+  refreshKycStatus: (row: MarketplaceAccount) => void,
   removeFromSelection: (rows: MarketplaceAccount[]) => void,
   resetSelection: () => void;
   setPager: (page: number, size: number) => void,
@@ -321,6 +334,10 @@ class AccountTable extends React.Component<AccountTableProps> {
   handleAction(action: string, index: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount): void {
     if (row.key) {
       switch (action) {
+        case EnumAction.KycRefresh:
+          this.props.refreshKycStatus(row);
+          break;
+
         default:
           // No action
           break;

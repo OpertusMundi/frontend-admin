@@ -101,4 +101,9 @@ export default class MarketplaceAccountApi extends Api {
     return this.delete<ObjectResponse<MarketplaceAccountDetails>>(url);
   }
 
+  public async refreshKycStatus(key: string): Promise<AxiosObjectResponse<MarketplaceAccountDetails>> {
+    const url = `/action/marketplace/accounts/${key}/kyc`;
+
+    return this.put<unknown, ObjectResponse<MarketplaceAccountDetails>>(url, null);
+  }
 }

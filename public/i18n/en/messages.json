@@ -64,6 +64,7 @@
       "last-update": "Last updated: ",
       "tooltip": {
         "create-payout": "Create PayOut",
+        "kyc-refresh": "Refresh KYC level",
         "send-message": "Send message",
         "view-assets": "View purchased assets and service subscriptions",
         "view-details": "View details",
@@ -77,6 +78,10 @@
         "funds": "Wallet Funds",
         "provider": "Provider"
       }
+    },
+    "message": {
+      "kyc-refresh-failure": "Failed to refresh KYC level",
+      "kyc-refresh-success": "KYC level has been updated"
     }
   },
   "analytics": {
