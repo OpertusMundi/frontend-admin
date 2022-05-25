@@ -15,7 +15,7 @@ import {
 } from './actions';
 
 // Services
-import ProcessInstanceApi from 'service/bpm-process-instance';
+import WorkflowApi from 'service/bpm-workflow';
 
 // Model
 import {
@@ -54,7 +54,7 @@ export const find = (
   dispatch(searchInit());
 
   // Get response
-  const api = new ProcessInstanceApi();
+  const api = new WorkflowApi();
 
   const response = await api.findHistory(query, pageRequest, sorting);
 
@@ -73,7 +73,7 @@ export const findOne = (
 ): ThunkResult<HistoryProcessInstanceDetails | null> => async (dispatch, getState) => {
   dispatch(loadInit(businessKey, processInstance));
   // Get response
-  const api = new ProcessInstanceApi();
+  const api = new WorkflowApi();
 
   const response = await api.findOneHistory(businessKey, processInstance);
 

@@ -24,10 +24,10 @@ import { mdiCommentAlertOutline } from '@mdi/js';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 import {
   TASKS,
-  EnumProcessInstanceSortField,
+  EnumProcessInstanceTaskSortField,
   ProcessDefinition,
-  ProcessInstance,
-  ProcessInstanceQuery,
+  ProcessInstanceTask,
+  ProcessInstanceTaskQuery,
 } from 'model/bpm-process-instance';
 
 // Services
@@ -44,21 +44,21 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-interface WorkflowInstanceProps extends WithStyles<typeof styles> {
+interface WorkflowTaskProps extends WithStyles<typeof styles> {
   intl: IntlShape,
-  query: ProcessInstanceQuery,
-  setFilter: (query: Partial<ProcessInstanceQuery>) => void,
+  query: ProcessInstanceTaskQuery,
+  setFilter: (query: Partial<ProcessInstanceTaskQuery>) => void,
   resetFilter: () => void,
   find: (
-    pageRequest?: PageRequest, sorting?: Sorting<EnumProcessInstanceSortField>[]
-  ) => Promise<PageResult<ProcessInstance> | null>,
+    pageRequest?: PageRequest, sorting?: Sorting<EnumProcessInstanceTaskSortField>[]
+  ) => Promise<PageResult<ProcessInstanceTask> | null>,
   disabled: boolean,
   processDefinitions: ProcessDefinition[],
 }
 
-class ProcessInstanceFilters extends React.Component<WorkflowInstanceProps> {
+class TaskFilters extends React.Component<WorkflowTaskProps> {
 
-  constructor(props: WorkflowInstanceProps) {
+  constructor(props: WorkflowTaskProps) {
     super(props);
 
     this.search = this.search.bind(this);
@@ -167,7 +167,7 @@ class ProcessInstanceFilters extends React.Component<WorkflowInstanceProps> {
 }
 
 // Apply styles
-const styledComponent = withStyles(styles)(ProcessInstanceFilters);
+const styledComponent = withStyles(styles)(TaskFilters);
 
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);

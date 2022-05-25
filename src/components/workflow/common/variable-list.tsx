@@ -20,7 +20,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import Typography from '@material-ui/core/Typography';
 
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
@@ -72,6 +71,7 @@ const styles = (theme: Theme) => createStyles({
     wordBreak: 'break-word',
   },
   errorDetailsTitle: {
+    display: 'block',
     marginTop: theme.spacing(2),
   },
   null: {
@@ -86,6 +86,7 @@ const styles = (theme: Theme) => createStyles({
 interface ProcessInstanceVariablesProps extends WithStyles<typeof styles> {
   intl: IntlShape;
   variables: BpmVariable[];
+  exclude?: string[];
 }
 
 class ProcessInstanceVariables extends React.Component<ProcessInstanceVariablesProps> {
@@ -129,9 +130,9 @@ class ProcessInstanceVariables extends React.Component<ProcessInstanceVariablesP
         return (
           <ListItemText className={classes.text} primary={v.name}
             secondary={details.map((text, index) => (
-              <Typography key={`detail-line-${index}`} variant="body2" gutterBottom className={classes.errorDetailsTitle}>
+              <span key={`detail-line-${index}`} className={classes.errorDetailsTitle}>
                 {text}
-              </Typography>
+              </span>
             ))}
           >
           </ListItemText>
@@ -145,10 +146,10 @@ class ProcessInstanceVariables extends React.Component<ProcessInstanceVariablesP
 
   render() {
     const _t = this.props.intl.formatMessage;
-    const { classes, variables = [] } = this.props;
+    const { classes, variables = [], exclude = [] } = this.props;
 
     const sortedVariables = _.uniqBy(variables, 'name')
-      .filter(v => !['startUserKey'].includes(v.name))
+      .filter(v => ![...exclude, 'startUserKey'].includes(v.name))
       .sort((v1, v2) => v1.name >= v2.name ? 1 : -1);
 
     return (

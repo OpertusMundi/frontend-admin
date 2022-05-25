@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 
 // Localization
@@ -107,7 +108,7 @@ class ProcessInstanceFilters extends React.Component<WorkflowInstanceProps> {
                 <MenuItem value="">
                   <em>All</em>
                 </MenuItem>
-                {processDefinitions.map((def) => (
+                {_.uniqBy(processDefinitions, 'name').map((def) => (
                   <MenuItem key={def.key} value={def.key}>{def.name}</MenuItem>
                 ))}
               </Select>

@@ -24,9 +24,11 @@ import ListItemText from '@material-ui/core/ListItemText';
 
 import { red } from '@material-ui/core/colors';
 
+import PerfectScrollbar from 'react-perfect-scrollbar';
+
 import Spinner from 'components/spinner';
-import ProcessInstanceTimeline from './timeline';
-import ProcessInstanceVariables from './variable-list';
+import ProcessInstanceTimeline from './common/timeline';
+import ProcessInstanceVariables from './common/variable-list';
 
 // Icons
 import Icon from '@mdi/react';
@@ -66,6 +68,9 @@ const styles = (theme: Theme) => createStyles({
   small: {
     width: theme.spacing(4),
     height: theme.spacing(4),
+  },
+  timeline: {
+    height: 'calc(100vh - 395px)',
   },
 });
 
@@ -224,10 +229,12 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
                       <Icon path={mdiTimelineClockOutline} size="1.5rem" />
                     </Avatar>
                   }
-                  title={_t({ id: 'billing.order.timeline.timeline-header' })}
+                  title={_t({ id: 'workflow.instance.timeline' })}
                 ></CardHeader>
                 <CardContent>
-                  <ProcessInstanceTimeline historyProcessInstance={processInstance} />
+                  <PerfectScrollbar className={classes.timeline}>
+                    <ProcessInstanceTimeline historyProcessInstance={processInstance} />
+                  </PerfectScrollbar>
                 </CardContent>
               </Card>
             </Grid>

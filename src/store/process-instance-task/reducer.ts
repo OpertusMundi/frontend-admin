@@ -7,9 +7,9 @@ import {
 } from 'store/security/types';
 
 import {
-  COUNT_PROCESS_INSTANCE_COMPLETE,
-  COUNT_PROCESS_INSTANCE_FAILURE,
-  COUNT_PROCESS_INSTANCE_INIT,
+  COUNT_PROCESS_INSTANCE_TASK_COMPLETE,
+  COUNT_PROCESS_INSTANCE_TASK_FAILURE,
+  COUNT_PROCESS_INSTANCE_TASK_INIT,
   SET_PAGER,
   RESET_PAGER,
   SET_FILTER,
@@ -25,26 +25,21 @@ import {
   LOAD_INIT,
   LOAD_SUCCESS,
   LOAD_FAILURE,
-  DELETE_INIT,
-  DELETE_SUCCESS,
-  DELETE_FAILURE,
-  ProcessInstanceActions,
-  ProcessInstanceState,
-} from 'store/process-instance/types';
+  ProcessInstanceTaskActions,
+  ProcessInstanceTaskState,
+} from 'store/process-instance-task/types';
 
 import { Order } from 'model/response';
-import { EnumProcessInstanceSortField } from 'model/bpm-process-instance';
+import { EnumProcessInstanceTaskSortField } from 'model/bpm-process-instance';
 
-const initialState: ProcessInstanceState = {
+const initialState: ProcessInstanceTaskState = {
   lastUpdated: null,
   loading: false,
-  loadingProcessInstance: false,
   pagination: {
     page: 0,
     size: 10,
   },
   processInstance: null,
-  processInstanceCounter: 0,
   query: {
     businessKey: '',
     processDefinitionKey: '',
@@ -53,15 +48,16 @@ const initialState: ProcessInstanceState = {
   result: null,
   selected: [],
   sorting: [{
-    id: EnumProcessInstanceSortField.STARTED_ON,
+    id: EnumProcessInstanceTaskSortField.STARTED_ON,
     order: Order.DESC,
   }],
+  taskCounter: 0,
 };
 
-export function processInstanceReducer(
+export function processInstanceTaskReducer(
   state = initialState,
-  action: ProcessInstanceActions
-): ProcessInstanceState {
+  action: ProcessInstanceTaskActions
+): ProcessInstanceTaskState {
 
   switch (action.type) {
     case LOGOUT_INIT:
@@ -69,24 +65,24 @@ export function processInstanceReducer(
         ...initialState
       };
 
-    case COUNT_PROCESS_INSTANCE_INIT:
+    case COUNT_PROCESS_INSTANCE_TASK_INIT:
       return {
         ...state,
         loading: true,
       };
 
-    case COUNT_PROCESS_INSTANCE_FAILURE:
+    case COUNT_PROCESS_INSTANCE_TASK_FAILURE:
       return {
         ...state,
-        processInstanceCounter: null,
+        taskCounter: null,
         lastUpdated: moment(),
         loading: false,
       };
 
-    case COUNT_PROCESS_INSTANCE_COMPLETE:
+    case COUNT_PROCESS_INSTANCE_TASK_COMPLETE:
       return {
         ...state,
-        processInstanceCounter: action.processInstanceCounter,
+        taskCounter: action.taskCounter,
         lastUpdated: moment(),
         loading: false,
       };
@@ -174,7 +170,7 @@ export function processInstanceReducer(
     case REMOVE_SELECTED:
       return {
         ...state,
-        selected: state.selected.filter(s => !action.removed.some(r => r.processInstanceId === s.processInstanceId)),
+        selected: state.selected.filter(s => !action.removed.some(r => r.taskId === s.taskId)),
       };
 
     case RESET_SELECTED:
@@ -192,35 +188,20 @@ export function processInstanceReducer(
     case LOAD_INIT:
       return {
         ...state,
-        loadingProcessInstance: true,
+        loading: true,
       };
 
     case LOAD_SUCCESS:
       return {
         ...state,
-        loadingProcessInstance: false,
+        loading: false,
         processInstance: action.processInstance,
       };
 
     case LOAD_FAILURE:
       return {
         ...state,
-        loadingProcessInstance: false,
-      };
-
-    case DELETE_INIT:
-      return {
-        ...state,
-        loading: true,
-        loadingProcessInstance: true,
-      };
-
-    case DELETE_FAILURE:
-    case DELETE_SUCCESS:
-      return {
-        ...state,
         loading: false,
-        loadingProcessInstance: false,
       };
 
     default:

@@ -475,6 +475,11 @@
       "CARD_DIRECT": "Card",
       "BANKWIRE": "Bank Transfer"
     },
+    "process-instance": {
+      "task": {
+        "task-helpdesk-set-error": "Publish Review Error"
+      }
+    },
     "recurring-payment-status": {
       "CREATED": "New",
       "IN_PROGRESS": "In Progress",
@@ -658,9 +663,11 @@
       "process-instance": {
         "manager": {
           "runtime": "Active Processes",
+          "tasks": "Tasks",
           "history": "Process History"
         },
-        "instance": "Process Instance"
+        "instance": "Process Instance",
+        "task": "Process Instance Task"
       }
     }
   },
@@ -744,6 +751,7 @@
         "reject": "Reject",
         "reset": "Reset",
         "save": "Save",
+        "send": "Send",
         "search": "Search",
         "yes": "Yes"
       },
@@ -791,7 +799,8 @@
       },
       "variables": {
         "title": "Variables [{count}]"
-      }
+      },
+      "timeline": "Timeline"
     },
     "header": {
       "instance": {
@@ -802,7 +811,8 @@
         "incident-count": "Incidents",
         "business-key": "Business Key",
         "started-on": "Started On",
-        "completed-on": "Completed On"
+        "completed-on": "Completed On",
+        "task-count": "Tasks"
       },
       "incident": {
         "actions": "Actions",
@@ -825,12 +835,19 @@
       "delete-confirm.3": "To continue, type the business key of the process instance in the text box below.",
       "delete-failure": "Delete operation has failed",
       "delete-success": "Process instance has been deleted",
-      "retry": "Would you like to increase the retry counter for process instance of type [{type}] with business key [{businessKey}]?"
+      "retry": "Would you like to increase the retry counter for process instance of type [{type}] with business key [{businessKey}]?",
+      "task-not-supported": "Task is not supported",
+      "review-error": {
+        "confirm": "The following message will be send to the provider. The process instance will be stopped and the asset status will be set to {status}."
+      },
+      "task-complete-success": "Task completed successfully",
+      "task-complete-failure": "Failed to complete task"
     },
     "tooltip": {
       "instance": {
         "delete": "Delete process instance",
-        "view": "View details"
+        "view": "View details",
+        "view-task": "View task"
       },
       "incident": {
         "error-details": "View error details",

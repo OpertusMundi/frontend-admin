@@ -20,6 +20,7 @@ import { orderReducer } from './order/reducer';
 import { payInReducer } from './payin/reducer';
 import { payOutReducer } from './payout/reducer';
 import { processInstanceReducer } from './process-instance/reducer';
+import { processInstanceTaskReducer } from './process-instance-task/reducer';
 import { processInstanceHistoryReducer } from './process-instance-history/reducer';
 import { providerReducer } from './provider/reducer';
 import { securityReducer } from './security/reducer';
@@ -60,6 +61,7 @@ export const rootReducer = Redux.combineReducers({
       history: processInstanceHistoryReducer,
     }),
     incidents: incidentReducer,
+    tasks: processInstanceTaskReducer,
   }),
   // Syncs loading bar and store
   loadingBar: loadingBarReducer,

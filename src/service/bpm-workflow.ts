@@ -17,10 +17,14 @@ import {
   ActiveProcessInstanceDetails,
   EnumProcessInstanceSortField,
   EnumProcessInstanceHistorySortField,
+  EnumProcessInstanceTaskSortField,
   HistoryProcessInstanceDetails,
   ProcessDefinition,
   ProcessInstance,
   ProcessInstanceQuery,
+  ProcessInstanceTask,
+  ProcessInstanceTaskQuery,
+  CompleteTaskTaskCommand,
 } from 'model/bpm-process-instance';
 
 export default class WorkflowApi extends Api {
@@ -35,7 +39,7 @@ export default class WorkflowApi extends Api {
     return this.get<ObjectResponse<ProcessDefinition[]>>(url);
   }
 
-  public async count(): Promise<AxiosObjectResponse<number>> {
+  public async countProcessInstances(): Promise<AxiosObjectResponse<number>> {
     const url = `/action/workflows/process-instances/count`;
 
     return this.get<ObjectResponse<number>>(url);
@@ -104,6 +108,34 @@ export default class WorkflowApi extends Api {
     const url = `/action/workflows/process-instances/${processInstanceId}`;
 
     return this.delete<SimpleResponse>(url);
+  }
+
+  public async countTasks(): Promise<AxiosObjectResponse<number>> {
+    const url = `/action/workflows/tasks/count`;
+
+    return this.get<ObjectResponse<number>>(url);
+  }
+
+  public async findTasks(
+    query: Partial<ProcessInstanceQuery>, pageRequest: PageRequest, sorting: Sorting<EnumProcessInstanceTaskSortField>[]
+  ): Promise<AxiosPageResponse<ProcessInstanceTask>> {
+    const { page, size } = pageRequest;
+    const { id: field, order } = sorting[0];
+
+    const queryString = (Object.keys(query) as Array<keyof ProcessInstanceTaskQuery>)
+      .reduce((result: string[], key: keyof ProcessInstanceTaskQuery) => {
+        return query[key] !== null ? [...result, `${key}=${query[key]}`] : result;
+      }, []);
+
+    const url = `/action/workflows/tasks?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
+
+    return this.get<ObjectResponse<PageResult<ProcessInstanceTask>>>(url);
+  }
+
+  public async completeTask<C extends CompleteTaskTaskCommand>(processInstanceId: string, command: C): Promise<SimpleResponse> {
+    const url = `/action/workflows/process-instances/${processInstanceId}/tasks`;
+
+    return this.post<CompleteTaskTaskCommand, SimpleResponse>(url, command).then((response) => response.data);
   }
 
 }

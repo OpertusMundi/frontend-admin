@@ -41,6 +41,7 @@ const initialState: ProcessInstanceState = {
   query: {
     businessKey: '',
     processDefinitionKey: '',
+    task: '',
   },
   result: null,
   selected: [],

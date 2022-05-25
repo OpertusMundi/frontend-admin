@@ -19,7 +19,7 @@ import { mdiCheckOutline, mdiCommentAlertOutline, mdiUndoVariant } from '@mdi/js
 
 // Services
 import message from 'service/message';
-import ProcessInstanceApi from 'service/bpm-process-instance';
+import WorkflowApi from 'service/bpm-workflow';
 
 // Store
 import { RootState } from 'store';
@@ -82,12 +82,12 @@ interface WorkflowManagerProps extends PropsFromRedux, WithStyles<typeof styles>
 
 class ProcessInstanceManager extends React.Component<WorkflowManagerProps, WorkflowManagerState> {
 
-  private api: ProcessInstanceApi;
+  private api: WorkflowApi;
 
   constructor(props: WorkflowManagerProps) {
     super(props);
 
-    this.api = new ProcessInstanceApi();
+    this.api = new WorkflowApi();
 
     this.viewProcessInstance = this.viewProcessInstance.bind(this);
   }

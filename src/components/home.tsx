@@ -61,6 +61,7 @@ import {
   mdiWalletOutline,
   mdiProgressWrench,
   mdiMenu,
+  mdiAccountWrenchOutline,
 } from '@mdi/js';
 
 // Utilities
@@ -81,6 +82,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 // Store
 import { RootState } from 'store';
 import { logout } from 'store/security/thunks';
+import { countTasks } from 'store/process-instance-task/thunks';
 import { countIncidents } from 'store/incident/thunks';
 import { countProcessInstances } from 'store/process-instance/thunks';
 import { countUnassignedMessages } from 'store/message-inbox-helpdesk/thunks';
@@ -301,12 +303,14 @@ class Home extends React.Component<HomeProps, HomeState> {
       }, false);
     }
 
+    this.props.countTasks();
     this.props.countIncidents();
     this.props.countProcessInstances();
     this.props.countNewMessages();
     this.props.countUnassignedMessages();
 
     this.refreshCountersInterval = window.setInterval(() => {
+      this.props.countTasks();
       this.props.countIncidents();
       this.props.countProcessInstances();
       this.props.countNewMessages();
@@ -447,7 +451,7 @@ class Home extends React.Component<HomeProps, HomeState> {
 
   render() {
     const { open } = this.state;
-    const { classes, workflow: { incidents: { incidentCounter } } } = this.props;
+    const { classes, workflow: { incidents: { incidentCounter }, tasks: { taskCounter } }, } = this.props;
 
     const _t = this.props.intl.formatMessage;
 
@@ -471,6 +475,13 @@ class Home extends React.Component<HomeProps, HomeState> {
             <div className={classes.toolbarContent}>
               <Breadcrumb />
               <div>
+                {taskCounter != null && taskCounter > 0 &&
+                  <IconButton title="BPM Server Tasks" color="inherit" onClick={() => this.props.navigate(StaticRoutes.ProcessInstanceTaskManager)}>
+                    <Badge overlap="rectangular" badgeContent={taskCounter} color="secondary">
+                      <Icon path={mdiAccountWrenchOutline} size="1.5rem" />
+                    </Badge>
+                  </IconButton>
+                }
                 {incidentCounter != null && incidentCounter > 0 &&
                   <IconButton title="BPM Server Incidents" color="inherit" onClick={() => this.props.navigate(StaticRoutes.IncidentManager)}>
                     <Badge overlap="rectangular" badgeContent={incidentCounter} color="secondary">
@@ -724,6 +735,17 @@ class Home extends React.Component<HomeProps, HomeState> {
                         <SecureContent roles={[EnumRole.ADMIN]}>
                           <ListItem button
                             className={open[EnumSection.Drawer] ? classes.nested : ''}
+                            onClick={(e) => this.onNavigate(e, StaticRoutes.ProcessInstanceTaskManager)}>
+                            <ListItemIcon>
+                              <Icon path={mdiAccountWrenchOutline} size="1.5rem" />
+                            </ListItemIcon>
+                            <ListItemText primary={_t({ id: 'links.workflow.process-instance.manager.tasks' })} />
+                          </ListItem>
+                        </SecureContent>
+
+                        <SecureContent roles={[EnumRole.ADMIN]}>
+                          <ListItem button
+                            className={open[EnumSection.Drawer] ? classes.nested : ''}
                             onClick={(e) => this.onNavigate(e, StaticRoutes.IncidentManager)}>
                             <ListItemIcon>
                               <Icon path={mdiBellAlertOutline} size="1.5rem" />
@@ -816,6 +838,7 @@ const mapState = (state: RootState) => ({
 const mapDispatch = {
   logout: () => logout(),
   countIncidents: () => countIncidents(),
+  countTasks: () => countTasks(),
   countProcessInstances: () => countProcessInstances(),
   countUnassignedMessages: () => countUnassignedMessages(),
   countNewMessages: () => countNewMessages(),

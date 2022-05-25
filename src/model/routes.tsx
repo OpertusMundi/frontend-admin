@@ -45,6 +45,7 @@ import {
   mdiWalletOutline,
   mdiProgressWrench,
   mdiFileSign,
+  mdiAccountWrenchOutline,
 } from '@mdi/js';
 
 /**
@@ -88,6 +89,7 @@ const OrderManager = '/billing/orders';
 const PayInManager = '/billing/payins';
 const PayOutManager = '/billing/payouts';
 const ProcessInstanceManager = '/workflows/process-instances';
+const ProcessInstanceTaskManager = '/workflows/process-instance-tasks';
 const ProcessInstanceHistoryManager = '/workflows/process-instances-history';
 const Profile = '/profile';
 const ProviderManager = '/providers'
@@ -115,6 +117,7 @@ export const StaticRoutes = {
   EventManager,
   ProcessInstanceManager,
   ProcessInstanceHistoryManager,
+  ProcessInstanceTaskManager,
   SettingsManager,
   TransferManager,
 };
@@ -133,6 +136,7 @@ const MarketplaceAccountView = '/marketplace/users/record/:key';
 const PayInView = '/billing/payin/:key';
 const PayOutView = '/billing/payout/:key';
 const ProcessInstanceView = '/workflows/process-instances/record';
+const ProcessInstanceTaskView = '/workflows/process-instances/:processInstance/tasks/:taskName';
 const ProcessInstanceHistoryView = '/workflows/process-instances-history/record';
 const TransferView = '/billing/transfer/:key';
 
@@ -147,6 +151,7 @@ export const DynamicRoutes = {
   PayInView,
   PayOutView,
   ProcessInstanceView,
+  ProcessInstanceTaskView,
   ProcessInstanceHistoryView,
   TransferView,
 };
@@ -348,6 +353,14 @@ export const routes: RouteRegistry = {
     roles: [EnumRole.ADMIN],
     links: [Dashboard, ProcessInstanceManager, IncidentManager],
   },
+  [ProcessInstanceTaskManager]: {
+    icon: (className?: string) => (<Icon path={mdiAccountWrenchOutline} size="1.5rem" className={className} />),
+    description: 'Manage BPM Server workflows',
+    title: 'links.workflow.process-instance.manager.tasks',
+    defaultTitle: 'Process Instance Tasks Management',
+    roles: [EnumRole.ADMIN],
+    links: [Dashboard, ProcessInstanceManager, IncidentManager],
+  },
   [IncidentManager]: {
     icon: (className?: string) => (<Icon path={mdiBellAlertOutline} size="1.5rem" className={className} />),
     description: 'View BPM Server incidents',
@@ -467,6 +480,12 @@ export const routes: RouteRegistry = {
         <ProcessInstanceToolbar />
       );
     }
+  },
+  [ProcessInstanceTaskView]: {
+    description: 'Process Instance Task',
+    title: 'links.workflow.process-instance.task',
+    defaultTitle: 'Process Instance Task',
+    links: defaultLinks,
   },
   [ProcessInstanceHistoryView]: {
     description: 'Process Instance',

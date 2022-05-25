@@ -11,12 +11,11 @@ import { Theme, withStyles } from '@material-ui/core/styles';
 
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
 // Icons
 import Icon from '@mdi/react';
-import { mdiCommentAlertOutline, mdiDeleteAlertOutline, mdiUndoVariant } from '@mdi/js';
+import { mdiCommentAlertOutline } from '@mdi/js';
 
 // Services
 import message from 'service/message';
@@ -32,19 +31,17 @@ import {
   setFilter,
   setPager,
   setSorting,
-} from 'store/process-instance/actions';
-import { find, deleteInstance } from 'store/process-instance/thunks';
+} from 'store/process-instance-task/actions';
+import { find } from 'store/process-instance-task/thunks';
 
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
-import { PageRequest, Sorting, SimpleResponse } from 'model/response';
-import { EnumProcessInstanceSortField, ProcessInstance } from 'model/bpm-process-instance';
+import { PageRequest, Sorting } from 'model/response';
+import { EnumProcessInstanceTaskSortField, ProcessInstanceTask } from 'model/bpm-process-instance';
 
 // Components
-import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
-
-import ProcessInstanceFilters from './process-instance/filter';
-import ProcessInstanceTable from './process-instance/table';
+import TaskFilters from './process-instance-tasks/filter';
+import TaskTable from './process-instance-tasks/table';
 
 const styles = (theme: Theme) => createStyles({
   container: {
@@ -80,7 +77,7 @@ const styles = (theme: Theme) => createStyles({
 
 interface WorkflowManagerState {
   confirm: boolean;
-  instance: ProcessInstance | null;
+  instance: ProcessInstanceTask | null;
   businessKey: string | null;
 }
 
@@ -99,7 +96,6 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
 
     this.api = new WorkflowApi();
 
-    this.deleteInstance = this.deleteInstance.bind(this);
     this.viewProcessInstance = this.viewProcessInstance.bind(this);
     this.viewProcessInstanceTask = this.viewProcessInstanceTask.bind(this);
   }
@@ -110,7 +106,7 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
     businessKey: null,
   }
 
-  showDeleteConfirmDialog(instance: ProcessInstance): void {
+  showDeleteConfirmDialog(instance: ProcessInstanceTask): void {
     this.setState({
       confirm: true,
       instance,
@@ -126,43 +122,6 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
     });
   }
 
-  confirmDialogHandler(action: DialogAction): void {
-    const _t = this.props.intl.formatMessage;
-    const { instance } = this.state;
-
-    switch (action.key) {
-      case EnumDialogAction.Accept: {
-        if (instance) {
-          this.props.deleteInstance(instance.processInstanceId)
-            .then((r: SimpleResponse) => {
-              if (r.success) {
-                message.info('workflow.message.delete-success');
-                this.props.find();
-              } else {
-                message.errorHtml(
-                  _t({ id: 'workflow.message.delete-failure' }),
-                  () => (<Icon path={mdiCommentAlertOutline} size="3rem" />)
-                );
-              }
-            })
-            .catch(() => {
-              message.errorHtml(
-                _t({ id: 'workflow.message.delete-failure' }),
-                () => (<Icon path={mdiCommentAlertOutline} size="3rem" />)
-              );
-            })
-            .finally(() => {
-              this.hideDeleteConfirmDialog();
-            });
-        }
-        break;
-      }
-      case EnumDialogAction.Cancel:
-        this.hideDeleteConfirmDialog();
-        break;
-    }
-  }
-
   componentDidMount() {
     this.find();
   }
@@ -175,10 +134,6 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
     });
   }
 
-  deleteInstance(instance: ProcessInstance): void {
-    this.showDeleteConfirmDialog(instance);
-  }
-
   viewProcessInstance(processInstance: string): void {
     const path = buildPath(DynamicRoutes.ProcessInstanceView, null, { processInstance });
     this.props.navigate(path);
@@ -186,11 +141,10 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
 
   viewProcessInstanceTask(processInstance: string, taskName: string): void {
     const path = buildPath(DynamicRoutes.ProcessInstanceTaskView, [processInstance, taskName]);
-    console.log(path);
     this.props.navigate(path);
   }
 
-  setSorting(sorting: Sorting<EnumProcessInstanceSortField>[]): void {
+  setSorting(sorting: Sorting<EnumProcessInstanceTaskSortField>[]): void {
     this.props.setSorting(sorting);
     this.find();
   }
@@ -200,7 +154,7 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
       addToSelection,
       classes,
       config: { processDefinitions },
-      workflow: { instances: { runtime: { query, result, pagination, selected, sorting, loading, lastUpdated } } },
+      workflow: { tasks: { query, result, pagination, selected, sorting, loading, lastUpdated } },
       find,
       setPager,
       setFilter,
@@ -212,7 +166,7 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
       <>
         <div>
           <Paper className={classes.paper}>
-            <ProcessInstanceFilters
+            <TaskFilters
               query={query}
               setFilter={setFilter}
               resetFilter={resetFilter}
@@ -233,98 +187,28 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
           </Paper>
 
           <Paper className={classes.paperTable}>
-            <ProcessInstanceTable
+            <TaskTable
               find={this.props.find}
               query={query}
               result={result}
               pagination={pagination}
               selected={selected}
               setPager={setPager}
-              setSorting={(sorting: Sorting<EnumProcessInstanceSortField>[]) => this.setSorting(sorting)}
+              setSorting={(sorting: Sorting<EnumProcessInstanceTaskSortField>[]) => this.setSorting(sorting)}
               addToSelection={addToSelection}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
-              viewProcessInstance={(processInstance: string) => this.viewProcessInstance(processInstance)}
               sorting={sorting}
               loading={loading}
-              deleteInstance={this.deleteInstance}
+              viewProcessInstance={this.viewProcessInstance}
               viewProcessInstanceTask={this.viewProcessInstanceTask}
             />
           </Paper>
         </div >
-        {this.renderDeleteDialog()}
       </>
     );
   }
 
-  renderDeleteDialog() {
-    const _t = this.props.intl.formatMessage;
-
-    const { confirm, instance: record, businessKey } = this.state;
-    const { classes } = this.props;
-
-    if (!confirm || !record) {
-      return null;
-    }
-
-    return (
-      <Dialog
-        actions={[
-          {
-            key: EnumDialogAction.Accept,
-            label: _t({ id: 'view.shared.action.delete' }),
-            iconClass: () => (<Icon path={mdiDeleteAlertOutline} size="1.5rem" />),
-            color: 'secondary',
-            disabled: businessKey !== record.businessKey,
-          }, {
-            key: EnumDialogAction.Cancel,
-            label: _t({ id: 'view.shared.action.cancel' }),
-            iconClass: () => (<Icon path={mdiUndoVariant} size="1.5rem" />)
-          }
-        ]}
-        handleClose={() => this.hideDeleteConfirmDialog()}
-        handleAction={(action) => this.confirmDialogHandler(action)}
-        header={
-          <span>
-            <i className={'mdi mdi-comment-question-outline mr-2'}></i>
-            <FormattedMessage id="view.shared.dialog.title" />
-          </span>
-        }
-        open={confirm}
-      >
-        <Grid container spacing={2}>
-          <Grid item xs={12} className={classes.item}>
-            <FormattedMessage
-              id="workflow.message.delete-confirm.1"
-              tagName={'p'}
-              values={{ id: <b>{record.businessKey}</b>, type: <b>{record.processDefinitionName}</b> }}
-            />
-            <Typography variant="h5" display="block" gutterBottom color="secondary">
-              <FormattedMessage
-                id="workflow.message.delete-confirm.2"
-                tagName={'p'}
-              />
-            </Typography>
-            <FormattedMessage
-              id="workflow.message.delete-confirm.3"
-              tagName={'p'}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.item}>
-            <TextField
-              id="name"
-              label={_t({ id: 'workflow.header.instance.business-key' })}
-              variant="standard"
-              margin="normal"
-              className={classes.textField}
-              value={businessKey || ''}
-              onChange={e => this.setState({ businessKey: e.target.value })}
-            />
-          </Grid>
-        </Grid>
-      </Dialog>
-    );
-  }
 }
 
 const mapState = (state: RootState) => ({
@@ -334,8 +218,7 @@ const mapState = (state: RootState) => ({
 
 const mapDispatch = {
   addToSelection,
-  deleteInstance,
-  find: (pageRequest?: PageRequest, sorting?: Sorting<EnumProcessInstanceSortField>[]) => find(pageRequest, sorting),
+  find: (pageRequest?: PageRequest, sorting?: Sorting<EnumProcessInstanceTaskSortField>[]) => find(pageRequest, sorting),
   removeFromSelection,
   resetFilter,
   resetSelection,

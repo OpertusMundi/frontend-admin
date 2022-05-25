@@ -35,8 +35,10 @@ import PayOutDetails from 'components/payout/payout-details';
 import PayOutManager from 'components/payout/payout-manager';
 import PlaceHolder from 'components/placeholder';
 import ProcessInstanceForm from 'components/workflow/process-instance-form';
+import ProcessInstanceTaskForm from 'components/workflow/process-instance-task-form';
 import ProcessInstanceHistoryForm from 'components/workflow/process-instance-history-form';
 import ProcessInstanceManager from 'components/workflow/process-instance-manager';
+import ProcessInstanceTaskManager from 'components/workflow/task-manager';
 import ProcessInstanceHistoryManager from 'components/workflow/process-instance-history-manager';
 import Profile from 'components/profile';
 import ProviderManager from 'components/provider/provider-grid';
@@ -103,6 +105,7 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             <Route path={DynamicRoutes.MarketplaceAccountView} element={<MarketplaceAccountView />} />
             <Route path={DynamicRoutes.ProcessInstanceHistoryView} element={<ProcessInstanceHistoryForm />} />
             <Route path={DynamicRoutes.ProcessInstanceView} element={<ProcessInstanceForm />} />
+            <Route path={DynamicRoutes.ProcessInstanceTaskView} element={<ProcessInstanceTaskForm />} />
             <Route path={DynamicRoutes.PayInView} element={<PayInDetails />} />
             <Route path={DynamicRoutes.PayOutView} element={<PayOutDetails />} />
             {/* Static */}
@@ -136,6 +139,9 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             </Route>
             <Route path={StaticRoutes.ProcessInstanceManager} element={<SecureRoute roles={[EnumRole.ADMIN]} />}>
               <Route path={StaticRoutes.ProcessInstanceManager} element={<ProcessInstanceManager />} />
+            </Route>
+            <Route path={StaticRoutes.ProcessInstanceTaskManager} element={<SecureRoute roles={[EnumRole.ADMIN]} />}>
+              <Route path={StaticRoutes.ProcessInstanceTaskManager} element={<ProcessInstanceTaskManager />} />
             </Route>
             <Route path={StaticRoutes.ProcessInstanceHistoryManager} element={<SecureRoute roles={[EnumRole.ADMIN]} />}>
               <Route path={StaticRoutes.ProcessInstanceHistoryManager} element={<ProcessInstanceHistoryManager />} />

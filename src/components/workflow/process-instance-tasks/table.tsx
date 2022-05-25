@@ -10,15 +10,14 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 import Icon from '@mdi/react';
 import {
-  mdiAccountAlertOutline,
+  mdiAccountWrenchOutline,
   mdiContentCopy,
   mdiDatabaseCogOutline,
-  mdiDeleteAlertOutline,
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
-import { PUBLISH_SET_ERROR_TASK, EnumProcessInstanceSortField, ProcessInstance, ProcessInstanceQuery } from 'model/bpm-process-instance';
+import { EnumProcessInstanceTaskSortField, ProcessInstanceTask, ProcessInstanceTaskQuery, TASKS } from 'model/bpm-process-instance';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 // Helper methods
@@ -26,11 +25,10 @@ import { copyToClipboard } from 'utils/clipboard';
 
 enum EnumAction {
   CopyBusinessKey = 'copy-business-key',
-  Delete = 'delete',
   View = 'view',
 };
 
-function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Column<ProcessInstance, EnumProcessInstanceSortField>[] {
+function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Column<ProcessInstanceTask, EnumProcessInstanceTaskSortField>[] {
   const { classes } = props;
 
   return (
@@ -40,9 +38,9 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
       width: 80,
       cell: (
         rowIndex: number,
-        column: Column<ProcessInstance, EnumProcessInstanceSortField>,
-        row: ProcessInstance,
-        handleAction?: cellActionHandler<ProcessInstance, EnumProcessInstanceSortField>
+        column: Column<ProcessInstanceTask, EnumProcessInstanceTaskSortField>,
+        row: ProcessInstanceTask,
+        handleAction?: cellActionHandler<ProcessInstanceTask, EnumProcessInstanceTaskSortField>
       ): React.ReactNode => (
         <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
           <Tooltip title={intl.formatMessage({ id: 'workflow.tooltip.instance.view' })}>
@@ -54,24 +52,15 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
               </Badge>
             </i>
           </Tooltip>
-          <Tooltip title={intl.formatMessage({ id: 'workflow.tooltip.instance.delete' })}>
-            <i
-              onClick={() => handleAction ? handleAction(EnumAction.Delete, rowIndex, column, row) : null}
-            >
-              <Badge overlap="rectangular" color="secondary" variant="dot" invisible={true}>
-                <Icon path={mdiDeleteAlertOutline} className={classes.rowIconAction} />
-              </Badge>
-            </i>
-          </Tooltip>
-          {row.taskNames.includes(PUBLISH_SET_ERROR_TASK) &&
+          {TASKS.includes(row.taskName) &&
             <Tooltip title={intl.formatMessage({ id: 'workflow.tooltip.instance.view-task' })}>
               <i
                 onClick={() => {
-                  props.viewProcessInstanceTask(row.processInstanceId, PUBLISH_SET_ERROR_TASK);
+                  props.viewProcessInstanceTask(row.processInstanceId, row.taskName);
                 }}
               >
                 <Badge overlap="rectangular" color="secondary" variant="dot" invisible={true}>
-                  <Icon path={mdiAccountAlertOutline} className={classes.rowIconAction} />
+                  <Icon path={mdiAccountWrenchOutline} className={classes.rowIconAction} />
                 </Badge>
               </i>
             </Tooltip>
@@ -83,16 +72,16 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
       id: 'processDefinitionName',
       width: 250,
       sortable: true,
-      sortColumn: EnumProcessInstanceSortField.PROCESS_DEFINITION,
+      sortColumn: EnumProcessInstanceTaskSortField.PROCESS_DEFINITION,
     }, {
       header: intl.formatMessage({ id: 'workflow.header.instance.process-definition-version' }),
       id: 'processDefinitionVersion',
       sortable: false,
       cell: (
         rowIndex: number,
-        column: Column<ProcessInstance, EnumProcessInstanceSortField>,
-        row: ProcessInstance,
-        handleAction?: cellActionHandler<ProcessInstance, EnumProcessInstanceSortField>
+        column: Column<ProcessInstanceTask, EnumProcessInstanceTaskSortField>,
+        row: ProcessInstanceTask,
+        handleAction?: cellActionHandler<ProcessInstanceTask, EnumProcessInstanceTaskSortField>
       ): React.ReactNode => (
         <span>{row.processDefinitionVersionTag} / {row.processDefinitionVersion}</span>
       ),
@@ -102,9 +91,9 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
       sortable: false,
       cell: (
         rowIndex: number,
-        column: Column<ProcessInstance, EnumProcessInstanceSortField>,
-        row: ProcessInstance,
-        handleAction?: cellActionHandler<ProcessInstance, EnumProcessInstanceSortField>
+        column: Column<ProcessInstanceTask, EnumProcessInstanceTaskSortField>,
+        row: ProcessInstanceTask,
+        handleAction?: cellActionHandler<ProcessInstanceTask, EnumProcessInstanceTaskSortField>
       ): React.ReactNode => (
         <FormattedTime value={row.processDefinitionDeployedOn.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
@@ -113,24 +102,18 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
       id: 'incidentCount',
       accessor: 'incidentCount',
       sortable: true,
-      sortColumn: EnumProcessInstanceSortField.INCIDENT_COUNT,
-    }, {
-      header: intl.formatMessage({ id: 'workflow.header.instance.task-count' }),
-      id: 'taskCount',
-      accessor: 'taskCount',
-      sortable: true,
-      sortColumn: EnumProcessInstanceSortField.TASK_COUNT,
+      sortColumn: EnumProcessInstanceTaskSortField.INCIDENT_COUNT,
     }, {
       header: intl.formatMessage({ id: 'workflow.header.instance.business-key' }),
       id: 'businessKey',
       accessor: 'businessKey',
       sortable: true,
-      sortColumn: EnumProcessInstanceSortField.BUSINESS_KEY,
+      sortColumn: EnumProcessInstanceTaskSortField.BUSINESS_KEY,
       cell: (
         rowIndex: number,
-        column: Column<ProcessInstance, EnumProcessInstanceSortField>,
-        row: ProcessInstance,
-        handleAction?: cellActionHandler<ProcessInstance, EnumProcessInstanceSortField>
+        column: Column<ProcessInstanceTask, EnumProcessInstanceTaskSortField>,
+        row: ProcessInstanceTask,
+        handleAction?: cellActionHandler<ProcessInstanceTask, EnumProcessInstanceTaskSortField>
       ): React.ReactNode => (
         <div className={classes.compositeLabel}>
           <div>{row.businessKey}</div>
@@ -145,12 +128,12 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
       header: intl.formatMessage({ id: 'workflow.header.instance.started-on' }),
       id: 'startedOn',
       sortable: true,
-      sortColumn: EnumProcessInstanceSortField.STARTED_ON,
+      sortColumn: EnumProcessInstanceTaskSortField.STARTED_ON,
       cell: (
         rowIndex: number,
-        column: Column<ProcessInstance, EnumProcessInstanceSortField>,
-        row: ProcessInstance,
-        handleAction?: cellActionHandler<ProcessInstance, EnumProcessInstanceSortField>
+        column: Column<ProcessInstanceTask, EnumProcessInstanceTaskSortField>,
+        row: ProcessInstanceTask,
+        handleAction?: cellActionHandler<ProcessInstanceTask, EnumProcessInstanceTaskSortField>
       ): React.ReactNode => (
         <FormattedTime value={row.startedOn.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
@@ -186,21 +169,20 @@ const styles = (theme: Theme) => createStyles({
 
 interface ProcessInstanceTableProps extends WithStyles<typeof styles> {
   intl: IntlShape,
-  loading?: boolean;
+  query: ProcessInstanceTaskQuery,
+  result: PageResult<ProcessInstanceTask> | null,
   pagination: PageRequest,
-  query: ProcessInstanceQuery,
-  result: PageResult<ProcessInstance> | null,
-  selected: ProcessInstance[],
-  sorting: Sorting<EnumProcessInstanceSortField>[];
-  addToSelection: (rows: ProcessInstance[]) => void,
-  deleteInstance: (processInstance: ProcessInstance) => void;
+  selected: ProcessInstanceTask[],
+  sorting: Sorting<EnumProcessInstanceTaskSortField>[];
+  loading?: boolean;
+  addToSelection: (rows: ProcessInstanceTask[]) => void,
   find: (
-    pageRequest?: PageRequest, sorting?: Sorting<EnumProcessInstanceSortField>[]
-  ) => Promise<PageResult<ProcessInstance> | null>,
-  removeFromSelection: (rows: ProcessInstance[]) => void,
+    pageRequest?: PageRequest, sorting?: Sorting<EnumProcessInstanceTaskSortField>[]
+  ) => Promise<PageResult<ProcessInstanceTask> | null>,
+  removeFromSelection: (rows: ProcessInstanceTask[]) => void,
   resetSelection: () => void;
   setPager: (page: number, size: number) => void,
-  setSorting: (sorting: Sorting<EnumProcessInstanceSortField>[]) => void,
+  setSorting: (sorting: Sorting<EnumProcessInstanceTaskSortField>[]) => void,
   viewProcessInstance: (processInstance: string) => void;
   viewProcessInstanceTask: (processInstance: string, taskName: string) => void;
 }
@@ -213,7 +195,7 @@ class ProcessInstanceTable extends React.Component<ProcessInstanceTableProps> {
     this.handleAction = this.handleAction.bind(this);
   }
 
-  handleAction(action: string, index: number, column: Column<ProcessInstance, EnumProcessInstanceSortField>, row: ProcessInstance): void {
+  handleAction(action: string, index: number, column: Column<ProcessInstanceTask, EnumProcessInstanceTaskSortField>, row: ProcessInstanceTask): void {
     switch (action) {
       case EnumAction.CopyBusinessKey:
         const value = row.businessKey;
@@ -223,10 +205,6 @@ class ProcessInstanceTable extends React.Component<ProcessInstanceTableProps> {
 
       case EnumAction.View:
         this.props.viewProcessInstance(row.processInstanceId);
-        break;
-
-      case EnumAction.Delete:
-        this.props.deleteInstance(row);
         break;
 
       default:
@@ -240,7 +218,7 @@ class ProcessInstanceTable extends React.Component<ProcessInstanceTableProps> {
 
     return (
       <>
-        <MaterialTable<ProcessInstance, EnumProcessInstanceSortField>
+        <MaterialTable<ProcessInstanceTask, EnumProcessInstanceTaskSortField>
           intl={intl}
           columns={workflowColumns(intl, this.props)}
           rows={result ? result.items : []}

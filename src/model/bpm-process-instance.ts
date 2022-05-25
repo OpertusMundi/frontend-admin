@@ -1,7 +1,19 @@
 import { Moment } from 'moment';
 import { MarketplaceAccountDetails } from './account-marketplace';
 
+export const PUBLISH_SET_ERROR_TASK = 'task-helpdesk-set-error';
+
+export const TASKS = [PUBLISH_SET_ERROR_TASK];
+
 export enum EnumProcessInstanceSortField {
+  BUSINESS_KEY = 'BUSINESS_KEY',
+  INCIDENT_COUNT = 'INCIDENT_COUNT',
+  PROCESS_DEFINITION = 'PROCESS_DEFINITION',
+  STARTED_ON = 'STARTED_ON',
+  TASK_COUNT = 'TASK_COUNT',
+}
+
+export enum EnumProcessInstanceTaskSortField {
   BUSINESS_KEY = 'BUSINESS_KEY',
   INCIDENT_COUNT = 'INCIDENT_COUNT',
   PROCESS_DEFINITION = 'PROCESS_DEFINITION',
@@ -16,6 +28,7 @@ export enum EnumProcessInstanceHistorySortField {
 }
 
 export interface ProcessDefinition {
+  id: string;
   key: string;
   name: string;
   version: string;
@@ -25,6 +38,13 @@ export interface ProcessDefinition {
 export interface ProcessInstanceQuery {
   businessKey: string;
   processDefinitionKey: string;
+  task: string;
+}
+
+export interface ProcessInstanceTaskQuery {
+  businessKey: string;
+  processDefinitionKey: string;
+  task: string;
 }
 
 export interface ProcessInstance {
@@ -39,6 +59,26 @@ export interface ProcessInstance {
   incidentCount: number | null;
   startedOn: Moment;
   completedOn: Moment | null;
+  taskCount: number,
+  taskReviewCount: number,
+  taskErrorCount: number,
+  taskNames: string[],
+}
+
+export interface ProcessInstanceTask {
+  processDefinitionId: string;
+  processDefinitionName: string;
+  processDefinitionKey: string;
+  processDefinitionVersion: number;
+  processDefinitionVersionTag: string;
+  processDefinitionDeployedOn: Moment;
+  processInstanceId: string
+  businessKey: string;
+  incidentCount: number | null;
+  startedOn: Moment;
+  completedOn: Moment | null;
+  taskId: string;
+  taskName: string,
 }
 
 export type ActivityType = 'startEvent' | 'serviceTask' | 'userTask' | 'noneEndEvent';
@@ -170,4 +210,12 @@ export interface ActiveProcessInstanceDetails extends ProcessInstanceDetails {
 
 export interface HistoryProcessInstanceDetails extends ProcessInstanceDetails {
   incidents: BpmHistoryIncident[];
+}
+
+export interface CompleteTaskTaskCommand {
+  taskName: string;
+}
+
+export interface SetPublishErrorTaskCommand extends CompleteTaskTaskCommand {
+  message: string;
 }
