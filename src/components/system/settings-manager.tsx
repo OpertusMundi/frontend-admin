@@ -147,8 +147,8 @@ class SettingsManager extends React.Component<SettingsManagerProps, SettingsMana
   }
 
   initializeAnnouncement() {
-    const bannerContent = this.settings.find(s => s.key === 'banner.text' && s.service === EnumService.API_GATEWAY)?.value || '';
-    const bannerEnabled = this.settings.find(s => s.key === 'banner.enabled' && s.service === EnumService.API_GATEWAY)?.value === 'true';
+    const bannerContent = this.settings.find(s => s.key === 'announcement.text' && s.service === EnumService.API_GATEWAY)?.value || '';
+    const bannerEnabled = this.settings.find(s => s.key === 'announcement.enabled' && s.service === EnumService.API_GATEWAY)?.value === 'true';
 
     this.setState({
       ...this.state,
@@ -197,11 +197,11 @@ class SettingsManager extends React.Component<SettingsManagerProps, SettingsMana
     e.preventDefault();
 
     const updates: SettingUpdate[] = [{
-      key: 'banner.text',
+      key: 'announcement.text',
       value: this.state.announcement.current.content || '',
       service: EnumService.API_GATEWAY,
     }, {
-      key: 'banner.enabled',
+      key: 'announcement.enabled',
       value: this.state.announcement.current.enabled.toString(),
       service: EnumService.API_GATEWAY,
     }];
