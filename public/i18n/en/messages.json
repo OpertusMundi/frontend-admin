@@ -750,6 +750,7 @@
         "no": "No",
         "reject": "Reject",
         "reset": "Reset",
+        "retry": "Retry",
         "save": "Save",
         "send": "Send",
         "search": "Search",
@@ -772,11 +773,13 @@
         "completed": "Workflow instance has been completed at {timestamp}",
         "resolved": "Incident resolved at {timestamp}",
         "userTask": {
+          "cancelled": "User task {activity} has been cancelled at {timestamp}",
           "completed": "User task {activity} has been completed at {timestamp}",
           "running": "User task {activity} is pending",
           "error": "User task {activity} has failed at {timestamp}"
         },
         "serviceTask": {
+          "cancelled": "Service task {activity} has been cancelled at {timestamp}",
           "completed": "Service task {activity} has been completed at {timestamp}",
           "running": "Service task {activity} is running",
           "error": "Service task {activity} has failed at {timestamp}"
@@ -841,7 +844,9 @@
         "confirm": "The following message will be send to the provider. The process instance will be stopped and the asset status will be set to {status}."
       },
       "task-complete-success": "Task completed successfully",
-      "task-complete-failure": "Failed to complete task"
+      "task-complete-failure": "Failed to complete task",
+      "modify-process-instance-success": "Process instance has been successfully updated",
+      "modify-process-instance-failure": "Failed to modify process instance"
     },
     "tooltip": {
       "instance": {
@@ -854,6 +859,10 @@
         "process-instance": "View process instance",
         "retry": "Retry task"
       }
+    },
+    "review-error": {
+      "set-error-and-cancel": "Set error, cancel workflow and reset draft",
+      "retry": "Retry draft at activity {activity}"
     }
   }
 }

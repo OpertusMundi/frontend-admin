@@ -16,18 +16,27 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
 import { red } from '@material-ui/core/colors';
 
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
 import Spinner from 'components/spinner';
-import { ExecutionDetails, ProcessInstanceTimeline, ProcessInstanceVariables } from './common';
+import {
+  ExecutionDetails,
+  ProcessDefinitionDiagram,
+  ProcessInstanceTimeline,
+  ProcessInstanceVariables,
+} from './common';
 
 // Icons
 import Icon from '@mdi/react';
 import {
+  mdiDatabaseCogOutline,
   mdiTimelineClockOutline,
+  mdiXml,
 } from '@mdi/js';
 
 // Store
@@ -37,9 +46,6 @@ import { findOne } from 'store/process-instance/thunks'
 // Model
 import { BasicMessageCode } from 'model/error-code';
 import { buildPath, DynamicRoutes } from 'model/routes';
-
-// Service
-import AccountApi from 'service/account-marketplace';
 
 const styles = (theme: Theme) => createStyles({
   avatar: {
@@ -64,7 +70,7 @@ const styles = (theme: Theme) => createStyles({
     height: theme.spacing(4),
   },
   timeline: {
-    height: 'calc(100vh - 395px)',
+    height: 'calc(100vh - 580px)',
   },
 });
 
@@ -75,6 +81,7 @@ interface RouteParams {
 
 interface ProcessInstanceState {
   initialized: boolean;
+  tabIndex: number;
 }
 
 interface ProcessInstanceProps extends PropsFromRedux, WithStyles<typeof styles> {
@@ -86,16 +93,13 @@ interface ProcessInstanceProps extends PropsFromRedux, WithStyles<typeof styles>
 
 class ProcessInstance extends React.Component<ProcessInstanceProps, ProcessInstanceState> {
 
-  api: AccountApi;
-
   constructor(props: ProcessInstanceProps) {
     super(props);
 
     this.state = {
       initialized: false,
+      tabIndex: 0,
     };
-
-    this.api = new AccountApi();
   }
 
   componentDidMount() {
@@ -138,7 +142,7 @@ class ProcessInstance extends React.Component<ProcessInstanceProps, ProcessInsta
   }
 
   render() {
-    const { initialized } = this.state;
+    const { initialized, tabIndex } = this.state;
     const { classes, config, processInstance = null } = this.props;
     const _t = this.props.intl.formatMessage;
 
@@ -147,18 +151,30 @@ class ProcessInstance extends React.Component<ProcessInstanceProps, ProcessInsta
     }
 
     return (
-      <>
-        <Grid container>
-          <Grid container item xs={12} lg={5}>
-            <Grid item xs={12} className={classes.item}>
-              <ExecutionDetails config={config} processInstance={processInstance} />
+      <Grid container>
+        <Grid item xs={12}>
+          <Tabs
+            value={tabIndex}
+            indicatorColor="primary"
+            textColor="primary"
+            onChange={(event, tabIndex) => this.setState({ tabIndex })}
+            variant="fullWidth"
+          >
+            <Tab icon={<Icon path={mdiDatabaseCogOutline} size="1.5rem" />} label="Process" />
+            <Tab icon={<Icon path={mdiXml} size="1.5rem" />} label="Workflow" />
+          </Tabs>
+        </Grid>
+        {tabIndex === 0 &&
+          <Grid container item xs={12}>
+            <Grid container item xs={12} lg={5} justifyContent="space-around">
+              <Grid item xs={12}>
+                <ExecutionDetails config={config} processInstance={processInstance} />
+              </Grid>
+              <Grid item xs={12}>
+                {this.renderVariables()}
+              </Grid>
             </Grid>
-            <Grid item xs={12} className={classes.item}>
-              {this.renderVariables()}
-            </Grid>
-          </Grid>
-          <Grid container item xs={12} lg={7}>
-            <Grid item className={classes.item}>
+            <Grid item xs={12} lg={7}>
               <Card className={classes.card}>
                 <CardHeader
                   avatar={
@@ -176,8 +192,13 @@ class ProcessInstance extends React.Component<ProcessInstanceProps, ProcessInsta
               </Card>
             </Grid>
           </Grid>
-        </Grid>
-      </>
+        }
+        {tabIndex === 1 && processInstance.bpmn2Xml &&
+          <Grid item xs={12}>
+            <ProcessDefinitionDiagram config={config} instance={processInstance} />
+          </Grid>
+        }
+      </Grid>
     );
   }
 

@@ -53,6 +53,7 @@ interface Incident {
   activityId: string;
   createTime: Moment;
   endTime: Moment | null;
+  executionId: string;
   incidentMessage: string;
   resolved: boolean;
 }
@@ -70,7 +71,7 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
     const { classes } = this.props;
     const { errorDetails } = instance;
 
-    const incident = incidents.find((i) => i.activityId === activity.activityId) || null;
+    const incident = incidents.find((i) => i.activityId === activity.activityId && i.executionId === activity.executionId) || null;
 
     switch (activity.activityType) {
       case 'startEvent':
@@ -140,8 +141,9 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
     }
 
     if (activity.endTime) {
+      const event = activity.canceled ? 'cancelled' : 'completed';
       return (
-        <FormattedMessage id={`workflow.instance.activity.${activity.activityType}.completed`} values={{
+        <FormattedMessage id={`workflow.instance.activity.${activity.activityType}.${event}`} values={{
           activity: activity.activityName,
           timestamp: _t(activity.endTime.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }),
         }} />
@@ -178,13 +180,11 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
     if (incident && ['userTask', 'serviceTask'].includes(activity.activityType)) {
       return incident.resolved ? '#757575' : '#f44336';
     }
-
     if (activity.activityType === 'intermediateTimer') {
       return '#1565C0';
     }
-
     if (!activity.startTime || activity.canceled) {
-      return '#757575';
+      return activity.canceled ? '#F44336' : '#757575';
     }
     if (!activity.endTime) {
       return '#1565C0';
@@ -208,12 +208,14 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
       activityId: i.activityId,
       createTime: i.createTime,
       endTime: i.endTime,
+      executionId: i.executionId,
       incidentMessage: i.incidentMessage,
       resolved: i.resolved,
     })) : activeProcessInstance ? activeProcessInstance.incidents.map(i => ({
       activityId: i.activityId,
       createTime: i.incidentTimestamp,
       endTime: null,
+      executionId: i.executionId,
       incidentMessage: i.incidentMessage,
       resolved: false,
     })) : [];

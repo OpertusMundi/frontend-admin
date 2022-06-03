@@ -245,7 +245,7 @@ const menuId = 'primary-search-account-menu';
 
 class Home extends React.Component<HomeProps, HomeState> {
 
-  private drawerRef: React.RefObject<HTMLDivElement> | null;;
+  private drawerRef: React.RefObject<HTMLDivElement> | null;
 
   private refreshCountersInterval: number | null = null;
 

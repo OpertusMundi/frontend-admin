@@ -44,7 +44,7 @@ import { findOne } from 'store/process-instance-task/thunks'
 // Model
 import { ErrorPages } from 'model/routes';
 import { SimpleResponse } from 'model/response';
-import { CompleteTaskTaskCommand, PUBLISH_SET_ERROR_TASK } from 'model/bpm-process-instance';
+import { CompleteTaskTaskCommand, ModificationCommand, PUBLISH_SET_ERROR_TASK } from 'model/bpm-process-instance';
 import { MarketplaceAccountDetails } from 'model/account-marketplace';
 
 // Service
@@ -151,6 +151,35 @@ class ProcessInstanceTask extends React.Component<ProcessInstanceTaskProps, Proc
       .catch(() => {
         message.errorHtml(
           _t({ id: 'workflow.message.task-complete-failure' }),
+          () => (<Icon path={mdiCommentAlertOutline} size="3rem" />)
+        );
+
+        return false;
+      });
+  }
+
+  async modifyProcessInstance(command: ModificationCommand): Promise<boolean> {
+    const { processInstance } = this.props.params;
+    const _t = this.props.intl.formatMessage;
+
+    return this.api.modifyProcessInstance(processInstance!, command)
+      .then(async (r: SimpleResponse) => {
+        if (r.success) {
+          message.info('workflow.message.modify-process-instance-success');
+        } else {
+          message.errorHtml(
+            r.messages[0].description,
+            () => (<Icon path={mdiCommentAlertOutline} size="3rem" />)
+          );
+        }
+
+        await this.load();
+
+        return true;
+      })
+      .catch(() => {
+        message.errorHtml(
+          _t({ id: 'workflow.message.modify-process-instance-failure' }),
           () => (<Icon path={mdiCommentAlertOutline} size="3rem" />)
         );
 
@@ -269,6 +298,7 @@ class ProcessInstanceTask extends React.Component<ProcessInstanceTaskProps, Proc
             processInstance={processInstance}
             taskName={taskName}
             completeTask={(c) => this.completeTask(c)}
+            modifyProcessInstance={(c) => this.modifyProcessInstance(c)}
           />
         )
     }

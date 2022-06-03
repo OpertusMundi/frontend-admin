@@ -21,21 +21,28 @@ import ListItemText from '@material-ui/core/ListItemText';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
-import { red } from '@material-ui/core/colors';
+import { indigo, red } from '@material-ui/core/colors';
 
 // Icons
 import Icon from '@mdi/react';
 import {
   mdiAccountOutline,
-  mdiAccountWrenchOutline,
   mdiEmailSendOutline,
+  mdiRestart,
+  mdiRestartOff,
   mdiUndoVariant,
 } from '@mdi/js';
 
 // Model
 import { ApplicationConfiguration } from 'model/configuration';
 import { MarketplaceAccountDetails } from 'model/account-marketplace';
-import { ActiveProcessInstanceDetails, CompleteTaskTaskCommand, SetPublishErrorTaskCommand } from 'model/bpm-process-instance';
+import {
+  ActiveProcessInstanceDetails,
+  BpmActivity,
+  CompleteTaskTaskCommand,
+  ModificationCommand,
+  SetPublishErrorTaskCommand,
+} from 'model/bpm-process-instance';
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
@@ -43,6 +50,9 @@ import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
 const styles = (theme: Theme) => createStyles({
   avatar: {
     backgroundColor: red[500],
+  },
+  avatarIndigo: {
+    backgroundColor: indigo[500],
   },
   button: {
     margin: theme.spacing(3, 1, 2),
@@ -95,7 +105,10 @@ interface ReviewErrorTaskProps extends WithStyles<typeof styles> {
   processInstance: ActiveProcessInstanceDetails;
   taskName: string;
   completeTask: (command: CompleteTaskTaskCommand) => Promise<boolean>;
+  modifyProcessInstance: (command: ModificationCommand) => Promise<boolean>;
 }
+
+const validTasks = ['userTask', 'serviceTask'];
 
 class ReviewErrorTask extends React.Component<ReviewErrorTaskProps, ReviewErrorTaskState> {
 
@@ -177,6 +190,28 @@ class ReviewErrorTask extends React.Component<ReviewErrorTaskProps, ReviewErrorT
     }
   }
 
+  resume() {
+    const { processInstance, taskName } = this.props;
+
+    this.setState({ loading: true });
+
+    const cancelActivities = processInstance.activities
+      .filter(a => a.startTime !== null && a.endTime === null)
+      .filter(a => validTasks.includes(a.activityType))
+      .map(a => a.activityId) || [];
+    const startActivities = processInstance.activities
+      .filter(a => a.canceled && validTasks.includes(a.activityType) && a.activityId !== taskName)
+      .map(a => a.activityId)
+      .filter((a, index, arr) => arr.indexOf(a) === index);
+
+    this.props.modifyProcessInstance({
+      startActivities,
+      cancelActivities,
+    }).finally(() => {
+      this.setState({ loading: false });
+    });
+  }
+
   renderDeleteDialog() {
     const _t = this.props.intl.formatMessage;
 
@@ -232,12 +267,30 @@ class ReviewErrorTask extends React.Component<ReviewErrorTaskProps, ReviewErrorT
     const { classes, processInstance, taskName } = this.props;
     const _t = this.props.intl.formatMessage;
 
-    const task = processInstance.activities.find(a => a.activityId === taskName) || null;
+    // Find the most recent tasks of the specific type
+    const tasks = processInstance.activities.filter(a => a.activityId === taskName) || null;
+    const task = tasks ? tasks.at(-1) : null;
+    const completed = !!task?.endTime;
+
+    // Get error details
     const errorDetails = processInstance.variables.find(v => v.name === 'bpmnBusinessErrorDetails')!.value;
     const messages = (errorDetails as string)?.split('||') || null;
-    const completed = !!task?.endTime;
     const errorMessage = processInstance.variables.find(v => v.name === 'helpdeskErrorMessage')?.value;
 
+    // Get the most recent retryable tasks. Exclude duplicate records
+    const retryableTasks = processInstance.activities
+      .filter(a => validTasks.includes(a.activityType) && a.activityId !== taskName) || [];
+    const duplicateTasks: string[] = [];
+    const cancelled = retryableTasks.reverse()
+      .map(t => {
+        if (duplicateTasks.includes(t.activityId)) {
+          return null;
+        } else {
+          duplicateTasks.push(t.activityId);
+          return t.canceled ? t : null;
+        }
+      })
+      .filter(t => t !== null);
 
     return (
       <>
@@ -245,10 +298,10 @@ class ReviewErrorTask extends React.Component<ReviewErrorTaskProps, ReviewErrorT
           <CardHeader
             avatar={
               <Avatar className={classes.avatar}>
-                <Icon path={mdiAccountWrenchOutline} size="1.5rem" />
+                <Icon path={mdiRestartOff} size="1.5rem" />
               </Avatar>
             }
-            title={_t({ id: `enum.process-instance.task.${taskName}` })}
+            title={_t({ id: 'workflow.review-error.set-error-and-cancel' })}
           ></CardHeader>
           <CardContent>
             <Grid container item xs={12}>
@@ -315,6 +368,37 @@ class ReviewErrorTask extends React.Component<ReviewErrorTaskProps, ReviewErrorT
           }
         </Card>
         {this.renderDeleteDialog()}
+        {cancelled.length === 1 &&
+          <Card className={classes.card}>
+            <CardHeader
+              avatar={
+                <Avatar className={classes.avatarIndigo}>
+                  <Icon path={mdiRestart} size="1.5rem" />
+                </Avatar>
+              }
+              title={_t({ id: 'workflow.review-error.retry' }, { activity: (<b>{cancelled[0]!.activityName}</b>) })}
+            ></CardHeader>
+            <CardContent>
+              <Grid container item xs={12}>
+                <Typography display="block" gutterBottom >
+                  Selecting this option will cause the workflow to continue from the last failed task <b>{cancelled[0]!.activityName}</b>. Any progress before this task will be preserved.
+                </Typography>
+              </Grid>
+            </CardContent>
+            {!completed &&
+              <CardActions disableSpacing className={classes.cardActions}>
+                <Button
+                  size="small"
+                  color="primary"
+                  className={classes.button}
+                  onClick={() => this.resume()}
+                >
+                  <FormattedMessage id="view.shared.action.retry"></FormattedMessage>
+                </Button>
+              </CardActions>
+            }
+          </Card>
+        }
       </>
     );
   }

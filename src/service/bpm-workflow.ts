@@ -25,6 +25,7 @@ import {
   ProcessInstanceTask,
   ProcessInstanceTaskQuery,
   CompleteTaskTaskCommand,
+  ModificationCommand,
 } from 'model/bpm-process-instance';
 
 export default class WorkflowApi extends Api {
@@ -37,6 +38,12 @@ export default class WorkflowApi extends Api {
     const url = `/action/workflows/process-definitions`;
 
     return this.get<ObjectResponse<ProcessDefinition[]>>(url);
+  }
+
+  public async getProcessBpmn2Xml(id: string): Promise<AxiosObjectResponse<string>> {
+    const url = `/action/workflows/process-definition/${id}/xml`;
+
+    return this.get<ObjectResponse<string>>(url);
   }
 
   public async countProcessInstances(): Promise<AxiosObjectResponse<number>> {
@@ -136,6 +143,12 @@ export default class WorkflowApi extends Api {
     const url = `/action/workflows/process-instances/${processInstanceId}/tasks`;
 
     return this.post<CompleteTaskTaskCommand, SimpleResponse>(url, command).then((response) => response.data);
+  }
+
+  public async modifyProcessInstance(processInstanceId: string, command: ModificationCommand): Promise<SimpleResponse> {
+    const url = `/action/workflows/process-instances/${processInstanceId}/modification`;
+
+    return this.post<ModificationCommand, SimpleResponse>(url, command).then((response) => response.data);
   }
 
 }

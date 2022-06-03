@@ -20,7 +20,6 @@ import { mdiCommentAlertOutline, mdiDeleteAlertOutline, mdiUndoVariant } from '@
 
 // Services
 import message from 'service/message';
-import WorkflowApi from 'service/bpm-workflow';
 
 // Store
 import { RootState } from 'store';
@@ -92,12 +91,8 @@ interface WorkflowManagerProps extends PropsFromRedux, WithStyles<typeof styles>
 
 class ProcessInstanceManager extends React.Component<WorkflowManagerProps, WorkflowManagerState> {
 
-  private api: WorkflowApi;
-
   constructor(props: WorkflowManagerProps) {
     super(props);
-
-    this.api = new WorkflowApi();
 
     this.deleteInstance = this.deleteInstance.bind(this);
     this.viewProcessInstance = this.viewProcessInstance.bind(this);
@@ -186,7 +181,6 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
 
   viewProcessInstanceTask(processInstance: string, taskName: string): void {
     const path = buildPath(DynamicRoutes.ProcessInstanceTaskView, [processInstance, taskName]);
-    console.log(path);
     this.props.navigate(path);
   }
 

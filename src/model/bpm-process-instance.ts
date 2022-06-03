@@ -130,43 +130,33 @@ export interface BpmVariable {
   value: string | number | boolean | null;
 }
 
-export interface BpmIncident {
+export interface BaseBpmIncident {
+  activityId: string;
+  causeIncidentId: string;
+  configuration: string;
+  executionId: string;
+  failedActivityId: string;
   id: string;
+  incidentMessage: string;
+  incidentType: string;
+  jobDefinitionId: string;
   processDefinitionId: string;
   processInstanceId: string;
-  executionId: string;
-  incidentTimestamp: Moment,
-  incidentType: string;
-  activityId: string;
-  failedActivityId: string;
-  causeIncidentId: string;
   rootCauseIncidentId: string;
-  configuration: string;
-  incidentMessage: string;
   tenantId: string;
-  jobDefinitionId: string;
 }
 
-export interface BpmHistoryIncident {
-  id: string;
+export interface BpmIncident extends BaseBpmIncident {
+  incidentTimestamp: Moment,
+}
+
+export interface BpmHistoryIncident extends BaseBpmIncident {
   processDefinitionKey: string;
-  processDefinitionId: string;
-  processInstanceId: string;
-  executionId: string;
   rootProcessInstanceId: string;
   createTime: Moment;
   endTime: Moment | null;
   removalTime: Moment | null,
-  incidentType: string;
-  activityId: string;
-  failedActivityId: string;
-  causeIncidentId: string;
-  rootCauseIncidentId: string;
-  configuration: string;
   historyConfiguration: string;
-  incidentMessage: string;
-  tenantId: string;
-  jobDefinitionId: string;
   open: boolean;
   deleted: boolean;
   resolved: boolean;
@@ -198,6 +188,7 @@ export interface BpmActivity {
 
 export interface ProcessInstanceDetails {
   activities: BpmActivity[];
+  bpmn2Xml?: string;
   errorDetails: { [activity: string]: string };
   instance: BpmProcessInstance;
   owner?: MarketplaceAccountDetails;
@@ -218,4 +209,9 @@ export interface CompleteTaskTaskCommand {
 
 export interface SetPublishErrorTaskCommand extends CompleteTaskTaskCommand {
   message: string;
+}
+
+export interface ModificationCommand {
+  startActivities: string[];
+  cancelActivities: string[];
 }
