@@ -22,9 +22,10 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
   },
   "include": [
-    "src"
-  ]
+    "src",
+    "decs.d.ts"
+  ],
 }

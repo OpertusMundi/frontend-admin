@@ -10,6 +10,10 @@
 // Import styles for custom components
 @import "styles/map";
 
+// BPMN diagram styles
+@import "~bpmn-js/dist/assets/diagram-js.css";
+@import "~bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
+
 // Custom styles
 body {
   margin: 0;
@@ -18,6 +22,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
 }
 
 code {
@@ -27,4 +32,28 @@ code {
 
 .MuiAutocomplete-inputRoot {
   min-height: 39px !important;
+}
+
+// BPMN diagrams
+
+.bpmn-execution {
+  font-weight: 700;
+  background: #1976D2;
+  color: #ffffff;
+  border-radius: 50%;
+  height: 24px;
+  width: 24px;
+  text-align: center;
+  line-height: 24px;
+}
+
+.bpmn-incident {
+  font-weight: 700;
+  background: #D32F2F;
+  color: #ffffff;
+  border-radius: 50%;
+  height: 24px;
+  width: 24px;
+  text-align: center;
+  line-height: 24px;
 }
