@@ -34,6 +34,7 @@ const styles = (theme: Theme) => createStyles({
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     width: 200,
+    paddingTop: 7,
   },
 });
 
@@ -94,7 +95,7 @@ class OrderFilters extends React.Component<OrderFiltersProps> {
     return (
       <form onSubmit={this.search} noValidate autoComplete="off">
         <Grid container spacing={3} justifyContent={'space-between'}>
-          <Grid item sm={3} xs={12}>
+          <Grid item sm={2} xs={12}>
             <TextField
               id="name"
               label={_t({ id: 'billing.order.filter.reference-number' })}
@@ -106,7 +107,19 @@ class OrderFilters extends React.Component<OrderFiltersProps> {
             />
           </Grid>
 
-          <Grid item sm={5} xs={12}>
+          <Grid item sm={2} xs={12}>
+            <TextField
+              id="name"
+              label={_t({ id: 'billing.order.filter.consumer' })}
+              variant="standard"
+              margin="normal"
+              className={classes.textField}
+              value={query.consumer || ''}
+              onChange={e => setFilter({ consumer: e.target.value })}
+            />
+          </Grid>
+
+          <Grid item sm={6} xs={12}>
             <Autocomplete
               style={{ marginTop: 16 }}
               multiple
@@ -126,7 +139,7 @@ class OrderFilters extends React.Component<OrderFiltersProps> {
             />
           </Grid>
 
-          <Grid container item sm={4} xs={12} justifyContent={'flex-end'}>
+          <Grid container item sm={2} xs={12} justifyContent={'flex-end'}>
             <Button
               type="submit"
               variant="contained"

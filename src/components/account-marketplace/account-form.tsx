@@ -53,7 +53,7 @@ import { findOne } from 'store/account-marketplace/thunks';
 import message from 'service/message';
 import AccountApi from 'service/account-marketplace';
 import { ObjectResponse, SimpleResponse } from 'model/response';
-import { CustomerType, EnumActivationStatus, EnumMangopayUserType, MarketplaceAccountDetails } from 'model/account-marketplace';
+import { CustomerType, EnumActivationStatus, EnumCustomerType, EnumMangopayUserType, MarketplaceAccountDetails } from 'model/account-marketplace';
 
 // Utilities
 import { FieldMapperFunc, localizeErrorCodes } from 'utils/error';
@@ -496,7 +496,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     }
   }
 
-  renderConsumer(consumer: CustomerType) {
+  renderCustomer(customer: CustomerType, type: EnumCustomerType) {
     const { classes } = this.props;
 
     return (
@@ -507,10 +507,12 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
               <Icon path={mdiFaceAgent} size="1.5rem" />
             </Avatar>
           }
-          title={this.getCustomerName(consumer)}
+          title={
+            <FormattedMessage id={`account-marketplace.form.section.${type}`} />
+          }
         ></CardHeader>
         <CardContent>
-          <CustomerDetails customer={consumer} />
+          <CustomerDetails customer={customer} />
         </CardContent>
       </Card>
     );
@@ -625,12 +627,12 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
             </Grid>
             {consumer &&
               <Grid item>
-                {this.renderConsumer(consumer)}
+                {this.renderCustomer(consumer, EnumCustomerType.CONSUMER)}
               </Grid>
             }
             {provider &&
               <Grid item>
-                {this.renderConsumer(provider)}
+                {this.renderCustomer(provider, EnumCustomerType.PROVIDER)}
               </Grid>
             }
           </Grid>

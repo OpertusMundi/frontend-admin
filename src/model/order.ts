@@ -513,6 +513,7 @@ export enum EnumOrderSortField {
 }
 
 export interface OrderQuery {
+  consumer: string;
   referenceNumber: string;
   status: EnumOrderStatus[];
 }
@@ -658,6 +659,10 @@ export interface PayOut {
    * Payout platform unique key
    */
   key: string;
+  /**
+   * Payout bank account
+   */
+  bankAccount: BankAccount;
   /**
    * Identifier of the workflow definition used for processing this PayIn
    * record

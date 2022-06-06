@@ -16,7 +16,6 @@ import {
   mdiCogSyncOutline,
   mdiEmailAlertOutline,
   mdiFinance,
-  mdiFolderOpenOutline,
   mdiLink,
   mdiMessageTextOutline,
   mdiPackageVariantClosed,
@@ -34,7 +33,6 @@ import clsx from 'clsx';
 enum EnumAction {
   CreatePayOut = 'create-payout',
   SendMessage = 'send-message',
-  ViewAssets = 'toggle-favorite',
   ViewDetails = 'view-details',
   ViewFinance = 'view-finance',
   ViewOrders = 'view-orders',
@@ -62,13 +60,6 @@ function providerColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
               onClick={() => handleAction ? handleAction(EnumAction.SendMessage, rowIndex, column, row) : null}
             >
               <Icon path={mdiMessageTextOutline} className={classes.classes.rowIconAction} style={{ marginTop: 2 }} />
-            </i>
-          </Tooltip>
-          <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-assets' })}>
-            <i
-              onClick={() => handleAction ? handleAction(EnumAction.ViewAssets, rowIndex, column, row) : null}
-            >
-              <Icon path={mdiFolderOpenOutline} className={classes.classes.rowIconAction} />
             </i>
           </Tooltip>
           <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-orders' })}>

@@ -27,7 +27,6 @@ const styles = (theme: Theme) => createStyles({
     display: 'flex',
     alignItems: 'center',
     flexGrow: 1,
-
   },
   icon: {
     marginRight: theme.spacing(1),
@@ -45,6 +44,7 @@ class Toolbar extends React.Component<ToolbarProps> {
   viewWorkflow(): void {
     const { record } = this.props;
     const processInstance = record?.processInstance;
+
     if (processInstance) {
       const path = buildPath(DynamicRoutes.ProcessInstanceHistoryView, null, { processInstance });
       this.props.navigate(path);
@@ -53,6 +53,7 @@ class Toolbar extends React.Component<ToolbarProps> {
 
   render() {
     const { classes, record } = this.props;
+
     if (!record) {
       return (
         <div></div>
@@ -66,7 +67,7 @@ class Toolbar extends React.Component<ToolbarProps> {
         <div className={classes.container}>
           <Icon path={mdiBankTransferIn} size="1.5rem" className={classes.icon} />
           <Typography component="h6" variant="h6" color="inherit" noWrap>
-            Pay In {record.referenceNumber}
+            Pay Out {record.bankwireRef}
           </Typography>
         </div>
         {processInstance &&
@@ -87,7 +88,7 @@ class Toolbar extends React.Component<ToolbarProps> {
 }
 
 const mapState = (state: RootState) => ({
-  record: state.billing.payin.record,
+  record: state.billing.payout.record,
 });
 
 const mapDispatch = {

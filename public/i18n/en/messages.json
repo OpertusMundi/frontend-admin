@@ -93,12 +93,13 @@
   "account-marketplace": {
     "form": {
       "section": {
-        "consumer": "Consumer",
+        "CONSUMER": "Consumer",
+        "PROVIDER": "Provider",
         "external-provider": "External Data Provider Configuration",
         "open-dataset-provider": "Open Dataset Provider",
         "provider": "Provider Information",
         "registration": "Registration Status",
-        "user": "Personal Information"
+        "user": "Account Information"
       },
       "field": {
         "email": "Email",
@@ -135,6 +136,7 @@
         "address": "Address",
         "address-headquarters": "Headquarters",
         "company": "Company Details",
+        "customer": "Customer",
         "representative": "Representative",
         "user": "User",
         "wallet": "Wallet"
@@ -142,6 +144,7 @@
     },
     "order": {
       "filter": {
+        "consumer": "Consumer Email",
         "reference-number": "Reference Number",
         "status": "Status"
       },
@@ -205,7 +208,7 @@
     "payin": {
       "route": "Pay In {referenceNumber}",
       "filter": {
-        "email": "User",
+        "email": "Consumer Email",
         "reference-number": "Reference Number",
         "status": "Status"
       },
@@ -433,7 +436,7 @@
       "PER_CALL_WITH_BLOCK_RATE": "Per service call with block rate",
       "PER_ROW_WITH_PREPAID": "Per service data row. Selected tier: {count} rows for {discount} discount",
       "PER_ROW_WITH_BLOCK_RATE": "Per service data row with block rate",
-      "SENTINEL_HUB_SUBSCRIPTION": "Sentinel Hub subscription",
+      "SENTINEL_HUB_SUBSCRIPTION": "Sentinel Hub subscription ({frequency})",
       "SENTINEL_HUB_IMAGES": "Sentinel Hub images"
     },
     "month": {
@@ -490,6 +493,10 @@
       "ADMIN": "Administrator",
       "DEVELOPER": "Developer",
       "USER": "User"
+    },
+    "subscription": {
+      "MONTHLY": "Monthly Payments",
+      "ANNUAL": "Annual Payments"
     },
     "transaction-status": {
       "NotSpecified": "Not Specified",
@@ -626,6 +633,12 @@
     "billing": {
       "order": {
         "timeline": "Order Timeline"
+      },
+      "payin": {
+        "record": "PayIn"
+      },
+      "payout": {
+        "record": "PayOut"
       }
     },
     "consumer-manager": "Consumers",
@@ -785,6 +798,7 @@
           "error": "Service task {activity} has failed at {timestamp}"
         },
         "intermediateMessageCatch": {
+          "cancelled": "Intermediate event cancelled at {timestamp}",
           "completed": "Received intermediate message at {timestamp}",
           "running": "Waiting for intermediate message",
           "error": "Failed to process intermediate message at {timestamp}"

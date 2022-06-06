@@ -42,8 +42,15 @@ import {
   mdiCreditCardRefundOutline,
   mdiCheckOutline,
   mdiPiggyBankOutline,
-  mdiLinkVariant,
   mdiFaceAgent,
+  mdiCartRemove,
+  mdiCartCheck,
+  mdiCartArrowDown,
+  mdiFileSign,
+  mdiFileDocumentEditOutline,
+  mdiCloudUploadOutline,
+  mdiCubeSend,
+  mdiTruckDeliveryOutline,
 } from '@mdi/js';
 
 // Store
@@ -265,6 +272,18 @@ class OrderDetails extends React.Component<OrderTimelineProps> {
     switch (status) {
       case EnumOrderStatus.CREATED:
         return (<Icon path={mdiPackageVariantClosed} size="1.5rem" />);
+      case EnumOrderStatus.PENDING_PROVIDER_APPROVAL:
+        return (<Icon path={mdiCartArrowDown} size="1.5rem" />);
+      case EnumOrderStatus.PROVIDER_REJECTED:
+        return (<Icon path={mdiCartRemove} size="1.5rem" />);
+      case EnumOrderStatus.PROVIDER_ACCEPTED:
+        return (<Icon path={mdiCartCheck} size="1.5rem" />);
+      case EnumOrderStatus.PENDING_PROVIDER_CONTRACT_UPLOAD:
+        return (<Icon path={mdiCloudUploadOutline} size="1.5rem" />);
+      case EnumOrderStatus.PENDING_CONSUMER_CONTRACT_ACCEPTANCE:
+        return (<Icon path={mdiFileDocumentEditOutline} size="1.5rem" />);
+      case EnumOrderStatus.CONTRACT_IS_SIGNED:
+        return (<Icon path={mdiFileSign} size="1.5rem" />);
       case EnumOrderStatus.CHARGED: {
         switch (order.paymentMethod) {
           case EnumPaymentMethod.FREE:
@@ -276,6 +295,10 @@ class OrderDetails extends React.Component<OrderTimelineProps> {
         }
         return null;
       }
+      case EnumOrderStatus.PENDING_PROVIDER_SEND_CONFIRMATION:
+        return (<Icon path={mdiCubeSend} size="1.5rem" />);
+      case EnumOrderStatus.PENDING_CONSUMER_RECEIVE_CONFIRMATION:
+        return (<Icon path={mdiTruckDeliveryOutline} size="1.5rem" />);
       case EnumOrderStatus.ASSET_REGISTRATION:
         return (<Icon path={mdiCogSyncOutline} size="1.5rem" />);
       case EnumOrderStatus.CANCELLED:
@@ -291,6 +314,18 @@ class OrderDetails extends React.Component<OrderTimelineProps> {
     switch (status) {
       case EnumOrderStatus.CREATED:
         return '#1565C0';
+      case EnumOrderStatus.PENDING_PROVIDER_APPROVAL:
+        return '#757575';
+      case EnumOrderStatus.PROVIDER_REJECTED:
+        return '#757575';
+      case EnumOrderStatus.PROVIDER_ACCEPTED:
+        return '#757575';
+      case EnumOrderStatus.PENDING_PROVIDER_CONTRACT_UPLOAD:
+        return '#757575';
+      case EnumOrderStatus.PENDING_CONSUMER_CONTRACT_ACCEPTANCE:
+        return '#757575';
+      case EnumOrderStatus.CONTRACT_IS_SIGNED:
+        return '#757575';
       case EnumOrderStatus.CHARGED:
         switch (order.payIn && order.payIn.status) {
           case EnumTransactionStatus.FAILED:
@@ -300,6 +335,10 @@ class OrderDetails extends React.Component<OrderTimelineProps> {
           default:
             return '#757575';
         }
+      case EnumOrderStatus.PENDING_PROVIDER_SEND_CONFIRMATION:
+        return '#757575';
+      case EnumOrderStatus.PENDING_CONSUMER_RECEIVE_CONFIRMATION:
+        return '#757575';
       case EnumOrderStatus.ASSET_REGISTRATION:
         return '#757575';
       case EnumOrderStatus.CANCELLED:
@@ -318,7 +357,6 @@ class OrderDetails extends React.Component<OrderTimelineProps> {
     if (history.length === 0) {
       return null;
     }
-
     const steps = history
       .sort((a, b) => a.statusUpdatedOn.isBefore(b.statusUpdatedOn) ? -1 : 1)
       .map((h, index) => (
@@ -431,11 +469,6 @@ class OrderDetails extends React.Component<OrderTimelineProps> {
               <Grid item container direction="column" xs={12} sm={6}>
                 <Typography variant="h6" gutterBottom className={classes.title}>
                   <FormattedMessage id={'billing.order.details.payment-details'} />
-                  {order.payIn &&
-                    <a href="/" onClick={(e) => this.showPayIn(e, order)} className={classes.linkIcon} title="Show Pay In">
-                      <Icon path={mdiLinkVariant} size="1rem" />
-                    </a>
-                  }
                 </Typography>
                 <Grid container>
                   {this.renderPaymentDetails(order)}

@@ -74,6 +74,7 @@ export interface Address extends AddressBase {
 export interface BankAccountBase {
   ownerName: string;
   iban: string;
+  id?: string;
   bic: string;
 }
 

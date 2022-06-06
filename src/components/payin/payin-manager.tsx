@@ -73,6 +73,7 @@ class PayInManager extends React.Component<PayInManagerProps> {
 
     this.createTransfer = this.createTransfer.bind(this);
     this.viewPayIn = this.viewPayIn.bind(this);
+    this.viewProcessInstance = this.viewProcessInstance.bind(this);
   }
 
   componentDidMount() {
@@ -89,6 +90,11 @@ class PayInManager extends React.Component<PayInManagerProps> {
 
   viewPayIn(key: string): void {
     const path = buildPath(DynamicRoutes.PayInView, [key]);
+    this.props.navigate(path);
+  }
+
+  viewProcessInstance(processInstance: string): void {
+    const path = buildPath(DynamicRoutes.ProcessInstanceView, null, { processInstance });
     this.props.navigate(path);
   }
 
@@ -202,20 +208,21 @@ class PayInManager extends React.Component<PayInManagerProps> {
 
           <Paper className={classes.paperTable}>
             <PayInTable
+              loading={loading}
+              pagination={pagination}
+              query={query}
+              result={items}
+              selected={selected}
+              sorting={sorting}
               addToSelection={addToSelection}
               createTransfer={this.createTransfer}
               find={this.props.find}
-              loading={loading}
-              pagination={pagination}
               removeFromSelection={removeFromSelection}
-              query={query}
               resetSelection={resetSelection}
-              selected={selected}
               setPager={setPager}
               setSorting={(sorting: Sorting<EnumPayInSortField>[]) => this.setSorting(sorting)}
-              result={items}
-              sorting={sorting}
               viewPayIn={this.viewPayIn}
+              viewProcessInstance={this.viewProcessInstance}
             />
           </Paper>
         </div >

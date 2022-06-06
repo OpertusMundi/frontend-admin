@@ -38,7 +38,6 @@ import { ApplicationConfiguration } from 'model/configuration';
 import { MarketplaceAccountDetails } from 'model/account-marketplace';
 import {
   ActiveProcessInstanceDetails,
-  BpmActivity,
   CompleteTaskTaskCommand,
   ModificationCommand,
   SetPublishErrorTaskCommand,

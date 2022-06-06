@@ -34,6 +34,7 @@ const styles = (theme: Theme) => createStyles({
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     width: 200,
+    paddingTop: 7,
   },
 });
 
@@ -94,7 +95,7 @@ class TransferFilters extends React.Component<TransferFiltersProps> {
     return (
       <form onSubmit={this.search} noValidate autoComplete="off">
         <Grid container spacing={3} justifyContent={'space-between'}>
-          <Grid item sm={3} xs={12}>
+          <Grid item sm={2} xs={12}>
             <TextField
               id="referenceNumber"
               label={_t({ id: 'billing.transfer.filter.reference-number' })}
@@ -106,7 +107,7 @@ class TransferFilters extends React.Component<TransferFiltersProps> {
             />
           </Grid>
 
-          <Grid item sm={3} xs={12}>
+          <Grid item sm={8} xs={12}>
             <Autocomplete
               style={{ marginTop: 16 }}
               multiple
@@ -126,7 +127,7 @@ class TransferFilters extends React.Component<TransferFiltersProps> {
             />
           </Grid>
 
-          <Grid container item sm={3} xs={12} justifyContent={'flex-end'}>
+          <Grid container item sm={2} xs={12} justifyContent={'flex-end'}>
             <Button
               type="submit"
               variant="contained"

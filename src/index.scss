@@ -57,3 +57,20 @@ code {
   text-align: center;
   line-height: 24px;
 }
+
+.bpmn-task-completed {
+  font-weight: 700;
+  background: #388E3C;
+  color: #ffffff;
+  border-radius: 50%;
+  height: 24px;
+  width: 24px;
+  text-align: center;
+  line-height: 24px;
+}
+
+.bpmn-icon {
+  position: absolute;
+  left: 5px;
+  top: 3px;
+}

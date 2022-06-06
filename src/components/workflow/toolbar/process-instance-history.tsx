@@ -10,7 +10,7 @@ import { Theme, withStyles } from '@material-ui/core/styles';
 
 import Typography from '@material-ui/core/Typography';
 
-//cons
+// Icons
 import Icon from '@mdi/react';
 import { mdiDatabaseCogOutline } from '@mdi/js';
 

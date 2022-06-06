@@ -350,7 +350,16 @@ export interface RowPrePaidQuotationParameters extends QuotationParameters {
   prePaidTier: number;
 }
 
-export interface SHSubscriptionQuotationParameters extends QuotationParameters {
+enum EnumRecurringPaymentFrequency {
+  MONTHLY = 'MONTHLY',
+  ANNUAL = 'ANNUAL',
+}
+
+export interface SubscriptionQuotationParameters extends QuotationParameters {
+  frequency: EnumRecurringPaymentFrequency;
+}
+
+export interface SHSubscriptionQuotationParameters extends SubscriptionQuotationParameters {
   type: EnumPricingModel.SENTINEL_HUB_SUBSCRIPTION;
 }
 

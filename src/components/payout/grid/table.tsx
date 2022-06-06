@@ -9,6 +9,7 @@ import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
 import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
@@ -128,6 +129,11 @@ const styles = (theme: Theme) => createStyles({
     minWidth: 100,
     justifyContent: 'center'
   },
+  provider: {
+    marginRight: theme.spacing(1),
+    display: 'flex',
+    flexDirection: 'column',
+  },
   statusLabelText: {
   },
   marginLeft: {
@@ -141,7 +147,9 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
-function payoutColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<PayOut, EnumPayOutSortField>[] {
+function payoutColumns(intl: IntlShape, props: PayOutTableProps): Column<PayOut, EnumPayOutSortField>[] {
+  const { classes } = props;
+
   return (
     [{
       header: intl.formatMessage({ id: 'billing.payout.header.actions' }),
@@ -150,13 +158,13 @@ function payoutColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Col
       cell: (
         rowIndex: number, column: Column<PayOut, EnumPayOutSortField>, row: PayOut, handleAction?: cellActionHandler<PayOut, EnumPayOutSortField>
       ): React.ReactNode => (
-        <div className={classes.classes.compositeLabelLeft}>
+        <div className={classes.compositeLabelLeft}>
           {row.processInstance &&
             <Tooltip title={intl.formatMessage({ id: 'billing.order.tooltip.view-process-instance' })}>
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.ViewProcessInstance, rowIndex, column, row) : null}
               >
-                <Icon path={mdiDatabaseCogOutline} className={classes.classes.rowIconAction} />
+                <Icon path={mdiDatabaseCogOutline} className={classes.rowIconAction} />
               </i>
             </Tooltip>
           }
@@ -171,14 +179,14 @@ function payoutColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Col
       cell: (
         rowIndex: number, column: Column<PayOut, EnumPayOutSortField>, row: PayOut, handleAction?: cellActionHandler<PayOut, EnumPayOutSortField>
       ): React.ReactNode => (
-        <div className={classes.classes.compositeLabelJustified}>
-          <Link to={buildPath(DynamicRoutes.PayOutView, [row.key])} className={classes.classes.link}>
+        <div className={classes.compositeLabelJustified}>
+          <Link to={buildPath(DynamicRoutes.PayOutView, [row.key])} className={classes.link}>
             {row.bankwireRef}
           </Link>
           <i
             onClick={() => handleAction ? handleAction(EnumAction.CopyReferenceNumber, rowIndex, column, row) : null}
           >
-            <Icon path={mdiContentCopy} className={classes.classes.rowIconAction} />
+            <Icon path={mdiContentCopy} className={classes.rowIconAction} />
           </i>
         </div>
       ),
@@ -192,17 +200,17 @@ function payoutColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Col
       ): React.ReactNode => {
 
         return (
-          <div className={classes.classes.labelPayOutContainer}>
+          <div className={classes.labelPayOutContainer}>
             {row?.status &&
               <div
-                className={classes.classes.labelPayOutStatus}
+                className={classes.labelPayOutStatus}
                 style={{ background: statusToBackGround(row.status) }}
               >
                 {intl.formatMessage({ id: `enum.transaction-status.${row.status}` })}
               </div>
             }
             {row?.status === EnumTransactionStatus.FAILED &&
-              <div className={classes.classes.labelPayOutMessage}>
+              <div className={classes.labelPayOutMessage}>
                 {`${row?.providerResultCode} - ${row?.providerResultMessage}`}
               </div>
             }
@@ -220,13 +228,18 @@ function payoutColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Col
         return (
           <>
             {row?.provider &&
-              <div className={classes.classes.compositeLabel}>
+              <div className={classes.compositeLabel}>
                 <div
-                  className={row?.provider?.kycLevel === EnumKycLevel.LIGHT ? classes.classes.statusLabelWarning : classes.classes.statusLabel}
+                  className={row?.provider?.kycLevel === EnumKycLevel.LIGHT ? classes.statusLabelWarning : classes.statusLabel}
                 >
-                  <div className={classes.classes.statusLabelText}>{row.provider?.kycLevel}</div>
+                  <div className={classes.statusLabelText}>{row.provider?.kycLevel}</div>
                 </div>
-                <div className={classes.classes.marginRight}>{getCustomerName(row)}</div>
+                <div className={classes.provider}>
+                  <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [row.provider!.key])} className={classes.link}>
+                    {getCustomerName(row)}
+                  </Link>
+                  <Typography variant="caption">{row.provider!.email}</Typography>
+                </div>
               </div>
             }
           </>
@@ -238,7 +251,7 @@ function payoutColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Col
       headerStyle: { textAlign: 'right' },
       sortable: true,
       sortColumn: EnumPayOutSortField.FUNDS,
-      className: classes.classes.alightRight,
+      className: classes.alightRight,
       cell: (
         rowIndex: number, column: Column<PayOut, EnumPayOutSortField>, row: PayOut, handleAction?: cellActionHandler<PayOut, EnumPayOutSortField>
       ): React.ReactNode => {
@@ -324,13 +337,13 @@ class AccountTable extends React.Component<PayOutTableProps> {
   }
 
   render() {
-    const { intl, classes, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
+    const { intl, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
 
     return (
       <>
         <MaterialTable<PayOut, EnumPayOutSortField>
           intl={intl}
-          columns={payoutColumns(intl, { classes })}
+          columns={payoutColumns(intl, this.props)}
           rows={result ? result.items : []}
           pagination={{
             rowsPerPageOptions: [10, 20, 50],

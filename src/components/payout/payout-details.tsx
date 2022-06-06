@@ -144,8 +144,12 @@ class PayOutDetails extends React.Component<PayOutDetailsProps> {
     }
   }
 
-  showMangopayPage(payout: PayOut) {
+  showMangopayPayoutPage(payout: PayOut) {
     window.open(`https://dashboard.sandbox.mangopay.com/PayOut/${payout.providerPayOut}`);
+  }
+
+  showMangopayBankAccountPage(user: string, bankAccount: string) {
+    window.open(`https://dashboard.sandbox.mangopay.com/User/${user}/BankAccounts/${bankAccount}`);
   }
 
   getCustomerName(customer: Customer): string {
@@ -175,7 +179,8 @@ class PayOutDetails extends React.Component<PayOutDetailsProps> {
   renderPayOutDetails(payout: PayOut): React.ReactNode {
     const { classes } = this.props;
     const { bankwireRef } = payout;
-    const bankAccount = payout.provider!.bankAccount;
+    const provider = payout.provider!;
+    const bankAccount = payout.bankAccount;
 
     return (
       <Grid container>
@@ -216,7 +221,7 @@ class PayOutDetails extends React.Component<PayOutDetailsProps> {
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Provider Transaction</Typography>
           <Typography gutterBottom>
-            <span className={classes.underline} onClick={() => this.showMangopayPage(payout)}>{payout.providerPayOut}</span>
+            <span className={classes.underline} onClick={() => this.showMangopayPayoutPage(payout)}>{payout.providerPayOut}</span>
           </Typography>
         </Grid>
         <Grid item xs={8}>
@@ -229,13 +234,21 @@ class PayOutDetails extends React.Component<PayOutDetailsProps> {
           <Typography variant="h6" gutterBottom className={classes.title}>
             <FormattedMessage id={'billing.payout.details.sections.bankwire.bank-account'} />
           </Typography>
+          <Typography className={classes.inline} variant="caption">Provider Bank Account</Typography>
+          <Typography gutterBottom>
+            <span
+              className={classes.underline}
+              onClick={() => this.showMangopayBankAccountPage(provider.paymentProviderUser, bankAccount.id!)}
+            >
+              {bankAccount.id}
+            </span>
+          </Typography>
           <Typography className={classes.inline} variant="caption">IBAN</Typography>
           <Typography gutterBottom>{bankAccount!.iban}</Typography>
           <Typography className={classes.inline} variant="caption">BIC</Typography>
           <Typography gutterBottom>{bankAccount!.bic}</Typography>
           <Typography className={classes.inline} variant="caption">Wire Reference</Typography>
           <Typography gutterBottom>{bankwireRef}</Typography>
-          <Typography className={classes.inline} variant="caption">Debited Funds</Typography>
         </Grid>
         <Grid item xs={6}>
           <Typography variant="h6" gutterBottom className={classes.title}>
@@ -245,6 +258,9 @@ class PayOutDetails extends React.Component<PayOutDetailsProps> {
           {this.renderAddress(bankAccount!.ownerAddress)}
         </Grid>
         <Grid item xs={12}>
+          <Typography variant="h6" gutterBottom className={classes.title}>
+            Debited Funds
+          </Typography>
           <Typography gutterBottom variant="h2">
             <FormattedNumber value={payout.debitedFunds} style={'currency'} currency={payout.currency} />
           </Typography>

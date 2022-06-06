@@ -8,7 +8,7 @@ import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
 // Model
-import { CallPrePaidQuotationParameters, EnumPricingModel } from 'model/pricing-model';
+import { CallPrePaidQuotationParameters, EnumPricingModel, SHSubscriptionQuotationParameters } from 'model/pricing-model';
 import { OrderItem } from 'model/order';
 
 const styles = (theme: Theme) => createStyles({
@@ -41,8 +41,6 @@ class PricingModelDetails extends React.Component<PricingModelDetailsProps> {
       case EnumPricingModel.FREE:
       case EnumPricingModel.PER_CALL_WITH_BLOCK_RATE:
       case EnumPricingModel.PER_ROW_WITH_BLOCK_RATE:
-      case EnumPricingModel.SENTINEL_HUB_IMAGES:
-      case EnumPricingModel.SENTINEL_HUB_SUBSCRIPTION:
         return (
           <FormattedMessage id={`enum.effective-pricing-model.${model.type}`} />
         );
@@ -97,6 +95,23 @@ class PricingModelDetails extends React.Component<PricingModelDetailsProps> {
           />
         );
       }
+
+      case EnumPricingModel.SENTINEL_HUB_IMAGES:
+        return (
+          <FormattedMessage id={`enum.effective-pricing-model.${model.type}`} />
+        );
+
+
+      case EnumPricingModel.SENTINEL_HUB_SUBSCRIPTION:
+        const typedUserParams = userParameters as SHSubscriptionQuotationParameters;
+        const frequency = typedUserParams.frequency;
+        return (
+          <FormattedMessage
+            id={`enum.effective-pricing-model.${model.type}`}
+            values={{ frequency: <FormattedMessage id={`enum.subscription.${frequency}`}></FormattedMessage> }}
+          />
+        );
+
     }
   }
 }

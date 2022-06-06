@@ -9,6 +9,7 @@ import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
 import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
@@ -47,7 +48,9 @@ const getCustomerName = (order: Order): string => {
   return '';
 }
 
-function orderColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<Order, EnumOrderSortField>[] {
+function orderColumns(intl: IntlShape, props: OrderTableProps): Column<Order, EnumOrderSortField>[] {
+  const { classes } = props;
+
   return (
     [{
       header: intl.formatMessage({ id: 'billing.order.header.actions' }),
@@ -56,12 +59,12 @@ function orderColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
       cell: (
         rowIndex: number, column: Column<Order, EnumOrderSortField>, row: Order, handleAction?: cellActionHandler<Order, EnumOrderSortField>
       ): React.ReactNode => (
-        <div className={classes.classes.compositeLabelLeft}>
+        <div className={classes.compositeLabelLeft}>
           <Tooltip title={intl.formatMessage({ id: 'billing.order.tooltip.send-message' })}>
             <i
               onClick={() => handleAction ? handleAction(EnumAction.SendMessage, rowIndex, column, row) : null}
             >
-              <Icon path={mdiMessageTextOutline} className={classes.classes.rowIconAction} style={{ marginTop: 2 }} />
+              <Icon path={mdiMessageTextOutline} className={classes.rowIconAction} style={{ marginTop: 2 }} />
             </i>
           </Tooltip>
           {row.payIn?.processInstance &&
@@ -69,7 +72,7 @@ function orderColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.ViewProcessInstance, rowIndex, column, row) : null}
               >
-                <Icon path={mdiDatabaseCogOutline} className={classes.classes.rowIconAction} />
+                <Icon path={mdiDatabaseCogOutline} className={classes.rowIconAction} />
               </i>
             </Tooltip>
           }
@@ -84,15 +87,15 @@ function orderColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
       cell: (
         rowIndex: number, column: Column<Order, EnumOrderSortField>, row: Order, handleAction?: cellActionHandler<Order, EnumOrderSortField>
       ): React.ReactNode => (
-        <div className={classes.classes.compositeLabelJustified}>
-          <Link to={buildPath(DynamicRoutes.OrderTimeline, [row.key])} className={classes.classes.link}>
+        <div className={classes.compositeLabelJustified}>
+          <Link to={buildPath(DynamicRoutes.OrderTimeline, [row.key])} className={classes.link}>
             {row.referenceNumber}
           </Link>
           {row.referenceNumber &&
             <i
               onClick={() => handleAction ? handleAction(EnumAction.CopyReferenceNumber, rowIndex, column, row) : null}
             >
-              <Icon path={mdiContentCopy} className={classes.classes.rowIconAction} />
+              <Icon path={mdiContentCopy} className={classes.rowIconAction} />
             </i>
           }
         </div>
@@ -108,10 +111,10 @@ function orderColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
       ): React.ReactNode => {
 
         return (
-          <div className={classes.classes.compositeLabelCenter}>
+          <div className={classes.compositeLabelCenter}>
             {row?.status &&
               <div
-                className={classes.classes.labelOrderStatus}
+                className={classes.labelOrderStatus}
                 style={{ background: statusToBackGround(row.status) }}
               >
                 {intl.formatMessage({ id: `enum.order-status.${row.status}` })}
@@ -131,13 +134,18 @@ function orderColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
         return (
           <>
             {row?.consumer &&
-              <div className={classes.classes.compositeLabel}>
+              <div className={classes.compositeLabel}>
                 <div
-                  className={row?.consumer?.kycLevel === EnumKycLevel.LIGHT ? classes.classes.statusLabelWarning : classes.classes.statusLabel}
+                  className={row?.consumer?.kycLevel === EnumKycLevel.LIGHT ? classes.statusLabelWarning : classes.statusLabel}
                 >
                   <div>{row.consumer?.kycLevel}</div>
                 </div>
-                <div className={classes.classes.marginRight}>{getCustomerName(row)}</div>
+                <div className={classes.consumer}>
+                  <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [row.consumer!.key])} className={classes.link}>
+                    {getCustomerName(row)}
+                  </Link>
+                  <Typography variant="caption">{row.consumer!.email}</Typography>
+                </div>
               </div>
             }
           </>
@@ -153,10 +161,10 @@ function orderColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
       ): React.ReactNode => {
 
         return (
-          <div className={classes.classes.compositeLabelCenter}>
+          <div className={classes.compositeLabelCenter}>
             {row?.paymentMethod &&
               <div
-                className={classes.classes.labelPaymentMethod}
+                className={classes.labelPaymentMethod}
               >
                 {intl.formatMessage({ id: `enum.payment-method.${row.paymentMethod}` })}
               </div>
@@ -174,10 +182,10 @@ function orderColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
       ): React.ReactNode => {
 
         return (
-          <div className={classes.classes.compositeLabelCenter}>
+          <div className={classes.compositeLabelCenter}>
             {row?.deliveryMethod &&
               <div
-                className={classes.classes.labelDeliveryMethod}
+                className={classes.labelDeliveryMethod}
               >
                 {intl.formatMessage({ id: `enum.delivery-method.${row.deliveryMethod}` })}
               </div>
@@ -239,6 +247,11 @@ const styles = (theme: Theme) => createStyles({
   compositeLabelLeft: {
     display: 'flex',
     alignItems: 'baseline',
+  },
+  consumer: {
+    marginRight: theme.spacing(1),
+    display: 'flex',
+    flexDirection: 'column',
   },
   statusLabel: {
     display: 'flex',
@@ -354,13 +367,13 @@ class OrderTable extends React.Component<OrderTableProps> {
   }
 
   render() {
-    const { intl, classes, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
+    const { intl, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
 
     return (
       <>
         <MaterialTable<Order, EnumOrderSortField>
           intl={intl}
-          columns={orderColumns(intl, { classes })}
+          columns={orderColumns(intl, this.props)}
           rows={result ? result.items : []}
           pagination={{
             rowsPerPageOptions: [10, 20, 50],

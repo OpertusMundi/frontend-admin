@@ -13,6 +13,7 @@ import IconButton from '@material-ui/core/IconButton';
 // Icons
 import Icon from '@mdi/react';
 import {
+  mdiCheck,
   mdiMagnifyExpand,
 } from '@mdi/js';
 
@@ -35,6 +36,12 @@ interface ProcessDiagramProps extends WithStyles<typeof styles> {
   config: ApplicationConfiguration;
   fitViewport?: boolean;
 }
+
+const pathToSvg = (path: String, size: string): String => (
+  `<svg viewBox="0 0 24 24" role="presentation" style="width: ${size}; height: {size};"><path d="${path}" style="fill: currentcolor;"></path></svg>`
+);
+
+const validTasks = ['userTask', 'serviceTask', 'intermediateMessageCatch'];
 
 class ProcessDiagram extends React.Component<ProcessDiagramProps> {
 
@@ -67,6 +74,27 @@ class ProcessDiagram extends React.Component<ProcessDiagramProps> {
         const overlays = this.viewer.get('overlays');
 
         const executions: string[] = [];
+
+        // Completed tasks
+        instance.activities.filter(a => a.startTime !== null && a.endTime !== null).forEach(a => {
+          const icon = pathToSvg(mdiCheck, '1rem');
+
+          if (!validTasks.includes(a.activityType)) {
+            return;
+          }
+
+          overlays.add(a.activityId, 'note', {
+            position: {
+              bottom: 12,
+              left: -12,
+            },
+            scale: true,
+            html: `<div class="bpmn-task-completed"><i class="bpmn-icon">${icon}</i></div>`,
+          });
+        });
+
+
+        // Running tasks
         instance.activities.filter(a => a.startTime !== null && a.endTime === null).forEach(a => {
           if (!executions.includes(a.executionId)) {
             executions.push(a.executionId);
@@ -117,7 +145,7 @@ class ProcessDiagram extends React.Component<ProcessDiagramProps> {
 
     const { classes } = this.props;
     return (
-      <div ref={this.containerRef} id={this.id} style={{ height: 'calc(100vh - 160px)', width: '100%', padding: 0, margin: 0, background: '#ffffff' }}>
+      <div ref={this.containerRef} id={this.id} style={{ height: 'calc(100vh - 220px)', width: '100%', padding: 0, margin: 0, background: '#ffffff' }}>
         <IconButton
           color="primary" aria-label="upload picture"
           component="span"

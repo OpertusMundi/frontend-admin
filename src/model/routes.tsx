@@ -15,6 +15,7 @@ import MessageInboxHelpdeskToolbar from 'components/message-inbox-helpdesk/toolb
 import MessageInboxUserToolbar from 'components/message-inbox-user/toolbar';
 import OrderToolbar from 'components/order/toolbar/order-toolbar';
 import PayInToolbar from 'components/payin/toolbar/payin-toolbar';
+import PayOutToolbar from 'components/payout/toolbar/payout-toolbar';
 import ProcessInstanceToolbar from 'components/workflow/toolbar/process-instance';
 import ProcessInstanceHistoryToolbar from 'components/workflow/toolbar/process-instance-history';
 /**
@@ -447,9 +448,9 @@ export const routes: RouteRegistry = {
     title: 'links.billing.order.timeline',
     defaultTitle: 'Order Timeline',
     links: defaultLinks,
-    toolbarComponent: (): React.ReactNode => {
+    toolbarComponent: (route: Route): React.ReactNode => {
       return (
-        <OrderToolbar />
+        <OrderToolbar route={route} />
       );
     }
   },
@@ -458,17 +459,22 @@ export const routes: RouteRegistry = {
     title: 'links.billing.payin.record',
     defaultTitle: 'PayIn',
     links: defaultLinks,
-    toolbarComponent: (): React.ReactNode => {
+    toolbarComponent: (route: Route): React.ReactNode => {
       return (
-        <PayInToolbar />
+        <PayInToolbar route={route} />
       );
-    }
+    },
   },
   [PayOutView]: {
     description: 'PayOut',
     title: 'links.billing.payout.record',
     defaultTitle: 'PayOut',
-    links: defaultLinks
+    links: defaultLinks,
+    toolbarComponent: (route: Route): React.ReactNode => {
+      return (
+        <PayOutToolbar route={route} />
+      );
+    },
   },
   [ProcessInstanceView]: {
     description: 'Process Instance',

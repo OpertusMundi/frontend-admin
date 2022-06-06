@@ -154,7 +154,7 @@ class CustomerDetails extends React.Component<CustomerDetailsProps> {
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="h6" gutterBottom className={classes.title}>
-            <FormattedMessage id={'billing.customer.sections.user'} />
+            <FormattedMessage id={'billing.customer.sections.customer'} />
           </Typography>
         </Grid>
         <Grid item xs={8}>
@@ -208,7 +208,7 @@ class CustomerDetails extends React.Component<CustomerDetailsProps> {
               {this.renderCustomerAddress()}
             </Grid>
             {customer.type === EnumMangopayUserType.PROFESSIONAL &&
-              <Grid xs={4}>
+              <Grid item xs={4}>
                 <Typography variant="h6" gutterBottom className={classes.title}>
                   <FormattedMessage id={'billing.customer.sections.representative'} />
                 </Typography>
