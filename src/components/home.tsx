@@ -114,8 +114,11 @@ const styles = (theme: Theme) => createStyles({
   outletContainerWrapper: {
     height: 'calc(100vh - 64px)',
   },
-  menuListWrapper: {
+  menuListScrollbar: {
     height: 'calc(100vh - 170px)',
+  },
+  menuListWrapper: {
+    overflowX: 'hidden',
   },
   container: {
     padding: theme.spacing(1),
@@ -547,9 +550,9 @@ class Home extends React.Component<HomeProps, HomeState> {
             }
           </Grid>
           <Divider light />
-          <PerfectScrollbar className={classes.menuListWrapper}>
+          <PerfectScrollbar className={classes.menuListScrollbar}>
             <List>
-              <div>
+              <div className={classes.menuListWrapper}>
                 <ListItem button
                   onClick={(e) => this.onNavigate(e, StaticRoutes.Dashboard)}>
                   <ListItemIcon>
