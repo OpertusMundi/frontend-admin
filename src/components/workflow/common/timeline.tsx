@@ -29,6 +29,7 @@ import {
   mdiAccountCogOutline,
   mdiEmailOutline,
   mdiClockOutline,
+  mdiArrowDecisionOutline,
 } from '@mdi/js';
 
 // Model
@@ -64,6 +65,25 @@ interface ProcessInstanceTimelineProps extends WithStyles<typeof styles> {
   historyProcessInstance?: HistoryProcessInstanceDetails;
 }
 
+const supportedTasks = [
+  'eventBasedGateway',
+  'intermediateMessageCatch',
+  'intermediateTimer',
+  'noneEndEvent',
+  'serviceTask',
+  'startEvent',
+  'userTask',
+];
+
+const intermediateElements = [
+  'eventBasedGateway',
+  'intermediateMessageCatch',
+  'intermediateTimer',
+  'serviceTask',
+  'userTask',
+];
+
+
 class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelineProps> {
 
   mapActivityToMessage(activity: BpmActivity, instance: ProcessInstanceDetails, incidents: Incident[]) {
@@ -85,6 +105,14 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
           <FormattedMessage id={'workflow.instance.activity.completed'} values={{
             timestamp: _t(activity.endTime.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }),
           }} />
+        );
+      case 'eventBasedGateway':
+        return (
+          <FormattedMessage
+            id={`workflow.instance.activity.${activity.activityType}`} values={{
+              timestamp: _t(activity.endTime.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }),
+            }}
+          />
         );
     }
 
@@ -169,6 +197,8 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
         return (<Icon path={mdiSourceCommitEndLocal} size="1.5rem" />);
       case 'intermediateMessageCatch':
         return (<Icon path={mdiEmailOutline} size="1.5rem" />);
+      case 'eventBasedGateway':
+        return (<Icon path={mdiArrowDecisionOutline} size="1.5rem" />);
       case 'intermediateTimer':
         return (<Icon path={mdiClockOutline} size="1.5rem" />);
     }
@@ -180,7 +210,7 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
     if (incident && ['userTask', 'serviceTask'].includes(activity.activityType)) {
       return incident.resolved ? '#757575' : '#f44336';
     }
-    if (activity.activityType === 'intermediateTimer') {
+    if (['eventBasedGateway', 'intermediateTimer'].includes(activity.activityType)) {
       return '#1565C0';
     }
     if (!activity.startTime || activity.canceled) {
@@ -228,7 +258,7 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
       instance.state === EnumBpmProcessInstanceState.INTERNALLY_TERMINATED;
 
     const activities = allActivities.filter((a) =>
-      ['startEvent', 'serviceTask', 'userTask', 'intermediateMessageCatch', 'noneEndEvent', 'intermediateTimer'].includes(a.activityType)
+      supportedTasks.includes(a.activityType)
     );
 
     const items = activities.map((a, index) => (
@@ -237,7 +267,7 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
           <Typography variant="body2" color="textSecondary">
             <FormattedTime value={a.startTime.toDate()} day='numeric' month='numeric' year='numeric' />
           </Typography>
-          {a.endTime && ['userTask', 'serviceTask', 'intermediateMessageCatch', 'intermediateTimer'].includes(a.activityType) &&
+          {a.endTime && intermediateElements.includes(a.activityType) &&
             <Typography variant="body2" color="textSecondary">
               <FormattedMessage
                 id={'workflow.instance.activity.duration'}

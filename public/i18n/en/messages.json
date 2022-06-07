@@ -808,6 +808,7 @@
           "running": "Waiting for time event",
           "error": "Failed to process time intermediate Event at {timestamp}"
         },
+        "eventBasedGateway": "Event based gateway completed at {timestamp}",
         "duration": "Duration {duration}"
       },
       "state": {
@@ -843,6 +844,15 @@
         "reported-on": "Created On",
         "task-name": "Task",
         "task-worker": "Worker"
+      },
+      "task": {
+        "actions": "Actions",
+        "process-definition-name": "Process",
+        "process-definition-version": "Version",
+        "task-name": "Task",
+        "process-definition-deployed-on": "Deployed On",
+        "business-key": "Business Key",
+        "started-on": "Started On"
       }
     },
     "last-update": "Last updated: ",
@@ -861,6 +871,10 @@
       "task-complete-failure": "Failed to complete task",
       "modify-process-instance-success": "Process instance has been successfully updated",
       "modify-process-instance-failure": "Failed to modify process instance"
+    },
+    "tasks": {
+      "task-helpdesk-set-error": "Set error by Helpdesk",
+      "task-review": "Review asset draft"
     },
     "tooltip": {
       "instance": {
