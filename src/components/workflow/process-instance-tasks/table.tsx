@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { injectIntl, IntlShape, FormattedTime } from 'react-intl';
+import { injectIntl, IntlShape, FormattedMessage, FormattedTime } from 'react-intl';
 
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
@@ -33,7 +33,7 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
 
   return (
     [{
-      header: intl.formatMessage({ id: 'workflow.header.instance.actions' }),
+      header: intl.formatMessage({ id: 'workflow.header.task.actions' }),
       id: 'actions',
       width: 80,
       cell: (
@@ -68,13 +68,13 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
         </div>
       ),
     }, {
-      header: intl.formatMessage({ id: 'workflow.header.instance.process-definition-name' }),
+      header: intl.formatMessage({ id: 'workflow.header.task.process-definition-name' }),
       id: 'processDefinitionName',
       width: 250,
       sortable: true,
       sortColumn: EnumProcessInstanceTaskSortField.PROCESS_DEFINITION,
     }, {
-      header: intl.formatMessage({ id: 'workflow.header.instance.process-definition-version' }),
+      header: intl.formatMessage({ id: 'workflow.header.task.process-definition-version' }),
       id: 'processDefinitionVersion',
       sortable: false,
       cell: (
@@ -86,7 +86,21 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
         <span>{row.processDefinitionVersionTag} / {row.processDefinitionVersion}</span>
       ),
     }, {
-      header: intl.formatMessage({ id: 'workflow.header.instance.process-definition-deployed-on' }),
+      header: intl.formatMessage({ id: 'workflow.header.task.task-name' }),
+      id: 'taskName',
+      width: 250,
+      sortable: true,
+      sortColumn: EnumProcessInstanceTaskSortField.TASK_NAME,
+      cell: (
+        rowIndex: number,
+        column: Column<ProcessInstanceTask, EnumProcessInstanceTaskSortField>,
+        row: ProcessInstanceTask,
+        handleAction?: cellActionHandler<ProcessInstanceTask, EnumProcessInstanceTaskSortField>
+      ): React.ReactNode => (
+        <FormattedMessage id={`workflow.tasks.${row.taskName}`} />
+      ),
+    }, {
+      header: intl.formatMessage({ id: 'workflow.header.task.process-definition-deployed-on' }),
       id: 'processDefinitionDeployedOn',
       sortable: false,
       cell: (
@@ -98,13 +112,7 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
         <FormattedTime value={row.processDefinitionDeployedOn.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
     }, {
-      header: intl.formatMessage({ id: 'workflow.header.instance.incident-count' }),
-      id: 'incidentCount',
-      accessor: 'incidentCount',
-      sortable: true,
-      sortColumn: EnumProcessInstanceTaskSortField.INCIDENT_COUNT,
-    }, {
-      header: intl.formatMessage({ id: 'workflow.header.instance.business-key' }),
+      header: intl.formatMessage({ id: 'workflow.header.task.business-key' }),
       id: 'businessKey',
       accessor: 'businessKey',
       sortable: true,
@@ -125,7 +133,7 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
         </div>
       ),
     }, {
-      header: intl.formatMessage({ id: 'workflow.header.instance.started-on' }),
+      header: intl.formatMessage({ id: 'workflow.header.task.started-on' }),
       id: 'startedOn',
       sortable: true,
       sortColumn: EnumProcessInstanceTaskSortField.STARTED_ON,

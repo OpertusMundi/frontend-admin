@@ -18,6 +18,7 @@ export enum EnumProcessInstanceTaskSortField {
   INCIDENT_COUNT = 'INCIDENT_COUNT',
   PROCESS_DEFINITION = 'PROCESS_DEFINITION',
   STARTED_ON = 'STARTED_ON',
+  TASK_NAME = 'TASK_NAME',
 }
 
 export enum EnumProcessInstanceHistorySortField {
