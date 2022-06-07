@@ -11,13 +11,18 @@ import { Theme, withStyles } from '@material-ui/core/styles';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Typography from '@material-ui/core/Typography';
 
+import Icon from '@mdi/react';
+import {
+  mdiDomain, mdiFaceAgent,
+} from '@mdi/js';
+
 // Store
 import { RootState } from 'store';
 import { setExternalProvider } from 'store/account-marketplace/thunks';
 
 // Model
 import { Route } from 'model/routes';
-import { ExternalProviderCommand } from 'model/account-marketplace';
+import { EnumAccountType, ExternalProviderCommand } from 'model/account-marketplace';
 
 const styles = (theme: Theme) => createStyles({
   breadcrumb: {
@@ -35,6 +40,9 @@ const styles = (theme: Theme) => createStyles({
     flexGrow: 1,
     display: 'flex',
     justifyContent: 'flex-end',
+  },
+  icon: {
+    marginRight: theme.spacing(1),
   },
 });
 
@@ -64,6 +72,7 @@ export class Toolbar extends React.Component<ToolbarProps> {
         </div>
         {account &&
           <div key={'user'} style={{ display: 'flex', alignItems: 'center' }}>
+            <Icon path={account.type === EnumAccountType.VENDOR ? mdiDomain : mdiFaceAgent} size="1.5rem" className={classes.icon} />
             <Typography component="h6" variant="h6" color="inherit" noWrap>
               {account.email}
             </Typography>

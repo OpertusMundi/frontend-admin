@@ -29,7 +29,7 @@ import { find } from 'store/account-marketplace/thunks';
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
-import { EnumMarketplaceAccountSortField, MarketplaceAccount } from 'model/account-marketplace';
+import { EnumMarketplaceAccountSortField, MarketplaceAccount, MarketplaceAccountSummary } from 'model/account-marketplace';
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
@@ -136,7 +136,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
     this.find();
   }
 
-  refreshKycStatus(row: MarketplaceAccount): void {
+  refreshKycStatus(row: MarketplaceAccountSummary): void {
     this.api.refreshKycStatus(row.key)
       .then((response) => {
         if (response.data!.success) {

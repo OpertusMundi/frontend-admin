@@ -106,6 +106,7 @@
         "firstName": "First name",
         "lastName": "Last name",
         "open-dataset-provider": "Enable publishing of Open Datasets",
+        "parent": "Organization",
         "provider": {
           "name": "Name",
           "vat": "VAT"

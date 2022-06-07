@@ -6,19 +6,19 @@ import {
   EnumMarketplaceAccountSortField,
   MarketplaceAccountQuery,
   MarketplaceAccount,
-  MarketplaceAccountDetails,
+  MarketplaceAccountSummary,
 } from 'model/account-marketplace';
 
 // State
 export interface MarketplaceAccountManagerState {
-  account: MarketplaceAccountDetails | null;
+  account: MarketplaceAccount | null;
   lastUpdated: Moment | null;
   loading: boolean;
   pagination: PageRequest;
   query: MarketplaceAccountQuery;
   response: ObjectResponse<MarketplaceAccount> | null;
-  result: PageResult<MarketplaceAccount> | null;
-  selected: MarketplaceAccount[];
+  result: PageResult<MarketplaceAccountSummary> | null;
+  selected: MarketplaceAccountSummary[];
   sorting: Sorting<EnumMarketplaceAccountSortField>[];
 }
 
@@ -80,17 +80,17 @@ export interface SearchFailureAction {
 
 export interface SearchCompleteAction {
   type: typeof SEARCH_COMPLETE;
-  result: PageResult<MarketplaceAccount>;
+  result: PageResult<MarketplaceAccountSummary>;
 }
 
 export interface SetSelectedAction {
   type: typeof ADD_SELECTED;
-  selected: MarketplaceAccount[];
+  selected: MarketplaceAccountSummary[];
 }
 
 export interface RemoveFromSelectionAction {
   type: typeof REMOVE_SELECTED;
-  removed: MarketplaceAccount[];
+  removed: MarketplaceAccountSummary[];
 }
 
 export interface ResetSelectionAction {
@@ -104,7 +104,7 @@ export interface LoadAccountInitAction {
 
 export interface LoadAccountCompleteAction {
   type: typeof LOAD_ACCOUNT_SUCCESS,
-  account: MarketplaceAccountDetails;
+  account: MarketplaceAccount;
 }
 
 export interface LoadAccountFailureAction {
@@ -117,7 +117,7 @@ export interface setExternalProviderInitAction {
 
 export interface setExternalProviderCompleteAction {
   type: typeof SET_EXTERNAL_PROVIDER_COMPLETE;
-  response: ObjectResponse<MarketplaceAccountDetails>;
+  response: ObjectResponse<MarketplaceAccount>;
 }
 
 export type AccountActions =

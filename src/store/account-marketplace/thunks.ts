@@ -25,7 +25,7 @@ import {
   EnumMarketplaceAccountSortField,
   ExternalProviderCommand,
   MarketplaceAccount,
-  MarketplaceAccountDetails,
+  MarketplaceAccountSummary,
 } from 'model/account-marketplace';
 
 // Helper thunk result type
@@ -33,7 +33,7 @@ type ThunkResult<R> = ThunkAction<Promise<R>, RootState, unknown, AccountActions
 
 export const find = (
   pageRequest?: PageRequest, sorting?: Sorting<EnumMarketplaceAccountSortField>[]
-): ThunkResult<PageResult<MarketplaceAccount> | null> => async (dispatch, getState) => {
+): ThunkResult<PageResult<MarketplaceAccountSummary> | null> => async (dispatch, getState) => {
   // Get query form state (filters are always set synchronously)
   const query = getState().account.marketplace.query;
 
@@ -71,7 +71,7 @@ export const find = (
   return null;
 }
 
-export const findOne = (key: string): ThunkResult<ObjectResponse<MarketplaceAccountDetails>> => async (dispatch, getState) => {
+export const findOne = (key: string): ThunkResult<ObjectResponse<MarketplaceAccount>> => async (dispatch, getState) => {
   dispatch(loadAccountInit(key));
 
   // Get response
@@ -90,7 +90,7 @@ export const findOne = (key: string): ThunkResult<ObjectResponse<MarketplaceAcco
 
 export const setExternalProvider = (
   key: string, command: ExternalProviderCommand
-): ThunkResult<ObjectResponse<MarketplaceAccountDetails>> => async (dispatch, getState) => {
+): ThunkResult<ObjectResponse<MarketplaceAccount>> => async (dispatch, getState) => {
   dispatch(setExternalProviderInit());
 
   // Get response

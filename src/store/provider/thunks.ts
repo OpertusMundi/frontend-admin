@@ -10,14 +10,14 @@ import MarketplaceAccountApi from 'service/account-marketplace';
 
 // Model
 import { PageRequest, Sorting, PageResult } from 'model/response';
-import { EnumMarketplaceAccountSortField, MarketplaceAccount, MarketplaceAccountDetails } from 'model/account-marketplace';
+import { EnumMarketplaceAccountSortField, MarketplaceAccount, MarketplaceAccountSummary } from 'model/account-marketplace';
 
 // Helper thunk result type
 type ThunkResult<R> = ThunkAction<Promise<R>, RootState, unknown, AccountActions>;
 
 export const find = (
   pageRequest?: PageRequest, sorting?: Sorting<EnumMarketplaceAccountSortField>[]
-): ThunkResult<PageResult<MarketplaceAccount> | null> => async (dispatch, getState) => {
+): ThunkResult<PageResult<MarketplaceAccountSummary> | null> => async (dispatch, getState) => {
   // Get query form state (filters are always set synchronously)
   const query = getState().account.provider.query;
 
@@ -55,7 +55,7 @@ export const find = (
   return null;
 }
 
-export const findOne = (key: string): ThunkResult<MarketplaceAccountDetails | null> => async (dispatch, getState) => {
+export const findOne = (key: string): ThunkResult<MarketplaceAccount | null> => async (dispatch, getState) => {
   dispatch(loadAccountInit(key));
 
   // Get response

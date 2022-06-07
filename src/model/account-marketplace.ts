@@ -327,62 +327,34 @@ export interface Profile extends ProfileBase {
 }
 
 /**
- * Marketplace account details
+ * Marketplace account summary
  */
-export interface MarketplaceAccountDetails {
-  /**
-   * Date of account activation. Activation occurs when the user verifies his email address.
-   * The date is in ISO format.
-   */
-  activatedAt: string;
-  /**
-   * Activation status
-   */
+export interface MarketplaceAccountSummary {
   activationStatus: EnumActivationStatus;
-  /**
-   * User email. Must be unique
-   */
+  activatedAt: string;
+  consumer: boolean
+  consumerFunds: number;
+  consumerKycLevel: EnumKycLevel;
+  consumerName: string;
+  consumerUpdatePending: boolean;
   email: string;
-  /**
-   * True if the email address is verified
-   */
   emailVerified: boolean;
-  /**
-   * Date of email verification
-   */
-  emailVerifiedAt: string;
-  /**
-   * IDP name used for account registration. A value from enum  {@link EnumAuthProvider}
-   */
-  idpName: EnumAuthProvider;
-  /**
-   * User name as retrieved by the IDP user info endpoint
-   */
-  idpUserName: string;
-  /**
-   * User image URL as retrieved by the IDP user info endpoint
-   */
-  idpUserImage: string;
-  /**
-   * User unique key
-   */
+  image: string;
+  imageMimeType: string;
   key: string;
-  /**
-   * User profile
-   */
+  locale: string;
+  pendingPayoutFunds: number;
+  pendingPayoutFundsUpdatedOn: Moment | null;
   profile: Profile;
-  /**
-   * Date of registration in ISO format
-   */
-  registeredAt: Moment;
-  /**
-   * User roles. Every authenticated user has at least role ROLE_USER
-   */
+  provider: boolean;
+  providerFunds: number;
+  providerKycLevel: EnumKycLevel;
+  providerName: string;
+  providerUpdatePending: boolean;
+  registeredOn: Moment;
   roles: EnumRole[];
-  /**
-   * User name (always equal to user email)
-   */
-  username: string;
+  type: EnumAccountType;
+  userName: string;
 }
 
 export enum EnumMarketplaceAccountSortField {
@@ -402,30 +374,24 @@ export enum EnumAccountType {
 }
 
 export interface MarketplaceAccount {
-  accountStatus: EnumActivationStatus;
   activatedAt: Moment;
-  consumer: boolean
-  consumerFunds: number;
-  consumerKycLevel: EnumKycLevel;
-  consumerName: string;
-  consumerUpdatePending: boolean;
+  activationStatus: EnumActivationStatus;
+  active: boolean;
   email: string;
   emailVerified: boolean;
-  image: string;
-  imageMimeType: string;
+  emailVerifiedAt: string;
+  idpName: EnumAuthProvider;
+  idpUserImage: string;
+  idpUserName: string;
   key: string;
-  locale: string;
-  pendingPayoutFunds: number;
-  pendingPayoutFundsUpdatedOn: Moment | null;
-  provider: boolean;
-  providerFunds: number;
-  providerKycLevel: EnumKycLevel;
-  providerName: string;
-  providerUpdatePending: boolean;
-  registeredOn: Moment;
+  parent?: MarketplaceAccount;
+  processDefinition: string;
+  processInstance: string;
+  profile: Profile;
+  registeredAt: Moment;
   roles: EnumRole[];
   type: EnumAccountType;
-  userName: string;
+  username: string;
 }
 
 export enum EnumAssetPurchaseSource {

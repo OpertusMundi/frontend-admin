@@ -35,7 +35,7 @@ import {
 
 // Model
 import { ApplicationConfiguration } from 'model/configuration';
-import { MarketplaceAccountDetails } from 'model/account-marketplace';
+import { MarketplaceAccount } from 'model/account-marketplace';
 import {
   ActiveProcessInstanceDetails,
   CompleteTaskTaskCommand,
@@ -121,7 +121,7 @@ class ReviewErrorTask extends React.Component<ReviewErrorTaskProps, ReviewErrorT
     };
   }
 
-  getAccountAvatar(account: MarketplaceAccountDetails | null): React.ReactElement {
+  getAccountAvatar(account: MarketplaceAccount | null): React.ReactElement {
     const { classes } = this.props;
 
     if (account) {
@@ -367,7 +367,7 @@ class ReviewErrorTask extends React.Component<ReviewErrorTaskProps, ReviewErrorT
           }
         </Card>
         {this.renderDeleteDialog()}
-        {cancelled.length === 1 &&
+        {!completed && cancelled.length === 1 &&
           <Card className={classes.card}>
             <CardHeader
               avatar={

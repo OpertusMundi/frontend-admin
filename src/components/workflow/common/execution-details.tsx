@@ -30,7 +30,7 @@ import {
 
 // Model
 import { ApplicationConfiguration } from 'model/configuration';
-import { MarketplaceAccountDetails } from 'model/account-marketplace';
+import { MarketplaceAccount } from 'model/account-marketplace';
 import { ActiveProcessInstanceDetails } from 'model/bpm-process-instance';
 
 const styles = (theme: Theme) => createStyles({
@@ -59,7 +59,7 @@ interface ExecutionDetailsProps extends WithStyles<typeof styles> {
 
 class ExecutionDetails extends React.Component<ExecutionDetailsProps> {
 
-  getAccountAvatar(account: MarketplaceAccountDetails | null): React.ReactElement {
+  getAccountAvatar(account: MarketplaceAccount | null): React.ReactElement {
     const { classes } = this.props;
 
     if (account) {

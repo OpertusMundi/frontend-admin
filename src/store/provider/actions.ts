@@ -3,7 +3,7 @@ import {
   EnumMarketplaceAccountSortField,
   MarketplaceAccount,
   MarketplaceAccountQuery,
-  MarketplaceAccountDetails,
+  MarketplaceAccountSummary,
 } from 'model/account-marketplace';
 
 import {
@@ -72,21 +72,21 @@ export function searchFailure(): AccountActions {
   };
 }
 
-export function searchComplete(result: PageResult<MarketplaceAccount>): AccountActions {
+export function searchComplete(result: PageResult<MarketplaceAccountSummary>): AccountActions {
   return {
     type: SEARCH_COMPLETE,
     result,
   };
 }
 
-export function addToSelection(selected: MarketplaceAccount[]): AccountActions {
+export function addToSelection(selected: MarketplaceAccountSummary[]): AccountActions {
   return {
     type: ADD_SELECTED,
     selected,
   };
 }
 
-export function removeFromSelection(removed: MarketplaceAccount[]): AccountActions {
+export function removeFromSelection(removed: MarketplaceAccountSummary[]): AccountActions {
   return {
     type: REMOVE_SELECTED,
     removed,
@@ -112,7 +112,7 @@ export function loadAccountFailure(): AccountActions {
   };
 }
 
-export function loadAccountSuccess(account: MarketplaceAccountDetails): AccountActions {
+export function loadAccountSuccess(account: MarketplaceAccount): AccountActions {
   return {
     type: LOAD_ACCOUNT_SUCCESS,
     account,

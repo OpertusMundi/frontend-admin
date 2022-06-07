@@ -7,6 +7,8 @@ import { connect, ConnectedProps } from 'react-redux';
 import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
 import { useNavigate, useLocation, useParams, NavigateFunction, Location } from 'react-router-dom';
 
+import { Link } from 'react-router-dom';
+
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
@@ -35,6 +37,7 @@ import {
   mdiCheckDecagramOutline,
   mdiCommentAlertOutline,
   mdiCreativeCommons,
+  mdiDomain,
   mdiFaceAgent,
   mdiListStatus,
   mdiTransitConnectionVariant,
@@ -53,13 +56,13 @@ import { findOne } from 'store/account-marketplace/thunks';
 import message from 'service/message';
 import AccountApi from 'service/account-marketplace';
 import { ObjectResponse, SimpleResponse } from 'model/response';
-import { CustomerType, EnumActivationStatus, EnumCustomerType, EnumMangopayUserType, MarketplaceAccountDetails } from 'model/account-marketplace';
+import { CustomerType, EnumAccountType, EnumActivationStatus, EnumCustomerType, EnumMangopayUserType, MarketplaceAccount } from 'model/account-marketplace';
 
 // Utilities
 import { FieldMapperFunc, localizeErrorCodes } from 'utils/error';
 
 // Model
-import { StaticRoutes } from 'model/routes';
+import { buildPath, DynamicRoutes, StaticRoutes } from 'model/routes';
 import { EnumDataProvider } from 'model/configuration';
 import { Message } from 'model/message';
 import { EnumMarketplaceRole } from 'model/role';
@@ -299,11 +302,24 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
   }
 
   componentDidMount() {
+    this.getAccountData();
+  }
+
+  componentDidUpdate(prevProps: MarketplaceAccountFormProps) {
+    const { key: prevKey } = prevProps.params;
+    const { key: newKey } = this.props.params;
+
+    if (prevKey !== newKey) {
+      this.getAccountData();
+    }
+  }
+
+  getAccountData(): void {
     const { config } = this.props;
 
     if (this.key) {
       this.props.findOne(this.key)
-        .then((response: ObjectResponse<MarketplaceAccountDetails>) => {
+        .then((response: ObjectResponse<MarketplaceAccount>) => {
           if (response.success) {
             const account = response.result!;
             const providers = config.externalProviders!.filter(p => account?.roles.some(r => r === p.requiredRole));
@@ -529,6 +545,8 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
 
     const provider = account.profile.provider.current;
     const consumer = account.profile.consumer.current;
+    const parent = account.parent;
+    const organization = parent?.profile?.provider?.current;
 
     return (
       <>
@@ -539,7 +557,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
                 <CardHeader
                   avatar={
                     <Avatar className={classes.avatar}>
-                      <Icon path={mdiAccount} size="1.5rem" />
+                      <Icon path={account.type === EnumAccountType.VENDOR ? mdiDomain : mdiAccount} size="1.5rem" />
                     </Avatar>
                   }
                   title={_t({ id: 'account-marketplace.form.section.user' })}
@@ -579,6 +597,18 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
                       </Grid>
                     </Grid>
                   </Grid>
+                  {organization &&
+                    <Grid container spacing={2}>
+                      <Grid item xs={12}>
+                        <Typography variant="caption">
+                          <FormattedMessage id={'account-marketplace.form.field.parent'} />
+                        </Typography>
+                        <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [organization.key])} className={classes.link}>
+                          <Typography gutterBottom>{this.getCustomerName(organization)}</Typography>
+                        </Link>
+                      </Grid>
+                    </Grid>
+                  }
                 </CardContent>
               </Card>
             </Grid>

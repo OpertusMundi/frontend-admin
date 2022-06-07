@@ -51,7 +51,7 @@ import { RootState } from 'store';
 import { findOne } from 'store/process-instance-history/thunks'
 
 // Model
-import { MarketplaceAccountDetails } from 'model/account-marketplace';
+import { MarketplaceAccount } from 'model/account-marketplace';
 
 const styles = (theme: Theme) => createStyles({
   item: {
@@ -117,7 +117,7 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
     }
   }
 
-  getAccountAvatar(account: MarketplaceAccountDetails | null): React.ReactElement {
+  getAccountAvatar(account: MarketplaceAccount | null): React.ReactElement {
     const { classes } = this.props;
 
     if (account) {

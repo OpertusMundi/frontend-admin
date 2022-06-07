@@ -17,7 +17,7 @@ import { mdiCommentAlertOutline } from '@mdi/js';
 
 // Model
 import { PageRequest, PageResult, Sorting } from 'model/response';
-import { EnumMarketplaceAccountSortField, MarketplaceAccount, MarketplaceAccountQuery } from 'model/account-marketplace';
+import { EnumMarketplaceAccountSortField, MarketplaceAccountQuery, MarketplaceAccountSummary } from 'model/account-marketplace';
 
 // Services
 import message from 'service/message';
@@ -42,7 +42,7 @@ interface ProviderFiltersProps extends WithStyles<typeof styles> {
   resetFilter: () => void,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumMarketplaceAccountSortField>[]
-  ) => Promise<PageResult<MarketplaceAccount> | null>,
+  ) => Promise<PageResult<MarketplaceAccountSummary> | null>,
   disabled: boolean,
 }
 

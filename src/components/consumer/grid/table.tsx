@@ -23,7 +23,7 @@ import {
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
 import { buildPath, DynamicRoutes } from 'model/routes';
-import { EnumMarketplaceAccountSortField, EnumKycLevel, MarketplaceAccount, MarketplaceAccountQuery } from 'model/account-marketplace';
+import { EnumMarketplaceAccountSortField, EnumKycLevel, MarketplaceAccountSummary, MarketplaceAccountQuery } from 'model/account-marketplace';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 // Utilities
@@ -36,14 +36,14 @@ enum EnumAction {
   ViewOrders = 'view-orders',
 };
 
-function consumerColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<MarketplaceAccount, EnumMarketplaceAccountSortField>[] {
+function consumerColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>[] {
   return (
     [{
       header: intl.formatMessage({ id: 'account.marketplace.header.actions' }),
       id: 'actions',
       width: 80,
       cell: (
-        rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
+        rowIndex: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary, handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.send-message' })}>
@@ -81,7 +81,7 @@ function consumerColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
       id: 'avatar',
       width: 60,
       cell: (
-        rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
+        rowIndex: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary, handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => {
         if (row?.image && row?.imageMimeType) {
           const url = `data:${row.imageMimeType};base64,${row.image}`;
@@ -98,7 +98,7 @@ function consumerColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
       sortable: true,
       sortColumn: EnumMarketplaceAccountSortField.EMAIL,
       cell: (
-        rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
+        rowIndex: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary, handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => (
         <div className={classes.classes.compositeLabel}>
           <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [row.key + ''])} className={classes.classes.link}>
@@ -114,7 +114,7 @@ function consumerColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
       id: 'consumer',
       sortable: false,
       cell: (
-        rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
+        rowIndex: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary, handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => {
         return (
           <div className={classes.classes.compositeLabel}>
@@ -146,9 +146,9 @@ function consumerColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
       sortable: false,
       cell: (
         rowIndex: number,
-        column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>,
-        row: MarketplaceAccount,
-        handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
+        column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>,
+        row: MarketplaceAccountSummary,
+        handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => (
         <FormattedTime value={row?.registeredOn?.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
@@ -159,7 +159,7 @@ function consumerColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
       sortable: false,
       className: classes.classes.alightRight,
       cell: (
-        rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
+        rowIndex: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary, handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => {
         return (
           <b>
@@ -224,15 +224,15 @@ interface ConsumerTableProps extends WithStyles<typeof styles> {
   intl: IntlShape,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumMarketplaceAccountSortField>[]
-  ) => Promise<PageResult<MarketplaceAccount> | null>,
+  ) => Promise<PageResult<MarketplaceAccountSummary> | null>,
   query: MarketplaceAccountQuery,
-  result: PageResult<MarketplaceAccount> | null,
+  result: PageResult<MarketplaceAccountSummary> | null,
   pagination: PageRequest,
-  selected: MarketplaceAccount[],
+  selected: MarketplaceAccountSummary[],
   setPager: (page: number, size: number) => void,
   setSorting: (sorting: Sorting<EnumMarketplaceAccountSortField>[]) => void,
-  addToSelection: (rows: MarketplaceAccount[]) => void,
-  removeFromSelection: (rows: MarketplaceAccount[]) => void,
+  addToSelection: (rows: MarketplaceAccountSummary[]) => void,
+  removeFromSelection: (rows: MarketplaceAccountSummary[]) => void,
   resetSelection: () => void;
   sorting: Sorting<EnumMarketplaceAccountSortField>[];
   loading?: boolean;
@@ -247,7 +247,7 @@ class ConsumerTable extends React.Component<ConsumerTableProps> {
   }
 
   handleAction(
-    action: string, index: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount
+    action: string, index: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary
   ): void {
     if (row.key) {
       switch (action) {
@@ -262,7 +262,7 @@ class ConsumerTable extends React.Component<ConsumerTableProps> {
     const { intl, classes, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
 
     return (
-      <MaterialTable<MarketplaceAccount, EnumMarketplaceAccountSortField>
+      <MaterialTable<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
         intl={intl}
         columns={consumerColumns(intl, { classes })}
         rows={result ? result.items : []}

@@ -45,7 +45,7 @@ import { findOne } from 'store/process-instance-task/thunks'
 import { ErrorPages } from 'model/routes';
 import { SimpleResponse } from 'model/response';
 import { CompleteTaskTaskCommand, ModificationCommand, PUBLISH_SET_ERROR_TASK } from 'model/bpm-process-instance';
-import { MarketplaceAccountDetails } from 'model/account-marketplace';
+import { MarketplaceAccount } from 'model/account-marketplace';
 
 // Service
 import message from 'service/message';
@@ -187,7 +187,7 @@ class ProcessInstanceTask extends React.Component<ProcessInstanceTaskProps, Proc
       });
   }
 
-  getAccountAvatar(account: MarketplaceAccountDetails | null): React.ReactElement {
+  getAccountAvatar(account: MarketplaceAccount | null): React.ReactElement {
     const { classes } = this.props;
 
     if (account) {

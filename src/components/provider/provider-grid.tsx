@@ -41,7 +41,7 @@ import { PageRequest, Sorting } from 'model/response';
 import {
   EnumMarketplaceAccountSortField,
   CustomerProfessional,
-  MarketplaceAccountDetails
+  MarketplaceAccount,
 } from 'model/account-marketplace';
 
 // Components
@@ -125,7 +125,7 @@ const mapErrorCodeToText = (intl: IntlShape, message: Message, fieldMapper?: Fie
 
 interface ProviderManagerState {
   payOut: boolean;
-  account: MarketplaceAccountDetails | null;
+  account: MarketplaceAccount | null;
   processing: boolean;
 }
 
@@ -166,7 +166,7 @@ class ProviderManager extends React.Component<ProviderManagerProps, ProviderMana
       });
   }
 
-  showPayOutDialog(account: MarketplaceAccountDetails): void {
+  showPayOutDialog(account: MarketplaceAccount): void {
     this.setState({
       payOut: true,
       account,
@@ -304,7 +304,7 @@ class ProviderManager extends React.Component<ProviderManagerProps, ProviderMana
     );
   }
 
-  renderAddress(account: MarketplaceAccountDetails): React.ReactNode | null {
+  renderAddress(account: MarketplaceAccount): React.ReactNode | null {
     const provider = account.profile.provider.current! as CustomerProfessional;
     const address = provider.headquartersAddress;
 
@@ -319,7 +319,7 @@ class ProviderManager extends React.Component<ProviderManagerProps, ProviderMana
     );
   }
 
-  renderBankAccount(account: MarketplaceAccountDetails): React.ReactNode | null {
+  renderBankAccount(account: MarketplaceAccount): React.ReactNode | null {
     const provider = account.profile.provider.current! as CustomerProfessional;
     const bankAccount = provider.bankAccount;
 

@@ -25,7 +25,7 @@ import {
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
 import { buildPath, DynamicRoutes } from 'model/routes';
-import { EnumMarketplaceAccountSortField, EnumKycLevel, MarketplaceAccount, MarketplaceAccountQuery, EnumAccountType } from 'model/account-marketplace';
+import { EnumMarketplaceAccountSortField, EnumKycLevel, MarketplaceAccountSummary, MarketplaceAccountQuery, EnumAccountType } from 'model/account-marketplace';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 // Utilities
@@ -41,7 +41,7 @@ enum EnumAction {
   VendorDetails = 'vendor-details',
 };
 
-function accountColumns(props: AccountTableProps): Column<MarketplaceAccount, EnumMarketplaceAccountSortField>[] {
+function accountColumns(props: AccountTableProps): Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>[] {
   const { intl, classes, config } = props;
 
   return (
@@ -50,7 +50,7 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccount, En
       id: 'actions',
       width: 80,
       cell: (
-        rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
+        rowIndex: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary, handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => (
         <>
           {row.type === EnumAccountType.VENDOR &&
@@ -112,7 +112,7 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccount, En
       id: 'avatar',
       width: 60,
       cell: (
-        rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
+        rowIndex: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary, handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => {
         if (row?.image && row?.imageMimeType) {
           const url = `data:${row.imageMimeType};base64,${row.image}`;
@@ -129,7 +129,7 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccount, En
       sortable: true,
       sortColumn: EnumMarketplaceAccountSortField.EMAIL,
       cell: (
-        rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
+        rowIndex: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary, handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => (
         <div className={classes.compositeLabel}>
           <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [row.key + ''])} className={classes.link}>
@@ -145,7 +145,7 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccount, En
       id: 'consumer',
       sortable: false,
       cell: (
-        rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
+        rowIndex: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary, handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => {
         return (
           <div className={classes.compositeLabel}>
@@ -176,7 +176,7 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccount, En
       id: 'provider',
       sortable: false,
       cell: (
-        rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
+        rowIndex: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary, handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => {
         return (
           <div className={classes.compositeLabel}>
@@ -207,7 +207,7 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccount, En
       id: 'external-provider',
       sortable: false,
       cell: (
-        rowIndex: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount, handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
+        rowIndex: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary, handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => {
         const providers = config.externalProviders!.filter(p => row.roles.some(r => r === p.requiredRole));
         if (providers.length !== 1) {
@@ -227,9 +227,9 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccount, En
       sortable: false,
       cell: (
         rowIndex: number,
-        column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>,
-        row: MarketplaceAccount,
-        handleAction?: cellActionHandler<MarketplaceAccount, EnumMarketplaceAccountSortField>
+        column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>,
+        row: MarketplaceAccountSummary,
+        handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => (
         <FormattedTime value={row?.registeredOn?.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
@@ -308,15 +308,15 @@ interface AccountTableProps extends WithStyles<typeof styles> {
   loading?: boolean;
   pagination: PageRequest,
   query: MarketplaceAccountQuery,
-  result: PageResult<MarketplaceAccount> | null,
-  selected: MarketplaceAccount[],
+  result: PageResult<MarketplaceAccountSummary> | null,
+  selected: MarketplaceAccountSummary[],
   sorting: Sorting<EnumMarketplaceAccountSortField>[];
-  addToSelection: (rows: MarketplaceAccount[]) => void,
+  addToSelection: (rows: MarketplaceAccountSummary[]) => void,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumMarketplaceAccountSortField>[]
-  ) => Promise<PageResult<MarketplaceAccount> | null>,
-  refreshKycStatus: (row: MarketplaceAccount) => void,
-  removeFromSelection: (rows: MarketplaceAccount[]) => void,
+  ) => Promise<PageResult<MarketplaceAccountSummary> | null>,
+  refreshKycStatus: (row: MarketplaceAccountSummary) => void,
+  removeFromSelection: (rows: MarketplaceAccountSummary[]) => void,
   resetSelection: () => void;
   setPager: (page: number, size: number) => void,
   setSorting: (sorting: Sorting<EnumMarketplaceAccountSortField>[]) => void,
@@ -331,7 +331,7 @@ class AccountTable extends React.Component<AccountTableProps> {
     this.handleAction = this.handleAction.bind(this);
   }
 
-  handleAction(action: string, index: number, column: Column<MarketplaceAccount, EnumMarketplaceAccountSortField>, row: MarketplaceAccount): void {
+  handleAction(action: string, index: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary): void {
     if (row.key) {
       switch (action) {
         case EnumAction.KycRefresh:
@@ -349,7 +349,7 @@ class AccountTable extends React.Component<AccountTableProps> {
     const { intl, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
 
     return (
-      <MaterialTable<MarketplaceAccount, EnumMarketplaceAccountSortField>
+      <MaterialTable<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
         intl={intl}
         columns={accountColumns(this.props)}
         rows={result ? result.items : []}

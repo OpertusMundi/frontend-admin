@@ -1,5 +1,5 @@
 import { Moment } from 'moment';
-import { MarketplaceAccountDetails } from './account-marketplace';
+import { MarketplaceAccount } from './account-marketplace';
 
 export const PUBLISH_SET_ERROR_TASK = 'task-helpdesk-set-error';
 
@@ -192,7 +192,7 @@ export interface ProcessInstanceDetails {
   bpmn2Xml?: string;
   errorDetails: { [activity: string]: string };
   instance: BpmProcessInstance;
-  owner?: MarketplaceAccountDetails;
+  owner?: MarketplaceAccount;
   variables: BpmVariable[];
 }
 

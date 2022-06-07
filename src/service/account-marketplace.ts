@@ -6,8 +6,8 @@ import {
   EnumMarketplaceAccountSortField,
   ExternalProviderCommand,
   MarketplaceAccount,
-  MarketplaceAccountDetails,
   MarketplaceAccountQuery,
+  MarketplaceAccountSummary,
 } from 'model/account-marketplace';
 
 enum EnumAccountType {
@@ -24,26 +24,26 @@ export default class MarketplaceAccountApi extends Api {
 
   public async find(
     query: Partial<MarketplaceAccountQuery>, pageRequest: PageRequest, sorting: Sorting<EnumMarketplaceAccountSortField>[]
-  ): Promise<AxiosPageResponse<MarketplaceAccount>> {
+  ): Promise<AxiosPageResponse<MarketplaceAccountSummary>> {
     return this.findByType(EnumAccountType.All, query, pageRequest, sorting);
   }
 
   public async findConsumers(
     query: Partial<MarketplaceAccountQuery>, pageRequest: PageRequest, sorting: Sorting<EnumMarketplaceAccountSortField>[]
-  ): Promise<AxiosPageResponse<MarketplaceAccount>> {
+  ): Promise<AxiosPageResponse<MarketplaceAccountSummary>> {
     return this.findByType(EnumAccountType.Consumer, query, pageRequest, sorting);
   }
 
   public async findProviders(
     query: Partial<MarketplaceAccountQuery>, pageRequest: PageRequest, sorting: Sorting<EnumMarketplaceAccountSortField>[]
-  ): Promise<AxiosPageResponse<MarketplaceAccount>> {
+  ): Promise<AxiosPageResponse<MarketplaceAccountSummary>> {
     return this.findByType(EnumAccountType.Provider, query, pageRequest, sorting);
   }
 
   public async findByType(
     type: EnumAccountType, query: Partial<MarketplaceAccountQuery>,
     pageRequest: PageRequest, sorting: Sorting<EnumMarketplaceAccountSortField>[]
-  ): Promise<AxiosPageResponse<MarketplaceAccount>> {
+  ): Promise<AxiosPageResponse<MarketplaceAccountSummary>> {
     const { page, size } = pageRequest;
     const { id: field, order } = sorting[0];
 
@@ -65,45 +65,45 @@ export default class MarketplaceAccountApi extends Api {
 
     const url = `${endpoint}?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
 
-    return this.get<ObjectResponse<PageResult<MarketplaceAccount>>>(url);
+    return this.get<ObjectResponse<PageResult<MarketplaceAccountSummary>>>(url);
   }
 
-  public async findOne(key: string): Promise<AxiosObjectResponse<MarketplaceAccountDetails>> {
+  public async findOne(key: string): Promise<AxiosObjectResponse<MarketplaceAccount>> {
     const url = `/action/marketplace/accounts/${key}`;
 
 
-    return this.get<ObjectResponse<MarketplaceAccountDetails>>(url);
+    return this.get<ObjectResponse<MarketplaceAccount>>(url);
   }
 
-  public async refreshWallets(key: string): Promise<AxiosObjectResponse<MarketplaceAccountDetails>> {
+  public async refreshWallets(key: string): Promise<AxiosObjectResponse<MarketplaceAccount>> {
     const url = `/action/billing/wallets/${key}`;
 
-    return this.put<unknown, ObjectResponse<MarketplaceAccountDetails>>(url, null);
+    return this.put<unknown, ObjectResponse<MarketplaceAccount>>(url, null);
   }
 
   public async setExternalProvider(
     key: string, command: ExternalProviderCommand,
-  ): Promise<AxiosObjectResponse<MarketplaceAccountDetails>> {
+  ): Promise<AxiosObjectResponse<MarketplaceAccount>> {
     const url = `/action/marketplace/accounts/${key}/external-provider`;
 
-    return this.post<ExternalProviderCommand, ObjectResponse<MarketplaceAccountDetails>>(url, command);
+    return this.post<ExternalProviderCommand, ObjectResponse<MarketplaceAccount>>(url, command);
   }
 
-  public async grantOpenDatasetProvider(key: string): Promise<AxiosObjectResponse<MarketplaceAccountDetails>> {
+  public async grantOpenDatasetProvider(key: string): Promise<AxiosObjectResponse<MarketplaceAccount>> {
     const url = `/action/marketplace/accounts/${key}/open-dataset-provider`;
 
-    return this.put<unknown, ObjectResponse<MarketplaceAccountDetails>>(url, null);
+    return this.put<unknown, ObjectResponse<MarketplaceAccount>>(url, null);
   }
 
-  public async revokeOpenDatasetProvider(key: string): Promise<AxiosObjectResponse<MarketplaceAccountDetails>> {
+  public async revokeOpenDatasetProvider(key: string): Promise<AxiosObjectResponse<MarketplaceAccount>> {
     const url = `/action/marketplace/accounts/${key}/open-dataset-provider`;
 
-    return this.delete<ObjectResponse<MarketplaceAccountDetails>>(url);
+    return this.delete<ObjectResponse<MarketplaceAccount>>(url);
   }
 
-  public async refreshKycStatus(key: string): Promise<AxiosObjectResponse<MarketplaceAccountDetails>> {
+  public async refreshKycStatus(key: string): Promise<AxiosObjectResponse<MarketplaceAccount>> {
     const url = `/action/marketplace/accounts/${key}/kyc`;
 
-    return this.put<unknown, ObjectResponse<MarketplaceAccountDetails>>(url, null);
+    return this.put<unknown, ObjectResponse<MarketplaceAccount>>(url, null);
   }
 }
