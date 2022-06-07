@@ -335,7 +335,9 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
       >
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <FormattedMessage id="draft.message.review-draft" values={{ title: record.title, version: record.version }} />
+            <FormattedMessage id="draft.message.review-draft" values={{
+              title: (<b>{record.title}</b>), version: (<b>{record.version}</b>)
+            }} />
           </Grid>
           <Grid item xs={12}>
             <TextField
