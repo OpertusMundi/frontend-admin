@@ -14,6 +14,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Icon from '@mdi/react';
 import {
   mdiCheck,
+  mdiCloseOutline,
   mdiMagnifyExpand,
 } from '@mdi/js';
 
@@ -77,19 +78,18 @@ class ProcessDiagram extends React.Component<ProcessDiagramProps> {
 
         // Completed tasks
         instance.activities.filter(a => a.startTime !== null && a.endTime !== null).forEach(a => {
-          const icon = pathToSvg(mdiCheck, '1rem');
+          const icon = pathToSvg(a.canceled ? mdiCloseOutline : mdiCheck, '1rem');
 
           if (!validTasks.includes(a.activityType)) {
             return;
           }
-
           overlays.add(a.activityId, 'note', {
             position: {
               bottom: 12,
               left: -12,
             },
             scale: true,
-            html: `<div class="bpmn-task-completed"><i class="bpmn-icon">${icon}</i></div>`,
+            html: `<div class="${a.canceled ? 'bpmn-task-cancelled' : 'bpmn-task-completed'}"><i class="bpmn-icon">${icon}</i></div>`,
           });
         });
 
