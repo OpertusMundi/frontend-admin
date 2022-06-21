@@ -3,7 +3,7 @@ import _ from 'lodash';
 import moment from 'utils/moment-localized';
 
 import { Order } from 'model/response';
-import { EnumMarketplaceAccountSortField } from 'model/account-marketplace';
+import { EnumMarketplaceAccountSortField, EnumSubscriptionSortField } from 'model/account-marketplace';
 
 import {
   LOGOUT_INIT,
@@ -28,26 +28,141 @@ import {
   SET_EXTERNAL_PROVIDER_COMPLETE,
   AccountActions,
   MarketplaceAccountManagerState,
+  ORDER_SET_PAGER,
+  ORDER_RESET_PAGER,
+  ORDER_SET_SORTING,
+  ORDER_SEARCH_INIT,
+  ORDER_SEARCH_FAILURE,
+  ORDER_SEARCH_COMPLETE,
+  PAYIN_SET_PAGER,
+  PAYIN_RESET_PAGER,
+  PAYIN_SET_SORTING,
+  PAYIN_SEARCH_INIT,
+  PAYIN_SEARCH_FAILURE,
+  PAYIN_SEARCH_COMPLETE,
+  TRANSFER_SET_PAGER,
+  TRANSFER_RESET_PAGER,
+  TRANSFER_SET_SORTING,
+  TRANSFER_SEARCH_INIT,
+  TRANSFER_SEARCH_FAILURE,
+  TRANSFER_SEARCH_COMPLETE,
+  PAYOUT_SET_PAGER,
+  PAYOUT_RESET_PAGER,
+  PAYOUT_SET_SORTING,
+  PAYOUT_SEARCH_INIT,
+  PAYOUT_SEARCH_FAILURE,
+  PAYOUT_SEARCH_COMPLETE,
+  SUBSCRIPTION_SET_PAGER,
+  SUBSCRIPTION_RESET_PAGER,
+  SUBSCRIPTION_SET_SORTING,
+  SUBSCRIPTION_SEARCH_INIT,
+  SUBSCRIPTION_SEARCH_FAILURE,
+  SUBSCRIPTION_SEARCH_COMPLETE,
+  SET_TAB_INDEX,
 } from 'store/account-marketplace/types';
+import { EnumOrderSortField, EnumPayInSortField, EnumPayOutSortField, EnumTransferSortField } from 'model/order';
 
 const initialState: MarketplaceAccountManagerState = {
   account: null,
   lastUpdated: null,
   loading: false,
+  orders: {
+    items: null,
+    loaded: false,
+    pagination: {
+      page: 0,
+      size: 10,
+    },
+    query: {
+      email: '',
+      referenceNumber: '',
+      status: [],
+    },
+    sorting: [{
+      id: EnumOrderSortField.MODIFIED_ON,
+      order: Order.DESC,
+    }],
+  },
   pagination: {
     page: 0,
     size: 10,
+  },
+  payins: {
+    items: null,
+    loaded: false,
+    pagination: {
+      page: 0,
+      size: 10,
+    },
+    query: {
+      email: '',
+      referenceNumber: '',
+      status: [],
+    },
+    sorting: [{
+      id: EnumPayInSortField.MODIFIED_ON,
+      order: Order.DESC,
+    }],
+  },
+  payouts: {
+    items: null,
+    loaded: false,
+    pagination: {
+      page: 0,
+      size: 10,
+    },
+    query: {
+      bankwireRef: '',
+      email: '',
+      status: [],
+    },
+    sorting: [{
+      id: EnumPayOutSortField.MODIFIED_ON,
+      order: Order.DESC,
+    }],
   },
   query: {
     name: '',
   },
   selected: [],
+  response: null,
   result: null,
   sorting: [{
     id: EnumMarketplaceAccountSortField.EMAIL,
     order: Order.ASC,
   }],
-  response: null,
+  subscriptions: {
+    items: null,
+    loaded: false,
+    pagination: {
+      page: 0,
+      size: 10,
+    },
+    query: {
+      status: [],
+    },
+    sorting: [{
+      id: EnumSubscriptionSortField.MODIFIED_ON,
+      order: Order.DESC,
+    }],
+  },
+  tabIndex: 0,
+  transfers: {
+    items: null,
+    loaded: false,
+    pagination: {
+      page: 0,
+      size: 10,
+    },
+    query: {
+      referenceNumber: '',
+      status: [],
+    },
+    sorting: [{
+      id: EnumTransferSortField.EXECUTED_ON,
+      order: Order.DESC,
+    }],
+  },
 };
 
 export function marketplaceAccountReducer(
@@ -59,6 +174,12 @@ export function marketplaceAccountReducer(
     case LOGOUT_INIT:
       return {
         ...initialState
+      };
+
+    case SET_TAB_INDEX:
+      return {
+        ...state,
+        tabIndex: action.tabIndex,
       };
 
     case SET_PAGER:
@@ -172,6 +293,22 @@ export function marketplaceAccountReducer(
         ...state,
         loading: false,
         account: action.account,
+        orders: {
+          ...initialState.orders,
+        },
+        payins: {
+          ...initialState.payins,
+        },
+        payouts: {
+          ...initialState.payouts,
+        },
+        transfers: {
+          ...initialState.transfers,
+        },
+        subscriptions: {
+          ...initialState.subscriptions,
+        },
+        tabIndex: action.tabIndex === null ? state.tabIndex : action.tabIndex,
       };
 
     case SET_EXTERNAL_PROVIDER_INIT:
@@ -187,6 +324,340 @@ export function marketplaceAccountReducer(
         account: action.response.success ? action.response.result! : state.account,
       };
 
+    case ORDER_SET_PAGER:
+      return {
+        ...state,
+        orders: {
+          ...state.orders,
+          pagination: {
+            page: action.page,
+            size: action.size,
+          },
+        },
+      };
+
+    case ORDER_RESET_PAGER:
+      return {
+        ...state,
+        orders: {
+          ...state.orders,
+          pagination: {
+            ...initialState.pagination
+          },
+        },
+      };
+
+    case ORDER_SET_SORTING:
+      return {
+        ...state,
+        orders: {
+          ...state.orders,
+          sorting: action.sorting,
+        },
+      };
+
+    case ORDER_SEARCH_INIT:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case ORDER_SEARCH_FAILURE:
+      return {
+        ...state,
+        orders: {
+          ...state.orders,
+          items: null,
+          pagination: {
+            page: 0,
+            size: state.pagination.size,
+          },
+        },
+        loading: false,
+      };
+
+    case ORDER_SEARCH_COMPLETE:
+      return {
+        ...state,
+        orders: {
+          ...state.orders,
+          loaded: true,
+          pagination: {
+            page: action.result.pageRequest.page,
+            size: action.result.pageRequest.size,
+          },
+          items: action.result,
+        },
+        loading: false,
+      };
+
+    case PAYIN_SET_PAGER:
+      return {
+        ...state,
+        payins: {
+          ...state.payins,
+          pagination: {
+            page: action.page,
+            size: action.size,
+          },
+        },
+      };
+
+    case PAYIN_RESET_PAGER:
+      return {
+        ...state,
+        payins: {
+          ...state.payins,
+          pagination: {
+            ...initialState.pagination
+          },
+        },
+      };
+
+    case PAYIN_SET_SORTING:
+      return {
+        ...state,
+        payins: {
+          ...state.payins,
+          sorting: action.sorting,
+        },
+      };
+
+    case PAYIN_SEARCH_INIT:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case PAYIN_SEARCH_FAILURE:
+      return {
+        ...state,
+        payins: {
+          ...state.payins,
+          items: null,
+          pagination: {
+            page: 0,
+            size: state.pagination.size,
+          },
+        },
+        loading: false,
+      };
+
+    case PAYIN_SEARCH_COMPLETE:
+      return {
+        ...state,
+        payins: {
+          ...state.payins,
+          loaded: true,
+          pagination: {
+            page: action.result.pageRequest.page,
+            size: action.result.pageRequest.size,
+          },
+          items: action.result,
+        },
+        loading: false,
+      };
+
+    case TRANSFER_SET_PAGER:
+      return {
+        ...state,
+        transfers: {
+          ...state.transfers,
+          pagination: {
+            page: action.page,
+            size: action.size,
+          },
+        },
+      };
+
+    case TRANSFER_RESET_PAGER:
+      return {
+        ...state,
+        transfers: {
+          ...state.transfers,
+          pagination: {
+            ...initialState.pagination
+          },
+        },
+      };
+
+    case TRANSFER_SET_SORTING:
+      return {
+        ...state,
+        transfers: {
+          ...state.transfers,
+          sorting: action.sorting,
+        },
+      };
+
+    case TRANSFER_SEARCH_INIT:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case TRANSFER_SEARCH_FAILURE:
+      return {
+        ...state,
+        transfers: {
+          ...state.transfers,
+          items: null,
+          pagination: {
+            page: 0,
+            size: state.pagination.size,
+          },
+        },
+        loading: false,
+      };
+
+    case TRANSFER_SEARCH_COMPLETE:
+      return {
+        ...state,
+        transfers: {
+          ...state.transfers,
+          loaded: true,
+          pagination: {
+            page: action.result.pageRequest.page,
+            size: action.result.pageRequest.size,
+          },
+          items: action.result,
+        },
+        loading: false,
+      };
+
+    case PAYOUT_SET_PAGER:
+      return {
+        ...state,
+        payouts: {
+          ...state.payouts,
+          pagination: {
+            page: action.page,
+            size: action.size,
+          },
+        },
+      };
+
+    case PAYOUT_RESET_PAGER:
+      return {
+        ...state,
+        payouts: {
+          ...state.payouts,
+          pagination: {
+            ...initialState.pagination
+          },
+        },
+      };
+
+    case PAYOUT_SET_SORTING:
+      return {
+        ...state,
+        payouts: {
+          ...state.payouts,
+          sorting: action.sorting,
+        },
+      };
+
+    case PAYOUT_SEARCH_INIT:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case PAYOUT_SEARCH_FAILURE:
+      return {
+        ...state,
+        payouts: {
+          ...state.payouts,
+          items: null,
+          pagination: {
+            page: 0,
+            size: state.pagination.size,
+          },
+        },
+        loading: false,
+      };
+
+    case PAYOUT_SEARCH_COMPLETE:
+      return {
+        ...state,
+        payouts: {
+          ...state.payouts,
+          loaded: true,
+          pagination: {
+            page: action.result.pageRequest.page,
+            size: action.result.pageRequest.size,
+          },
+          items: action.result,
+        },
+        loading: false,
+      };
+
+    case SUBSCRIPTION_SET_PAGER:
+      return {
+        ...state,
+        subscriptions: {
+          ...state.subscriptions,
+          pagination: {
+            page: action.page,
+            size: action.size,
+          },
+        },
+      };
+
+    case SUBSCRIPTION_RESET_PAGER:
+      return {
+        ...state,
+        subscriptions: {
+          ...state.subscriptions,
+          pagination: {
+            ...initialState.pagination
+          },
+        },
+      };
+
+    case SUBSCRIPTION_SET_SORTING:
+      return {
+        ...state,
+        subscriptions: {
+          ...state.subscriptions,
+          sorting: action.sorting,
+        },
+      };
+
+    case SUBSCRIPTION_SEARCH_INIT:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case SUBSCRIPTION_SEARCH_FAILURE:
+      return {
+        ...state,
+        subscriptions: {
+          ...state.subscriptions,
+          items: null,
+          pagination: {
+            page: 0,
+            size: state.pagination.size,
+          },
+        },
+        loading: false,
+      };
+
+    case SUBSCRIPTION_SEARCH_COMPLETE:
+      return {
+        ...state,
+        subscriptions: {
+          ...state.subscriptions,
+          loaded: true,
+          pagination: {
+            page: action.result.pageRequest.page,
+            size: action.result.pageRequest.size,
+          },
+          items: action.result,
+        },
+        loading: false,
+      };
     default:
       return state;
   }

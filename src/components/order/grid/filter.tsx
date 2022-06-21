@@ -114,8 +114,8 @@ class OrderFilters extends React.Component<OrderFiltersProps> {
               variant="standard"
               margin="normal"
               className={classes.textField}
-              value={query.consumer || ''}
-              onChange={e => setFilter({ consumer: e.target.value })}
+              value={query.email || ''}
+              onChange={e => setFilter({ email: e.target.value })}
             />
           </Grid>
 

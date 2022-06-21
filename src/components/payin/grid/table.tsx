@@ -28,7 +28,7 @@ import {
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { EnumKycLevel, EnumMangopayUserType, CustomerIndividual, CustomerProfessional } from 'model/account-marketplace';
-import { EnumPayInItemType, EnumPayInSortField, EnumTransactionStatus, PayIn, PayInQuery } from 'model/order';
+import { EnumBillingViewMode, EnumPayInItemType, EnumPayInSortField, EnumTransactionStatus, PayIn, PayInQuery } from 'model/order';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 import { EnumPaymentMethod } from 'model/enum';
 
@@ -258,7 +258,10 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayIn, En
               </i>
             </Tooltip>
           }
-          {row.status === EnumTransactionStatus.SUCCEEDED && !hasTransfer(row) && row.paymentMethod !== EnumPaymentMethod.FREE &&
+          {
+            props.createTransfer &&
+            row.status === EnumTransactionStatus.SUCCEEDED &&
+            !hasTransfer(row) && row.paymentMethod !== EnumPaymentMethod.FREE &&
             <Tooltip title={intl.formatMessage({ id: 'billing.payin.tooltip.transfer-funds' })}>
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.TransferFunds, rowIndex, column, row) : null}
@@ -267,7 +270,10 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayIn, En
               </i>
             </Tooltip>
           }
-          {row.status === EnumTransactionStatus.SUCCEEDED && hasTransfer(row) &&
+          {
+            props.createTransfer &&
+            row.status === EnumTransactionStatus.SUCCEEDED &&
+            hasTransfer(row) &&
             <Tooltip title={intl.formatMessage({ id: 'billing.payin.tooltip.transfer-funds-completed' })}>
               <i>
                 <Icon path={mdiWalletPlusOutline} className={classes.rowIconActionDisabled} />
@@ -343,6 +349,7 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayIn, En
       header: intl.formatMessage({ id: 'billing.payin.header.consumer' }),
       id: 'consumer',
       sortable: false,
+      hidden: props.mode === EnumBillingViewMode.CONSUMER,
       cell: (
         rowIndex: number, column: Column<PayIn, EnumPayInSortField>, row: PayIn, handleAction?: cellActionHandler<PayIn, EnumPayInSortField>
       ): React.ReactNode => {
@@ -421,18 +428,19 @@ const statusToBackGround = (status: EnumTransactionStatus): string => {
 interface PayInTableProps extends WithStyles<typeof styles> {
   intl: IntlShape,
   loading?: boolean;
+  mode: EnumBillingViewMode;
   pagination: PageRequest,
   query: PayInQuery,
   result: PageResult<PayIn> | null,
   selected: PayIn[],
   sorting: Sorting<EnumPayInSortField>[];
-  addToSelection: (rows: PayIn[]) => void,
-  createTransfer: (payIn: PayIn) => void;
+  addToSelection?: (rows: PayIn[]) => void,
+  createTransfer?: (payIn: PayIn) => void;
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumPayInSortField>[]
   ) => Promise<PageResult<PayIn> | null>,
-  removeFromSelection: (rows: PayIn[]) => void,
-  resetSelection: () => void;
+  removeFromSelection?: (rows: PayIn[]) => void,
+  resetSelection?: () => void;
   setPager: (page: number, size: number) => void,
   setSorting: (sorting: Sorting<EnumPayInSortField>[]) => void,
   viewPayIn: (key: string) => void;
@@ -447,6 +455,10 @@ class PayInTable extends React.Component<PayInTableProps> {
     this.handleAction = this.handleAction.bind(this);
   }
 
+  static defaultProps = {
+    mode: EnumBillingViewMode.DEFAULT,
+  }
+
   handleAction(action: string, index: number, column: Column<PayIn, EnumPayInSortField>, row: PayIn): void {
     if (row.key) {
       switch (action) {
@@ -457,7 +469,9 @@ class PayInTable extends React.Component<PayInTableProps> {
           break;
 
         case EnumAction.TransferFunds:
-          this.props.createTransfer(row);
+          if (this.props.createTransfer) {
+            this.props.createTransfer(row);
+          }
           break;
 
         case EnumAction.ViewProcessInstance:

@@ -1,7 +1,8 @@
 import { Moment } from 'moment';
-import { EnumTopicCategory } from './catalogue';
+import { CatalogueItem, EnumTopicCategory } from './catalogue';
 import { EnumDataProvider } from './configuration';
 import { EnumAuthProvider } from './enum';
+import { RecurringRegistration } from './order';
 import { EnumMarketplaceRole as EnumRole } from './role';
 
 export enum EnumActivationStatus {
@@ -394,40 +395,77 @@ export interface MarketplaceAccount {
   username: string;
 }
 
+export enum EnumSubscriptionStatus {
+  CREATED = 'CREATED',
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+}
+
 export enum EnumAssetPurchaseSource {
   PURCHASE = 'PURCHASE',
   UPDATE = 'UPDATE',
 }
 
-export interface MarketplaceAccountSubscription {
-  /**
-   * Service PID
-   */
-  service: string;
+export enum EnumSubscriptionSortField {
+  ADDED_ON = 'ADDED_ON',
+  CONSUMER = 'CONSUMER',
+  MODIFIED_ON = 'MODIFIED_ON',
+  ORDER = 'ORDER',
+  PROVIDER = 'PROVIDER',
+  STATUS = 'STATUS',
+}
+
+export interface SubscriptionQuery {
+  consumerKey?: string;
+  providerKey?: string;
+  status: EnumSubscriptionStatus[];
+}
+
+export interface AccountSubscription {
   /**
    * When the subscription was registered to the user account
    */
   addedOn: Moment;
   /**
-   * Date of last update
+   * Asset PID
    */
-  updatedOn: Moment;
+  assetId: string;
   /**
-   * Operation that registered the subscription
+   * Catalogue item
    */
-  source: EnumAssetPurchaseSource;
+  item?: CatalogueItem;
+  /**
+   * Subscription unique key
+   */
+  key: string;
   /**
    * First asset topic category if any exist
    */
   segment: EnumTopicCategory;
   /**
+   * Operation that registered the subscription
+   */
+  source: EnumAssetPurchaseSource;
+  /**
+   * Subscription status
+   */
+  status: EnumSubscriptionStatus;
+  /**
+   * Date of last update
+   */
+  updatedOn: Moment;
+  /**
    * Subscription owner
    */
-  consumer?: Customer;
+  consumer?: CustomerType;
   /**
    * Subscription seller
    */
   provider?: Customer;
+  /**
+   * Recurring PayIn registration
+   */
+  recurringRegistration?: RecurringRegistration;
 }
 
 export interface ExternalProviderCommand {

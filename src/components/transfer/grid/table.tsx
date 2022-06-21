@@ -26,7 +26,8 @@ import {
   PayIn,
   PayInItem,
   OrderPayInItem,
-  TransferQuery
+  TransferQuery,
+  EnumBillingViewMode
 } from 'model/order';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 import {
@@ -194,6 +195,7 @@ function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTrans
       header: '',
       id: 'separator',
       sortable: false,
+      hidden: props.mode === EnumBillingViewMode.PROVIDER,
       cell: (
         rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
       ): React.ReactNode => {
@@ -203,6 +205,7 @@ function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTrans
       header: intl.formatMessage({ id: 'billing.transfer.header.provider' }),
       id: 'provider',
       sortable: false,
+      hidden: props.mode === EnumBillingViewMode.PROVIDER,
       cell: (
         rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
       ): React.ReactNode => {
@@ -334,6 +337,7 @@ interface TransferTableProps extends WithStyles<typeof styles> {
   setSorting: (sorting: Sorting<EnumTransferSortField>[]) => void,
   sorting: Sorting<EnumTransferSortField>[];
   loading?: boolean;
+  mode?: EnumBillingViewMode;
 }
 
 class AccountTable extends React.Component<TransferTableProps> {
@@ -342,6 +346,10 @@ class AccountTable extends React.Component<TransferTableProps> {
     super(props);
 
     this.handleAction = this.handleAction.bind(this);
+  }
+
+  static defaultProps = {
+    mode: EnumBillingViewMode.DEFAULT,
   }
 
   handleAction(action: string, index: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem): void {

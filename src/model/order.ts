@@ -5,9 +5,15 @@ import {
   BankAccount,
   CustomerProfessional,
   CustomerType,
-  MarketplaceAccountSubscription,
+  AccountSubscription,
 } from 'model/account-marketplace';
 import { EffectivePricingModel } from 'model/pricing-model';
+
+export enum EnumBillingViewMode {
+  DEFAULT = 'DEFAULT',
+  CONSUMER = 'CONSUMER',
+  PROVIDER = 'PROVIDER'
+}
 
 export enum EnumCardType {
   CB_VISA_MASTERCARD = 'CB_VISA_MASTERCARD',
@@ -115,7 +121,7 @@ export interface SubscriptionBilling {
   /**
    * Account subscription
    */
-  subscription?: MarketplaceAccountSubscription;
+  subscription?: AccountSubscription;
   /**
    * Service description
    */
@@ -195,6 +201,7 @@ export enum EnumPayInSortField {
 }
 
 export interface PayInQuery {
+  consumerKey?: string;
   email: string;
   referenceNumber: string;
   status: EnumTransactionStatus[];
@@ -513,7 +520,8 @@ export enum EnumOrderSortField {
 }
 
 export interface OrderQuery {
-  consumer: string;
+  consumerKey?: string;
+  email: string;
   referenceNumber: string;
   status: EnumOrderStatus[];
 }
@@ -621,6 +629,7 @@ export enum EnumTransferSortField {
 }
 
 export interface TransferQuery {
+  providerKey?: string;
   referenceNumber: string;
   status: EnumTransactionStatus[];
 }
@@ -636,6 +645,7 @@ export enum EnumPayOutSortField {
 }
 
 export interface PayOutQuery {
+  providerKey?: string;
   bankwireRef: string;
   email: string;
   status: EnumTransactionStatus[];

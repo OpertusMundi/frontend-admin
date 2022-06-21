@@ -22,8 +22,11 @@ import CardContent from '@material-ui/core/CardContent';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
@@ -32,16 +35,23 @@ import { red } from '@material-ui/core/colors';
 import Icon from '@mdi/react';
 import {
   mdiAccount,
+  mdiAccountCircleOutline,
   mdiAlertDecagramOutline,
+  mdiBankTransferIn,
+  mdiBankTransferOut,
   mdiCheck,
   mdiCheckDecagramOutline,
+  mdiClockFast,
   mdiCommentAlertOutline,
   mdiCreativeCommons,
   mdiDomain,
   mdiFaceAgent,
   mdiListStatus,
+  mdiPackageVariantClosed,
   mdiTransitConnectionVariant,
+  mdiTuneVariant,
   mdiUndoVariant,
+  mdiWalletPlusOutline,
 } from '@mdi/js';
 
 // Components
@@ -50,13 +60,26 @@ import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
 
 // Store
 import { RootState } from 'store';
-import { findOne } from 'store/account-marketplace/thunks';
+import {
+  setOrderPager,
+  setOrderSorting,
+  setPayInPager,
+  setPayInSorting,
+  setTransferPager,
+  setTransferSorting,
+  setPayOutPager,
+  setPayOutSorting,
+  setSubscriptionPager,
+  setSubscriptionSorting,
+  setTabIndex,
+} from 'store/account-marketplace/actions';
+import { findOne, findOrders, findPayIns, findTransfers, findPayOuts, findSubscriptions } from 'store/account-marketplace/thunks';
 
 // Service
 import message from 'service/message';
 import AccountApi from 'service/account-marketplace';
-import { ObjectResponse, SimpleResponse } from 'model/response';
-import { CustomerType, EnumAccountType, EnumActivationStatus, EnumCustomerType, EnumMangopayUserType, MarketplaceAccount } from 'model/account-marketplace';
+import { ObjectResponse, PageRequest, SimpleResponse, Sorting } from 'model/response';
+import { CustomerType, EnumAccountType, EnumActivationStatus, EnumCustomerType, EnumMangopayUserType, EnumSubscriptionSortField, MarketplaceAccount } from 'model/account-marketplace';
 
 // Utilities
 import { FieldMapperFunc, localizeErrorCodes } from 'utils/error';
@@ -66,14 +89,21 @@ import { buildPath, DynamicRoutes, StaticRoutes } from 'model/routes';
 import { EnumDataProvider } from 'model/configuration';
 import { Message } from 'model/message';
 import { EnumMarketplaceRole } from 'model/role';
+import { EnumOrderSortField, EnumBillingViewMode, EnumPayInSortField, EnumPayOutSortField, EnumTransferSortField } from 'model/order';
+
+// Components
+import OrderTable from 'components/order/grid/table';
+import PayInTable from 'components/payin/grid/table';
+import PayOutTable from 'components/payout/grid/table';
+import TransferTable from 'components/transfer/grid/table';
+import SubscriptionTable from 'components/subscription/grid/table';
 
 const styles = (theme: Theme) => createStyles({
-  root: {
-    display: 'flex',
-    padding: 0,
+  alignSelfBaseline: {
+    alignSelf: 'baseline',
   },
-  paper: {
-    padding: '6px 16px',
+  avatar: {
+    backgroundColor: red[500],
   },
   card: {
     minWidth: 480,
@@ -85,11 +115,21 @@ const styles = (theme: Theme) => createStyles({
   cardActions: {
     justifyContent: 'flex-end',
   },
-  avatar: {
-    backgroundColor: red[500],
-  },
   listItem: {
     padding: theme.spacing(1, 0),
+  },
+  paper: {
+    padding: theme.spacing(1),
+    margin: theme.spacing(1),
+    color: theme.palette.text.secondary,
+    borderRadius: 0,
+  },
+  paperTable: {
+    padding: theme.spacing(1),
+    margin: theme.spacing(1),
+    color: theme.palette.text.secondary,
+    borderRadius: 0,
+    overflowX: 'auto',
   },
   total: {
     fontWeight: 700,
@@ -180,6 +220,9 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
       externalProvider: EnumDataProvider.UNDEFINED,
       openDatasetProvider: false,
     };
+
+    this.viewPayIn = this.viewPayIn.bind(this);
+    this.viewProcessInstance = this.viewProcessInstance.bind(this);
   }
 
   get key(): string | null {
@@ -315,10 +358,10 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
   }
 
   getAccountData(): void {
-    const { config } = this.props;
+    const { config, account } = this.props;
 
     if (this.key) {
-      this.props.findOne(this.key)
+      this.props.findOne(this.key, account?.key !== this.key ? 0 : null)
         .then((response: ObjectResponse<MarketplaceAccount>) => {
           if (response.success) {
             const account = response.result!;
@@ -331,6 +374,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
               externalProvider: provider,
               openDatasetProvider,
             });
+            this.loadTabContent(this.props.tabIndex);
           } else {
             const messages = localizeErrorCodes(this.props.intl, response, false);
             message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
@@ -341,6 +385,34 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     } else {
       this.props.navigate(StaticRoutes.MarketplaceAccountManager);
     }
+  }
+
+  loadTabContent(index: number) {
+    const { account, orders, payins, transfers, payouts, subscriptions } = this.props;
+    const consumer = account?.profile.consumer.current;
+    const provider = account?.profile.provider.current;
+
+    if (index === 1 && consumer && !orders.loaded) {
+      this.findOrders();
+    }
+    if (index === 1 && provider && !transfers.loaded) {
+      this.findTransfers();
+    }
+    if (index === 2 && consumer && !payins.loaded) {
+      this.findPayIns();
+    }
+    if (index === 2 && provider && !payouts.loaded) {
+      this.findPayOuts();
+    }
+    if (index === 3 && consumer && !subscriptions.loaded) {
+      this.findSubscriptions();
+    }
+  }
+
+  setTabIndex(index: number) {
+    this.props.setTabIndex(index);
+
+    this.loadTabContent(index);
   }
 
   renderExternalProviderDialog() {
@@ -534,9 +606,83 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     );
   }
 
-  render() {
-    const { account = null, classes, config, loading } = this.props;
-    const { externalProvider, openDatasetProvider } = this.state;
+  findOrders(): void {
+    this.props.findOrders().then((result) => {
+      if (!result) {
+        message.errorHtml("Find operation has failed", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+      }
+    });
+  }
+
+  findPayIns(): void {
+    this.props.findPayIns().then((result) => {
+      if (!result) {
+        message.errorHtml("Find operation has failed", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+      }
+    });
+  }
+
+  findTransfers(): void {
+    this.props.findTransfers().then((result) => {
+      if (!result) {
+        message.errorHtml("Find operation has failed", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+      }
+    });
+  }
+
+  findPayOuts(): void {
+    this.props.findPayOuts().then((result) => {
+      if (!result) {
+        message.errorHtml("Find operation has failed", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+      }
+    });
+  }
+
+  findSubscriptions(): void {
+    this.props.findSubscriptions().then((result) => {
+      if (!result) {
+        message.errorHtml("Find operation has failed", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+      }
+    });
+  }
+
+  setOrderSorting(sorting: Sorting<EnumOrderSortField>[]): void {
+    this.props.setOrderSorting(sorting);
+    this.findOrders();
+  }
+
+  setPayInSorting(sorting: Sorting<EnumPayInSortField>[]): void {
+    this.props.setPayInSorting(sorting);
+    this.findPayIns();
+  }
+
+  setTransferSorting(sorting: Sorting<EnumTransferSortField>[]): void {
+    this.props.setTransferSorting(sorting);
+    this.findTransfers();
+  }
+
+  setPayOutSorting(sorting: Sorting<EnumPayOutSortField>[]): void {
+    this.props.setPayOutSorting(sorting);
+    this.findPayOuts();
+  }
+
+  setSubscriptionSorting(sorting: Sorting<EnumSubscriptionSortField>[]): void {
+    this.props.setSubscriptionSorting(sorting);
+    this.findSubscriptions();
+  }
+
+  viewProcessInstance(processInstance: string): void {
+    const path = buildPath(DynamicRoutes.ProcessInstanceView, null, { processInstance });
+    this.props.navigate(path);
+  }
+
+  viewPayIn(key: string): void {
+    const path = buildPath(DynamicRoutes.PayInView, [key]);
+    this.props.navigate(path);
+  }
+
+  renderAccountData() {
+    const { account = null, classes } = this.props;
     const _t = this.props.intl.formatMessage;
 
     if (!account) {
@@ -549,211 +695,354 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     const organization = parent?.profile?.provider?.current;
 
     return (
+      <Grid container>
+        <Grid container item xs={6} className={classes.alignSelfBaseline}>
+          <Grid item xs={12}>
+            <Card className={classes.card}>
+              <CardHeader
+                avatar={
+                  <Avatar className={classes.avatar}>
+                    <Icon path={account.type === EnumAccountType.VENDOR ? mdiDomain : mdiAccount} size="1.5rem" />
+                  </Avatar>
+                }
+                title={_t({ id: 'account-marketplace.form.section.user' })}
+              ></CardHeader>
+              <CardContent>
+                <Grid container spacing={2}>
+                  <Grid item xs={4}>
+                    <Typography variant="caption">
+                      <FormattedMessage id={'account-marketplace.form.field.firstName'} />
+                    </Typography>
+                    <Typography gutterBottom>{account.profile.firstName}</Typography>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Typography variant="caption">
+                      <FormattedMessage id={'account-marketplace.form.field.lastName'} />
+                    </Typography>
+                    <Typography gutterBottom>{account.profile.lastName}</Typography>
+                  </Grid>
+                </Grid>
+                <Grid container alignItems="center">
+                  <Grid item>
+                    <Typography variant="caption">
+                      <FormattedMessage id={'account-marketplace.form.field.email'} />
+                    </Typography>
+                    <Grid container item justifyContent="flex-start" spacing={1}>
+                      <Grid item>
+                        <Typography gutterBottom>{account.email}</Typography>
+                      </Grid>
+                      <Grid item>
+                        {account.emailVerified &&
+                          <Icon color={'#4CAF50'} path={mdiCheckDecagramOutline} size="1.5rem" />
+                        }
+                        {!account.emailVerified &&
+                          <Icon color={'#FF5722'} path={mdiAlertDecagramOutline} size="1.5rem" />
+                        }
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                {organization &&
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <Typography variant="caption">
+                        <FormattedMessage id={'account-marketplace.form.field.parent'} />
+                      </Typography>
+                      <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [organization.key])} className={classes.link}>
+                        <Typography gutterBottom>{this.getCustomerName(organization)}</Typography>
+                      </Link>
+                    </Grid>
+                  </Grid>
+                }
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12}>
+            <Card className={classes.card}>
+              <CardHeader
+                avatar={
+                  <Avatar className={classes.avatar}>
+                    <Icon path={mdiListStatus} size="1.5rem" />
+                  </Avatar>
+                }
+                title={
+                  <a className={classes.link} href={`/workflows/process-instances/record?businessKey=${account.key}`}>
+                    <FormattedMessage id={'account-marketplace.form.section.registration'} />
+                  </a>
+                }
+              ></CardHeader>
+              <CardContent>
+                <Grid container spacing={2}>
+                  <Grid item xs={8}>
+                    <Typography variant="caption">
+                      <FormattedMessage id={'account-marketplace.form.field.registeredAt'} />
+                    </Typography>
+                    <Typography gutterBottom>
+                      <FormattedTime value={account.registeredAt.toDate()} day='numeric' month='numeric' year='numeric' />
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Typography variant="caption">
+                      <FormattedMessage id={'account-marketplace.form.field.registration-status'} />
+                    </Typography>
+                    {account.activationStatus === EnumActivationStatus.COMPLETED &&
+                      <div className={classes.statusLabel}>
+                        <div className={classes.statusLabelText}>{account.activationStatus}</div>
+                      </div>
+                    }
+                    {account.activationStatus === EnumActivationStatus.PENDING &&
+                      <div className={classes.statusLabelWarning}>
+                        <div className={classes.statusLabelText}>{account.activationStatus}</div>
+                      </div>
+                    }
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+        <Grid container item xs={6}>
+          {consumer &&
+            <Grid item xs={12}>
+              {this.renderCustomer(consumer, EnumCustomerType.CONSUMER)}
+            </Grid>
+          }
+          {provider &&
+            <Grid item xs={12}>
+              {this.renderCustomer(provider, EnumCustomerType.PROVIDER)}
+            </Grid>
+          }
+        </Grid>
+      </Grid>
+    );
+  }
+
+  render() {
+    const { account = null, classes, config, loading, orders, payins, transfers, payouts, subscriptions, tabIndex } = this.props;
+    const { externalProvider, openDatasetProvider } = this.state;
+    const _t = this.props.intl.formatMessage;
+
+    if (!account) {
+      return null;
+    }
+
+    const provider = account.profile.provider.current;
+    const consumer = account.profile.consumer.current;
+
+    return (
       <>
         <Grid container>
-          <Grid container item xs={6}>
+          <Grid item xs={12}>
+            <Tabs
+              value={tabIndex}
+              indicatorColor="primary"
+              textColor="primary"
+              onChange={(event, tabIndex) => this.setTabIndex(tabIndex)}
+              variant="fullWidth"
+            >
+              <Tab icon={<Icon path={mdiAccountCircleOutline} size="1.5rem" />} label="Account" />
+
+              {consumer &&
+                <Tab icon={<Icon path={mdiPackageVariantClosed} size="1.5rem" />} label="Orders" />
+              }
+              {consumer &&
+                <Tab icon={<Icon path={mdiBankTransferIn} size="1.5rem" />} label="Pay Ins" />
+              }
+              {provider &&
+                <Tab icon={<Icon path={mdiWalletPlusOutline} size="1.5rem" />} label="Transfers" />
+              }
+              {provider &&
+                <Tab icon={<Icon path={mdiBankTransferOut} size="1.5rem" />} label="Pay Outs" />
+              }
+              {consumer &&
+                <Tab icon={<Icon path={mdiClockFast} size="1.5rem" />} label="Subscriptions" />
+              }
+              {provider &&
+                <Tab icon={<Icon path={mdiTuneVariant} size="1.5rem" />} label="Configuration" />
+              }
+            </Tabs>
+          </Grid>
+          {tabIndex === 0 &&
+            this.renderAccountData()
+          }
+          {tabIndex === 1 && consumer &&
             <Grid item xs={12}>
-              <Card className={classes.card}>
-                <CardHeader
-                  avatar={
-                    <Avatar className={classes.avatar}>
-                      <Icon path={account.type === EnumAccountType.VENDOR ? mdiDomain : mdiAccount} size="1.5rem" />
-                    </Avatar>
-                  }
-                  title={_t({ id: 'account-marketplace.form.section.user' })}
-                ></CardHeader>
-                <CardContent>
-                  <Grid container spacing={2}>
-                    <Grid item xs={4}>
-                      <Typography variant="caption">
-                        <FormattedMessage id={'account-marketplace.form.field.firstName'} />
-                      </Typography>
-                      <Typography gutterBottom>{account.profile.firstName}</Typography>
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Typography variant="caption">
-                        <FormattedMessage id={'account-marketplace.form.field.lastName'} />
-                      </Typography>
-                      <Typography gutterBottom>{account.profile.lastName}</Typography>
-                    </Grid>
-                  </Grid>
-                  <Grid container alignItems="center">
-                    <Grid item>
-                      <Typography variant="caption">
-                        <FormattedMessage id={'account-marketplace.form.field.email'} />
-                      </Typography>
-                      <Grid container item justifyContent="flex-start" spacing={1}>
-                        <Grid item>
-                          <Typography gutterBottom>{account.email}</Typography>
-                        </Grid>
-                        <Grid item>
-                          {account.emailVerified &&
-                            <Icon color={'#4CAF50'} path={mdiCheckDecagramOutline} size="1.5rem" />
-                          }
-                          {!account.emailVerified &&
-                            <Icon color={'#FF5722'} path={mdiAlertDecagramOutline} size="1.5rem" />
-                          }
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  {organization &&
-                    <Grid container spacing={2}>
-                      <Grid item xs={12}>
-                        <Typography variant="caption">
-                          <FormattedMessage id={'account-marketplace.form.field.parent'} />
-                        </Typography>
-                        <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [organization.key])} className={classes.link}>
-                          <Typography gutterBottom>{this.getCustomerName(organization)}</Typography>
-                        </Link>
-                      </Grid>
-                    </Grid>
-                  }
-                </CardContent>
-              </Card>
+              <Paper className={classes.paperTable}>
+                <OrderTable
+                  find={this.props.findOrders}
+                  loading={loading}
+                  mode={EnumBillingViewMode.CONSUMER}
+                  pagination={orders.pagination}
+                  query={orders.query}
+                  result={orders.items}
+                  selected={[]}
+                  setPager={this.props.setOrderPager}
+                  setSorting={(sorting: Sorting<EnumOrderSortField>[]) => this.setOrderSorting(sorting)}
+                  sorting={orders.sorting}
+                  viewProcessInstance={this.viewProcessInstance}
+                />
+              </Paper>
             </Grid>
+          }
+          {tabIndex === 1 && provider &&
             <Grid item xs={12}>
+              <Paper className={classes.paperTable}>
+                <TransferTable
+                  find={this.props.findTransfers}
+                  loading={loading}
+                  mode={EnumBillingViewMode.PROVIDER}
+                  pagination={transfers.pagination}
+                  query={transfers.query}
+                  result={transfers.items}
+                  setPager={this.props.setTransferPager}
+                  setSorting={(sorting: Sorting<EnumTransferSortField>[]) => this.setTransferSorting(sorting)}
+                  sorting={transfers.sorting}
+                />
+              </Paper>
+            </Grid>
+          }
+          {tabIndex === 2 && consumer &&
+            <Grid item xs={12}>
+              <Paper className={classes.paperTable}>
+                <PayInTable
+                  find={this.props.findPayIns}
+                  loading={loading}
+                  mode={EnumBillingViewMode.CONSUMER}
+                  pagination={payins.pagination}
+                  query={payins.query}
+                  result={payins.items}
+                  selected={[]}
+                  setPager={this.props.setPayInPager}
+                  setSorting={(sorting: Sorting<EnumPayInSortField>[]) => this.setPayInSorting(sorting)}
+                  sorting={payins.sorting}
+                  viewPayIn={this.viewPayIn}
+                  viewProcessInstance={this.viewProcessInstance}
+                />
+              </Paper>
+            </Grid>
+          }
+          {tabIndex === 2 && provider &&
+            <Grid item xs={12}>
+              <Paper className={classes.paperTable}>
+                <PayOutTable
+                  find={this.props.findPayOuts}
+                  loading={loading}
+                  mode={EnumBillingViewMode.PROVIDER}
+                  pagination={payouts.pagination}
+                  query={payouts.query}
+                  selected={[]}
+                  setPager={this.props.setPayOutPager}
+                  setSorting={(sorting: Sorting<EnumPayOutSortField>[]) => this.setPayOutSorting(sorting)}
+                  result={payouts.items}
+                  sorting={payouts.sorting}
+                  viewProcessInstance={this.viewProcessInstance}
+                />
+              </Paper>
+            </Grid>
+          }
+          {tabIndex === 3 && consumer &&
+            <Grid item xs={12}>
+              <Paper className={classes.paperTable}>
+                <SubscriptionTable
+                  config={this.props.config}
+                  find={this.props.findSubscriptions}
+                  loading={loading}
+                  mode={EnumBillingViewMode.CONSUMER}
+                  pagination={subscriptions.pagination}
+                  query={subscriptions.query}
+                  selected={[]}
+                  setPager={this.props.setSubscriptionPager}
+                  setSorting={(sorting: Sorting<EnumSubscriptionSortField>[]) => this.setSubscriptionSorting(sorting)}
+                  result={subscriptions.items}
+                  sorting={subscriptions.sorting}
+                />
+              </Paper>
+            </Grid>
+          }
+          {tabIndex === 3 && provider &&
+            <Grid container>
               <Card className={classes.card}>
                 <CardHeader
                   avatar={
                     <Avatar className={classes.avatar}>
-                      <Icon path={mdiListStatus} size="1.5rem" />
+                      <Icon path={mdiTransitConnectionVariant} size="1.5rem" />
                     </Avatar>
                   }
                   title={
-                    <a className={classes.link} href={`/workflows/process-instances/record?businessKey=${account.key}`}>
-                      <FormattedMessage id={'account-marketplace.form.section.registration'} />
-                    </a>
+                    <FormattedMessage id={'account-marketplace.form.section.external-provider'} />
                   }
                 ></CardHeader>
                 <CardContent>
-                  <Grid container spacing={2}>
+                  <Grid container spacing={1}>
                     <Grid item xs={8}>
-                      <Typography variant="caption">
-                        <FormattedMessage id={'account-marketplace.form.field.registeredAt'} />
-                      </Typography>
-                      <Typography gutterBottom>
-                        <FormattedTime value={account.registeredAt.toDate()} day='numeric' month='numeric' year='numeric' />
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Typography variant="caption">
-                        <FormattedMessage id={'account-marketplace.form.field.registration-status'} />
-                      </Typography>
-                      {account.activationStatus === EnumActivationStatus.COMPLETED &&
-                        <div className={classes.statusLabel}>
-                          <div className={classes.statusLabelText}>{account.activationStatus}</div>
-                        </div>
-                      }
-                      {account.activationStatus === EnumActivationStatus.PENDING &&
-                        <div className={classes.statusLabelWarning}>
-                          <div className={classes.statusLabelText}>{account.activationStatus}</div>
-                        </div>
-                      }
+                      <RadioGroup
+                        value={externalProvider}
+                        name="external-provider-group"
+                        onChange={(e) => this.setState({ externalProvider: e.target.value as EnumDataProvider })}
+                      >
+                        {config.externalProviders!.map((p) => (
+                          <FormControlLabel key={p.id} value={p.id} control={<Radio />} label={p.name} />
+                        ))}
+                      </RadioGroup>
                     </Grid>
                   </Grid>
                 </CardContent>
+                <CardActions disableSpacing className={classes.cardActions}>
+                  <Button
+                    size="small"
+                    color="primary"
+                    className={classes.button}
+                    disabled={loading || this.state.initialExternalProvider === this.state.externalProvider}
+                    onClick={(e) => this.onAssignExternalProvider(e)}
+                  >
+                    <FormattedMessage id="view.shared.action.save"></FormattedMessage>
+                  </Button>
+                </CardActions>
+              </Card>
+              <Card className={classes.card}>
+                <CardHeader
+                  avatar={
+                    <Avatar className={classes.avatar}>
+                      <Icon path={mdiCreativeCommons} size="1.5rem" />
+                    </Avatar>
+                  }
+                  title={
+                    <FormattedMessage id={'account-marketplace.form.section.open-dataset-provider'} />
+                  }
+                ></CardHeader>
+                <CardContent>
+                  <Grid container spacing={1}>
+                    <Grid item xs={8}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={openDatasetProvider}
+                            onChange={
+                              (event) => this.onOpenDatasetProviderChange(event)
+                            }
+                            name="enabled"
+                            color="primary"
+                          />
+                        }
+                        label={_t({ id: 'account-marketplace.form.field.open-dataset-provider' })}
+                      />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+                <CardActions disableSpacing className={classes.cardActions}>
+                  <Button
+                    size="small"
+                    color="primary"
+                    className={classes.button}
+                    disabled={loading || this.state.initialOpenDatasetProvider === this.state.openDatasetProvider}
+                    onClick={(e) => this.onAssignOpenDatasetProvider(e)}
+                  >
+                    <FormattedMessage id="view.shared.action.save"></FormattedMessage>
+                  </Button>
+                </CardActions>
               </Card>
             </Grid>
-            {consumer &&
-              <Grid item>
-                {this.renderCustomer(consumer, EnumCustomerType.CONSUMER)}
-              </Grid>
-            }
-            {provider &&
-              <Grid item>
-                {this.renderCustomer(provider, EnumCustomerType.PROVIDER)}
-              </Grid>
-            }
-          </Grid>
-          <Grid container item xs={6}>
-            {provider &&
-              <>
-                <Grid container item>
-                  <Card className={classes.card}>
-                    <CardHeader
-                      avatar={
-                        <Avatar className={classes.avatar}>
-                          <Icon path={mdiTransitConnectionVariant} size="1.5rem" />
-                        </Avatar>
-                      }
-                      title={
-                        <FormattedMessage id={'account-marketplace.form.section.external-provider'} />
-                      }
-                    ></CardHeader>
-                    <CardContent>
-                      <Grid container spacing={1}>
-                        <Grid item xs={8}>
-                          <RadioGroup
-                            value={externalProvider}
-                            name="external-provider-group"
-                            onChange={(e) => this.setState({ externalProvider: e.target.value as EnumDataProvider })}
-                          >
-                            {config.externalProviders!.map((p) => (
-                              <FormControlLabel key={p.id} value={p.id} control={<Radio />} label={p.name} />
-                            ))}
-                          </RadioGroup>
-                        </Grid>
-                      </Grid>
-                    </CardContent>
-                    <CardActions disableSpacing className={classes.cardActions}>
-                      <Button
-                        size="small"
-                        color="primary"
-                        className={classes.button}
-                        disabled={loading || this.state.initialExternalProvider === this.state.externalProvider}
-                        onClick={(e) => this.onAssignExternalProvider(e)}
-                      >
-                        <FormattedMessage id="view.shared.action.save"></FormattedMessage>
-                      </Button>
-                    </CardActions>
-                  </Card>
-                  <Card className={classes.card}>
-                    <CardHeader
-                      avatar={
-                        <Avatar className={classes.avatar}>
-                          <Icon path={mdiCreativeCommons} size="1.5rem" />
-                        </Avatar>
-                      }
-                      title={
-                        <FormattedMessage id={'account-marketplace.form.section.open-dataset-provider'} />
-                      }
-                    ></CardHeader>
-                    <CardContent>
-                      <Grid container spacing={1}>
-                        <Grid item xs={8}>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={openDatasetProvider}
-                                onChange={
-                                  (event) => this.onOpenDatasetProviderChange(event)
-                                }
-                                name="enabled"
-                                color="primary"
-                              />
-                            }
-                            label={_t({ id: 'account-marketplace.form.field.open-dataset-provider' })}
-                          />
-                        </Grid>
-                      </Grid>
-                    </CardContent>
-                    <CardActions disableSpacing className={classes.cardActions}>
-                      <Button
-                        size="small"
-                        color="primary"
-                        className={classes.button}
-                        disabled={loading || this.state.initialOpenDatasetProvider === this.state.openDatasetProvider}
-                        onClick={(e) => this.onAssignOpenDatasetProvider(e)}
-                      >
-                        <FormattedMessage id="view.shared.action.save"></FormattedMessage>
-                      </Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              </>
-            }
-          </Grid>
+          }
         </Grid>
         {this.renderExternalProviderDialog()}
         {this.renderOpenDatasetProviderDialog()}
@@ -764,13 +1053,35 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
 }
 
 const mapState = (state: RootState) => ({
-  config: state.config,
   account: state.account.marketplace.account,
+  config: state.config,
   loading: state.account.marketplace.loading,
+  orders: state.account.marketplace.orders,
+  payins: state.account.marketplace.payins,
+  payouts: state.account.marketplace.payouts,
+  subscriptions: state.account.marketplace.subscriptions,
+  tabIndex: state.account.marketplace.tabIndex,
+  transfers: state.account.marketplace.transfers,
 });
 
 const mapDispatch = {
-  findOne: (key: string) => findOne(key),
+  findOne: (key: string, tabIndex: number | null) => findOne(key, tabIndex),
+  findOrders: (pageRequest?: PageRequest, sorting?: Sorting<EnumOrderSortField>[]) => findOrders(pageRequest, sorting),
+  findPayIns: (pageRequest?: PageRequest, sorting?: Sorting<EnumPayInSortField>[]) => findPayIns(pageRequest, sorting),
+  findTransfers: (pageRequest?: PageRequest, sorting?: Sorting<EnumTransferSortField>[]) => findTransfers(pageRequest, sorting),
+  findPayOuts: (pageRequest?: PageRequest, sorting?: Sorting<EnumPayOutSortField>[]) => findPayOuts(pageRequest, sorting),
+  findSubscriptions: (pageRequest?: PageRequest, sorting?: Sorting<EnumSubscriptionSortField>[]) => findSubscriptions(pageRequest, sorting),
+  setOrderPager,
+  setOrderSorting,
+  setPayInPager,
+  setPayInSorting,
+  setTransferPager,
+  setTransferSorting,
+  setPayOutPager,
+  setPayOutSorting,
+  setSubscriptionPager,
+  setSubscriptionSorting,
+  setTabIndex,
 };
 
 const connector = connect(

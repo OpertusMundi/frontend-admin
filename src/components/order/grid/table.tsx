@@ -24,7 +24,7 @@ import {
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { EnumKycLevel, EnumMangopayUserType, CustomerIndividual, CustomerProfessional } from 'model/account-marketplace';
-import { EnumOrderSortField, EnumOrderStatus, Order, OrderQuery } from 'model/order';
+import { EnumOrderSortField, EnumOrderStatus, EnumBillingViewMode, Order, OrderQuery } from 'model/order';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 // Helper methods
@@ -127,6 +127,7 @@ function orderColumns(intl: IntlShape, props: OrderTableProps): Column<Order, En
       header: intl.formatMessage({ id: 'billing.order.header.consumer' }),
       id: 'consumer',
       sortable: false,
+      hidden: props.mode === EnumBillingViewMode.CONSUMER,
       cell: (
         rowIndex: number, column: Column<Order, EnumOrderSortField>, row: Order, handleAction?: cellActionHandler<Order, EnumOrderSortField>
       ): React.ReactNode => {
@@ -318,21 +319,22 @@ const statusToBackGround = (status: EnumOrderStatus): string => {
 
 interface OrderTableProps extends WithStyles<typeof styles> {
   intl: IntlShape,
+  loading?: boolean;
+  mode: EnumBillingViewMode,
+  pagination: PageRequest,
+  query: OrderQuery,
+  result: PageResult<Order> | null,
+  selected: Order[],
+  sorting: Sorting<EnumOrderSortField>[];
+  addToSelection?: (rows: Order[]) => void,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumOrderSortField>[]
   ) => Promise<PageResult<Order> | null>,
-  query: OrderQuery,
-  result: PageResult<Order> | null,
-  pagination: PageRequest,
-  selected: Order[],
+  removeFromSelection?: (rows: Order[]) => void,
+  resetSelection?: () => void;
   setPager: (page: number, size: number) => void,
   setSorting: (sorting: Sorting<EnumOrderSortField>[]) => void,
-  addToSelection: (rows: Order[]) => void,
-  removeFromSelection: (rows: Order[]) => void,
-  resetSelection: () => void;
-  sorting: Sorting<EnumOrderSortField>[];
   viewProcessInstance: (processInstance: string) => void;
-  loading?: boolean;
 }
 
 class OrderTable extends React.Component<OrderTableProps> {
@@ -341,6 +343,10 @@ class OrderTable extends React.Component<OrderTableProps> {
     super(props);
 
     this.handleAction = this.handleAction.bind(this);
+  }
+
+  static defaultProps = {
+    mode: EnumBillingViewMode.DEFAULT,
   }
 
   handleAction(action: string, index: number, column: Column<Order, EnumOrderSortField>, row: Order): void {

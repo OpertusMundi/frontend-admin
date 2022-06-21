@@ -23,7 +23,7 @@ import {
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { EnumKycLevel, CustomerProfessional } from 'model/account-marketplace';
-import { EnumPayOutSortField, EnumTransactionStatus, PayOut, PayOutQuery } from 'model/order';
+import { EnumBillingViewMode, EnumPayOutSortField, EnumTransactionStatus, PayOut, PayOutQuery } from 'model/order';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 // Helper methods
@@ -289,21 +289,22 @@ const statusToBackGround = (status: EnumTransactionStatus): string => {
 
 interface PayOutTableProps extends WithStyles<typeof styles> {
   intl: IntlShape,
+  loading?: boolean;
+  mode?: EnumBillingViewMode;
+  pagination: PageRequest,
+  query: PayOutQuery,
+  result: PageResult<PayOut> | null,
+  selected: PayOut[],
+  sorting: Sorting<EnumPayOutSortField>[];
+  addToSelection?: (rows: PayOut[]) => void,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumPayOutSortField>[]
   ) => Promise<PageResult<PayOut> | null>,
-  query: PayOutQuery,
-  result: PageResult<PayOut> | null,
-  pagination: PageRequest,
-  selected: PayOut[],
+  removeFromSelection?: (rows: PayOut[]) => void,
+  resetSelection?: () => void;
   setPager: (page: number, size: number) => void,
   setSorting: (sorting: Sorting<EnumPayOutSortField>[]) => void,
-  addToSelection: (rows: PayOut[]) => void,
-  removeFromSelection: (rows: PayOut[]) => void,
-  resetSelection: () => void;
-  sorting: Sorting<EnumPayOutSortField>[];
   viewProcessInstance: (processInstance: string) => void;
-  loading?: boolean;
 }
 
 class AccountTable extends React.Component<PayOutTableProps> {
@@ -312,6 +313,10 @@ class AccountTable extends React.Component<PayOutTableProps> {
     super(props);
 
     this.handleAction = this.handleAction.bind(this);
+  }
+
+  static defaultProps = {
+    mode: EnumBillingViewMode.DEFAULT,
   }
 
   handleAction(action: string, index: number, column: Column<PayOut, EnumPayOutSortField>, row: PayOut): void {

@@ -107,47 +107,45 @@ class OrderManager extends React.Component<OrderManagerProps> {
     } = this.props;
 
     return (
-      <>
-        <div>
-          <Paper className={classes.paper}>
-            <OrderFilters
-              query={query}
-              setFilter={setFilter}
-              resetFilter={resetFilter}
-              find={find}
-              disabled={loading}
-            />
-            {lastUpdated &&
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <Typography variant="caption" display="block" gutterBottom className={classes.caption}>
-                    <FormattedMessage id="billing.order.last-update" />
-                    <FormattedTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
-                  </Typography>
-                </Grid>
+      <div>
+        <Paper className={classes.paper}>
+          <OrderFilters
+            query={query}
+            setFilter={setFilter}
+            resetFilter={resetFilter}
+            find={find}
+            disabled={loading}
+          />
+          {lastUpdated &&
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Typography variant="caption" display="block" gutterBottom className={classes.caption}>
+                  <FormattedMessage id="billing.order.last-update" />
+                  <FormattedTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
+                </Typography>
               </Grid>
-            }
-          </Paper>
+            </Grid>
+          }
+        </Paper>
 
-          <Paper className={classes.paperTable}>
-            <OrderTable
-              addToSelection={addToSelection}
-              find={this.props.find}
-              loading={loading}
-              pagination={pagination}
-              removeFromSelection={removeFromSelection}
-              query={query}
-              resetSelection={resetSelection}
-              selected={selected}
-              setPager={setPager}
-              setSorting={(sorting: Sorting<EnumOrderSortField>[]) => this.setSorting(sorting)}
-              result={result}
-              sorting={sorting}
-              viewProcessInstance={this.viewProcessInstance}
-            />
-          </Paper>
-        </div >
-      </>
+        <Paper className={classes.paperTable}>
+          <OrderTable
+            addToSelection={addToSelection}
+            find={this.props.find}
+            loading={loading}
+            pagination={pagination}
+            removeFromSelection={removeFromSelection}
+            query={query}
+            resetSelection={resetSelection}
+            selected={selected}
+            setPager={setPager}
+            setSorting={(sorting: Sorting<EnumOrderSortField>[]) => this.setSorting(sorting)}
+            result={result}
+            sorting={sorting}
+            viewProcessInstance={this.viewProcessInstance}
+          />
+        </Paper>
+      </div>
     );
   }
 

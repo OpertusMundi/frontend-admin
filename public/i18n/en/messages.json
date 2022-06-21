@@ -293,6 +293,20 @@
         "view-details": "View PayIn"
       }
     },
+    "subscription": {
+      "header": {
+        "actions": " ",
+        "added-on": "Added On",
+        "consumer": "Consumer",
+        "item": "Asset",
+        "provider": "Provider",
+        "modified-on": "Modified On",
+        "status": "Status"
+      },
+      "tooltip": {
+        "view": "Preview in Marketplace"
+      }
+    },
     "transfer": {
       "filter": {
         "reference-number": "Reference Number",
@@ -498,6 +512,11 @@
     "subscription": {
       "MONTHLY": "Monthly Payments",
       "ANNUAL": "Annual Payments"
+    },
+    "subscription-status": {
+      "CREATED": "New",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive"
     },
     "transaction-status": {
       "NotSpecified": "Not Specified",

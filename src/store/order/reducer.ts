@@ -31,7 +31,7 @@ import {
 const initialState: OrderManagerState = {
   loading: false,
   query: {
-    consumer: '',
+    email: '',
     referenceNumber: '',
     status: [],
   },

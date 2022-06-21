@@ -275,7 +275,7 @@ interface BaseCatalogueItem {
   /*
    * An abstract of the resource
    */
-  abstract: string;
+  abstractText: string;
   /*
    * Degree of conformity with the implementing rules/standard of the metadata followed
    */
