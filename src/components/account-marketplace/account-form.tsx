@@ -392,20 +392,55 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     const consumer = account?.profile.consumer.current;
     const provider = account?.profile.provider.current;
 
-    if (index === 1 && consumer && !orders.loaded) {
-      this.findOrders();
-    }
-    if (index === 1 && provider && !transfers.loaded) {
-      this.findTransfers();
-    }
-    if (index === 2 && consumer && !payins.loaded) {
-      this.findPayIns();
-    }
-    if (index === 2 && provider && !payouts.loaded) {
-      this.findPayOuts();
-    }
-    if (index === 3 && consumer && !subscriptions.loaded) {
-      this.findSubscriptions();
+    /**
+     * Tabs
+     *
+     * 1: Orders        (consumer) / Transfers  (provider)
+     * 2: PayIns        (consumer) / PayOuts    (provider)
+     * 3: Subscriptions (consumer)
+     * 4: Transfers     (consumer + provider)
+     * 5: PayOuts       (consumer + provider)
+     * 6:
+     */
+    switch (index) {
+      case 1:
+        // Orders
+        if (consumer && !orders.loaded) {
+          this.findOrders();
+        }
+        // Transfers
+        if (!consumer && provider && !transfers.loaded) {
+          this.findTransfers();
+        }
+        break;
+      case 2:
+        // PayIns
+        if (consumer && !payins.loaded) {
+          this.findPayIns();
+        }
+        // PayOuts
+        if (!consumer && provider && !payouts.loaded) {
+          this.findPayOuts();
+        }
+        break;
+      case 3:
+        // Subscriptions
+        if (consumer && !subscriptions.loaded) {
+          this.findSubscriptions();
+        }
+        break;
+      case 4:
+        // Transfers
+        if (consumer && provider && !transfers.loaded) {
+          this.findTransfers();
+        }
+        break;
+      case 5:
+        // PayOuts
+        if (consumer && provider && !payouts.loaded) {
+          this.findPayOuts();
+        }
+        break;
     }
   }
 
@@ -841,21 +876,20 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
               variant="fullWidth"
             >
               <Tab icon={<Icon path={mdiAccountCircleOutline} size="1.5rem" />} label="Account" />
-
               {consumer &&
                 <Tab icon={<Icon path={mdiPackageVariantClosed} size="1.5rem" />} label="Orders" />
               }
               {consumer &&
                 <Tab icon={<Icon path={mdiBankTransferIn} size="1.5rem" />} label="Pay Ins" />
               }
+              {consumer &&
+                <Tab icon={<Icon path={mdiClockFast} size="1.5rem" />} label="Subscriptions" />
+              }
               {provider &&
                 <Tab icon={<Icon path={mdiWalletPlusOutline} size="1.5rem" />} label="Transfers" />
               }
               {provider &&
                 <Tab icon={<Icon path={mdiBankTransferOut} size="1.5rem" />} label="Pay Outs" />
-              }
-              {consumer &&
-                <Tab icon={<Icon path={mdiClockFast} size="1.5rem" />} label="Subscriptions" />
               }
               {provider &&
                 <Tab icon={<Icon path={mdiTuneVariant} size="1.5rem" />} label="Configuration" />
