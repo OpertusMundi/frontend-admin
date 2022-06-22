@@ -15,10 +15,7 @@ import {
   mdiBankPlus,
   mdiCogSyncOutline,
   mdiEmailAlertOutline,
-  mdiFinance,
-  mdiLink,
   mdiMessageTextOutline,
-  mdiPackageVariantClosed,
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
@@ -33,9 +30,6 @@ import clsx from 'clsx';
 enum EnumAction {
   CreatePayOut = 'create-payout',
   SendMessage = 'send-message',
-  ViewDetails = 'view-details',
-  ViewFinance = 'view-finance',
-  ViewOrders = 'view-orders',
 };
 
 function providerColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>[] {
@@ -43,37 +37,16 @@ function providerColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
     [{
       header: intl.formatMessage({ id: 'account.marketplace.header.actions' }),
       id: 'actions',
-      width: 80,
+      width: 60,
       cell: (
         rowIndex: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary, handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-details' })}>
-            <i
-              onClick={() => handleAction ? handleAction(EnumAction.ViewDetails, rowIndex, column, row) : null}
-            >
-              <Icon path={mdiLink} className={classes.classes.rowIconAction} />
-            </i>
-          </Tooltip>
           <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.send-message' })}>
             <i
               onClick={() => handleAction ? handleAction(EnumAction.SendMessage, rowIndex, column, row) : null}
             >
               <Icon path={mdiMessageTextOutline} className={classes.classes.rowIconAction} style={{ marginTop: 2 }} />
-            </i>
-          </Tooltip>
-          <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-orders' })}>
-            <i
-              onClick={() => handleAction ? handleAction(EnumAction.ViewOrders, rowIndex, column, row) : null}
-            >
-              <Icon path={mdiPackageVariantClosed} className={classes.classes.rowIconAction} />
-            </i>
-          </Tooltip>
-          <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-finance' })}>
-            <i
-              onClick={() => handleAction ? handleAction(EnumAction.ViewFinance, rowIndex, column, row) : null}
-            >
-              <Icon path={mdiFinance} className={classes.classes.rowIconAction} />
             </i>
           </Tooltip>
           {row.providerKycLevel === EnumKycLevel.REGULAR &&

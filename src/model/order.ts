@@ -7,7 +7,7 @@ import {
   CustomerType,
   AccountSubscription,
 } from 'model/account-marketplace';
-import { EffectivePricingModel } from 'model/pricing-model';
+import { EffectivePricingModel, PricingModelCommand } from 'model/pricing-model';
 
 export enum EnumBillingViewMode {
   DEFAULT = 'DEFAULT',
@@ -113,11 +113,115 @@ export interface Transfer {
   resultMessage: string;
 }
 
+export enum EnumSubscriptionBillingSortField {
+  CREATED_ON = 'CREATED_ON',
+  DUE_DATE = 'DUE_DATE',
+  FROM_DATE = 'FROM_DATE',
+  STATUS = 'STATUS',
+  TO_DATE = 'TO_DATE',
+  TOTAL_PRICE = 'TOTAL_PRICE',
+  UPDATED_ON = 'UPDATED_ON',
+}
+
+export enum EnumSubscriptionBillingStatus {
+  /**
+   * A billing record with 0 total price has been created
+   */
+  NO_CHARGE = 'NO_CHARGE',
+  /**
+   * A billing record has been generated, but it hasn't been paid yet
+   */
+  DUE = 'DUE',
+  /**
+   * Payment method has been declined
+   */
+  FAILED = 'FAILED',
+  /**
+   * Billing record has been paid
+   */
+  PAID = 'PAID',
+}
+
+export interface ServiceUseStats {
+  /**
+   * Number of service calls
+   */
+  calls: number;
+  /**
+   * Number of service calls per client
+   */
+  clientCalls: { [client: string]: number };
+  /**
+   * Number of rows returned by service calls per client
+   */
+  clientRows: { [client: string]: number };
+  /**
+   * Number of rows returned by service calls
+   */
+  rows: number;
+  /**
+   * Asset unique PID
+   */
+  subscriptionKey: string;
+  /**
+   * Subscriber account unique key
+   */
+  userKey: string;
+}
+
 export interface SubscriptionBilling {
+  /**
+   * Date of creation
+   */
+  createdOn: Moment;
+  /**
+   * Payment due date
+   */
+  dueDate: Moment;
+  /**
+   * Billing interval first date in ISO format e.g. 2020-06-10T16:01:04.991+03:00
+   */
+  fromDate: Moment;
+  /**
+   * Subscription billing payin
+   */
+  payin?: PayInType;
+  /**
+   * Pricing model used for the quotation
+   */
+  pricingModel: PricingModelCommand;
   /**
    * Service unique PID
    */
   service: string;
+  /**
+   * Billing interval last date in ISO format e.g. 2020-07-10T16:01:04.991+03:00
+   */
+  toDate: Moment;
+  /**
+   * Total calls charged in this record. This field is exclusive with field `totalRows`
+   */
+  totalCalls: number;
+  /**
+   * Total rows charged in this record. This field is exclusive with field `totalCalls`
+   */
+  totalRows: number;
+  /**
+   * Total calls used by purchased SKUs. This field is exclusive with field `skuTotalRows`
+   */
+  skuTotalCalls: number;
+  /**
+   * Total rows used by purchased SKUs. This field is exclusive with field `skuTotalCalls`
+   */
+  skuTotalRows: number;
+  /**
+   * Use statistics
+   */
+  stats: ServiceUseStats;
+  /**
+   * Status
+   */
+  status: EnumSubscriptionBillingStatus;
   /**
    * Account subscription
    */
@@ -126,30 +230,6 @@ export interface SubscriptionBilling {
    * Service description
    */
   subscriptionDescription: string;
-  /**
-   * Billing interval first date in ISO format e.g. 2020-06-10T16:01:04.991+03:00
-   */
-  fromDate: string;
-  /**
-   * Billing interval last date in ISO format e.g. 2020-07-10T16:01:04.991+03:00
-   */
-  toDate: string;
-  /**
-   * Total rows charged in this record. This field is exclusive with field `totalCalls`
-   */
-  totalRows: number;
-  /**
-   * Total calls charged in this record. This field is exclusive with field `totalRows`
-   */
-  totalCalls: number;
-  /**
-   * Total rows used by purchased SKUs. This field is exclusive with field `skuTotalCalls`
-   */
-  skuTotalRows: number;
-  /**
-   * Total calls used by purchased SKUs. This field is exclusive with field `skuTotalRows`
-   */
-  skuTotalCalls: number;
   /**
    * Item total price
    */
@@ -162,6 +242,16 @@ export interface SubscriptionBilling {
    * Item tax
    */
   totalTax: number;
+  /**
+   * Date of last update
+   */
+  updatedOn: Moment;
+}
+
+export interface SubscriptionBillingQuery {
+  consumerKey?: string;
+  providerKey?: string;
+  status: EnumSubscriptionBillingStatus[];
 }
 
 export interface PayInItem {

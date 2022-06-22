@@ -58,12 +58,35 @@ import {
   SUBSCRIPTION_SEARCH_INIT,
   SUBSCRIPTION_SEARCH_FAILURE,
   SUBSCRIPTION_SEARCH_COMPLETE,
+  SUB_BILLING_SET_PAGER,
+  SUB_BILLING_RESET_PAGER,
+  SUB_BILLING_SET_SORTING,
+  SUB_BILLING_SEARCH_INIT,
+  SUB_BILLING_SEARCH_FAILURE,
+  SUB_BILLING_SEARCH_COMPLETE,
   SET_TAB_INDEX,
 } from 'store/account-marketplace/types';
-import { EnumOrderSortField, EnumPayInSortField, EnumPayOutSortField, EnumTransferSortField } from 'model/order';
+import { EnumOrderSortField, EnumPayInSortField, EnumPayOutSortField, EnumSubscriptionBillingSortField, EnumTransferSortField } from 'model/order';
 
 const initialState: MarketplaceAccountManagerState = {
   account: null,
+  billing: {
+    subscriptions: {
+      items: null,
+      loaded: false,
+      pagination: {
+        page: 0,
+        size: 10,
+      },
+      query: {
+        status: [],
+      },
+      sorting: [{
+        id: EnumSubscriptionBillingSortField.CREATED_ON,
+        order: Order.DESC,
+      }],
+    },
+  },
   lastUpdated: null,
   loading: false,
   orders: {
@@ -658,6 +681,89 @@ export function marketplaceAccountReducer(
         },
         loading: false,
       };
+
+    case SUB_BILLING_SET_PAGER:
+      return {
+        ...state,
+        billing: {
+          ...state.billing,
+          subscriptions: {
+            ...state.billing.subscriptions,
+            pagination: {
+              page: action.page,
+              size: action.size,
+            },
+          },
+        },
+      };
+
+    case SUB_BILLING_RESET_PAGER:
+      return {
+        ...state,
+        billing: {
+          ...state.billing,
+          subscriptions: {
+            ...state.billing.subscriptions,
+            pagination: {
+              ...initialState.pagination
+            },
+          },
+        },
+      };
+
+    case SUB_BILLING_SET_SORTING:
+      return {
+        ...state,
+        billing: {
+          ...state.billing,
+          subscriptions: {
+            ...state.billing.subscriptions,
+            sorting: action.sorting,
+          },
+        },
+      };
+
+    case SUB_BILLING_SEARCH_INIT:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case SUB_BILLING_SEARCH_FAILURE:
+      return {
+        ...state,
+        billing: {
+          ...state.billing,
+          subscriptions: {
+            ...state.billing.subscriptions,
+            items: null,
+            pagination: {
+              page: 0,
+              size: state.pagination.size,
+            },
+          },
+        },
+        loading: false,
+      };
+
+    case SUB_BILLING_SEARCH_COMPLETE:
+      return {
+        ...state,
+        billing: {
+          ...state.billing,
+          subscriptions: {
+            ...state.billing.subscriptions,
+            loaded: true,
+            pagination: {
+              page: action.result.pageRequest.page,
+              size: action.result.pageRequest.size,
+            },
+            items: action.result,
+          },
+        },
+        loading: false,
+      };
+
     default:
       return state;
   }

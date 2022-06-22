@@ -12,6 +12,8 @@ import { SimpleResponse } from 'model/response';
 
 const iso8601 = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/;
 
+const localDate = /^\d{4}-\d\d-\d\d$/;
+
 function isIso8601(value: any): boolean {
   // Check null
   if (!value) {
@@ -23,6 +25,19 @@ function isIso8601(value: any): boolean {
   }
   // Check regular expression
   return iso8601.test(value);
+}
+
+function isLocalDate(value: any): boolean {
+  // Check null
+  if (!value) {
+    return false;
+  }
+  // Check only string values
+  if (typeof value !== 'string') {
+    return false;
+  }
+  // Check regular expression
+  return localDate.test(value);
 }
 
 function convertStringToMoment(obj: any): void {
@@ -48,6 +63,9 @@ function convertStringToMoment(obj: any): void {
       convertStringToMoment(value);
     } else if (isIso8601(value)) {
       // Replace valid ISO date with moment instance
+      obj[key] = moment(value);
+    } else if (isLocalDate(value)) {
+      // Replace string with format YYYY-MM-DD with moment instance
       obj[key] = moment(value);
     }
   }

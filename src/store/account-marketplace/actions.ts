@@ -56,17 +56,25 @@ import {
   SUBSCRIPTION_SEARCH_INIT,
   SUBSCRIPTION_SEARCH_FAILURE,
   SUBSCRIPTION_SEARCH_COMPLETE,
+  SUB_BILLING_SET_PAGER,
+  SUB_BILLING_RESET_PAGER,
+  SUB_BILLING_SET_SORTING,
+  SUB_BILLING_SEARCH_INIT,
+  SUB_BILLING_SEARCH_FAILURE,
+  SUB_BILLING_SEARCH_COMPLETE,
   SET_TAB_INDEX,
 } from './types';
 import {
   EnumOrderSortField,
   EnumPayInSortField,
   EnumPayOutSortField,
+  EnumSubscriptionBillingSortField,
   EnumTransferSortField,
   Order,
   PayIn,
   PayInItem,
   PayOut,
+  SubscriptionBilling,
 } from 'model/order';
 
 
@@ -374,6 +382,46 @@ export function searchSubscriptionFailure(): AccountActions {
 export function searchSubscriptionComplete(result: PageResult<AccountSubscription>): AccountActions {
   return {
     type: SUBSCRIPTION_SEARCH_COMPLETE,
+    result,
+  };
+}
+
+export function setSubBillingPager(page: number, size: number): AccountActions {
+  return {
+    type: SUB_BILLING_SET_PAGER,
+    page,
+    size,
+  };
+}
+
+export function resetSubBillingPager(): AccountActions {
+  return {
+    type: SUB_BILLING_RESET_PAGER,
+  };
+}
+
+export function setSubBillingSorting(sorting: Sorting<EnumSubscriptionBillingSortField>[]): AccountActions {
+  return {
+    type: SUB_BILLING_SET_SORTING,
+    sorting,
+  };
+}
+
+export function searchSubBillingInit(): AccountActions {
+  return {
+    type: SUB_BILLING_SEARCH_INIT,
+  };
+}
+
+export function searchSubBillingFailure(): AccountActions {
+  return {
+    type: SUB_BILLING_SEARCH_FAILURE,
+  };
+}
+
+export function searchSubBillingComplete(result: PageResult<SubscriptionBilling>): AccountActions {
+  return {
+    type: SUB_BILLING_SEARCH_COMPLETE,
     result,
   };
 }

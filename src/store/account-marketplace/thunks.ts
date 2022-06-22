@@ -34,12 +34,16 @@ import {
   setSubscriptionPager,
   searchSubscriptionComplete,
   searchSubscriptionFailure,
+  setSubBillingSorting,
+  setSubBillingPager,
+  searchSubBillingComplete,
+  searchSubBillingFailure,
 } from './actions';
 
 // Services
 import MarketplaceAccountApi from 'service/account-marketplace';
-import ConsumerBillingApi from 'service/billing-consumer';
-import ProviderBillingApi from 'service/billing-provider';
+import ConsumerBillingApi from 'service/consumer';
+import ProviderBillingApi from 'service/provider';
 
 // Model
 import { PageRequest, Sorting, PageResult, ObjectResponse } from 'model/response';
@@ -56,6 +60,7 @@ import {
   EnumOrderSortField,
   EnumPayInSortField,
   EnumPayOutSortField,
+  EnumSubscriptionBillingSortField,
   EnumTransferSortField,
   Order,
   OrderQuery,
@@ -64,6 +69,8 @@ import {
   PayInQuery,
   PayOut,
   PayOutQuery,
+  SubscriptionBilling,
+  SubscriptionBillingQuery,
   TransferQuery,
 } from 'model/order';
 
@@ -350,5 +357,47 @@ export const findSubscriptions = (
   }
 
   dispatch(searchSubscriptionFailure());
+  return null;
+}
+
+export const findSubscriptionBilling = (
+  pageRequest?: PageRequest, sorting?: Sorting<EnumSubscriptionBillingSortField>[]
+): ThunkResult<PageResult<SubscriptionBilling> | null> => async (dispatch, getState) => {
+  // Get query form state (filters are always set synchronously)
+  const query: Partial<SubscriptionBillingQuery> = {
+    consumerKey: getState().account.marketplace.account?.key,
+  }
+
+  // Update sorting or use the existing value
+  if (sorting) {
+    dispatch(setSubBillingSorting(sorting));
+  } else {
+    sorting = getState().account.marketplace.billing.subscriptions.sorting;
+  }
+
+  // Update page or user the existing value (i.e. data page refresh)
+  if (pageRequest) {
+    const { page, size } = pageRequest;
+
+    dispatch(setSubBillingPager(page, size));
+  } else {
+    pageRequest = getState().account.marketplace.billing.subscriptions.pagination;
+  }
+
+  // Initialize search
+  dispatch(searchInit());
+
+  // Get response
+  const api = new ConsumerBillingApi();
+
+  const response = await api.findSubscriptionBilling(query, pageRequest, sorting);
+
+  // Update state
+  if (response.data.success) {
+    dispatch(searchSubBillingComplete(response.data.result!));
+    return response.data.result!;
+  }
+
+  dispatch(searchSubBillingFailure());
   return null;
 }

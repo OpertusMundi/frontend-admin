@@ -15,6 +15,7 @@ import {
   EnumOrderSortField,
   EnumPayInSortField,
   EnumPayOutSortField,
+  EnumSubscriptionBillingSortField,
   EnumTransferSortField,
   Order,
   OrderQuery,
@@ -23,12 +24,23 @@ import {
   PayInQuery,
   PayOut,
   PayOutQuery,
+  SubscriptionBilling,
+  SubscriptionBillingQuery,
   TransferQuery,
 } from 'model/order';
 
 // State
 export interface MarketplaceAccountManagerState {
   account: MarketplaceAccount | null;
+  billing:{
+    subscriptions: {
+      items: PageResult<SubscriptionBilling> | null;
+      loaded: boolean;
+      pagination: PageRequest;
+      query: SubscriptionBillingQuery,
+      sorting: Sorting<EnumSubscriptionBillingSortField>[];
+    },
+  },
   lastUpdated: Moment | null;
   loading: boolean;
   orders: {
@@ -132,6 +144,13 @@ export const SUBSCRIPTION_SET_SORTING = 'marketplace-account/manager/SUBSCRIPTIO
 export const SUBSCRIPTION_SEARCH_INIT = 'marketplace-account/manager/SUBSCRIPTION_SEARCH_INIT';
 export const SUBSCRIPTION_SEARCH_FAILURE = 'marketplace-account/manager/SUBSCRIPTION_SEARCH_FAILURE';
 export const SUBSCRIPTION_SEARCH_COMPLETE = 'marketplace-account/manager/SUBSCRIPTION_SEARCH_COMPLETE';
+
+export const SUB_BILLING_SET_PAGER = 'marketplace-account/manager/SUB_BILLING_SET_PAGER';
+export const SUB_BILLING_RESET_PAGER = 'marketplace-account/manager/SUB_BILLING_RESET_PAGER';
+export const SUB_BILLING_SET_SORTING = 'marketplace-account/manager/SUB_BILLING_SET_SORTING';
+export const SUB_BILLING_SEARCH_INIT = 'marketplace-account/manager/SUB_BILLING_SEARCH_INIT';
+export const SUB_BILLING_SEARCH_FAILURE = 'marketplace-account/manager/SUB_BILLING_SEARCH_FAILURE';
+export const SUB_BILLING_SEARCH_COMPLETE = 'marketplace-account/manager/SUB_BILLING_SEARCH_COMPLETE';
 
 export interface SetPagerAction {
   type: typeof SET_PAGER;
@@ -325,9 +344,6 @@ export interface SetTabIndexAction {
   tabIndex: number;
 }
 
-
-
-
 export interface SetSubscriptionPagerAction {
   type: typeof SUBSCRIPTION_SET_PAGER;
   page: number;
@@ -360,6 +376,40 @@ export interface SetTabIndexAction {
   type: typeof SET_TAB_INDEX;
   tabIndex: number;
 }
+
+export interface SetSubBillingPagerAction {
+  type: typeof SUB_BILLING_SET_PAGER;
+  page: number;
+  size: number;
+}
+
+export interface ResetSubBillingPagerAction {
+  type: typeof SUB_BILLING_RESET_PAGER
+}
+
+export interface SetSubBillingSortingAction {
+  type: typeof SUB_BILLING_SET_SORTING;
+  sorting: Sorting<EnumSubscriptionBillingSortField>[];
+}
+
+export interface SearchSubBillingInitAction {
+  type: typeof SUB_BILLING_SEARCH_INIT;
+}
+
+export interface SearchSubBillingFailureAction {
+  type: typeof SUB_BILLING_SEARCH_FAILURE;
+}
+
+export interface SearchSubBillingCompleteAction {
+  type: typeof SUB_BILLING_SEARCH_COMPLETE;
+  result: PageResult<SubscriptionBilling>;
+}
+
+export interface SetTabIndexAction {
+  type: typeof SET_TAB_INDEX;
+  tabIndex: number;
+}
+
 
 export type AccountActions =
   | LogoutInitAction
@@ -410,5 +460,11 @@ export type AccountActions =
   | SearchSubscriptionInitAction
   | SearchSubscriptionFailureAction
   | SearchSubscriptionCompleteAction
+  | SetSubBillingPagerAction
+  | ResetSubBillingPagerAction
+  | SetSubBillingSortingAction
+  | SearchSubBillingInitAction
+  | SearchSubBillingFailureAction
+  | SearchSubBillingCompleteAction
   | SetTabIndexAction
   ;

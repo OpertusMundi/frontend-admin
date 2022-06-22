@@ -8,7 +8,7 @@ import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
 // Model
-import { CallPrePaidQuotationParameters, EnumPricingModel, SHSubscriptionQuotationParameters } from 'model/pricing-model';
+import { PerCallQuotationParameters, EnumPricingModel, SHSubscriptionQuotationParameters } from 'model/pricing-model';
 import { OrderItem } from 'model/order';
 
 const styles = (theme: Theme) => createStyles({
@@ -39,8 +39,6 @@ class PricingModelDetails extends React.Component<PricingModelDetailsProps> {
 
     switch (model.type) {
       case EnumPricingModel.FREE:
-      case EnumPricingModel.PER_CALL_WITH_BLOCK_RATE:
-      case EnumPricingModel.PER_ROW_WITH_BLOCK_RATE:
         return (
           <FormattedMessage id={`enum.effective-pricing-model.${model.type}`} />
         );
@@ -72,8 +70,8 @@ class PricingModelDetails extends React.Component<PricingModelDetailsProps> {
         );
       }
 
-      case EnumPricingModel.PER_CALL_WITH_PREPAID: {
-        const typedUserParams = userParameters as CallPrePaidQuotationParameters;
+      case EnumPricingModel.PER_CALL: {
+        const typedUserParams = userParameters as PerCallQuotationParameters;
         const tier = model.prePaidTiers[typedUserParams.prePaidTier];
 
         return (
@@ -84,8 +82,8 @@ class PricingModelDetails extends React.Component<PricingModelDetailsProps> {
         );
       }
 
-      case EnumPricingModel.PER_ROW_WITH_PREPAID: {
-        const typedUserParams = userParameters as CallPrePaidQuotationParameters;
+      case EnumPricingModel.PER_ROW: {
+        const typedUserParams = userParameters as PerCallQuotationParameters;
         const tier = model.prePaidTiers[typedUserParams.prePaidTier];
 
         return (

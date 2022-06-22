@@ -307,6 +307,27 @@
         "view": "Preview in Marketplace"
       }
     },
+    "subscription-billing": {
+      "header": {
+        "actions": " ",
+        "consumer": "Consumer",
+        "created-on": "Created On",
+        "due-date": "Due Date",
+        "interval": "Interval",
+        "item": "Asset",
+        "net-price": "VAT",
+        "provider": "Provider",
+        "status": "Status",
+        "tax": "Price",
+        "total-price": "Total",
+        "updated-on": "Modified On"
+      },
+      "tooltip": {
+        "view-asset": "Preview in Marketplace",
+        "view-payin": "View Payment",
+        "view-statistics": "View Use Statistics"
+      }
+    },
     "transfer": {
       "filter": {
         "reference-number": "Reference Number",
@@ -517,6 +538,12 @@
       "CREATED": "New",
       "ACTIVE": "Active",
       "INACTIVE": "Inactive"
+    },
+    "subscription-billing-status": {
+      "NO_CHARGE": "No Charge",
+      "DUE": "Due",
+      "FAILED": "Failed",
+      "PAID": "Paid"
     },
     "transaction-status": {
       "NotSpecified": "Not Specified",

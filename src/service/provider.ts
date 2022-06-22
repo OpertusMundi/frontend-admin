@@ -21,7 +21,7 @@ export default class ProviderBillingApi extends Api {
         return query[key] !== null ? [...result, `${key}=${query[key]}`] : result;
       }, []);
 
-    const url = `/action/billing/provider/transfers?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
+    const url = `/action/provider/transfers?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
 
     return this.get<ObjectResponse<PageResult<PayInItem>>>(url);
   }
@@ -37,7 +37,7 @@ export default class ProviderBillingApi extends Api {
         return query[key] !== null ? [...result, `${key}=${query[key]}`] : result;
       }, []);
 
-    const url = `/action/billing/provider/payouts?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
+    const url = `/action/provider/payouts?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
 
     return this.get<ObjectResponse<PageResult<PayOut>>>(url);
   }
