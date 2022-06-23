@@ -126,6 +126,11 @@ const styles = (theme: Theme) => createStyles({
   avatar: {
     backgroundColor: red[500],
   },
+  button: {
+    margin: theme.spacing(3, 1, 2),
+    borderRadius: 0,
+    textTransform: 'none',
+  },
   card: {
     minWidth: 480,
     maxWidth: 640,
@@ -136,35 +141,31 @@ const styles = (theme: Theme) => createStyles({
   cardActions: {
     justifyContent: 'flex-end',
   },
-  statsDrawer: {
-    overflowX: 'hidden',
-    maxWidth: 500,
+  gridLabel: {
+    position: 'absolute',
+    top: '0px',
+    background: '#3f51b5',
+    color: '#ffffff',
+    left: 0,
+    padding: theme.spacing(0.5),
+    borderBottomRightRadius: theme.spacing(0.5),
+    fontSize: '0.7rem',
   },
-  listItem: {
-    padding: theme.spacing(1, 0),
-  },
-  paper: {
-    padding: theme.spacing(1),
-    margin: theme.spacing(1),
-    color: theme.palette.text.secondary,
-    borderRadius: 0,
+  link: {
+    textDecoration: 'underline',
+    color: 'inherit',
   },
   paperTable: {
     padding: theme.spacing(1),
+    position: 'relative',
     margin: theme.spacing(1),
     color: theme.palette.text.secondary,
     borderRadius: 0,
     overflowX: 'auto',
   },
-  total: {
-    fontWeight: 700,
-  },
-  title: {
-    marginTop: theme.spacing(2),
-  },
-  link: {
-    textDecoration: 'underline',
-    color: 'inherit',
+  statsDrawer: {
+    overflowX: 'hidden',
+    maxWidth: 500,
   },
   statusLabel: {
     display: 'flex',
@@ -181,13 +182,6 @@ const styles = (theme: Theme) => createStyles({
     padding: theme.spacing(0.5),
     borderRadius: theme.spacing(0.5),
     justifyContent: 'center',
-  },
-  statusLabelText: {
-  },
-  button: {
-    margin: theme.spacing(3, 1, 2),
-    borderRadius: 0,
-    textTransform: 'none',
   },
   textField: {
     margin: 0,
@@ -868,12 +862,12 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
                     </Typography>
                     {account.activationStatus === EnumActivationStatus.COMPLETED &&
                       <div className={classes.statusLabel}>
-                        <div className={classes.statusLabelText}>{account.activationStatus}</div>
+                        <div>{account.activationStatus}</div>
                       </div>
                     }
                     {account.activationStatus === EnumActivationStatus.PENDING &&
                       <div className={classes.statusLabelWarning}>
-                        <div className={classes.statusLabelText}>{account.activationStatus}</div>
+                        <div>{account.activationStatus}</div>
                       </div>
                     }
                   </Grid>
@@ -1046,6 +1040,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
             <Grid container>
               <Grid item xs={12}>
                 <Paper className={classes.paperTable}>
+                  <div className={classes.gridLabel}>Subscriptions</div>
                   <SubscriptionTable
                     config={this.props.config}
                     find={this.props.findSubscriptions}
@@ -1063,6 +1058,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
               </Grid>
               <Grid item xs={12}>
                 <Paper className={classes.paperTable}>
+                  <div className={classes.gridLabel}>Billing Records</div>
                   <SubscriptionBillingTable
                     config={this.props.config}
                     find={this.props.findSubscriptionBilling}

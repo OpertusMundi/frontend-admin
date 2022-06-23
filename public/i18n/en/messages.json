@@ -315,10 +315,10 @@
         "due-date": "Due Date",
         "interval": "Interval",
         "item": "Asset",
-        "net-price": "VAT",
+        "price": "Price",
         "provider": "Provider",
         "status": "Status",
-        "tax": "Price",
+        "tax": "VAT",
         "total-price": "Total",
         "updated-on": "Modified On"
       },

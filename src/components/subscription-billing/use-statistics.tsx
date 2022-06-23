@@ -207,7 +207,7 @@ class UseStatistics extends React.Component<UseStatisticsProps> {
           <Grid item xs={12}>
             <table className={classes.blockTable}>
               <tbody>
-                <tr key={'block-header'}>
+                <tr key={'analysis-header'}>
                   <td>
                     <Typography variant="caption" display="block">
                       Price
@@ -236,7 +236,7 @@ class UseStatistics extends React.Component<UseStatisticsProps> {
                   </td>
                 </tr>
                 {blocks.map((block, index) => (
-                  <tr>
+                  <tr key={`analysis-row-${index}`}>
                     <td>
                       <Typography variant="body1" display="block" component="div">
                         <FormattedNumber value={block.price} style={'currency'} currency={'EUR'} minimumFractionDigits={3} />
@@ -272,7 +272,7 @@ class UseStatistics extends React.Component<UseStatisticsProps> {
                     </td>
                   </tr>
                 ))}
-                <tr key={'block-total'}>
+                <tr key={'analysis-total'}>
                   <td colSpan={6}>
                   </td>
                   <td className={clsx(classes.blockTableDivider, classes.blockAlignRight)} >

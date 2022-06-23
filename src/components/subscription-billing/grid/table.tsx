@@ -302,7 +302,7 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
         <FormattedDate value={row.dueDate.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
     }, {
-      header: intl.formatMessage({ id: 'billing.subscription-billing.header.net-price' }),
+      header: intl.formatMessage({ id: 'billing.subscription-billing.header.price' }),
       id: 'netPrice',
       headerStyle: { textAlign: 'right' },
       sortable: false,
