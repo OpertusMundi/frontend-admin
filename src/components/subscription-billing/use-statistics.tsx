@@ -13,7 +13,8 @@ import Typography from '@material-ui/core/Typography';
 // Icons
 import Icon from '@mdi/react';
 import {
-  mdiClose, mdiEqual,
+  mdiClose,
+  mdiEqual,
 } from '@mdi/js';
 
 // Utilities
@@ -251,14 +252,11 @@ class UseStatistics extends React.Component<UseStatisticsProps> {
                       </Typography>
                     </td>
                     <td>
-                      {block.discount &&
-                        <Icon path={mdiClose} size="1rem" className={classes.operator} />
-                      }
                     </td>
                     <td>
                       {block.discount &&
                         <Typography variant="body1" display="block" component="div">
-                          {(100 - block.discount)} %
+                          {(block.discount)} %
                         </Typography>
                       }
                     </td>
