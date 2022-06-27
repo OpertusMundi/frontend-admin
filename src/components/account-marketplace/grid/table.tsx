@@ -15,10 +15,7 @@ import {
   mdiCogSyncOutline,
   mdiDomain,
   mdiEmailAlertOutline,
-  mdiFinance,
-  mdiFolderOpenOutline,
   mdiMessageTextOutline,
-  mdiPackageVariantClosed,
   mdiShieldRefreshOutline,
 } from '@mdi/js';
 
@@ -35,9 +32,6 @@ import { ApplicationConfiguration } from 'model/configuration';
 enum EnumAction {
   KycRefresh = 'kyc-refresh',
   SendMessage = 'send-message',
-  ViewAssets = 'toggle-favorite',
-  ViewFinance = 'view-finance',
-  ViewOrders = 'view-orders',
   VendorDetails = 'vendor-details',
 };
 
@@ -73,27 +67,6 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccountSumm
                   <Icon path={mdiMessageTextOutline} className={classes.rowIconAction} style={{ marginTop: 2 }} />
                 </i>
               </Tooltip>
-              <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-assets' })}>
-                <i
-                  onClick={() => handleAction ? handleAction(EnumAction.ViewAssets, rowIndex, column, row) : null}
-                >
-                  <Icon path={mdiFolderOpenOutline} className={classes.rowIconAction} />
-                </i>
-              </Tooltip>
-              <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-orders' })}>
-                <i
-                  onClick={() => handleAction ? handleAction(EnumAction.ViewOrders, rowIndex, column, row) : null}
-                >
-                  <Icon path={mdiPackageVariantClosed} className={classes.rowIconAction} />
-                </i>
-              </Tooltip>
-              <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.view-finance' })}>
-                <i
-                  onClick={() => handleAction ? handleAction(EnumAction.ViewFinance, rowIndex, column, row) : null}
-                >
-                  <Icon path={mdiFinance} className={classes.rowIconAction} />
-                </i>
-              </Tooltip>
               {(row.consumer || row.provider) &&
                 <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.kyc-refresh' })}>
                   <i
@@ -125,7 +98,7 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccountSumm
     }, {
       header: intl.formatMessage({ id: 'account.marketplace.header.email' }),
       id: 'email',
-      width: 250,
+      width: 150,
       sortable: true,
       sortColumn: EnumMarketplaceAccountSortField.EMAIL,
       cell: (
@@ -225,6 +198,7 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccountSumm
       header: intl.formatMessage({ id: 'account.marketplace.header.registered-on' }),
       id: 'registeredOn',
       sortable: false,
+      width: 180,
       cell: (
         rowIndex: number,
         column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>,
