@@ -154,6 +154,7 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
       id: 'status',
       sortable: true,
       sortColumn: EnumSubscriptionBillingSortField.STATUS,
+      width: 150,
       cell: (
         rowIndex: number, column: Column<SubscriptionBilling, EnumSubscriptionBillingSortField>, row: SubscriptionBilling, handleAction?: cellActionHandler<SubscriptionBilling, EnumSubscriptionBillingSortField>
       ): React.ReactNode => {
@@ -292,7 +293,7 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
       id: 'dueDate',
       sortable: true,
       sortColumn: EnumSubscriptionBillingSortField.DUE_DATE,
-      width: 150,
+      width: 100,
       cell: (
         rowIndex: number,
         column: Column<SubscriptionBilling, EnumSubscriptionBillingSortField>,
