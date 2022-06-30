@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment, { Moment } from 'moment';
 import React from 'react';
 
 // State, routing and localization
@@ -111,14 +112,22 @@ class ProcessInstanceVariables extends React.Component<ProcessInstanceVariablesP
     );
   }
 
-  copyValueToClipboard(value: string | number | boolean | null) {
+  copyValueToClipboard(value: string | number | boolean | Moment | null) {
     if (!value || typeof value === 'boolean') {
       return;
     }
 
-    const copiedValue = typeof value === 'number' ? '' + value : value;
+    const copiedValue = moment.isMoment(value) ? value.toString() : typeof value === 'number' ? '' + value : value;
 
     copyToClipboard(copiedValue);
+  }
+
+  renderValue(v: BpmVariable) {
+    if (moment.isMoment(v.value)) {
+      return v.value!.toString();
+    }
+
+    return v.value;
   }
 
   renderVariableValue(v: BpmVariable) {
@@ -140,7 +149,7 @@ class ProcessInstanceVariables extends React.Component<ProcessInstanceVariablesP
       }
     }
     return (
-      <ListItemText className={classes.text} primary={v.name} secondary={v.value ? v.value : ''} />
+      <ListItemText className={classes.text} primary={v.name} secondary={v.value ? this.renderValue(v) : ''} />
     );
   }
 
