@@ -46,6 +46,7 @@ import OrderDetails from 'components/order/order-details';
 import OrderManager from 'components/order/order-manager';
 import QueryEditor from './analytics/query-editor';
 import SecureRoute from 'components/secure-route';
+import SubscriptionBillingManager from 'components/subscription-billing-batch/billing-manager';
 import TransferManager from 'components/transfer/transfer-grid';
 
 // Model
@@ -119,6 +120,7 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             <Route path={StaticRoutes.PayInManager} element={<PayInManager />} />
             <Route path={StaticRoutes.PayOutManager} element={<PayOutManager />} />
             <Route path={StaticRoutes.ProviderManager} element={<ProviderManager />} />
+            <Route path={StaticRoutes.SubscriptionBillingManager} element={<SubscriptionBillingManager />} />
             <Route path={StaticRoutes.TransferManager} element={<TransferManager />} />
             <Route path={StaticRoutes.SettingsManager} element={<SettingsManager />} />
             <Route path={StaticRoutes.Map} element={<MapViewerComponent />} />

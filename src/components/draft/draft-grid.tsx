@@ -41,8 +41,8 @@ import { EnumSortField, AssetDraft, EnumDraftStatus, EnumContractType } from 'mo
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
 
-import AccountFilters from './grid/filter';
-import AccountTable from './grid/table';
+import DraftFilters from './grid/filter';
+import DraftTable from './grid/table';
 
 const styles = (theme: Theme) => createStyles({
   container: {
@@ -247,7 +247,7 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
       <>
         <div>
           <Paper className={classes.paper}>
-            <AccountFilters
+            <DraftFilters
               query={query}
               setFilter={setFilter}
               resetFilter={resetFilter}
@@ -267,7 +267,7 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
           </Paper>
 
           <Paper className={classes.paper}>
-            <AccountTable
+            <DraftTable
               find={this.props.find}
               query={query}
               result={result}

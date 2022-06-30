@@ -62,6 +62,7 @@ import {
   mdiProgressWrench,
   mdiMenu,
   mdiAccountWrenchOutline,
+  mdiClockFast,
 } from '@mdi/js';
 
 // Utilities
@@ -646,6 +647,15 @@ class Home extends React.Component<HomeProps, HomeState> {
                         <Icon path={mdiBankTransferOut} size="1.5rem" />
                       </ListItemIcon>
                       <ListItemText primary={_t({ id: 'links.payout-manager' })} />
+                    </ListItem>
+
+                    <ListItem button
+                      className={open[EnumSection.Drawer] ? classes.nested : ''}
+                      onClick={(e) => this.onNavigate(e, StaticRoutes.SubscriptionBillingManager)}>
+                      <ListItemIcon>
+                        <Icon path={mdiClockFast} size="1.5rem" />
+                      </ListItemIcon>
+                      <ListItemText primary={_t({ id: 'links.subscription-billing-manager' })} />
                     </ListItem>
 
                   </List>

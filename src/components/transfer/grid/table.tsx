@@ -340,7 +340,7 @@ interface TransferTableProps extends WithStyles<typeof styles> {
   mode?: EnumBillingViewMode;
 }
 
-class AccountTable extends React.Component<TransferTableProps> {
+class TransferTable extends React.Component<TransferTableProps> {
 
   constructor(props: TransferTableProps) {
     super(props);
@@ -406,7 +406,7 @@ class AccountTable extends React.Component<TransferTableProps> {
 }
 
 // Apply styles
-const styledComponent = withStyles(styles)(AccountTable);
+const styledComponent = withStyles(styles)(TransferTable);
 
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);

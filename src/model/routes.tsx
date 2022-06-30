@@ -47,6 +47,7 @@ import {
   mdiProgressWrench,
   mdiFileSign,
   mdiAccountWrenchOutline,
+  mdiClockFast,
 } from '@mdi/js';
 
 /**
@@ -95,6 +96,7 @@ const ProcessInstanceHistoryManager = '/workflows/process-instances-history';
 const Profile = '/profile';
 const ProviderManager = '/providers'
 const Settings = '/settings';
+const SubscriptionBillingManager = '/billing/subscription-billing';
 const TransferManager = '/billing/transfers';
 
 export const StaticRoutes = {
@@ -120,6 +122,7 @@ export const StaticRoutes = {
   ProcessInstanceHistoryManager,
   ProcessInstanceTaskManager,
   SettingsManager,
+  SubscriptionBillingManager,
   TransferManager,
 };
 
@@ -277,23 +280,30 @@ export const routes: RouteRegistry = {
   },
   [PayInManager]: {
     icon: (className?: string) => (<Icon path={mdiBankTransferIn} size="1.5rem" className={className} />),
-    description: 'Billing',
+    description: 'Pay In',
     title: 'links.payin-manager',
-    defaultTitle: 'Billing',
+    defaultTitle: 'Pay Ins',
     links: defaultLinks
   },
   [PayOutManager]: {
     icon: (className?: string) => (<Icon path={mdiBankTransferOut} size="1.5rem" className={className} />),
-    description: 'Billing',
+    description: 'Pay Outs',
     title: 'links.payout-manager',
-    defaultTitle: 'Billing',
+    defaultTitle: 'Pay Outs',
+    links: defaultLinks
+  },
+  [SubscriptionBillingManager]: {
+    icon: (className?: string) => (<Icon path={mdiClockFast} size="1.5rem" className={className} />),
+    description: 'Subscription Billing',
+    title: 'links.subscription-billing-manager',
+    defaultTitle: 'Subscription Billing',
     links: defaultLinks
   },
   [TransferManager]: {
     icon: (className?: string) => (<Icon path={mdiWalletOutline} size="1.5rem" className={className} />),
-    description: 'Billing',
+    description: 'Transfers',
     title: 'links.transfer-manager',
-    defaultTitle: 'Billing',
+    defaultTitle: 'Transfers',
     links: defaultLinks
   },
   [Profile]: {

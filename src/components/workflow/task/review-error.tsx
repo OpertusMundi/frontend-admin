@@ -274,7 +274,7 @@ class ReviewErrorTask extends React.Component<ReviewErrorTaskProps, ReviewErrorT
     // Get error details
     const errorDetails = processInstance.variables.find(v => v.name === 'bpmnBusinessErrorDetails')!.value;
     const messages = (errorDetails as string)?.split('||') || null;
-    const errorMessage = processInstance.variables.find(v => v.name === 'helpdeskErrorMessage')?.value;
+    const errorMessage = processInstance.variables.find(v => v.name === 'helpdeskErrorMessage')?.value as string;
 
     // Get the most recent retryable tasks. Exclude duplicate records
     const retryableTasks = processInstance.activities

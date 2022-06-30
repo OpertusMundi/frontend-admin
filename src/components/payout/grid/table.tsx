@@ -307,7 +307,7 @@ interface PayOutTableProps extends WithStyles<typeof styles> {
   viewProcessInstance: (processInstance: string) => void;
 }
 
-class AccountTable extends React.Component<PayOutTableProps> {
+class PayOutTable extends React.Component<PayOutTableProps> {
 
   constructor(props: PayOutTableProps) {
     super(props);
@@ -379,7 +379,7 @@ class AccountTable extends React.Component<PayOutTableProps> {
 }
 
 // Apply styles
-const styledComponent = withStyles(styles)(AccountTable);
+const styledComponent = withStyles(styles)(PayOutTable);
 
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);

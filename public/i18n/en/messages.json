@@ -328,6 +328,23 @@
         "view-statistics": "View Use Statistics"
       }
     },
+    "subscription-billing-batch": {
+      "filter": {
+        "status": "Status"
+      },
+      "header": {
+        "actions": " ",
+        "created-by": "Created By",
+        "interval": "Interval",
+        "modified-on": "Modified On",
+        "status": "Status",
+        "total-price": "Total"
+      },
+      "last-update": "Last updated: ",
+      "tooltip": {
+        "view-process-instance": "View process instance"
+      }
+    },
     "transfer": {
       "filter": {
         "reference-number": "Reference Number",
@@ -545,6 +562,11 @@
       "FAILED": "Failed",
       "PAID": "Paid"
     },
+    "subscription-billing-batch-status": {
+      "RUNNING": "Running",
+      "SUCCEEDED": "Competed",
+      "FAILED": "Failed"
+    },
     "transaction-status": {
       "NotSpecified": "Not Specified",
       "CREATED": "New",
@@ -716,6 +738,7 @@
     "profile": "Profile",
     "provider-manager": "Providers",
     "settings": "Settings",
+    "subscription-billing-manager": "Subscription Billing",
     "workflow": {
       "incident": {
         "manager": "Incidents"

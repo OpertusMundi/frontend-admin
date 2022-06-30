@@ -128,7 +128,7 @@ export interface BpmVariable {
   state?: string;
   taskId?: string;
   type: string;
-  value: string | number | boolean | null;
+  value: string | number | boolean | Moment | null;
 }
 
 export interface BaseBpmIncident {

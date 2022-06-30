@@ -252,7 +252,7 @@ interface ProviderTableProps extends WithStyles<typeof styles> {
   loading?: boolean;
 }
 
-class AccountTable extends React.Component<ProviderTableProps> {
+class ProviderTable extends React.Component<ProviderTableProps> {
 
   constructor(props: ProviderTableProps) {
     super(props);
@@ -310,7 +310,7 @@ class AccountTable extends React.Component<ProviderTableProps> {
 }
 
 // Apply styles
-const styledComponent = withStyles(styles)(AccountTable);
+const styledComponent = withStyles(styles)(ProviderTable);
 
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);
