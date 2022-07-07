@@ -42,7 +42,7 @@ const pathToSvg = (path: String, size: string): String => (
   `<svg viewBox="0 0 24 24" role="presentation" style="width: ${size}; height: {size};"><path d="${path}" style="fill: currentcolor;"></path></svg>`
 );
 
-const validTasks = ['userTask', 'serviceTask', 'intermediateMessageCatch'];
+const validTasks = ['userTask', 'serviceTask', 'intermediateTimer', 'intermediateMessageCatch'];
 
 class ProcessDiagram extends React.Component<ProcessDiagramProps> {
 
