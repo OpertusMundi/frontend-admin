@@ -165,6 +165,7 @@ class Login extends React.Component<LoginProps, LoginState> {
                   variant="contained"
                   color="primary"
                   className={classes.buttonSubmit}
+                  disabled={!this.state.username || !this.state.password}
                 >
                   <FormattedMessage id="login.login" />
                 </Button>
