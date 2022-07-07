@@ -44,7 +44,7 @@ import { findOne } from 'store/process-instance-task/thunks'
 // Model
 import { ErrorPages } from 'model/routes';
 import { SimpleResponse } from 'model/response';
-import { CompleteTaskTaskCommand, ModificationCommand, PUBLISH_SET_ERROR_TASK } from 'model/bpm-process-instance';
+import { CompleteTaskTaskCommand, ModificationCommand, PUBLISH_CATALOGUE_ASSET_SET_ERROR, PUBLISH_USER_SERVICE_SET_ERROR, } from 'model/bpm-process-instance';
 import { MarketplaceAccount } from 'model/account-marketplace';
 
 // Service
@@ -286,12 +286,13 @@ class ProcessInstanceTask extends React.Component<ProcessInstanceTaskProps, Proc
     }
 
     const task = processInstance.activities.find(a => a.activityId === taskName) || null;
-    if (!task) {
+    if (!taskName || !task) {
       return null;
     }
 
     switch (taskName) {
-      case PUBLISH_SET_ERROR_TASK:
+      case PUBLISH_CATALOGUE_ASSET_SET_ERROR:
+      case PUBLISH_USER_SERVICE_SET_ERROR:
         return (
           <ReviewErrorTask
             config={config}

@@ -17,7 +17,7 @@ import {
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
-import { EnumProcessInstanceTaskSortField, ProcessInstanceTask, ProcessInstanceTaskQuery, TASKS } from 'model/bpm-process-instance';
+import { EnumProcessInstanceTaskSortField, ProcessInstanceTask, ProcessInstanceTaskQuery, SET_ERROR_TASKS } from 'model/bpm-process-instance';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 // Helper methods
@@ -52,7 +52,7 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
               </Badge>
             </i>
           </Tooltip>
-          {TASKS.includes(row.taskName) &&
+          {SET_ERROR_TASKS.includes(row.taskName) &&
             <Tooltip title={intl.formatMessage({ id: 'workflow.tooltip.instance.view-task' })}>
               <i
                 onClick={() => {

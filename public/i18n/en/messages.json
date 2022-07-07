@@ -533,7 +533,8 @@
     },
     "process-instance": {
       "task": {
-        "task-helpdesk-set-error": "Publish Review Error"
+        "task-publish-catalogue-asset-set-error": "Publish Asset Error",
+        "task-publish-user-service-set-error": "Publish User Service Error"
       }
     },
     "recurring-payment-status": {
@@ -943,7 +944,8 @@
       "modify-process-instance-failure": "Failed to modify process instance"
     },
     "tasks": {
-      "task-helpdesk-set-error": "Set error by Helpdesk",
+      "task-publish-catalogue-asset-set-error": "Set error by Helpdesk",
+      "task-publish-user-service-set-error": "Set error by Helpdesk",
       "task-review": "Review asset draft"
     },
     "tooltip": {

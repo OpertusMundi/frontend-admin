@@ -18,7 +18,12 @@ import {
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
-import { PUBLISH_SET_ERROR_TASK, EnumProcessInstanceSortField, ProcessInstance, ProcessInstanceQuery } from 'model/bpm-process-instance';
+import {
+  SET_ERROR_TASKS,
+  EnumProcessInstanceSortField,
+  ProcessInstance,
+  ProcessInstanceQuery,
+} from 'model/bpm-process-instance';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 // Helper methods
@@ -63,11 +68,11 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
               </Badge>
             </i>
           </Tooltip>
-          {row.taskNames.includes(PUBLISH_SET_ERROR_TASK) &&
+          {row.taskNames.length === 1 && row.taskNames.some(t => SET_ERROR_TASKS.includes(t)) &&
             <Tooltip title={intl.formatMessage({ id: 'workflow.tooltip.instance.view-task' })}>
               <i
                 onClick={() => {
-                  props.viewProcessInstanceTask(row.processInstanceId, PUBLISH_SET_ERROR_TASK);
+                  props.viewProcessInstanceTask(row.processInstanceId, row.taskNames[0]);
                 }}
               >
                 <Badge overlap="rectangular" color="secondary" variant="dot" invisible={true}>

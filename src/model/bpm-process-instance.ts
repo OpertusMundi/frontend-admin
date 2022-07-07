@@ -1,9 +1,13 @@
 import { Moment } from 'moment';
 import { MarketplaceAccount } from './account-marketplace';
 
-export const PUBLISH_SET_ERROR_TASK = 'task-helpdesk-set-error';
+export const PUBLISH_CATALOGUE_ASSET_SET_ERROR = "task-publish-catalogue-asset-set-error";
+export const PUBLISH_USER_SERVICE_SET_ERROR = "task-publish-user-service-set-error";
 
-export const TASKS = [PUBLISH_SET_ERROR_TASK];
+export const SET_ERROR_TASKS = [
+  PUBLISH_CATALOGUE_ASSET_SET_ERROR,
+  PUBLISH_USER_SERVICE_SET_ERROR,
+];
 
 export enum EnumProcessInstanceSortField {
   BUSINESS_KEY = 'BUSINESS_KEY',

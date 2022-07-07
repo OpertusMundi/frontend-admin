@@ -23,7 +23,7 @@ import { mdiCommentAlertOutline } from '@mdi/js';
 // Model
 import { PageRequest, PageResult, Sorting } from 'model/response';
 import {
-  TASKS,
+  SET_ERROR_TASKS,
   EnumProcessInstanceSortField,
   ProcessDefinition,
   ProcessInstance,
@@ -130,7 +130,7 @@ class ProcessInstanceFilters extends React.Component<WorkflowInstanceProps> {
                 <MenuItem value="">
                   <em>All</em>
                 </MenuItem>
-                {TASKS.map((task) => (
+                {SET_ERROR_TASKS.map((task) => (
                   <MenuItem key={task} value={task}>{_t({ id: `enum.process-instance.task.${task}` })}</MenuItem>
                 ))}
               </Select>
