@@ -70,7 +70,7 @@ const styles = (theme: Theme) => createStyles({
     height: theme.spacing(4),
   },
   timeline: {
-    height: 'calc(100vh - 580px)',
+    height: 'calc(100vh - 300px)',
   },
 });
 
