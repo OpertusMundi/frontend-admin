@@ -4,6 +4,11 @@ import { MarketplaceAccount } from './account-marketplace';
 export const PUBLISH_CATALOGUE_ASSET_SET_ERROR = "task-publish-catalogue-asset-set-error";
 export const PUBLISH_USER_SERVICE_SET_ERROR = "task-publish-user-service-set-error";
 
+export enum EnumWorkflow {
+  PROVIDER_PUBLISH_ASSET = 'provider-publish-asset',
+  SYSTEM_REMOVE_ALL_USER_DATA = 'system-maintenance-remove-all-user-data',
+}
+
 export const SET_ERROR_TASKS = [
   PUBLISH_CATALOGUE_ASSET_SET_ERROR,
   PUBLISH_USER_SERVICE_SET_ERROR,
@@ -68,6 +73,8 @@ export interface ProcessInstance {
   taskReviewCount: number,
   taskErrorCount: number,
   taskNames: string[],
+  variableNames: string[],
+  variableValues: string[],
 }
 
 export interface ProcessInstanceTask {

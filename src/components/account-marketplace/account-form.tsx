@@ -14,21 +14,14 @@ import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
 import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
-import Checkbox from '@material-ui/core/Checkbox';
 import Drawer from '@material-ui/core/Drawer';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
-import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
 import { red } from '@material-ui/core/colors';
@@ -40,24 +33,20 @@ import {
   mdiAlertDecagramOutline,
   mdiBankTransferIn,
   mdiBankTransferOut,
-  mdiCheck,
   mdiCheckDecagramOutline,
   mdiClockFast,
   mdiCommentAlertOutline,
-  mdiCreativeCommons,
   mdiDomain,
   mdiFaceAgent,
   mdiListStatus,
   mdiPackageVariantClosed,
-  mdiTransitConnectionVariant,
   mdiTuneVariant,
-  mdiUndoVariant,
   mdiWalletPlusOutline,
 } from '@mdi/js';
 
 // Components
 import { CustomerDetails } from 'components/common';
-import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
+import MarketplaceAccountConfiguration from 'components/account-marketplace/form/configuration';
 
 // Store
 import { RootState } from 'store';
@@ -138,9 +127,6 @@ const styles = (theme: Theme) => createStyles({
     padding: theme.spacing(1),
     margin: theme.spacing(1),
   },
-  cardActions: {
-    justifyContent: 'flex-end',
-  },
   gridLabel: {
     position: 'absolute',
     top: '0px',
@@ -183,11 +169,6 @@ const styles = (theme: Theme) => createStyles({
     borderRadius: theme.spacing(0.5),
     justifyContent: 'center',
   },
-  textField: {
-    margin: 0,
-    padding: 0,
-    width: '100%',
-  },
 });
 
 interface RouteParams {
@@ -208,8 +189,7 @@ interface MarketplaceAccountFormState {
   confirmOpenDatasetProviderUpdate: boolean,
   initialExternalProvider: EnumDataProvider;
   initialOpenDatasetProvider: boolean;
-  externalProvider: EnumDataProvider;
-  openDatasetProvider: boolean;
+  loaded: boolean;
 }
 
 const customerErrorMapper = (intl: IntlShape, message: Message, fieldMapper?: FieldMapperFunc) => {
@@ -238,10 +218,11 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
       confirmOpenDatasetProviderUpdate: false,
       initialExternalProvider: EnumDataProvider.UNDEFINED,
       initialOpenDatasetProvider: false,
-      externalProvider: EnumDataProvider.UNDEFINED,
-      openDatasetProvider: false,
+      loaded: false,
     };
 
+    this.setExternalProvider = this.setExternalProvider.bind(this);
+    this.setOpenDatasetProvider = this.setOpenDatasetProvider.bind(this);
     this.viewPayIn = this.viewPayIn.bind(this);
     this.viewProcessInstance = this.viewProcessInstance.bind(this);
     this.viewUseStatistics = this.viewUseStatistics.bind(this);
@@ -253,117 +234,59 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     return key || null;
   }
 
-  showExternalProviderConfirmDialog(): void {
-    this.setState({
-      confirmCompanyName: '',
-      confirmExternalProviderUpdate: true,
-    });
-  }
-
-  hideExternalProviderConfirmDialog(): void {
-    this.setState({
-      confirmCompanyName: '',
-      confirmExternalProviderUpdate: false,
-    });
-  }
-
-  showOpenDatasetProviderConfirmDialog(): void {
-    this.setState({
-      confirmCompanyName: '',
-      confirmOpenDatasetProviderUpdate: true,
-    });
-  }
-
-  hideOpenDatasetProviderConfirmDialog(): void {
-    this.setState({
-      confirmCompanyName: '',
-      confirmOpenDatasetProviderUpdate: false,
-    });
-  }
-
-  confirmExternalProviderDialogHandler(action: DialogAction): void {
+  setExternalProvider(key: string, provider: EnumDataProvider): Promise<boolean> {
     const { account } = this.props;
-    const { externalProvider: provider } = this.state;
 
-    switch (action.key) {
-      case EnumDialogAction.Accept: {
-        if (account) {
-          this.api.setExternalProvider(account.key, { provider })
-            .then((response) => {
-              if (response.data.success) {
-                this.setState((state) => ({
-                  initialExternalProvider: state.externalProvider,
-                }));
-
-                this.hideExternalProviderConfirmDialog();
-              } else {
-                const messages = localizeErrorCodes(this.props.intl, response.data, undefined, undefined, customerErrorMapper);
-                message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
-              }
-            })
-            .catch((err: AxiosError<SimpleResponse>) => {
-              const messages = localizeErrorCodes(this.props.intl, err.response?.data, undefined, undefined, customerErrorMapper);
-              message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+    if (account) {
+      this.api.setExternalProvider(account.key, { provider })
+        .then((response) => {
+          if (response.data.success) {
+            this.setState({
+              initialExternalProvider: provider,
             });
-        }
 
-        break;
-      }
-      case EnumDialogAction.Cancel:
-        this.hideExternalProviderConfirmDialog();
-        break;
+            return true;
+          } else {
+            const messages = localizeErrorCodes(this.props.intl, response.data, undefined, undefined, customerErrorMapper);
+            message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+            return false;
+          }
+        })
+        .catch((err: AxiosError<SimpleResponse>) => {
+          const messages = localizeErrorCodes(this.props.intl, err.response?.data, undefined, undefined, customerErrorMapper);
+          message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+          return false;
+        });
     }
+    return Promise.resolve(true);
   }
 
-  confirmOpenDatasetProviderDialogHandler(action: DialogAction): void {
-    const { openDatasetProvider } = this.state;
+  setOpenDatasetProvider(key: string, enabled: boolean): Promise<boolean> {
     const { account } = this.props;
 
-    switch (action.key) {
-      case EnumDialogAction.Accept: {
-        if (account) {
-          (openDatasetProvider
-            ? this.api.grantOpenDatasetProvider(account.key)
-            : this.api.revokeOpenDatasetProvider(account.key)
-          ).then((response) => {
-            if (response.data.success) {
-              this.setState((state) => ({
-                initialOpenDatasetProvider: state.openDatasetProvider,
-              }));
-
-              this.hideOpenDatasetProviderConfirmDialog();
-            } else {
-              const messages = localizeErrorCodes(this.props.intl, response.data, undefined, undefined, customerErrorMapper);
-              message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
-            }
-          }).catch((err: AxiosError<SimpleResponse>) => {
-            const messages = localizeErrorCodes(this.props.intl, err.response?.data, undefined, undefined, customerErrorMapper);
-            message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+    if (account) {
+      (enabled
+        ? this.api.grantOpenDatasetProvider(account.key)
+        : this.api.revokeOpenDatasetProvider(account.key)
+      ).then((response) => {
+        if (response.data.success) {
+          this.setState({
+            initialOpenDatasetProvider: enabled,
           });
+
+          return true;
+        } else {
+          const messages = localizeErrorCodes(this.props.intl, response.data, undefined, undefined, customerErrorMapper);
+          message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+          return false;
         }
-
-        break;
-      }
-      case EnumDialogAction.Cancel:
-        this.hideOpenDatasetProviderConfirmDialog();
-        break;
+      }).catch((err: AxiosError<SimpleResponse>) => {
+        const messages = localizeErrorCodes(this.props.intl, err.response?.data, undefined, undefined, customerErrorMapper);
+        message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+        return false;
+      });
     }
-  }
-
-  onAssignExternalProvider(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-
-    this.showExternalProviderConfirmDialog();
-  }
-
-  onAssignOpenDatasetProvider(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-
-    this.showOpenDatasetProviderConfirmDialog();
-  }
-
-  onOpenDatasetProviderChange(e: React.ChangeEvent<HTMLInputElement>) {
-    this.setState((state) => ({ openDatasetProvider: !state.openDatasetProvider }));
+    return Promise.resolve(true);
   }
 
   componentDidMount() {
@@ -390,11 +313,11 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
             const providers = config.externalProviders!.filter(p => account?.roles.some(r => r === p.requiredRole));
             const provider = providers[0] ? providers[0].id : EnumDataProvider.UNDEFINED;
             const openDatasetProvider = account.roles.includes(EnumMarketplaceRole.ROLE_PROVIDER_OPEN_DATASET);
+
             this.setState({
               initialExternalProvider: provider,
               initialOpenDatasetProvider: openDatasetProvider,
-              externalProvider: provider,
-              openDatasetProvider,
+              loaded: true,
             });
             this.loadTabContent(this.props.tabIndex);
           } else {
@@ -471,165 +394,6 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     this.props.setTabIndex(index);
 
     this.loadTabContent(index);
-  }
-
-  renderExternalProviderDialog() {
-    const _t = this.props.intl.formatMessage;
-
-    const { confirmExternalProviderUpdate, confirmCompanyName, externalProvider } = this.state;
-    const { account, classes, config } = this.props;
-
-    const providers = config.externalProviders!.filter(p => p.id === externalProvider);
-    const provider = providers[0];
-
-    if (!confirmExternalProviderUpdate || !account || !provider) {
-      return null;
-    }
-
-    const companyName = account?.profile.provider.current?.name || '';
-
-    const confirmMessage = externalProvider === EnumDataProvider.UNDEFINED ?
-      'account-marketplace.form.message.reset-external-provider-confirm' :
-      'account-marketplace.form.message.set-external-provider-confirm';
-    const warningMessage = externalProvider === EnumDataProvider.UNDEFINED ?
-      "account-marketplace.form.message.reset-external-provider-warning" :
-      "account-marketplace.form.message.set-external-provider-warning";
-    return (
-      <Dialog
-        actions={[
-          {
-            key: EnumDialogAction.Accept,
-            label: _t({ id: 'view.shared.action.save' }),
-            iconClass: () => (<Icon path={mdiCheck} size="1.5rem" />),
-            color: 'primary',
-            disabled: companyName !== confirmCompanyName
-          }, {
-            key: EnumDialogAction.Cancel,
-            label: _t({ id: 'view.shared.action.cancel' }),
-            iconClass: () => (<Icon path={mdiUndoVariant} size="1.5rem" />)
-          }
-        ]}
-        handleClose={() => this.hideExternalProviderConfirmDialog()}
-        handleAction={(action) => this.confirmExternalProviderDialogHandler(action)}
-        header={
-          <span>
-            <i className={'mdi mdi-comment-question-outline mr-2'}></i>
-            <FormattedMessage id="view.shared.dialog.title" />
-          </span>
-        }
-        open={confirmExternalProviderUpdate}
-      >
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <FormattedMessage
-              id={confirmMessage}
-              tagName={'p'}
-              values={{ company: <b>{companyName}</b>, provider: <b>{provider.name}</b> }}
-            />
-            <Typography variant="h5" display="block" gutterBottom color="secondary">
-              <FormattedMessage
-                id={warningMessage}
-                tagName={'p'}
-              />
-            </Typography>
-            <FormattedMessage
-              id="account-marketplace.form.message.external-provider-notes"
-              tagName={'p'}
-            />
-          </Grid>
-          <Grid item xs={12} >
-            <TextField
-              id="name"
-              label={_t({ id: 'account-marketplace.form.field.provider.name' })}
-              variant="standard"
-              margin="normal"
-              className={classes.textField}
-              value={confirmCompanyName || ''}
-              onChange={e => this.setState({ confirmCompanyName: e.target.value })}
-              error={confirmCompanyName !== companyName}
-            />
-          </Grid>
-        </Grid>
-      </Dialog>
-    );
-  }
-
-  renderOpenDatasetProviderDialog() {
-    const _t = this.props.intl.formatMessage;
-
-    const { confirmOpenDatasetProviderUpdate, confirmCompanyName, openDatasetProvider } = this.state;
-    const { account, classes } = this.props;
-
-    if (!confirmOpenDatasetProviderUpdate || !account) {
-      return null;
-    }
-
-    const companyName = account?.profile.provider.current?.name || '';
-
-    const confirmMessage = openDatasetProvider ?
-      'account-marketplace.form.message.set-open-dataset-provider-confirm' :
-      'account-marketplace.form.message.reset-open-dataset-provider-confirm';
-    const warningMessage = openDatasetProvider ?
-      "account-marketplace.form.message.set-open-dataset-provider-warning" :
-      "account-marketplace.form.message.reset-open-dataset-provider-warning";
-    return (
-      <Dialog
-        actions={[
-          {
-            key: EnumDialogAction.Accept,
-            label: _t({ id: 'view.shared.action.save' }),
-            iconClass: () => (<Icon path={mdiCheck} size="1.5rem" />),
-            color: 'primary',
-            disabled: companyName !== confirmCompanyName
-          }, {
-            key: EnumDialogAction.Cancel,
-            label: _t({ id: 'view.shared.action.cancel' }),
-            iconClass: () => (<Icon path={mdiUndoVariant} size="1.5rem" />)
-          }
-        ]}
-        handleClose={() => this.hideOpenDatasetProviderConfirmDialog()}
-        handleAction={(action) => this.confirmOpenDatasetProviderDialogHandler(action)}
-        header={
-          <span>
-            <i className={'mdi mdi-comment-question-outline mr-2'}></i>
-            <FormattedMessage id="view.shared.dialog.title" />
-          </span>
-        }
-        open={confirmOpenDatasetProviderUpdate}
-      >
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <FormattedMessage
-              id={confirmMessage}
-              tagName={'p'}
-              values={{ company: <b>{companyName}</b> }}
-            />
-            <Typography variant="h5" display="block" gutterBottom color="secondary">
-              <FormattedMessage
-                id={warningMessage}
-                tagName={'p'}
-              />
-            </Typography>
-            <FormattedMessage
-              id="account-marketplace.form.message.external-provider-notes"
-              tagName={'p'}
-            />
-          </Grid>
-          <Grid item xs={12} >
-            <TextField
-              id="name"
-              label={_t({ id: 'account-marketplace.form.field.provider.name' })}
-              variant="standard"
-              margin="normal"
-              className={classes.textField}
-              value={confirmCompanyName || ''}
-              onChange={e => this.setState({ confirmCompanyName: e.target.value })}
-              error={confirmCompanyName !== companyName}
-            />
-          </Grid>
-        </Grid>
-      </Dialog>
-    );
   }
 
   getCustomerName(customer: CustomerType): string {
@@ -908,10 +672,10 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     } = this.props;
     const {
       billingRecord,
-      externalProvider,
-      openDatasetProvider,
+      initialExternalProvider,
+      initialOpenDatasetProvider,
+      loaded,
     } = this.state;
-    const _t = this.props.intl.formatMessage;
 
     if (!account) {
       return null;
@@ -1079,95 +843,20 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
             </Grid>
           }
           {(
-            (tabIndex === 3 && !consumer && provider) ||
-            (tabIndex === 6 && consumer && provider)
+            (loaded && tabIndex === 3 && !consumer && provider) ||
+            (loaded && tabIndex === 6 && consumer && provider)
           ) &&
-            <Grid container>
-              <Card className={classes.card}>
-                <CardHeader
-                  avatar={
-                    <Avatar className={classes.avatar}>
-                      <Icon path={mdiTransitConnectionVariant} size="1.5rem" />
-                    </Avatar>
-                  }
-                  title={
-                    <FormattedMessage id={'account-marketplace.form.section.external-provider'} />
-                  }
-                ></CardHeader>
-                <CardContent>
-                  <Grid container spacing={1}>
-                    <Grid item xs={8}>
-                      <RadioGroup
-                        value={externalProvider}
-                        name="external-provider-group"
-                        onChange={(e) => this.setState({ externalProvider: e.target.value as EnumDataProvider })}
-                      >
-                        {config.externalProviders!.map((p) => (
-                          <FormControlLabel key={p.id} value={p.id} control={<Radio />} label={p.name} />
-                        ))}
-                      </RadioGroup>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-                <CardActions disableSpacing className={classes.cardActions}>
-                  <Button
-                    size="small"
-                    color="primary"
-                    className={classes.button}
-                    disabled={loading || this.state.initialExternalProvider === this.state.externalProvider}
-                    onClick={(e) => this.onAssignExternalProvider(e)}
-                  >
-                    <FormattedMessage id="view.shared.action.save"></FormattedMessage>
-                  </Button>
-                </CardActions>
-              </Card>
-              <Card className={classes.card}>
-                <CardHeader
-                  avatar={
-                    <Avatar className={classes.avatar}>
-                      <Icon path={mdiCreativeCommons} size="1.5rem" />
-                    </Avatar>
-                  }
-                  title={
-                    <FormattedMessage id={'account-marketplace.form.section.open-dataset-provider'} />
-                  }
-                ></CardHeader>
-                <CardContent>
-                  <Grid container spacing={1}>
-                    <Grid item xs={8}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={openDatasetProvider}
-                            onChange={
-                              (event) => this.onOpenDatasetProviderChange(event)
-                            }
-                            name="enabled"
-                            color="primary"
-                          />
-                        }
-                        label={_t({ id: 'account-marketplace.form.field.open-dataset-provider' })}
-                      />
-                    </Grid>
-                  </Grid>
-                </CardContent>
-                <CardActions disableSpacing className={classes.cardActions}>
-                  <Button
-                    size="small"
-                    color="primary"
-                    className={classes.button}
-                    disabled={loading || this.state.initialOpenDatasetProvider === this.state.openDatasetProvider}
-                    onClick={(e) => this.onAssignOpenDatasetProvider(e)}
-                  >
-                    <FormattedMessage id="view.shared.action.save"></FormattedMessage>
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
+            <MarketplaceAccountConfiguration
+              account={account}
+              config={config}
+              initialExternalProvider={initialExternalProvider}
+              initialOpenDatasetProvider={initialOpenDatasetProvider}
+              loading={loading}
+              setExternalProvider={this.setExternalProvider}
+              setOpenDatasetProvider={this.setOpenDatasetProvider}
+            />
           }
         </Grid>
-        {this.renderExternalProviderDialog()}
-        {this.renderOpenDatasetProviderDialog()}
         <Drawer anchor={'right'} open={billingRecord !== null} onClose={() => this.viewUseStatistics(null)}
           classes={{
             paper: classes.statsDrawer,

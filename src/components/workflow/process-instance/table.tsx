@@ -23,6 +23,7 @@ import {
   EnumProcessInstanceSortField,
   ProcessInstance,
   ProcessInstanceQuery,
+  EnumWorkflow,
 } from 'model/bpm-process-instance';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
@@ -35,6 +36,33 @@ enum EnumAction {
   View = 'view',
 };
 
+function getVariable(row: ProcessInstance, name: string): string {
+  const vIndex = row.variableNames.indexOf(name);
+  const value = row.variableValues[vIndex] || '';
+
+  return value;
+}
+
+function getProcessInstanceName(row: ProcessInstance) {
+  switch (row.processDefinitionKey) {
+    case EnumWorkflow.PROVIDER_PUBLISH_ASSET:
+      const assetTitle = getVariable(row, 'assetTitle');
+      const assetVersion = getVariable(row, 'assetVersion');
+      const assetType = getVariable(row, 'assetType');
+      return (
+        <span>{row.processDefinitionName}<br /><b>{assetType}: {assetTitle} {assetVersion}</b></span>
+      );
+
+    case EnumWorkflow.SYSTEM_REMOVE_ALL_USER_DATA:
+      const userName = getVariable(row, 'userName');
+      return (
+        <span>{row.processDefinitionName}<br /><b>{userName}</b></span>
+      );
+  }
+  return (
+    <span>{row.processDefinitionName}</span>
+  );
+}
 function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Column<ProcessInstance, EnumProcessInstanceSortField>[] {
   const { classes } = props;
 
@@ -86,9 +114,17 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
     }, {
       header: intl.formatMessage({ id: 'workflow.header.instance.process-definition-name' }),
       id: 'processDefinitionName',
-      width: 250,
+      width: 350,
       sortable: true,
       sortColumn: EnumProcessInstanceSortField.PROCESS_DEFINITION,
+      cell: (
+        rowIndex: number,
+        column: Column<ProcessInstance, EnumProcessInstanceSortField>,
+        row: ProcessInstance,
+        handleAction?: cellActionHandler<ProcessInstance, EnumProcessInstanceSortField>
+      ): React.ReactNode => (
+        getProcessInstanceName(row)
+      ),
     }, {
       header: intl.formatMessage({ id: 'workflow.header.instance.process-definition-version' }),
       id: 'processDefinitionVersion',

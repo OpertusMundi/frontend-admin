@@ -7,6 +7,7 @@ export enum EnumHelpdeskRole {
 export enum EnumMarketplaceRole {
   // Marketplace roles
   ROLE_USER = 'ROLE_USER',
+  ROLE_TESTER = 'ROLE_TESTER',
   ROLE_DEVELOPER = 'ROLE_DEVELOPER',
   ROLE_CONSUMER = 'ROLE_CONSUMER',
   ROLE_PROVIDER = 'ROLE_PROVIDER',

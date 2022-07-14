@@ -1,7 +1,7 @@
 import { AxiosRequestConfig } from 'axios';
 
 import { Api } from 'utils/api';
-import { ObjectResponse, PageRequest, Sorting, AxiosObjectResponse, AxiosPageResponse, PageResult } from 'model/response';
+import { ObjectResponse, PageRequest, Sorting, AxiosObjectResponse, AxiosPageResponse, PageResult, AxiosSimpleResponse } from 'model/response';
 import {
   EnumMarketplaceAccountSortField,
   ExternalProviderCommand,
@@ -105,5 +105,18 @@ export default class MarketplaceAccountApi extends Api {
     const url = `/action/marketplace/accounts/${key}/kyc`;
 
     return this.put<unknown, ObjectResponse<MarketplaceAccount>>(url, null);
+  }
+
+  public async toggleTester(key: string): Promise<AxiosObjectResponse<MarketplaceAccount>> {
+    const url = `/action/marketplace/accounts/${key}/tester`;
+
+    return this.put<unknown, ObjectResponse<MarketplaceAccount>>(url, null);
+  }
+
+
+  public async deleteAllUserData(key: string, accountDeleted = false, fileSystemDeleted = false): Promise<AxiosSimpleResponse> {
+    const url = `/action/marketplace/accounts/${key}?accountDeleted=${accountDeleted}&fileSystemDeleted=${fileSystemDeleted}`;
+
+    return this.delete<ObjectResponse<MarketplaceAccount>>(url);
   }
 }

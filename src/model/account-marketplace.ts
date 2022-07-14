@@ -327,12 +327,19 @@ export interface Profile extends ProfileBase {
   provider: ProviderData;
 }
 
+export enum EnumAccountActiveTask {
+  NONE = 'NONE',
+  DELETE = 'DELETE',
+  DATA_RESET = 'DATA_RESET',
+}
+
 /**
  * Marketplace account summary
  */
 export interface MarketplaceAccountSummary {
   activationStatus: EnumActivationStatus;
   activatedAt: string;
+  activeTask: EnumAccountActiveTask;
   consumer: boolean
   consumerFunds: number;
   consumerKycLevel: EnumKycLevel;

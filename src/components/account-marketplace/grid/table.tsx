@@ -8,30 +8,36 @@ import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
 import Avatar from '@material-ui/core/Avatar';
+import Switch from '@material-ui/core/Switch';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import Icon from '@mdi/react';
 import {
+  mdiCogOutline,
   mdiCogSyncOutline,
   mdiDomain,
   mdiEmailAlertOutline,
   mdiMessageTextOutline,
   mdiShieldRefreshOutline,
+  mdiTrashCanOutline,
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
 import { buildPath, DynamicRoutes } from 'model/routes';
-import { EnumMarketplaceAccountSortField, EnumKycLevel, MarketplaceAccountSummary, MarketplaceAccountQuery, EnumAccountType } from 'model/account-marketplace';
+import { EnumMarketplaceAccountSortField, EnumKycLevel, MarketplaceAccountSummary, MarketplaceAccountQuery, EnumAccountType, EnumAccountActiveTask } from 'model/account-marketplace';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 // Utilities
 import clsx from 'clsx';
 import { ApplicationConfiguration } from 'model/configuration';
+import { EnumMarketplaceRole } from 'model/role';
 
 enum EnumAction {
+  DeleteAllUserData = 'delete-all-user-data',
   KycRefresh = 'kyc-refresh',
   SendMessage = 'send-message',
+  ToggleTester = 'toggle-tester',
   VendorDetails = 'vendor-details',
 };
 
@@ -76,6 +82,26 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccountSumm
                   </i>
                 </Tooltip>
               }
+              {row.roles.includes(EnumMarketplaceRole.ROLE_TESTER) &&
+                <Tooltip title={intl.formatMessage({
+                  id: row.activeTask === EnumAccountActiveTask.NONE
+                    ? 'account.marketplace.tooltip.delete-execute'
+                    : 'account.marketplace.tooltip.delete-processing'
+                })}>
+                  <i
+                    onClick={() => handleAction && row.activeTask === EnumAccountActiveTask.NONE
+                      ? handleAction(EnumAction.DeleteAllUserData, rowIndex, column, row)
+                      : null
+                    }
+                  >
+                    <Icon
+                      path={row.activeTask === EnumAccountActiveTask.NONE ? mdiTrashCanOutline : mdiCogOutline}
+                      className={row.activeTask === EnumAccountActiveTask.NONE ? classes.rowIconAction : classes.rowIcon}
+                      spin={row.activeTask !== EnumAccountActiveTask.NONE}
+                    />
+                  </i>
+                </Tooltip>
+              }
             </div>
           }
         </>
@@ -105,9 +131,14 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccountSumm
         rowIndex: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary, handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => (
         <div className={classes.compositeLabel}>
-          <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [row.key + ''])} className={classes.link}>
-            {row.email}
-          </Link>
+          {row.activeTask === EnumAccountActiveTask.NONE &&
+            <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [row.key + ''])} className={classes.link}>
+              {row.email}
+            </Link>
+          }
+          {row.activeTask !== EnumAccountActiveTask.NONE &&
+            <span>{row.email}</span>
+          }
           {!row.emailVerified &&
             <Icon path={mdiEmailAlertOutline} className={clsx(classes.rowIcon, classes.marginLeft)} />
           }
@@ -207,13 +238,51 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccountSumm
       ): React.ReactNode => (
         <FormattedTime value={row?.registeredOn?.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
+    }, {
+      header: intl.formatMessage({ id: 'account.marketplace.header.tester' }),
+      id: 'tester',
+      sortable: false,
+      width: 120,
+      className: classes.alightCenter,
+      cell: (
+        rowIndex: number,
+        column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>,
+        row: MarketplaceAccountSummary,
+        handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
+      ): React.ReactNode => (
+        row.type !== EnumAccountType.VENDOR && row.activeTask === EnumAccountActiveTask.NONE
+          ? <Switch
+            checked={row.roles.includes(EnumMarketplaceRole.ROLE_TESTER)}
+            onChange={() => handleAction && handleAction(EnumAction.ToggleTester, rowIndex, column, row)}
+            name="tester"
+            color="primary"
+          />
+          : null
+      ),
     }]);
 }
 
 const styles = (theme: Theme) => createStyles({
-  root: {
+  alightCenter: {
+    textAlign: 'center',
+  },
+  avatar: {
+    width: theme.spacing(4),
+    height: theme.spacing(4),
+  },
+  compositeLabel: {
     display: 'flex',
-    padding: 0,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  link: {
+    color: 'inherit',
+  },
+  marginLeft: {
+    marginLeft: theme.spacing(1),
+  },
+  marginRight: {
+    marginRight: theme.spacing(1),
   },
   rowIcon: {
     width: 18,
@@ -224,18 +293,6 @@ const styles = (theme: Theme) => createStyles({
     marginRight: 8,
     cursor: 'pointer',
   },
-  avatar: {
-    width: theme.spacing(4),
-    height: theme.spacing(4),
-  },
-  link: {
-    color: 'inherit',
-  },
-  compositeLabel: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
   statusLabel: {
     display: 'flex',
     marginRight: theme.spacing(2),
@@ -243,6 +300,8 @@ const styles = (theme: Theme) => createStyles({
     color: '#ffffff',
     padding: theme.spacing(0.5),
     borderRadius: theme.spacing(0.5),
+  },
+  statusLabelText: {
   },
   statusLabelWarning: {
     display: 'flex',
@@ -252,48 +311,31 @@ const styles = (theme: Theme) => createStyles({
     padding: theme.spacing(0.5),
     borderRadius: theme.spacing(0.5),
   },
-  statusLabelNew: {
-    display: 'flex',
-    marginRight: theme.spacing(2),
-    background: '#0277BD',
-    color: '#ffffff',
-    padding: theme.spacing(0.5),
-    borderRadius: theme.spacing(0.5),
-  },
-  statusLabelText: {
-  },
   statusLabelTextWithMargin: {
     marginRight: theme.spacing(1),
   },
-  marginLeft: {
-    marginLeft: theme.spacing(1),
-  },
-  marginRight: {
-    marginRight: theme.spacing(1),
-  },
-  alightRight: {
-    textAlign: 'right',
-  }
 });
 
 interface AccountTableProps extends WithStyles<typeof styles> {
-  config: ApplicationConfiguration,
-  intl: IntlShape,
+  config: ApplicationConfiguration;
+  intl: IntlShape;
   loading?: boolean;
-  pagination: PageRequest,
-  query: MarketplaceAccountQuery,
-  result: PageResult<MarketplaceAccountSummary> | null,
-  selected: MarketplaceAccountSummary[],
+  pagination: PageRequest;
+  query: MarketplaceAccountQuery;
+  result: PageResult<MarketplaceAccountSummary> | null;
+  selected: MarketplaceAccountSummary[];
   sorting: Sorting<EnumMarketplaceAccountSortField>[];
-  addToSelection: (rows: MarketplaceAccountSummary[]) => void,
+  addToSelection: (rows: MarketplaceAccountSummary[]) => void;
+  deleteAllUserData: (row: MarketplaceAccountSummary) => void;
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumMarketplaceAccountSortField>[]
-  ) => Promise<PageResult<MarketplaceAccountSummary> | null>,
-  refreshKycStatus: (row: MarketplaceAccountSummary) => void,
-  removeFromSelection: (rows: MarketplaceAccountSummary[]) => void,
+  ) => Promise<PageResult<MarketplaceAccountSummary> | null>;
+  refreshKycStatus: (row: MarketplaceAccountSummary) => void;
+  removeFromSelection: (rows: MarketplaceAccountSummary[]) => void;
   resetSelection: () => void;
-  setPager: (page: number, size: number) => void,
-  setSorting: (sorting: Sorting<EnumMarketplaceAccountSortField>[]) => void,
+  setPager: (page: number, size: number) => void;
+  setSorting: (sorting: Sorting<EnumMarketplaceAccountSortField>[]) => void;
+  toggleTester: (row: MarketplaceAccountSummary) => void;
   view: (key: string) => void;
 }
 
@@ -308,8 +350,18 @@ class AccountTable extends React.Component<AccountTableProps> {
   handleAction(action: string, index: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary): void {
     if (row.key) {
       switch (action) {
+        case EnumAction.DeleteAllUserData:
+          if (row.activeTask === EnumAccountActiveTask.NONE) {
+            this.props.deleteAllUserData(row);
+          }
+          break;
+
         case EnumAction.KycRefresh:
           this.props.refreshKycStatus(row);
+          break;
+
+        case EnumAction.ToggleTester:
+          this.props.toggleTester(row);
           break;
 
         default:

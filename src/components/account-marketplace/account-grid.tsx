@@ -9,13 +9,15 @@ import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-in
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 // Icons
 import Icon from '@mdi/react';
-import { mdiCommentAlertOutline, mdiShieldRefreshOutline, mdiTrashCan, mdiUndoVariant } from '@mdi/js';
+import { mdiShieldBugOutline, mdiCommentAlertOutline, mdiShieldRefreshOutline, mdiTrashCan, mdiUndoVariant, mdiTrashCanOutline, mdiShredder } from '@mdi/js';
 
 // Services
 import message from 'service/message';
@@ -29,7 +31,7 @@ import { find } from 'store/account-marketplace/thunks';
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
-import { EnumMarketplaceAccountSortField, MarketplaceAccount, MarketplaceAccountSummary } from 'model/account-marketplace';
+import { EnumMarketplaceAccountSortField, MarketplaceAccountSummary } from 'model/account-marketplace';
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
@@ -62,8 +64,10 @@ const styles = (theme: Theme) => createStyles({
 });
 
 interface AccountManagerState {
-  confirm: boolean;
-  record: MarketplaceAccount | null
+  accountDeleted: boolean;
+  confirmDelete: boolean;
+  fileSystemDeleted: boolean;
+  record: MarketplaceAccountSummary | null;
 }
 
 interface AccountManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
@@ -81,11 +85,15 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
 
     this.api = new MarketplaceAccountApi();
 
+    this.deleteAllUserData = this.deleteAllUserData.bind(this);
     this.refreshKycStatus = this.refreshKycStatus.bind(this);
+    this.toggleTester = this.toggleTester.bind(this);
   }
 
   state: AccountManagerState = {
-    confirm: false,
+    accountDeleted: false,
+    confirmDelete: false,
+    fileSystemDeleted: false,
     record: null,
   }
 
@@ -95,28 +103,54 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
     this.props.navigate(path);
   }
 
-  showConfirmDialog(record: MarketplaceAccount): void {
+  showConfirmDeleteDialog(record: MarketplaceAccountSummary): void {
     this.setState({
-      confirm: true,
+      accountDeleted: false,
+      confirmDelete: true,
+      fileSystemDeleted: false,
       record,
     });
   }
 
-  hideConfirmDialog(): void {
+  hideConfirmDeleteDialog(): void {
     this.setState({
-      confirm: false,
+      confirmDelete: false,
       record: null,
     });
   }
 
-  confirmDialogHandler(action: DialogAction): void {
+  confirmDeleteDialogHandler(action: DialogAction): void {
     switch (action.key) {
       case EnumDialogAction.Yes:
+        const { record, accountDeleted, fileSystemDeleted } = this.state;
+
+        if (record) {
+          this.api.deleteAllUserData(record.key, accountDeleted, fileSystemDeleted)
+            .then((response) => {
+              if (response.data!.success) {
+                message.infoHtml(
+                  <FormattedMessage
+                    id={accountDeleted
+                      ? 'account-marketplace.message.delete-user-started'
+                      : 'account-marketplace.message.delete-user-data-started'
+                    }
+                  />,
+                  () => (<Icon path={accountDeleted ? mdiTrashCanOutline : mdiShredder} size="3rem" />),
+                );
+                this.find();
+              } else {
+                message.errorHtml(response.data!.messages[0].description);
+              }
+            })
+            .catch(() => {
+              message.error('account-marketplace.message.kyc-refresh-failure');
+            });
+        }
         break;
 
     }
 
-    this.hideConfirmDialog();
+    this.hideConfirmDeleteDialog();
   }
 
   componentDidMount() {
@@ -136,24 +170,61 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
     this.find();
   }
 
+  deleteAllUserData(row: MarketplaceAccountSummary): void {
+    this.showConfirmDeleteDialog(row);
+  }
+
   refreshKycStatus(row: MarketplaceAccountSummary): void {
     this.api.refreshKycStatus(row.key)
       .then((response) => {
         if (response.data!.success) {
           message.infoHtml(
             <FormattedMessage
-              id={'account.message.kyc-refresh-success'}
+              id={'account-marketplace.message.kyc-refresh-success'}
             />,
             () => (<Icon path={mdiShieldRefreshOutline} size="3rem" />),
           );
           this.find();
         } else {
-          message.error('account.message.kyc-refresh-failure');
+          message.error('account-marketplace.message.kyc-refresh-failure');
         }
       })
       .catch(() => {
-        message.error('account.message.kyc-refresh-failure');
+        message.error('account-marketplace.message.kyc-refresh-failure');
       });
+  }
+
+  toggleTester(row: MarketplaceAccountSummary): void {
+    this.api.toggleTester(row.key)
+      .then((response) => {
+        if (response.data!.success) {
+          message.infoHtml(
+            <FormattedMessage
+              id={'account-marketplace.message.toggle-tester-success'}
+            />,
+            () => (<Icon path={mdiShieldBugOutline} size="3rem" />),
+          );
+          this.find();
+        } else {
+          message.error('account-marketplace.message.toggle-tester-failure');
+        }
+      })
+      .catch(() => {
+        message.error('account-marketplace.message.toggle-tester-failure');
+      });
+  }
+
+  fileSystemDeletedChanged(fileSystemDeleted: boolean): void {
+    this.setState({
+      fileSystemDeleted,
+    });
+  }
+
+  accountDeletedChanged(accountDeleted: boolean): void {
+    this.setState((state) => ({
+      fileSystemDeleted: accountDeleted ? true : state.fileSystemDeleted,
+      accountDeleted,
+    }));
   }
 
   render() {
@@ -202,27 +273,29 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
               selected={selected}
               sorting={sorting}
               addToSelection={addToSelection}
+              deleteAllUserData={this.deleteAllUserData}
               find={this.props.find}
               refreshKycStatus={this.refreshKycStatus}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
               setPager={setPager}
               setSorting={(sorting: Sorting<EnumMarketplaceAccountSortField>[]) => this.setSorting(sorting)}
+              toggleTester={this.toggleTester}
               view={(key: string) => this.viewRow(key)}
             />
           </Paper>
         </div >
-        {this.renderConfirm()}
+        {this.renderConfirmDeleteDialog()}
       </>
     );
   }
 
-  renderConfirm() {
+  renderConfirmDeleteDialog() {
     const _t = this.props.intl.formatMessage;
 
-    const { confirm, record } = this.state;
+    const { confirmDelete, record, accountDeleted, fileSystemDeleted } = this.state;
 
-    if (!confirm || !record) {
+    if (!confirmDelete || !record) {
       return null;
     }
 
@@ -240,17 +313,52 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
             iconClass: () => (<Icon path={mdiUndoVariant} size="1.5rem" />)
           }
         ]}
-        handleClose={() => this.hideConfirmDialog()}
-        handleAction={(action) => this.confirmDialogHandler(action)}
+        handleClose={() => this.hideConfirmDeleteDialog()}
+        handleAction={(action) => this.confirmDeleteDialogHandler(action)}
         header={
           <span>
             <i className={'mdi mdi-comment-question-outline mr-2'}></i>
             <FormattedMessage id="view.shared.dialog.title" />
           </span>
         }
-        open={confirm}
+        open={confirmDelete}
       >
-        <FormattedMessage id="view.shared.message.delete-confirm" values={{ name: record.email }} />
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <FormattedMessage id="view.shared.message.delete-confirm" values={{ name: (<b>{record.email}</b>) }} />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={fileSystemDeleted}
+                  disabled={accountDeleted}
+                  onChange={
+                    (event) => this.fileSystemDeletedChanged(event.target.checked)
+                  }
+                  name="checkedB"
+                  color="primary"
+                />
+              }
+              label={_t({ id: 'account-marketplace.confirm-delete-dialog.delete-file-system' })}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={accountDeleted}
+                  onChange={
+                    (event) => this.accountDeletedChanged(event.target.checked)
+                  }
+                  name="checkedB"
+                  color="primary"
+                />
+              }
+              label={_t({ id: 'account-marketplace.confirm-delete-dialog.delete-account' })}
+            />
+          </Grid>
+        </Grid>
       </Dialog>
     );
   }
