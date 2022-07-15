@@ -45,6 +45,14 @@ function getVariable(row: ProcessInstance, name: string): string {
 
 function getProcessInstanceName(row: ProcessInstance) {
   switch (row.processDefinitionKey) {
+    case EnumWorkflow.CONSUMER_REGISTRATION:
+    case EnumWorkflow.PROVIDER_REGISTRATION: {
+      const userName = getVariable(row, 'userName');
+      return (
+        <span>{row.processDefinitionName}<br /><b>{userName}</b></span>
+      );
+    }
+
     case EnumWorkflow.PROVIDER_PUBLISH_ASSET:
       const assetTitle = getVariable(row, 'assetTitle');
       const assetVersion = getVariable(row, 'assetVersion');
@@ -53,11 +61,19 @@ function getProcessInstanceName(row: ProcessInstance) {
         <span>{row.processDefinitionName}<br /><b>{assetType}: {assetTitle} {assetVersion}</b></span>
       );
 
-    case EnumWorkflow.SYSTEM_REMOVE_ALL_USER_DATA:
+    case EnumWorkflow.SYSTEM_REMOVE_ALL_USER_DATA: {
       const userName = getVariable(row, 'userName');
       return (
         <span>{row.processDefinitionName}<br /><b>{userName}</b></span>
       );
+    }
+
+    case EnumWorkflow.PUBLISH_USER_SERVICE:
+      const serviceTitle = getVariable(row, 'serviceTitle');
+      return (
+        <span>{row.processDefinitionName}<br /><b>{serviceTitle}</b></span>
+      );
+
   }
   return (
     <span>{row.processDefinitionName}</span>
