@@ -2,7 +2,7 @@ import { AxiosRequestConfig } from 'axios';
 
 import { Api } from 'utils/api';
 import { ObjectResponse, PageRequest, Sorting, AxiosPageResponse, PageResult, AxiosObjectResponse } from 'model/response';
-import { EnumPayInSortField, PayIn, PayInQuery, PayInType } from 'model/order';
+import { EnumPayInSortField, PayInQuery, PayInType } from 'model/order';
 
 export default class PayInApi extends Api {
 
@@ -10,7 +10,7 @@ export default class PayInApi extends Api {
     super(config);
   }
 
-  public async find(query: Partial<PayInQuery>, pageRequest: PageRequest, sorting: Sorting<EnumPayInSortField>[]): Promise<AxiosPageResponse<PayIn>> {
+  public async find(query: Partial<PayInQuery>, pageRequest: PageRequest, sorting: Sorting<EnumPayInSortField>[]): Promise<AxiosPageResponse<PayInType>> {
     const { page, size } = pageRequest;
     const { id: field, order } = sorting[0];
 
@@ -21,7 +21,7 @@ export default class PayInApi extends Api {
 
     const url = `/action/billing/payins?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
 
-    return this.get<ObjectResponse<PageResult<PayIn>>>(url);
+    return this.get<ObjectResponse<PageResult<PayInType>>>(url);
   }
 
   public async findOne(key: string): Promise<AxiosObjectResponse<PayInType>> {

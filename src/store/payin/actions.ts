@@ -1,5 +1,5 @@
 import { PageResult, Sorting } from 'model/response';
-import { EnumPayInSortField, PayIn, PayInQuery, PayInType } from 'model/order';
+import { EnumPayInSortField, PayInQuery, PayInType } from 'model/order';
 
 import {
   PayInActions,
@@ -67,21 +67,21 @@ export function searchFailure(): PayInActions {
   };
 }
 
-export function searchComplete(result: PageResult<PayIn>): PayInActions {
+export function searchComplete(result: PageResult<PayInType>): PayInActions {
   return {
     type: SEARCH_COMPLETE,
     result,
   };
 }
 
-export function addToSelection(selected: PayIn[]): PayInActions {
+export function addToSelection(selected: PayInType[]): PayInActions {
   return {
     type: ADD_SELECTED,
     selected,
   };
 }
 
-export function removeFromSelection(removed: PayIn[]): PayInActions {
+export function removeFromSelection(removed: PayInType[]): PayInActions {
   return {
     type: REMOVE_SELECTED,
     removed,

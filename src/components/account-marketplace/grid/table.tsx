@@ -52,27 +52,25 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccountSumm
       cell: (
         rowIndex: number, column: Column<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>, row: MarketplaceAccountSummary, handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => (
-        <>
+        <div style={{ display: 'flex', justifyContent: 'start' }}>
+          <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.send-message' })}>
+            <i
+              onClick={() => handleAction ? handleAction(EnumAction.SendMessage, rowIndex, column, row) : null}
+            >
+              <Icon path={mdiMessageTextOutline} className={classes.rowIconAction} style={{ marginTop: 2 }} />
+            </i>
+          </Tooltip>
           {row.type === EnumAccountType.VENDOR &&
-            <div style={{ display: 'flex', justifyContent: 'start' }}>
-              <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.vendor-details' })}>
-                <i
-                  onClick={() => handleAction ? handleAction(EnumAction.VendorDetails, rowIndex, column, row) : null}
-                >
-                  <Icon path={mdiDomain} className={classes.rowIconAction} />
-                </i>
-              </Tooltip>
-            </div>
+            <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.vendor-details' })}>
+              <i
+                onClick={() => handleAction ? handleAction(EnumAction.VendorDetails, rowIndex, column, row) : null}
+              >
+                <Icon path={mdiDomain} className={classes.rowIconAction} />
+              </i>
+            </Tooltip>
           }
           {row.type === EnumAccountType.OPERTUSMUNDI &&
-            <div style={{ display: 'flex', justifyContent: 'start' }}>
-              <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.send-message' })}>
-                <i
-                  onClick={() => handleAction ? handleAction(EnumAction.SendMessage, rowIndex, column, row) : null}
-                >
-                  <Icon path={mdiMessageTextOutline} className={classes.rowIconAction} style={{ marginTop: 2 }} />
-                </i>
-              </Tooltip>
+            <>
               {(row.consumer || row.provider) &&
                 <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.kyc-refresh' })}>
                   <i
@@ -102,9 +100,9 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccountSumm
                   </i>
                 </Tooltip>
               }
-            </div>
+            </>
           }
-        </>
+        </div>
       ),
     }, {
       header: '',

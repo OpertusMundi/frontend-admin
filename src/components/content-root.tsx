@@ -8,6 +8,7 @@ import { ToastContainer } from 'react-toastify';
 
 // State
 import { RootState } from 'store';
+import { toggleSendMessageDialog } from 'store/message/actions';
 
 // Components
 import AccountForm from 'components/account/account-form';
@@ -27,6 +28,7 @@ import SettingsManager from 'components/system/settings-manager';
 import MapViewerComponent from 'components/map-viewer';
 import MarketplaceAccountManager from 'components/account-marketplace/account-grid';
 import MarketplaceAccountView from 'components/account-marketplace/account-form';
+import MessageDialogComponent from 'components/message/message-send-dialog';
 import MessageInboxHelpdesk from 'components/message-inbox-helpdesk/message-grid';
 import MessageInboxUser from 'components/message-inbox-user/message-grid';
 import PayInDetails from 'components/payin/payin-details';
@@ -55,8 +57,14 @@ import { EnumHelpdeskRole as EnumRole } from 'model/role';
 
 class ContentRoot extends React.Component<PropsFromRedux> {
 
+  closeSendMessageDialog() {
+    this.props.toggleSendMessageDialog();
+  }
+
   render() {
-    let authenticated = (this.props.profile != null);
+    const { profile, sendMessageContact, sendMessageSubject } = this.props;
+    const authenticated = profile != null;
+
     let routes;
 
     if (!authenticated) {
@@ -169,6 +177,14 @@ class ContentRoot extends React.Component<PropsFromRedux> {
           pauseOnHover
           icon={false}
         />
+        {sendMessageContact &&
+          <MessageDialogComponent
+            close={() => this.closeSendMessageDialog()}
+            contact={sendMessageContact}
+            defaultSubject={sendMessageSubject}
+            open={true}
+          />
+        }
       </div>
     );
   }
@@ -179,11 +195,18 @@ class ContentRoot extends React.Component<PropsFromRedux> {
 //
 
 const mapState = (state: RootState) => ({
+  sendMessageContact: state.message.sendMessageDialog.contact,
+  sendMessageSubject: state.message.sendMessageDialog.subject,
   profile: state.security.profile,
 });
 
+const mapDispatch = {
+  toggleSendMessageDialog,
+};
+
 const connector = connect(
   mapState,
+  mapDispatch,
 );
 
 type PropsFromRedux = ConnectedProps<typeof connector>

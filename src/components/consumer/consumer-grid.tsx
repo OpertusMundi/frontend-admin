@@ -23,18 +23,16 @@ import message from 'service/message';
 import { RootState } from 'store';
 import { addToSelection, removeFromSelection, resetFilter, resetSelection, setFilter, setPager, setSorting } from 'store/consumer/actions';
 import { find } from 'store/consumer/thunks';
+import { toggleSendMessageDialog } from 'store/message/actions';
 
 // Model
 import { PageRequest, Sorting } from 'model/response';
-import {
-  EnumMarketplaceAccountSortField, MarketplaceAccountSummary,
-} from 'model/account-marketplace';
+import { EnumMarketplaceAccountSortField, MarketplaceAccountSummary } from 'model/account-marketplace';
+import { ClientContact } from 'model/chat';
 
 // Components
 import ConsumerFilters from './grid/filter';
 import ConsumerTable from './grid/table';
-import MessageDialogComponent from 'components/message/message-send-dialog';
-import { ClientContact } from 'model/chat';
 
 const styles = (theme: Theme) => createStyles({
   paper: {
@@ -56,25 +54,11 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-interface ConsumerManagerState {
-  contact: ClientContact | null;
-  sendMessage: boolean;
-}
-
 interface ConsumerManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
   intl: IntlShape,
 }
 
-class ConsumerManager extends React.Component<ConsumerManagerProps, ConsumerManagerState> {
-
-  constructor(props: ConsumerManagerProps) {
-    super(props);
-
-    this.state = {
-      contact: null,
-      sendMessage: false,
-    }
-  }
+class ConsumerManager extends React.Component<ConsumerManagerProps> {
 
   componentDidMount() {
     this.find();
@@ -94,17 +78,8 @@ class ConsumerManager extends React.Component<ConsumerManagerProps, ConsumerMana
   }
 
   showSendMessageDialog(row: MarketplaceAccountSummary) {
-    this.setState({
-      contact: this.getContact(row),
-      sendMessage: true,
-    });
-  }
-
-  closeSendMessageDialog() {
-    this.setState({
-      contact: null,
-      sendMessage: false,
-    });
+    const contact = this.getContact(row);
+    this.props.toggleSendMessageDialog(contact);
   }
 
   getContact(row: MarketplaceAccountSummary): ClientContact {
@@ -118,7 +93,6 @@ class ConsumerManager extends React.Component<ConsumerManagerProps, ConsumerMana
   }
 
   render() {
-    const { sendMessage, contact } = this.state;
     const {
       addToSelection,
       classes,
@@ -171,13 +145,6 @@ class ConsumerManager extends React.Component<ConsumerManagerProps, ConsumerMana
             />
           </Paper>
         </div>
-        {contact &&
-          <MessageDialogComponent
-            close={() => this.closeSendMessageDialog()}
-            contact={contact}
-            open={sendMessage}
-          />
-        }
       </>
     );
   }
@@ -197,6 +164,7 @@ const mapDispatch = {
   setFilter,
   setPager,
   setSorting,
+  toggleSendMessageDialog,
 };
 
 const connector = connect(

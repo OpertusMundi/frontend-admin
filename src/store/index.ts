@@ -24,6 +24,7 @@ import { processInstanceTaskReducer } from './process-instance-task/reducer';
 import { processInstanceHistoryReducer } from './process-instance-history/reducer';
 import { providerReducer } from './provider/reducer';
 import { securityReducer } from './security/reducer';
+import { sendMessageDialogReducer } from './message/reducer';
 import { subscriptionBillingReducer } from './subscription-billing/reducer';
 import { transferReducer } from './transfer/reducer';
 import { userInboxReducer } from './message-inbox-user/reducer';
@@ -47,6 +48,7 @@ export const rootReducer = Redux.combineReducers({
   }),
   message: Redux.combineReducers({
     helpdeskInbox: helpdeskInboxReducer,
+    sendMessageDialog: sendMessageDialogReducer,
     userInbox: userInboxReducer,
   }),
   config: configurationReducer,

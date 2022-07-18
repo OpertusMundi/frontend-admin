@@ -180,7 +180,7 @@ class MessageManager extends React.Component<MessageManagerProps> {
             setFilter={(query: Partial<MessageQuery>) => this.props.setFilter(query)}
           />
         </Grid>
-        {items.length === 0 &&
+        {!loading && items.length === 0 &&
           <Grid item xs={12}>
             <Alert severity="info">No messages found</Alert>
           </Grid>

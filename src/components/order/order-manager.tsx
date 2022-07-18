@@ -24,11 +24,14 @@ import message from 'service/message';
 import { RootState } from 'store';
 import { addToSelection, removeFromSelection, resetFilter, resetSelection, setFilter, setPager, setSorting } from 'store/order/actions';
 import { find } from 'store/order/thunks';
+import { toggleSendMessageDialog } from 'store/message/actions';
 
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
-import { EnumOrderSortField } from 'model/order';
+import { EnumOrderSortField, Order } from 'model/order';
+import { ClientContact } from 'model/chat';
+import { CustomerIndividual, CustomerProfessional, EnumMangopayUserType } from 'model/account-marketplace';
 
 // Components
 import OrderFilters from './grid/filter';
@@ -94,6 +97,35 @@ class OrderManager extends React.Component<OrderManagerProps> {
     this.find();
   }
 
+  showSendMessageDialog(row: Order) {
+    const contact = this.getContact(row);
+    this.props.toggleSendMessageDialog(contact, `Order ${row.referenceNumber}`);
+  }
+
+  getContact(row: Order): ClientContact | null {
+    if (row.consumer && row.consumer.type === EnumMangopayUserType.INDIVIDUAL) {
+      const c = row.consumer as CustomerIndividual;
+      return {
+        id: c.key,
+        logoImage: null,
+        logoImageMimeType: null,
+        name: [c.firstName, c.lastName].join(' '),
+        email: row.consumer!.email,
+      };
+    } else if (row.consumer && row.consumer?.type === EnumMangopayUserType.PROFESSIONAL) {
+      const c = row.consumer as CustomerProfessional;
+      return {
+        id: c.key,
+        logoImage: c.logoImage,
+        logoImageMimeType: c.logoImageMimeType,
+        name: c.name,
+        email: row.consumer!.email,
+      };
+    }
+
+    return null;
+  }
+
   render() {
     const {
       addToSelection,
@@ -138,6 +170,7 @@ class OrderManager extends React.Component<OrderManagerProps> {
             query={query}
             resetSelection={resetSelection}
             selected={selected}
+            sendMessage={(row: Order) => this.showSendMessageDialog(row)}
             setPager={setPager}
             setSorting={(sorting: Sorting<EnumOrderSortField>[]) => this.setSorting(sorting)}
             result={result}
@@ -165,6 +198,7 @@ const mapDispatch = {
   setFilter,
   setPager,
   setSorting,
+  toggleSendMessageDialog,
 };
 
 const connector = connect(

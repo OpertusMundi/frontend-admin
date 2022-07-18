@@ -2,7 +2,7 @@ import { AxiosRequestConfig } from 'axios';
 
 import { Api } from 'utils/api';
 import { ObjectResponse, PageRequest, Sorting, AxiosPageResponse, PageResult } from 'model/response';
-import { EnumOrderSortField, EnumPayInSortField, EnumSubscriptionBillingSortField, Order, OrderQuery, PayIn, PayInQuery, SubscriptionBilling, SubscriptionBillingQuery } from 'model/order';
+import { EnumOrderSortField, EnumPayInSortField, EnumSubscriptionBillingSortField, Order, OrderQuery, PayInQuery, PayInType, SubscriptionBilling, SubscriptionBillingQuery } from 'model/order';
 import { EnumSubscriptionSortField, AccountSubscription, SubscriptionQuery } from 'model/account-marketplace';
 
 export default class ConsumerBillingApi extends Api {
@@ -27,7 +27,7 @@ export default class ConsumerBillingApi extends Api {
 
   public async findPayIns(
     query: Partial<PayInQuery>, pageRequest: PageRequest, sorting: Sorting<EnumPayInSortField>[]
-  ): Promise<AxiosPageResponse<PayIn>> {
+  ): Promise<AxiosPageResponse<PayInType>> {
     const { page, size } = pageRequest;
     const { id: field, order } = sorting[0];
 
@@ -38,7 +38,7 @@ export default class ConsumerBillingApi extends Api {
 
     const url = `/action/consumer/payins?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
 
-    return this.get<ObjectResponse<PageResult<PayIn>>>(url);
+    return this.get<ObjectResponse<PageResult<PayInType>>>(url);
   }
 
   public async findSubscriptions(

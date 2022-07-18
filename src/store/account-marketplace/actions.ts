@@ -71,8 +71,8 @@ import {
   EnumSubscriptionBillingSortField,
   EnumTransferSortField,
   Order,
-  PayIn,
   PayInItem,
+  PayInType,
   PayOut,
   SubscriptionBilling,
 } from 'model/order';
@@ -259,7 +259,7 @@ export function searchPayInFailure(): AccountActions {
   };
 }
 
-export function searchPayInComplete(result: PageResult<PayIn>): AccountActions {
+export function searchPayInComplete(result: PageResult<PayInType>): AccountActions {
   return {
     type: PAYIN_SEARCH_COMPLETE,
     result,

@@ -248,6 +248,7 @@ interface ProviderTableProps extends WithStyles<typeof styles> {
   addToSelection: (rows: MarketplaceAccountSummary[]) => void,
   removeFromSelection: (rows: MarketplaceAccountSummary[]) => void,
   resetSelection: () => void;
+  sendMessage: (row: MarketplaceAccountSummary) => void;
   sorting: Sorting<EnumMarketplaceAccountSortField>[];
   loading?: boolean;
 }
@@ -268,6 +269,11 @@ class ProviderTable extends React.Component<ProviderTableProps> {
         case EnumAction.CreatePayOut:
           this.props.createPayOut(row.key);
           break;
+
+        case EnumAction.SendMessage:
+          this.props.sendMessage(row);
+          break;
+
         default:
           // No action
           break;

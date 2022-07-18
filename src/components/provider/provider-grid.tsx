@@ -31,6 +31,7 @@ import PayOutApi from 'service/payout';
 import { RootState } from 'store';
 import { addToSelection, removeFromSelection, resetFilter, resetSelection, setFilter, setPager, setSorting } from 'store/provider/actions';
 import { find } from 'store/provider/thunks';
+import { toggleSendMessageDialog } from 'store/message/actions';
 
 // Utilities
 import { FieldMapperFunc, localizeErrorCodes } from 'utils/error';
@@ -38,10 +39,12 @@ import { FieldMapperFunc, localizeErrorCodes } from 'utils/error';
 // Model
 import { Message } from 'model/message';
 import { PageRequest, Sorting } from 'model/response';
+import { ClientContact } from 'model/chat';
 import {
   EnumMarketplaceAccountSortField,
   CustomerProfessional,
   MarketplaceAccount,
+  MarketplaceAccountSummary,
 } from 'model/account-marketplace';
 
 // Components
@@ -246,6 +249,21 @@ class ProviderManager extends React.Component<ProviderManagerProps, ProviderMana
     this.find();
   }
 
+  showSendMessageDialog(row: MarketplaceAccountSummary) {
+    const contact = this.getContact(row);
+    this.props.toggleSendMessageDialog(contact);
+  }
+
+  getContact(row: MarketplaceAccountSummary): ClientContact {
+    return {
+      id: row.key,
+      logoImage: row.image,
+      logoImageMimeType: row.imageMimeType,
+      name: row.providerName,
+      email: row.email,
+    };
+  }
+
   render() {
     const {
       addToSelection,
@@ -294,6 +312,7 @@ class ProviderManager extends React.Component<ProviderManagerProps, ProviderMana
               addToSelection={addToSelection}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
+              sendMessage={(row: MarketplaceAccountSummary) => this.showSendMessageDialog(row)}
               sorting={sorting}
               loading={loading}
             />
@@ -421,6 +440,7 @@ const mapDispatch = {
   setFilter,
   setPager,
   setSorting,
+  toggleSendMessageDialog,
 };
 
 const connector = connect(

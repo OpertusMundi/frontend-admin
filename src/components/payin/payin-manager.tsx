@@ -25,12 +25,14 @@ import { RootState } from 'store';
 import { addToSelection, removeFromSelection, resetFilter, resetSelection, setFilter, setPager, setSorting } from 'store/payin/actions';
 import { find } from 'store/payin/thunks';
 import { createTransfer } from 'store/transfer/thunks';
-
+import { toggleSendMessageDialog } from 'store/message/actions';
 
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
-import { EnumOrderStatus, EnumPayInItemType, EnumPayInSortField, OrderPayInItem, PayIn } from 'model/order';
+import { EnumOrderStatus, EnumPayInItemType, EnumPayInSortField, OrderPayInItem, PayInType } from 'model/order';
+import { ClientContact } from 'model/chat';
+import { CustomerIndividual, CustomerProfessional, EnumMangopayUserType } from 'model/account-marketplace';
 
 // Components
 import PayInFilters from './grid/filter';
@@ -98,7 +100,7 @@ class PayInManager extends React.Component<PayInManagerProps> {
     this.props.navigate(path);
   }
 
-  createTransfer(payIn: PayIn): void {
+  createTransfer(payIn: PayInType): void {
     const _t = this.props.intl.formatMessage;
     const _n = this.props.intl.formatNumber;
 
@@ -171,6 +173,35 @@ class PayInManager extends React.Component<PayInManagerProps> {
     this.find();
   }
 
+  showSendMessageDialog(row: PayInType) {
+    const contact = this.getContact(row);
+    this.props.toggleSendMessageDialog(contact, `Payment ${row.referenceNumber}`);
+  }
+
+  getContact(row: PayInType): ClientContact | null {
+    if (row.consumer && row.consumer.type === EnumMangopayUserType.INDIVIDUAL) {
+      const c = row.consumer as CustomerIndividual;
+      return {
+        id: c.key,
+        logoImage: null,
+        logoImageMimeType: null,
+        name: [c.firstName, c.lastName].join(' '),
+        email: row.consumer!.email,
+      };
+    } else if (row.consumer && row.consumer?.type === EnumMangopayUserType.PROFESSIONAL) {
+      const c = row.consumer as CustomerProfessional;
+      return {
+        id: c.key,
+        logoImage: c.logoImage,
+        logoImageMimeType: c.logoImageMimeType,
+        name: c.name,
+        email: row.consumer!.email,
+      };
+    }
+
+    return null;
+  }
+
   render() {
     const {
       addToSelection,
@@ -219,6 +250,7 @@ class PayInManager extends React.Component<PayInManagerProps> {
               find={this.props.find}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
+              sendMessage={(row: PayInType) => this.showSendMessageDialog(row)}
               setPager={setPager}
               setSorting={(sorting: Sorting<EnumPayInSortField>[]) => this.setSorting(sorting)}
               viewPayIn={this.viewPayIn}
@@ -229,7 +261,6 @@ class PayInManager extends React.Component<PayInManagerProps> {
       </>
     );
   }
-
 }
 
 const mapState = (state: RootState) => ({
@@ -247,6 +278,7 @@ const mapDispatch = {
   setFilter,
   setPager,
   setSorting,
+  toggleSendMessageDialog,
 };
 
 const connector = connect(

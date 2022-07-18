@@ -21,6 +21,7 @@ import {
   mdiClockFast,
   mdiContentCopy,
   mdiDatabaseCogOutline,
+  mdiMessageTextOutline,
   mdiPackageVariantClosed,
   mdiWalletPlusOutline,
 } from '@mdi/js';
@@ -28,7 +29,7 @@ import {
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { EnumKycLevel, EnumMangopayUserType, CustomerIndividual, CustomerProfessional } from 'model/account-marketplace';
-import { EnumBillingViewMode, EnumPayInItemType, EnumPayInSortField, EnumTransactionStatus, PayIn, PayInQuery } from 'model/order';
+import { EnumBillingViewMode, EnumPayInItemType, EnumPayInSortField, EnumTransactionStatus, PayInQuery, PayInType } from 'model/order';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 import { EnumPaymentMethod } from 'model/enum';
 
@@ -40,11 +41,12 @@ import { copyToClipboard } from 'utils/clipboard';
 
 enum EnumAction {
   CopyReferenceNumber = 'copy-reference-number',
+  SendMessage = 'send-message',
   TransferFunds = 'transfer-funds',
   ViewProcessInstance = 'view-process-instance',
 };
 
-const getCustomerName = (payin: PayIn): string => {
+const getCustomerName = (payin: PayInType): string => {
   if (payin?.consumer && payin?.consumer?.type === EnumMangopayUserType.INDIVIDUAL) {
     const c = payin?.consumer as CustomerIndividual;
     return [c.firstName, c.lastName].join(' ');
@@ -56,7 +58,7 @@ const getCustomerName = (payin: PayIn): string => {
   return '';
 }
 
-function mapStatusToColor(payin: PayIn) {
+function mapStatusToColor(payin: PayInType) {
   switch (payin.status) {
     case EnumTransactionStatus.FAILED:
       return '#f44336';
@@ -67,7 +69,7 @@ function mapStatusToColor(payin: PayIn) {
   }
 }
 
-function renderItems(payin: PayIn, props: PayInTableProps, intl: IntlShape) {
+function renderItems(payin: PayInType, props: PayInTableProps, intl: IntlShape) {
   const items = payin.items;
   let orderCount = 0, subCount = 0;
 
@@ -223,7 +225,7 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
-function hasTransfer(row: PayIn): boolean {
+function hasTransfer(row: PayInType): boolean {
   if (!row.items) {
     return true;
   }
@@ -237,7 +239,7 @@ function hasTransfer(row: PayIn): boolean {
   return false;
 }
 
-function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayIn, EnumPayInSortField>[] {
+function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayInType, EnumPayInSortField>[] {
   const { classes } = props;
 
   return (
@@ -246,9 +248,16 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayIn, En
       id: 'actions',
       width: 80,
       cell: (
-        rowIndex: number, column: Column<PayIn, EnumPayInSortField>, row: PayIn, handleAction?: cellActionHandler<PayIn, EnumPayInSortField>
+        rowIndex: number, column: Column<PayInType, EnumPayInSortField>, row: PayInType, handleAction?: cellActionHandler<PayInType, EnumPayInSortField>
       ): React.ReactNode => (
         <div className={classes.compositeLabelLeft}>
+          <Tooltip title={intl.formatMessage({ id: 'billing.order.tooltip.send-message' })}>
+            <i
+              onClick={() => handleAction ? handleAction(EnumAction.SendMessage, rowIndex, column, row) : null}
+            >
+              <Icon path={mdiMessageTextOutline} className={classes.rowIconAction} style={{ marginTop: 2 }} />
+            </i>
+          </Tooltip>
           {row?.processInstance &&
             <Tooltip title={intl.formatMessage({ id: 'billing.order.tooltip.view-process-instance' })}>
               <i
@@ -287,7 +296,7 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayIn, En
       id: 'avatar',
       width: 60,
       cell: (
-        rowIndex: number, column: Column<PayIn, EnumPayInSortField>, row: PayIn, handleAction?: cellActionHandler<PayIn, EnumPayInSortField>
+        rowIndex: number, column: Column<PayInType, EnumPayInSortField>, row: PayInType, handleAction?: cellActionHandler<PayInType, EnumPayInSortField>
       ): React.ReactNode => {
         return (
           <Avatar style={{ background: mapStatusToColor(row) }}>
@@ -302,7 +311,7 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayIn, En
       sortable: true,
       sortColumn: EnumPayInSortField.REFERENCE_NUMBER,
       cell: (
-        rowIndex: number, column: Column<PayIn, EnumPayInSortField>, row: PayIn, handleAction?: cellActionHandler<PayIn, EnumPayInSortField>
+        rowIndex: number, column: Column<PayInType, EnumPayInSortField>, row: PayInType, handleAction?: cellActionHandler<PayInType, EnumPayInSortField>
       ): React.ReactNode => (
         <div className={classes.compositeLabelJustified}>
           <Link to={buildPath(DynamicRoutes.PayInView, [row.key])} className={classes.link}>
@@ -322,7 +331,7 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayIn, En
       sortColumn: EnumPayInSortField.STATUS,
       width: 350,
       cell: (
-        rowIndex: number, column: Column<PayIn, EnumPayInSortField>, row: PayIn, handleAction?: cellActionHandler<PayIn, EnumPayInSortField>
+        rowIndex: number, column: Column<PayInType, EnumPayInSortField>, row: PayInType, handleAction?: cellActionHandler<PayInType, EnumPayInSortField>
       ): React.ReactNode => {
 
         return (
@@ -351,7 +360,7 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayIn, En
       sortable: false,
       hidden: props.mode === EnumBillingViewMode.CONSUMER,
       cell: (
-        rowIndex: number, column: Column<PayIn, EnumPayInSortField>, row: PayIn, handleAction?: cellActionHandler<PayIn, EnumPayInSortField>
+        rowIndex: number, column: Column<PayInType, EnumPayInSortField>, row: PayInType, handleAction?: cellActionHandler<PayInType, EnumPayInSortField>
       ): React.ReactNode => {
 
         return (
@@ -379,7 +388,7 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayIn, En
       id: 'type',
       sortable: false,
       cell: (
-        rowIndex: number, column: Column<PayIn, EnumPayInSortField>, row: PayIn, handleAction?: cellActionHandler<PayIn, EnumPayInSortField>
+        rowIndex: number, column: Column<PayInType, EnumPayInSortField>, row: PayInType, handleAction?: cellActionHandler<PayInType, EnumPayInSortField>
       ): React.ReactNode => {
         return renderItems(row, props, intl);
       },
@@ -391,7 +400,7 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayIn, En
       sortColumn: EnumPayInSortField.TOTAL_PRICE,
       className: classes.alightRight,
       cell: (
-        rowIndex: number, column: Column<PayIn, EnumPayInSortField>, row: PayIn, handleAction?: cellActionHandler<PayIn, EnumPayInSortField>
+        rowIndex: number, column: Column<PayInType, EnumPayInSortField>, row: PayInType, handleAction?: cellActionHandler<PayInType, EnumPayInSortField>
       ): React.ReactNode => {
         return (
           <b>
@@ -406,9 +415,9 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayIn, En
       sortColumn: EnumPayInSortField.MODIFIED_ON,
       cell: (
         rowIndex: number,
-        column: Column<PayIn, EnumPayInSortField>,
-        row: PayIn,
-        handleAction?: cellActionHandler<PayIn, EnumPayInSortField>
+        column: Column<PayInType, EnumPayInSortField>,
+        row: PayInType,
+        handleAction?: cellActionHandler<PayInType, EnumPayInSortField>
       ): React.ReactNode => (
         <FormattedTime value={row?.statusUpdatedOn?.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
@@ -431,15 +440,16 @@ interface PayInTableProps extends WithStyles<typeof styles> {
   mode: EnumBillingViewMode;
   pagination: PageRequest,
   query: PayInQuery,
-  result: PageResult<PayIn> | null,
-  selected: PayIn[],
+  result: PageResult<PayInType> | null,
+  selected: PayInType[],
   sorting: Sorting<EnumPayInSortField>[];
-  addToSelection?: (rows: PayIn[]) => void,
-  createTransfer?: (payIn: PayIn) => void;
+  addToSelection?: (rows: PayInType[]) => void,
+  createTransfer?: (payIn: PayInType) => void;
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumPayInSortField>[]
-  ) => Promise<PageResult<PayIn> | null>,
-  removeFromSelection?: (rows: PayIn[]) => void,
+  ) => Promise<PageResult<PayInType> | null>,
+  removeFromSelection?: (rows: PayInType[]) => void,
+  sendMessage: (row: PayInType) => void;
   resetSelection?: () => void;
   setPager: (page: number, size: number) => void,
   setSorting: (sorting: Sorting<EnumPayInSortField>[]) => void,
@@ -459,13 +469,16 @@ class PayInTable extends React.Component<PayInTableProps> {
     mode: EnumBillingViewMode.DEFAULT,
   }
 
-  handleAction(action: string, index: number, column: Column<PayIn, EnumPayInSortField>, row: PayIn): void {
+  handleAction(action: string, index: number, column: Column<PayInType, EnumPayInSortField>, row: PayInType): void {
     if (row.key) {
       switch (action) {
         case EnumAction.CopyReferenceNumber:
           const value = row.referenceNumber;
-
           copyToClipboard(value);
+          break;
+
+        case EnumAction.SendMessage:
+          this.props.sendMessage(row);
           break;
 
         case EnumAction.TransferFunds:
@@ -492,7 +505,7 @@ class PayInTable extends React.Component<PayInTableProps> {
 
     return (
       <>
-        <MaterialTable<PayIn, EnumPayInSortField>
+        <MaterialTable<PayInType, EnumPayInSortField>
           intl={intl}
           columns={payinColumns(intl, this.props)}
           rows={result ? result.items : []}

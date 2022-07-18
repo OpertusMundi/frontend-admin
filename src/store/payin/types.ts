@@ -2,17 +2,17 @@ import { Moment } from 'moment';
 
 import { LogoutInitAction } from 'store/security/types';
 import { PageResult, PageRequest, Sorting } from 'model/response';
-import { EnumPayInSortField, PayIn, PayInQuery, PayInType } from 'model/order';
+import { EnumPayInSortField, PayInQuery, PayInType } from 'model/order';
 
 // State
 export interface PayInManagerState {
-  items: PageResult<PayIn> | null;
+  items: PageResult<PayInType> | null;
   lastUpdated: Moment | null;
   loading: boolean;
   pagination: PageRequest;
   query: PayInQuery;
   record: PayInType | null,
-  selected: PayIn[];
+  selected: PayInType[];
   sorting: Sorting<EnumPayInSortField>[];
 }
 
@@ -71,17 +71,17 @@ export interface SearchFailureAction {
 
 export interface SearchCompleteAction {
   type: typeof SEARCH_COMPLETE;
-  result: PageResult<PayIn>;
+  result: PageResult<PayInType>;
 }
 
 export interface SetSelectedAction {
   type: typeof ADD_SELECTED;
-  selected: PayIn[];
+  selected: PayInType[];
 }
 
 export interface RemoveFromSelectionAction {
   type: typeof REMOVE_SELECTED;
-  removed: PayIn[];
+  removed: PayInType[];
 }
 
 export interface ResetSelectionAction {

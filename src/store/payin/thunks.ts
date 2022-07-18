@@ -13,14 +13,14 @@ import PayInApi from 'service/payin';
 
 // Model
 import { PageRequest, Sorting, PageResult } from 'model/response';
-import { EnumPayInSortField, PayIn, PayInType } from 'model/order';
+import { EnumPayInSortField, PayInType } from 'model/order';
 
 // Helper thunk result type
 type ThunkResult<R> = ThunkAction<Promise<R>, RootState, unknown, PayInActions>;
 
 export const find = (
   pageRequest?: PageRequest, sorting?: Sorting<EnumPayInSortField>[]
-): ThunkResult<PageResult<PayIn> | null> => async (dispatch, getState) => {
+): ThunkResult<PageResult<PayInType> | null> => async (dispatch, getState) => {
   // Get query form state (filters are always set synchronously)
   const query = getState().billing.payin.query;
 

@@ -74,12 +74,11 @@ import {
   findSubscriptions,
   findSubscriptionBilling,
 } from 'store/account-marketplace/thunks';
+import { toggleSendMessageDialog } from 'store/message/actions';
 
 // Service
 import message from 'service/message';
 import AccountApi from 'service/account-marketplace';
-import { ObjectResponse, PageRequest, SimpleResponse, Sorting } from 'model/response';
-import { CustomerType, EnumAccountType, EnumActivationStatus, EnumCustomerType, EnumMangopayUserType, EnumSubscriptionSortField, MarketplaceAccount } from 'model/account-marketplace';
 
 // Utilities
 import { FieldMapperFunc, localizeErrorCodes } from 'utils/error';
@@ -89,6 +88,18 @@ import { buildPath, DynamicRoutes, StaticRoutes } from 'model/routes';
 import { EnumDataProvider } from 'model/configuration';
 import { Message } from 'model/message';
 import { EnumMarketplaceRole } from 'model/role';
+import { ObjectResponse, PageRequest, SimpleResponse, Sorting } from 'model/response';
+import {
+  CustomerIndividual,
+  CustomerProfessional,
+  CustomerType, EnumAccountType,
+  EnumActivationStatus,
+  EnumCustomerType,
+  EnumMangopayUserType,
+  EnumSubscriptionSortField,
+  MarketplaceAccount,
+} from 'model/account-marketplace';
+
 import {
   EnumOrderSortField,
   EnumBillingViewMode,
@@ -97,6 +108,8 @@ import {
   EnumTransferSortField,
   EnumSubscriptionBillingSortField,
   SubscriptionBilling,
+  Order,
+  PayInType,
 } from 'model/order';
 
 // Components
@@ -107,6 +120,7 @@ import TransferTable from 'components/transfer/grid/table';
 import SubscriptionTable from 'components/subscription/grid/table';
 import SubscriptionBillingTable from 'components/subscription-billing/grid/table';
 import UseStatisticsState from 'components/subscription-billing/use-statistics';
+import { ClientContact } from 'model/chat';
 
 const styles = (theme: Theme) => createStyles({
   alignSelfBaseline: {
@@ -520,6 +534,64 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     this.setState({ billingRecord });
   }
 
+  showSendOrderMessageDialog(row: Order) {
+    const contact = this.getContactFromOrder(row);
+    this.props.toggleSendMessageDialog(contact, `Order ${row.referenceNumber}`);
+  }
+
+  getContactFromOrder(row: Order): ClientContact | null {
+    if (row.consumer && row.consumer.type === EnumMangopayUserType.INDIVIDUAL) {
+      const c = row.consumer as CustomerIndividual;
+      return {
+        id: c.key,
+        logoImage: null,
+        logoImageMimeType: null,
+        name: [c.firstName, c.lastName].join(' '),
+        email: row.consumer!.email,
+      };
+    } else if (row.consumer && row.consumer?.type === EnumMangopayUserType.PROFESSIONAL) {
+      const c = row.consumer as CustomerProfessional;
+      return {
+        id: c.key,
+        logoImage: c.logoImage,
+        logoImageMimeType: c.logoImageMimeType,
+        name: c.name,
+        email: row.consumer!.email,
+      };
+    }
+
+    return null;
+  }
+
+  showSendPayInMessageDialog(row: PayInType) {
+    const contact = this.getContactFromPayIn(row);
+    this.props.toggleSendMessageDialog(contact, `Payment ${row.referenceNumber}`);
+  }
+
+  getContactFromPayIn(row: PayInType): ClientContact | null {
+    if (row.consumer && row.consumer.type === EnumMangopayUserType.INDIVIDUAL) {
+      const c = row.consumer as CustomerIndividual;
+      return {
+        id: c.key,
+        logoImage: null,
+        logoImageMimeType: null,
+        name: [c.firstName, c.lastName].join(' '),
+        email: row.consumer!.email,
+      };
+    } else if (row.consumer && row.consumer?.type === EnumMangopayUserType.PROFESSIONAL) {
+      const c = row.consumer as CustomerProfessional;
+      return {
+        id: c.key,
+        logoImage: c.logoImage,
+        logoImageMimeType: c.logoImageMimeType,
+        name: c.name,
+        email: row.consumer!.email,
+      };
+    }
+
+    return null;
+  }
+
   renderAccountData() {
     const { account = null, classes } = this.props;
     const _t = this.props.intl.formatMessage;
@@ -730,6 +802,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
                   query={orders.query}
                   result={orders.items}
                   selected={[]}
+                  sendMessage={(row: Order) => this.showSendOrderMessageDialog(row)}
                   setPager={this.props.setOrderPager}
                   setSorting={(sorting: Sorting<EnumOrderSortField>[]) => this.setOrderSorting(sorting)}
                   sorting={orders.sorting}
@@ -769,6 +842,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
                   query={payins.query}
                   result={payins.items}
                   selected={[]}
+                  sendMessage={(row: PayInType) => this.showSendPayInMessageDialog(row)}
                   setPager={this.props.setPayInPager}
                   setSorting={(sorting: Sorting<EnumPayInSortField>[]) => this.setPayInSorting(sorting)}
                   sorting={payins.sorting}
@@ -906,6 +980,7 @@ const mapDispatch = {
   setSubBillingPager,
   setSubBillingSorting,
   setTabIndex,
+  toggleSendMessageDialog,
 };
 
 const connector = connect(

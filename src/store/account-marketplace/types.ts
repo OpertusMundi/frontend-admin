@@ -19,9 +19,9 @@ import {
   EnumTransferSortField,
   Order,
   OrderQuery,
-  PayIn,
   PayInItem,
   PayInQuery,
+  PayInType,
   PayOut,
   PayOutQuery,
   SubscriptionBilling,
@@ -52,7 +52,7 @@ export interface MarketplaceAccountManagerState {
   },
   pagination: PageRequest;
   payins: {
-    items: PageResult<PayIn> | null;
+    items: PageResult<PayInType> | null;
     loaded: boolean;
     pagination: PageRequest;
     query: PayInQuery,
@@ -280,7 +280,7 @@ export interface SearchPayInFailureAction {
 
 export interface SearchPayInCompleteAction {
   type: typeof PAYIN_SEARCH_COMPLETE;
-  result: PageResult<PayIn>;
+  result: PageResult<PayInType>;
 }
 
 export interface SetTransferPagerAction {

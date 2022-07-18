@@ -318,22 +318,23 @@ const statusToBackGround = (status: EnumOrderStatus): string => {
 };
 
 interface OrderTableProps extends WithStyles<typeof styles> {
-  intl: IntlShape,
+  intl: IntlShape;
   loading?: boolean;
-  mode: EnumBillingViewMode,
-  pagination: PageRequest,
-  query: OrderQuery,
-  result: PageResult<Order> | null,
-  selected: Order[],
+  mode: EnumBillingViewMode;
+  pagination: PageRequest;
+  query: OrderQuery;
+  result: PageResult<Order> | null;
+  selected: Order[];
   sorting: Sorting<EnumOrderSortField>[];
-  addToSelection?: (rows: Order[]) => void,
+  addToSelection?: (rows: Order[]) => void;
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumOrderSortField>[]
-  ) => Promise<PageResult<Order> | null>,
-  removeFromSelection?: (rows: Order[]) => void,
+  ) => Promise<PageResult<Order> | null>;
+  removeFromSelection?: (rows: Order[]) => void;
   resetSelection?: () => void;
-  setPager: (page: number, size: number) => void,
-  setSorting: (sorting: Sorting<EnumOrderSortField>[]) => void,
+  sendMessage: (row: Order) => void;
+  setPager: (page: number, size: number) => void;
+  setSorting: (sorting: Sorting<EnumOrderSortField>[]) => void;
   viewProcessInstance: (processInstance: string) => void;
 }
 
@@ -357,6 +358,10 @@ class OrderTable extends React.Component<OrderTableProps> {
 
           copyToClipboard(value);
 
+          break;
+
+        case EnumAction.SendMessage:
+          this.props.sendMessage(row);
           break;
 
         case EnumAction.ViewProcessInstance:
