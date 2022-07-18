@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { injectIntl, IntlShape } from 'react-intl';
 
 // Components
-import { createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Grid, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
 import Card from '@material-ui/core/Card';
@@ -19,7 +19,8 @@ import Typography from '@material-ui/core/Typography';
 // Icons
 import Icon from '@mdi/react';
 import {
-  mdiExclamationThick,
+  mdiEmailOpenOutline,
+  mdiEmailOutline,
 } from '@mdi/js';
 
 // Model
@@ -42,7 +43,10 @@ const styles = (theme: Theme) => createStyles({
     }
   },
   cardHeader: {
-    padding: theme.spacing(1, 2, 1, 1),
+    padding: theme.spacing(0.5, 2, 0, 1),
+  },
+  cardHeaderInner: {
+    padding: theme.spacing(0),
   },
   cardContent: {
     padding: theme.spacing(1, 2, 1, 1),
@@ -57,6 +61,12 @@ const styles = (theme: Theme) => createStyles({
   avatar: {
     width: theme.spacing(4),
     height: theme.spacing(4),
+  },
+  textUser: {
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    maxWidth: '90%',
   },
   text: {
     textOverflow: 'ellipsis',
@@ -90,9 +100,10 @@ class MessageHeader extends React.Component<MessageHeaderProps> {
   render() {
     const _t = this.props.intl.formatTime;
     const { classes, message, selected } = this.props;
-    const { createdAt, sender, text, read, reply } = message;
+    const { createdAt, sender, recipient, subject, text, read } = message;
 
-    const url = sender && sender.logoImage ? `data:${sender.logoImageMimeType};base64,${sender.logoImage}` : null;
+    const urlSender = sender && sender.logoImage ? `data:${sender.logoImageMimeType};base64,${sender.logoImage}` : null;
+    const urlRecipient = recipient && recipient.logoImage ? `data:${recipient.logoImageMimeType};base64,${recipient.logoImage}` : null;
 
     return (
       <Card
@@ -101,37 +112,88 @@ class MessageHeader extends React.Component<MessageHeaderProps> {
       >
         <CardHeader
           className={classes.cardHeader}
-          avatar={
-            <Avatar className={classes.avatar} src={url || undefined}>
-              {!url &&
-                message.sender!.name.toUpperCase()[0]
-              }
-            </Avatar>
-          }
-          action={reply === null &&
-            <Icon path={mdiExclamationThick} size="1.2rem" className={classes.icon} />
+          action={read
+            ? <Icon path={mdiEmailOpenOutline} size="1.2rem" className={classes.icon} />
+            : <Icon path={mdiEmailOutline} size="1.2rem" className={classes.icon} />
           }
           title={
-            <Typography
-              variant="body2" color="textPrimary" component="p"
-              className={clsx(classes.text, !read && classes.textBold)}
-            >
-              {sender!.name}
-            </Typography>
-          }
-          subheader={
-            <Typography
-              variant="caption" color="textSecondary" component="p"
-              className={clsx(classes.text, !read && classes.textBold)}
-            >
-              {_t(createdAt.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' })}
-            </Typography>
+            <Grid container spacing={0}>
+              <Grid item xs={6}>
+                <CardHeader
+                  className={classes.cardHeaderInner}
+                  avatar={
+                    <Avatar className={classes.avatar} src={urlSender || undefined}>
+                      {!urlSender &&
+                        message.sender!.name.toUpperCase()[0]
+                      }
+                    </Avatar>
+                  }
+                  title={
+                    <Typography
+                      variant="caption" color="textSecondary" component="p"
+                      className={clsx(classes.textUser, !read && classes.textBold)}
+                    >
+                      {sender!.email}
+                    </Typography>
+                  }
+                  subheader={
+                    <Typography
+                      variant="body2" color="textPrimary" component="p"
+                      className={clsx(classes.textUser, !read && classes.textBold)}
+                    >
+                      {sender!.name}
+                    </Typography>
+                  }
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <CardHeader
+                  className={classes.cardHeaderInner}
+                  avatar={
+                    <Avatar className={classes.avatar} src={urlRecipient || undefined}>
+                      {!urlRecipient &&
+                        message.recipient!.name.toUpperCase()[0]
+                      }
+                    </Avatar>
+                  }
+                  title={
+                    <Typography
+                      variant="caption" color="textSecondary" component="p"
+                      className={clsx(classes.textUser, !read && classes.textBold)}
+                    >
+                      {recipient!.email}
+                    </Typography>
+                  }
+                  subheader={
+                    <Typography
+                      variant="body2" color="textPrimary" component="p"
+                      className={clsx(classes.textUser, !read && classes.textBold)}
+                    >
+                      {recipient!.name}
+                    </Typography>
+                  }
+                />
+              </Grid>
+            </Grid>
           }
         />
         <CardContent className={classes.cardContent}>
           <Typography
-            variant="body2" color="textSecondary" component="p"
+            variant="caption" color="textSecondary" component="p"
             className={clsx(classes.text, !read && classes.textBold)}
+          >
+            {_t(createdAt.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' })}
+          </Typography>
+          <Typography
+            variant="body1" color="primary" component="p"
+            className={clsx(classes.text, !read && classes.textBold)}
+            gutterBottom
+          >
+            {subject || '<No Subject>'}
+          </Typography>
+          <Typography
+            variant="body2" color="textSecondary" component="p"
+            className={classes.text}
           >
             {text}
           </Typography>

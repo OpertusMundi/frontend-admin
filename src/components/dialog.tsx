@@ -49,12 +49,13 @@ class GenericDialog extends React.Component<DialogProps, DialogState>  {
   }
 
   render() {
-    const { actions, children, handleAction, handleClose, header, open } = this.props;
+    const { actions, children, className, handleAction, handleClose, header, open } = this.props;
 
     return (
       <Dialog
         open={open}
         onClose={() => handleClose()}
+        classes={{ paper: className }}
       >
         <DialogTitle id="alert-dialog-title">{header}</DialogTitle>
         <DialogContent>

@@ -13,20 +13,30 @@ export enum EnumMessageSortField {
   SENDER = 'RECIPIENT',
 }
 
+export enum EnumMessageStatus {
+  ALL = 'ALL',
+  UNREAD = 'UNREAD',
+  THREAD_ONLY = 'THREAD_ONLY',
+  THREAD_ONLY_UNREAD = 'THREAD_ONLY_UNREAD',
+}
+
 export interface MessageQuery {
+  contact: string | null;
   dateFrom: Moment;
   dateTo: Moment;
-  read: boolean;
+  status: EnumMessageStatus;
 }
 
 export interface ClientContact {
   id: string;
-  logoImage: string;
-  logoImageMimeType: string;
+  logoImage: string | null;
+  logoImageMimeType: string | null;
   name: string;
+  email: string;
 }
 
 export interface ClientMessageCommand {
+  subject: string;
   text: string;
 }
 
@@ -45,6 +55,7 @@ export interface ClientMessage extends ClientBaseMessage {
   reply: string | null;
   senderId: string;
   sender?: ClientContact | null;
+  subject: string | null;
   thread: string;
 }
 

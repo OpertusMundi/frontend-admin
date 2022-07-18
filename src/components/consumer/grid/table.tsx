@@ -205,6 +205,7 @@ interface ConsumerTableProps extends WithStyles<typeof styles> {
   setPager: (page: number, size: number) => void,
   setSorting: (sorting: Sorting<EnumMarketplaceAccountSortField>[]) => void,
   addToSelection: (rows: MarketplaceAccountSummary[]) => void,
+  sendMessage: (row: MarketplaceAccountSummary) => void;
   removeFromSelection: (rows: MarketplaceAccountSummary[]) => void,
   resetSelection: () => void;
   sorting: Sorting<EnumMarketplaceAccountSortField>[];
@@ -224,6 +225,10 @@ class ConsumerTable extends React.Component<ConsumerTableProps> {
   ): void {
     if (row.key) {
       switch (action) {
+        case EnumAction.SendMessage:
+          this.props.sendMessage(row);
+          break;
+
         default:
           // No action
           break;

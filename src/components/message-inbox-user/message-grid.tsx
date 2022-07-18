@@ -11,7 +11,7 @@ import { Theme, withStyles } from '@material-ui/core/styles';
 
 import Alert from '@material-ui/lab/Alert';
 import Grid from '@material-ui/core/Grid';
-import Pagination from '@material-ui/lab/Pagination';
+import TablePagination from '@material-ui/core/TablePagination';
 
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
@@ -31,19 +31,24 @@ import { RootState } from 'store';
 import {
   addToSelection, removeFromSelection, resetFilter, resetSelection, setFilter, setPager, setSorting,
 } from 'store/message-inbox-user/actions';
-import { find, readMessage, replyToMessage, sendMessage, getThreadMessages } from 'store/message-inbox-user/thunks';
+import { find, readMessage, replyToMessage, sendMessage, getThreadMessages, findContacts } from 'store/message-inbox-user/thunks';
 import { countNewMessages } from 'store/message-inbox-user/thunks';
 
 // Model
 import { PageRequest, Sorting } from 'model/response';
-import { EnumMessageSortField, ClientMessage, ClientMessageCommand } from 'model/chat';
+import { EnumMessageSortField, ClientMessage, ClientMessageCommand, MessageQuery } from 'model/chat';
 
 // Components
+import MessageFilters from './grid/filter';
 import Message from 'components/message/message';
 import MessageHeader from 'components/message/message-header';
 import MessageSend from 'components/message/message-send';
 
 const styles = (theme: Theme) => createStyles({
+  caption: {
+    paddingLeft: 8,
+    fontSize: '0.7rem',
+  },
   container: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -54,9 +59,8 @@ const styles = (theme: Theme) => createStyles({
     color: theme.palette.text.secondary,
     borderRadius: 0,
   },
-  caption: {
-    paddingLeft: 8,
-    fontSize: '0.7rem',
+  paginationToolbar: {
+    paddingLeft: theme.spacing(1),
   },
   messageListContainer: {
     marginRight: theme.spacing(1),
@@ -111,9 +115,9 @@ class MessageManager extends React.Component<MessageManagerProps> {
     });
   }
 
-  sendMessage(userKey: string, messageKey: string, threadKey: string, text: string): Promise<ClientMessage | null> {
+  sendMessage(userKey: string, messageKey: string, threadKey: string, subject: string, text: string): Promise<ClientMessage | null> {
     if (threadKey) {
-      return this.props.replyToMessage(threadKey, { text })
+      return this.props.replyToMessage(threadKey, { subject, text })
         .then((m) => {
           message.infoHtml(
             <FormattedMessage id="inbox.user.message-sent" />,
@@ -143,7 +147,7 @@ class MessageManager extends React.Component<MessageManagerProps> {
     if (!message.read) {
       this.readTimer = window.setTimeout(() => {
         this.readMessage(message.id);
-      }, 3000);
+      }, 2000);
     }
 
     this.props.getThreadMessages(message.id, message.thread);
@@ -153,79 +157,100 @@ class MessageManager extends React.Component<MessageManagerProps> {
     const {
       classes,
       find,
-      inbox: { messages, loading, selectedMessages, thread },
+      inbox,
+      inbox: { contacts, messages, loading, selectedMessages, thread },
       profile,
       setPager,
     } = this.props;
 
     const items = messages?.result?.items || [];
 
-    const pages = Math.ceil((messages?.result?.count || 0) / (messages?.result?.pageRequest.size || 10));
-    const page = (messages?.result?.pageRequest.page || 0) + 1;
+    const page = (messages?.result?.pageRequest.page || 0);
     const size = messages?.result?.pageRequest.size || 10;
-
-    if (items.length === 0) {
-      return (
-        <Alert severity="info">Inbox is empty</Alert>
-      );
-    }
 
     return (
       <Grid container direction="row" spacing={1}>
-        <Grid container item xs={12}>
-          <Pagination
-            count={pages}
-            boundaryCount={1}
-            siblingCount={0}
-            page={page}
-            showFirstButton
-            showLastButton
-            onChange={(event: React.ChangeEvent<unknown>, value: number) => {
-              setPager(value - 1, size);
-
-              find();
-            }}
+        <Grid container item xs={12} style={{ paddingLeft: 16 }}>
+          <MessageFilters
+            contacts={contacts}
+            query={inbox.query}
+            find={this.props.find}
+            findContacts={this.props.findContacts}
+            resetFilter={() => this.props.resetFilter()}
+            setFilter={(query: Partial<MessageQuery>) => this.props.setFilter(query)}
           />
         </Grid>
-        <Grid container item xs={4}>
-          <PerfectScrollbar className={classes.messageList} options={{ suppressScrollX: true }}>
-            <div className={classes.messageListContainer}>
+        {items.length === 0 &&
+          <Grid item xs={12}>
+            <Alert severity="info">No messages found</Alert>
+          </Grid>
+        }
+        {items.length !== 0 &&
+          <>
+            <Grid container item xs={12}>
+              <TablePagination
+                classes={{
+                  toolbar: classes.paginationToolbar,
+                }}
+                component="div"
+                rowsPerPageOptions={[10]}
+                count={messages?.result?.count || 0}
+                rowsPerPage={10}
+                page={page}
+                onPageChange={(event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+                  setPager(newPage, size);
 
-              {items.map((m) => (
-                <MessageHeader
-                  key={m.id}
-                  message={m}
-                  read={(id: string) => this.readMessage(id)}
-                  select={(message: ClientMessage) => this.selectMessage(message)}
-                  selected={!!selectedMessages.find((s) => s.id === m.id)}
-                />
-              ))}
-            </div>
-          </PerfectScrollbar>
-        </Grid>
-        <Grid container item xs={8} direction={'column'}>
-          {thread && thread.result &&
-            <PerfectScrollbar className={classes.messageList} options={{ suppressScrollX: true }}>
-              {thread.result!.map((m) => (
-                <Grid container item key={m.id}>
-                  <Message
-                    align={profile!.key === m.senderId ? 'right' : 'left'}
-                    message={m}
-                    size={'lg'}
-                  />
-                </Grid>
-              ))}
-              <Grid container item>
-                <MessageSend
-                  align={'right'}
-                  message={thread.result![thread.result!.length - 1] || null}
-                  readOnly={loading}
-                  send={this.sendMessage}
-                />
-              </Grid>
-            </PerfectScrollbar>
-          }
-        </Grid>
+                  find();
+                }}
+                labelDisplayedRows={({ from, to, count }) => (
+                  <FormattedMessage id="inbox.messages-displayed" values={{ from, to: (to === -1 ? count : to), count }} />
+                )}
+              />
+            </Grid>
+            <Grid item xs={5}>
+              <PerfectScrollbar className={classes.messageList} options={{ suppressScrollX: true }}>
+                <div className={classes.messageListContainer}>
+
+                  {items.map((m) => (
+                    <MessageHeader
+                      key={m.id}
+                      message={m}
+                      read={(id: string) => this.readMessage(id)}
+                      select={(message: ClientMessage) => this.selectMessage(message)}
+                      selected={!!selectedMessages.find((s) => s.id === m.id)}
+                    />
+                  ))}
+                </div>
+              </PerfectScrollbar>
+            </Grid>
+
+            <Grid container item xs={7} direction={'column'}>
+              {thread && thread.result &&
+                <PerfectScrollbar className={classes.messageList} options={{ suppressScrollX: true }}>
+                  {thread.result!.map((m, index) => (
+                    <Grid container item key={m.id}>
+                      <Message
+                        align={profile!.key === m.senderId ? 'right' : 'left'}
+                        message={m}
+                        size={'lg'}
+                        hideHeader={index !== 0}
+                        selected={!!selectedMessages.find((s) => s.id === m.id)}
+                      />
+                    </Grid>
+                  ))}
+                  <Grid container item>
+                    <MessageSend
+                      align={'right'}
+                      message={thread.result![thread.result!.length - 1] || null}
+                      readOnly={loading}
+                      send={this.sendMessage}
+                    />
+                  </Grid>
+                </PerfectScrollbar>
+              }
+            </Grid>
+          </>
+        }
       </Grid>
     );
 
@@ -243,6 +268,7 @@ const mapDispatch = {
   addToSelection,
   countNewMessages: () => countNewMessages(),
   find: (pageRequest?: PageRequest, sorting?: Sorting<EnumMessageSortField>[]) => find(pageRequest, sorting),
+  findContacts: (email: string) => findContacts(email),
   readMessage: (messageKey: string) => readMessage(messageKey),
   removeFromSelection,
   replyToMessage: (threadKey: string, command: ClientMessageCommand) => replyToMessage(threadKey, command),

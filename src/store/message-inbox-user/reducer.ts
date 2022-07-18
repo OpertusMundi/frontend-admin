@@ -33,11 +33,14 @@ import {
   SEND_SUCCESS,
   MessageActions,
   MessageManagerState,
+  GET_CONTACTS_INIT,
+  GET_CONTACTS_COMPLETE,
 } from './types';
 
 const initialState: MessageManagerState = {
   activeMessage: null,
   count: 0,
+  contacts: [],
   lastUpdated: null,
   loading: false,
   pagination: {
@@ -239,6 +242,25 @@ export function userInboxReducer(
         ...state,
         loading: false,
       };
+
+    case GET_CONTACTS_INIT:
+      return {
+        ...state,
+        loading: true,
+      }
+
+    case GET_CONTACTS_COMPLETE: {
+      const contact = state.query.contact;
+
+      return {
+        ...state,
+        contacts: action.contacts,
+        query: {
+          ...state.query,
+          contact: contact && action.contacts.find(c => c.id === contact) ? contact : null,
+        }
+      }
+    }
 
     default:
       return state;

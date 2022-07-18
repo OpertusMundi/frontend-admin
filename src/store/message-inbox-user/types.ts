@@ -9,11 +9,13 @@ import {
   ClientMessageCommand,
   ClientMessageThreadResponse,
   ClientMessageCollectionResponse,
+  ClientContact,
 } from 'model/chat';
 
 // State
 export interface MessageManagerState {
   activeMessage: string | null;
+  contacts: ClientContact[];
   count: number;
   lastUpdated: Moment | null;
   loading: boolean;
@@ -58,6 +60,9 @@ export const READ_SUCCESS = 'message/user-inbox/READ_SUCCESS';
 export const SEND_INIT = 'message/user-inbox/SEND_INIT';
 export const SEND_FAILURE = 'message/user-inbox/SEND_FAILURE';
 export const SEND_SUCCESS = 'message/user-inbox/SEND_SUCCESS';
+
+export const GET_CONTACTS_INIT = 'message/user-inbox/GET_CONTACTS_INIT';
+export const GET_CONTACTS_COMPLETE = 'message/user-inbox/GET_CONTACTS_COMPLETE';
 
 export interface SetPagerAction {
   type: typeof SET_PAGER;
@@ -166,6 +171,15 @@ export interface SendFailureAction {
   type: typeof SEND_FAILURE;
 }
 
+export interface GetContactsInitAction {
+  type: typeof GET_CONTACTS_INIT;
+}
+
+export interface GetContactsCompleteAction {
+  type: typeof GET_CONTACTS_COMPLETE;
+  contacts: ClientContact[];
+}
+
 export type MessageActions =
   | LogoutInitAction
   | SetPagerAction
@@ -191,4 +205,6 @@ export type MessageActions =
   | SendInitAction
   | SendCompleteAction
   | SendFailureAction
+  | GetContactsInitAction
+  | GetContactsCompleteAction
   ;

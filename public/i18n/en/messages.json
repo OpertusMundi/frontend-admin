@@ -694,7 +694,8 @@
     },
     "user": {
       "message-sent": "Message was sent successfully"
-    }
+    },
+    "messages-displayed": "Messages {from}-{to} of {count}"
   },
   "links": {
     "account": {
@@ -741,6 +742,7 @@
     "message-inbox": "Messages",
     "message-inbox-helpdesk": "Helpdesk Inbox",
     "message-inbox-user": "My Inbox",
+    "message-sent-user": "Sent Items",
     "order-manager": "Orders",
     "orders-billing": "Orders and Billing",
     "payin-manager": "Pay Ins",
@@ -791,6 +793,17 @@
     "password-changed": "Password has been updated",
     "password-reset-success": "Password has been reset",
     "settings-changed": "Settings has been updated"
+  },
+  "send-message-dialog": {
+    "title": "Send Message",
+    "action": {
+      "cancel": "Cancel",
+      "send": "Send"
+    },
+    "message": {
+      "success": "Message sent to {recipient} successfully",
+      "failure": "Failed to sent message to {recipient}"
+    }
   },
   "pdf-viewer": {
     "pagination": "Page {pageNumber} of {numPages}"

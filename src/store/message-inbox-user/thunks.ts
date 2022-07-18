@@ -8,7 +8,7 @@ import {
   loadThreadInit, loadThreadSuccess, loadThreadFailure,
   countInit, countFailure, countSuccess,
   readInit, readFailure, readSuccess,
-  sendInit, sendFailure, sendSuccess,
+  sendInit, sendFailure, sendSuccess, getContactsInit, getContactsComplete,
 } from './actions';
 
 // Services
@@ -16,7 +16,7 @@ import MessageApi from 'service/chat';
 
 // Model
 import { PageRequest, Sorting, PageResult } from 'model/response';
-import { ClientMessage, ClientMessageCommand, ClientMessageThreadResponse, EnumMessageSortField } from 'model/chat';
+import { ClientContact, ClientMessage, ClientMessageCommand, ClientMessageThreadResponse, EnumMessageSortField } from 'model/chat';
 
 // Helper thunk result type
 type ThunkResult<R> = ThunkAction<Promise<R>, RootState, unknown, MessageActions>;
@@ -152,4 +152,14 @@ export const replyToMessage = (threadKey: string, command: ClientMessageCommand)
   dispatch(sendFailure());
 
   return null;
+}
+
+export const findContacts = (email: string): ThunkResult<ClientContact[]> => async (dispatch, getState) => {
+  dispatch(getContactsInit());
+
+  const api = new MessageApi();
+  const contacts = await api.findContacts(email);
+
+  dispatch(getContactsComplete(contacts))
+  return contacts;
 }

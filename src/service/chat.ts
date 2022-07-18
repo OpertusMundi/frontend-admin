@@ -2,7 +2,7 @@ import { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { Api } from 'utils/api';
 import { ObjectResponse, PageRequest, Sorting, AxiosObjectResponse } from 'model/response';
-import { EnumMessageSortField, MessageQuery, ClientMessageCollectionResponse, ClientMessage, ClientMessageCommand, ClientMessageThreadResponse } from 'model/chat';
+import { EnumMessageSortField, MessageQuery, ClientMessageCollectionResponse, ClientMessage, ClientMessageCommand, ClientMessageThreadResponse, ClientContact } from 'model/chat';
 
 const baseUri = '/action/messages';
 
@@ -10,6 +10,20 @@ export default class MessageApi extends Api {
 
   constructor(config: AxiosRequestConfig = {}) {
     super(config);
+  }
+
+  public async findContacts(email: string): Promise<ClientContact[]> {
+    if (!email || email.length < 3) {
+      return Promise.resolve([]);
+    }
+    const url = `${baseUri}/helpdesk/contacts?email=${email}`;
+
+    return this.get<ObjectResponse<ClientContact[]>>(url).then((response: AxiosObjectResponse<ClientContact[]>) => {
+      if (response.data.success) {
+        return response.data.result!;
+      }
+      return [];
+    });
   }
 
   public async findUnassignedMessages(

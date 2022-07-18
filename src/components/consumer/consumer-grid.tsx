@@ -14,9 +14,7 @@ import Typography from '@material-ui/core/Typography';
 
 // Icons
 import Icon from '@mdi/react';
-import {
-  mdiCommentAlertOutline,
-} from '@mdi/js';
+import { mdiCommentAlertOutline } from '@mdi/js';
 
 // Services
 import message from 'service/message';
@@ -29,12 +27,14 @@ import { find } from 'store/consumer/thunks';
 // Model
 import { PageRequest, Sorting } from 'model/response';
 import {
-  EnumMarketplaceAccountSortField,
+  EnumMarketplaceAccountSortField, MarketplaceAccountSummary,
 } from 'model/account-marketplace';
 
 // Components
 import ConsumerFilters from './grid/filter';
 import ConsumerTable from './grid/table';
+import MessageDialogComponent from 'components/message/message-send-dialog';
+import { ClientContact } from 'model/chat';
 
 const styles = (theme: Theme) => createStyles({
   paper: {
@@ -57,6 +57,8 @@ const styles = (theme: Theme) => createStyles({
 });
 
 interface ConsumerManagerState {
+  contact: ClientContact | null;
+  sendMessage: boolean;
 }
 
 interface ConsumerManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
@@ -65,7 +67,13 @@ interface ConsumerManagerProps extends PropsFromRedux, WithStyles<typeof styles>
 
 class ConsumerManager extends React.Component<ConsumerManagerProps, ConsumerManagerState> {
 
-  state: ConsumerManagerState = {
+  constructor(props: ConsumerManagerProps) {
+    super(props);
+
+    this.state = {
+      contact: null,
+      sendMessage: false,
+    }
   }
 
   componentDidMount() {
@@ -85,7 +93,32 @@ class ConsumerManager extends React.Component<ConsumerManagerProps, ConsumerMana
     this.find();
   }
 
+  showSendMessageDialog(row: MarketplaceAccountSummary) {
+    this.setState({
+      contact: this.getContact(row),
+      sendMessage: true,
+    });
+  }
+
+  closeSendMessageDialog() {
+    this.setState({
+      contact: null,
+      sendMessage: false,
+    });
+  }
+
+  getContact(row: MarketplaceAccountSummary): ClientContact {
+    return {
+      id: row.key,
+      logoImage: row.image,
+      logoImageMimeType: row.imageMimeType,
+      name: row.consumerName,
+      email: row.email,
+    };
+  }
+
   render() {
+    const { sendMessage, contact } = this.state;
     const {
       addToSelection,
       classes,
@@ -132,11 +165,19 @@ class ConsumerManager extends React.Component<ConsumerManagerProps, ConsumerMana
               addToSelection={addToSelection}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
+              sendMessage={(row: MarketplaceAccountSummary) => this.showSendMessageDialog(row)}
               sorting={sorting}
               loading={loading}
             />
           </Paper>
-        </div >
+        </div>
+        {contact &&
+          <MessageDialogComponent
+            close={() => this.closeSendMessageDialog()}
+            contact={contact}
+            open={sendMessage}
+          />
+        }
       </>
     );
   }

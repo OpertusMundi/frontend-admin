@@ -6,6 +6,7 @@ import {
   ClientMessageThreadResponse,
   EnumMessageSortField,
   MessageQuery,
+  ClientContact,
 } from 'model/chat';
 
 import {
@@ -33,6 +34,8 @@ import {
   SEND_INIT,
   SEND_FAILURE,
   SEND_SUCCESS,
+  GET_CONTACTS_INIT,
+  GET_CONTACTS_COMPLETE,
 } from './types';
 
 
@@ -187,5 +190,18 @@ export function sendSuccess(message: ClientMessage): MessageActions {
   return {
     type: SEND_SUCCESS,
     message,
+  };
+}
+
+export function getContactsInit(): MessageActions {
+  return {
+    type: GET_CONTACTS_INIT,
+  };
+}
+
+export function getContactsComplete(contacts: ClientContact[]): MessageActions {
+  return {
+    type: GET_CONTACTS_COMPLETE,
+    contacts,
   };
 }

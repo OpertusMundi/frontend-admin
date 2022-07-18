@@ -1,26 +1,33 @@
 import React from 'react';
 
 // Localization
-import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
+import { injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
-import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
 // Icons
 import Icon from '@mdi/react';
-import { mdiCommentAlertOutline } from '@mdi/js';
+import {
+  mdiCommentAlertOutline,
+  mdiEmailMultipleOutline,
+  mdiEmailOutline,
+  mdiTrayFull,
+} from '@mdi/js';
+
 
 // Model
 import { PageRequest, PageResult, Sorting } from 'model/response';
-import { EnumMessageSortField, MessageQuery, ClientMessage } from 'model/chat';
+import { EnumMessageSortField, MessageQuery, ClientMessage, ClientContact, EnumMessageStatus } from 'model/chat';
 
 // Services
 import message from 'service/message';
+import AsyncCustomerAutoComplete from 'components/common/customer-auto-complete';
 
 const styles = (theme: Theme) => createStyles({
   root: {
@@ -44,13 +51,15 @@ const styles = (theme: Theme) => createStyles({
 
 interface MessageFiltersProps extends WithStyles<typeof styles> {
   intl: IntlShape,
+  contacts: ClientContact[],
+  disabled?: boolean,
   query: Partial<MessageQuery>,
-  setFilter: (query: Partial<MessageQuery>) => void,
-  resetFilter: () => void,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumMessageSortField>[]
   ) => Promise<PageResult<ClientMessage> | null>,
-  disabled: boolean,
+  findContacts: (email: string) => Promise<ClientContact[]>,
+  resetFilter: () => void,
+  setFilter: (query: Partial<MessageQuery>) => void,
 }
 
 class MessageFilters extends React.Component<MessageFiltersProps> {
@@ -58,8 +67,11 @@ class MessageFilters extends React.Component<MessageFiltersProps> {
   constructor(props: MessageFiltersProps) {
     super(props);
 
-    this.clear = this.clear.bind(this);
-    this.search = this.search.bind(this);
+    this.onChangeReadStatus = this.onChangeReadStatus.bind(this);
+  }
+
+  static defaultProps = {
+    disabled: false,
   }
 
   find(): void {
@@ -70,41 +82,59 @@ class MessageFilters extends React.Component<MessageFiltersProps> {
     });
   }
 
-  clear(): void {
-    this.props.resetFilter();
-    this.find();
-  }
-
-  search(e: React.FormEvent): void {
-    e.preventDefault();
-
-    this.find();
+  onChangeReadStatus(event: React.MouseEvent<HTMLElement>, status: EnumMessageStatus) {
+    this.props.setFilter({
+      status,
+    });
+    this.props.find();
   }
 
   render() {
-    const { classes, disabled, query, setFilter } = this.props;
-    const _t = this.props.intl.formatMessage;
+    const { contacts, query, setFilter, find, findContacts } = this.props;
 
     return (
-      <form onSubmit={this.search} noValidate autoComplete="off">
-        <Grid container spacing={3} justifyContent={'space-between'}>
-          <Grid item sm={4} xs={12}>
-
-          </Grid>
-
-          <Grid container item sm={8} xs={12} justifyContent={'flex-end'}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              className={classes.button}
-              disabled={disabled}
-            >
-              <FormattedMessage id="view.shared.action.search" />
-            </Button>
-          </Grid>
+      <Grid container spacing={2} item alignItems='center'>
+        <Grid item>
+          <ToggleButtonGroup
+            value={query.status}
+            exclusive
+            onChange={this.onChangeReadStatus}
+            aria-label="text alignment"
+          >
+            <ToggleButton value={EnumMessageStatus.ALL} aria-label="left aligned">
+              <Icon path={mdiTrayFull} size="1.65rem" title={'All'} />
+            </ToggleButton>
+            <ToggleButton value={EnumMessageStatus.UNREAD} aria-label="centered" title={'Only unread'}>
+              <Icon path={mdiEmailOutline} size="1.65rem" />
+            </ToggleButton>
+            <ToggleButton value={EnumMessageStatus.THREAD_ONLY} aria-label="centered" title={'Only threads'}>
+              <Icon path={mdiEmailMultipleOutline} size="1.65rem" />
+            </ToggleButton>
+          </ToggleButtonGroup>
         </Grid>
-      </form>
+        <Grid item sm={4} xs={12}>
+          <AsyncCustomerAutoComplete
+            error={false}
+            label={'Customer'}
+            loadingText={'Searching ...'}
+            noOptionsText={'No data found'}
+            options={contacts}
+            promptText={'Type 3 characters ...'}
+            getOptionKey={(option: ClientContact) => {
+              return option.id;
+            }}
+            getOptionLabel={(option: ClientContact) => {
+              return option.email;
+            }}
+            loadOptions={(value: string) => findContacts(value)}
+            onChange={(value: ClientContact | null) => {
+              setFilter({ contact: value?.id || null });
+              find();
+            }}
+            value={query.contact || null}
+          />
+        </Grid>
+      </Grid >
     );
   }
 }

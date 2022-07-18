@@ -31,19 +31,33 @@ import {
 const styles = (theme: Theme) => createStyles({
   card: {
     margin: theme.spacing(1),
+    borderRadius: 0,
+    borderLeftWidth: theme.spacing(1),
+    borderLeftColor: 'transparent',
+    borderLeftStyle: 'solid',
   },
   cardNone: {
     width: '100%',
   },
   cardLeft: {
     width: '100%',
-    marginRight: theme.spacing(8),
+    marginRight: theme.spacing(12),
   },
   cardRight: {
     width: '100%',
-    marginLeft: theme.spacing(8),
+    marginLeft: theme.spacing(12),
   },
-  avatar: {
+  cardHeader: {
+    padding: theme.spacing(1, 2, 0.5),
+  },
+  cardContent: {
+    padding: theme.spacing(1, 2, 0.5),
+  },
+  selected: {
+    borderRadius: 0,
+    borderLeftWidth: theme.spacing(1),
+    borderLeftColor: theme.palette.primary.main,
+    borderLeftStyle: 'solid',
   },
   text: {
     textOverflow: 'ellipsis',
@@ -57,25 +71,29 @@ type Size = 'sm' | 'lg' | undefined;
 
 interface MessageProps extends WithStyles<typeof styles> {
   align?: Align;
+  hideHeader?: boolean;
   intl: IntlShape;
   message: ClientMessage;
+  selected?: boolean;
+  size?: Size,
   assign?: (id: string) => void;
   read?: (id: string) => void;
-  size?: Size,
 }
 
 class Message extends React.Component<MessageProps> {
 
   static defaultProps = {
     align: 'none' as Align,
+    hideHeader: false,
+    selected: false,
     size: 'sm' as Size,
   }
 
   render() {
     const _fm = this.props.intl.formatMessage;
     const _ft = this.props.intl.formatTime;
-    const { align, classes, message, assign, size } = this.props;
-    const { createdAt, sender, text, recipientId } = message;
+    const { align, classes, hideHeader, message, assign, selected, size } = this.props;
+    const { createdAt, sender, subject, text, recipientId } = message;
 
     const url = sender && sender.logoImage ? `data:${sender.logoImageMimeType};base64,${sender.logoImage}` : null;
 
@@ -86,11 +104,12 @@ class Message extends React.Component<MessageProps> {
           align === 'none' && classes.cardNone,
           align === 'right' && classes.cardRight,
           align === 'left' && classes.cardLeft,
+          selected && classes.selected
         )}
       >
         <CardHeader
           avatar={
-            <Avatar className={classes.avatar} src={url || undefined}>
+            <Avatar src={url || undefined}>
               {!url &&
                 message.sender!.name.toUpperCase()[0]
               }
@@ -105,6 +124,7 @@ class Message extends React.Component<MessageProps> {
               <Icon path={mdiTrayPlus} size="1.5rem" />
             </IconButton>
           }
+          className={classes.cardHeader}
           title={sender!.name}
           subheader={
             <Typography
@@ -115,7 +135,12 @@ class Message extends React.Component<MessageProps> {
             </Typography>
           }
         />
-        <CardContent>
+        <CardContent className={classes.cardContent}>
+          {!hideHeader &&
+            <Typography variant="body1" color="primary" component="p" className={clsx(size === 'sm' && classes.text)} gutterBottom>
+              {subject || '<No Subject>'}
+            </Typography>
+          }
           <Typography variant="body2" color="textSecondary" component="p" className={clsx(size === 'sm' && classes.text)}>
             {text}
           </Typography>
