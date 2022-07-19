@@ -27,11 +27,13 @@ import MarketplaceAccountApi from 'service/account-marketplace';
 import { RootState } from 'store';
 import { addToSelection, removeFromSelection, resetFilter, resetSelection, setFilter, setPager, setSorting } from 'store/account-marketplace/actions';
 import { find } from 'store/account-marketplace/thunks';
+import { toggleSendMessageDialog } from 'store/message/actions';
 
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
 import { EnumMarketplaceAccountSortField, MarketplaceAccountSummary } from 'model/account-marketplace';
+import { ClientContact } from 'model/chat';
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
@@ -227,6 +229,21 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
     }));
   }
 
+  showSendMessageDialog(row: MarketplaceAccountSummary) {
+    const contact = this.getContact(row);
+    this.props.toggleSendMessageDialog(contact);
+  }
+
+  getContact(row: MarketplaceAccountSummary): ClientContact {
+    return {
+      id: row.key,
+      logoImage: row.image,
+      logoImageMimeType: row.imageMimeType,
+      name: row.consumerName,
+      email: row.email,
+    };
+  }
+
   render() {
     const {
       addToSelection,
@@ -278,6 +295,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
               refreshKycStatus={this.refreshKycStatus}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
+              sendMessage={(row: MarketplaceAccountSummary) => this.showSendMessageDialog(row)}
               setPager={setPager}
               setSorting={(sorting: Sorting<EnumMarketplaceAccountSortField>[]) => this.setSorting(sorting)}
               toggleTester={this.toggleTester}
@@ -378,6 +396,7 @@ const mapDispatch = {
   setFilter,
   setPager,
   setSorting,
+  toggleSendMessageDialog,
 };
 
 const connector = connect(

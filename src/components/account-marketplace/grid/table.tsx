@@ -331,6 +331,7 @@ interface AccountTableProps extends WithStyles<typeof styles> {
   refreshKycStatus: (row: MarketplaceAccountSummary) => void;
   removeFromSelection: (rows: MarketplaceAccountSummary[]) => void;
   resetSelection: () => void;
+  sendMessage: (row: MarketplaceAccountSummary) => void;
   setPager: (page: number, size: number) => void;
   setSorting: (sorting: Sorting<EnumMarketplaceAccountSortField>[]) => void;
   toggleTester: (row: MarketplaceAccountSummary) => void;
@@ -356,6 +357,10 @@ class AccountTable extends React.Component<AccountTableProps> {
 
         case EnumAction.KycRefresh:
           this.props.refreshKycStatus(row);
+          break;
+
+        case EnumAction.SendMessage:
+          this.props.sendMessage(row);
           break;
 
         case EnumAction.ToggleTester:
