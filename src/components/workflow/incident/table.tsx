@@ -173,7 +173,6 @@ interface IncidentTableProps extends WithStyles<typeof styles> {
   removeFromSelection: (rows: Incident[]) => void,
   resetSelection: () => void;
   sorting: Sorting<EnumIncidentSortField>[];
-  viewIncident: (key: string) => void;
   viewProcessInstance: (processInstance: string) => void;
   loading?: boolean;
 }

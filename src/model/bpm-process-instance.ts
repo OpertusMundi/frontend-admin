@@ -177,6 +177,16 @@ export interface BpmHistoryIncident extends BaseBpmIncident {
   resolved: boolean;
 }
 
+export interface TimelineIncident {
+  activityId: string;
+  createTime: Moment;
+  endTime: Moment | null;
+  executionId: string
+  externalTaskId: string | null;
+  incidentMessage: string;
+  resolved: boolean;
+}
+
 export interface BpmActivity {
   id: string;
   parentActivityInstanceId: string;

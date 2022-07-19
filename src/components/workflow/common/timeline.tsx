@@ -1,4 +1,4 @@
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import React from 'react';
 
 // State, routing and localization
@@ -30,39 +30,43 @@ import {
   mdiEmailOutline,
   mdiClockOutline,
   mdiArrowDecisionOutline,
+  mdiAutorenew,
 } from '@mdi/js';
 
 // Model
 import {
   ActiveProcessInstanceDetails,
   BpmActivity,
+  BpmProcessInstance,
   EnumBpmProcessInstanceState,
   HistoryProcessInstanceDetails,
   ProcessInstanceDetails,
+  TimelineIncident,
 } from 'model/bpm-process-instance';
 
 const styles = (theme: Theme) => createStyles({
-  paper: {
-    padding: '6px 16px',
+  action: {
+    width: 18,
+    cursor: 'pointer',
+    margin: theme.spacing(0.5, 0, 0, 1),
   },
   details: {
     lineBreak: 'anywhere',
-  }
+  },
+  incidentError: {
+    display: 'flex',
+    alignItems: 'start',
+  },
+  paper: {
+    padding: '6px 16px',
+  },
 });
-
-interface Incident {
-  activityId: string;
-  createTime: Moment;
-  endTime: Moment | null;
-  executionId: string;
-  incidentMessage: string;
-  resolved: boolean;
-}
 
 interface ProcessInstanceTimelineProps extends WithStyles<typeof styles> {
   intl: IntlShape;
   activeProcessInstance?: ActiveProcessInstanceDetails;
   historyProcessInstance?: HistoryProcessInstanceDetails;
+  retryExternalTask?: (instance: BpmProcessInstance, incident: TimelineIncident) => void,
 }
 
 const supportedTasks = [
@@ -86,7 +90,7 @@ const intermediateElements = [
 
 class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelineProps> {
 
-  mapActivityToMessage(activity: BpmActivity, instance: ProcessInstanceDetails, incidents: Incident[]) {
+  mapActivityToMessage(activity: BpmActivity, instance: ProcessInstanceDetails, incidents: TimelineIncident[]) {
     const _t = this.props.intl.formatTime;
     const { classes } = this.props;
     const { errorDetails } = instance;
@@ -119,13 +123,20 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
     if (incident) {
       return (
         <>
-          <FormattedMessage
-            id={`workflow.instance.activity.${activity.activityType}.error`}
-            values={{
-              activity: activity.activityName,
-              timestamp: _t(incident.createTime.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }), //
-            }}
-          />
+          <div className={classes.incidentError}>
+            <FormattedMessage
+              id={`workflow.instance.activity.${activity.activityType}.error`}
+              values={{
+                activity: activity.activityName,
+                timestamp: _t(incident.createTime.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }), //
+              }}
+            />
+            {this.props.retryExternalTask && incident.externalTaskId &&
+              <i onClick={() => this.props.retryExternalTask!(instance.instance, incident)}>
+                <Icon path={mdiAutorenew} className={classes.action} title={'Retry'} />
+              </i>
+            }
+          </div>
           <Divider />
           <Typography variant="subtitle1" >
             {'Message'}
@@ -204,7 +215,7 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
     }
   }
 
-  mapActivityToColor(activity: BpmActivity, instance: ProcessInstanceDetails, incidents: Incident[]) {
+  mapActivityToColor(activity: BpmActivity, instance: ProcessInstanceDetails, incidents: TimelineIncident[]) {
     const incident = incidents.find((i) => i.activityId === activity.activityId) || null;
 
     if (incident && ['userTask', 'serviceTask'].includes(activity.activityType)) {
@@ -234,13 +245,14 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
 
     const { instance, activities: allActivities } = processInstance;
 
-    const incidents: Incident[] = historyProcessInstance ? historyProcessInstance.incidents.map(i => ({
+    const incidents: TimelineIncident[] = historyProcessInstance ? historyProcessInstance.incidents.map(i => ({
       activityId: i.activityId,
       createTime: i.createTime,
       endTime: i.endTime,
       executionId: i.executionId,
       incidentMessage: i.incidentMessage,
       resolved: i.resolved,
+      externalTaskId: null,
     })) : activeProcessInstance ? activeProcessInstance.incidents.map(i => ({
       activityId: i.activityId,
       createTime: i.incidentTimestamp,
@@ -248,6 +260,7 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
       executionId: i.executionId,
       incidentMessage: i.incidentMessage,
       resolved: false,
+      externalTaskId: i.configuration,
     })) : [];
 
     if (!instance) {

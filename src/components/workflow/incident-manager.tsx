@@ -99,7 +99,6 @@ class IncidentManager extends React.Component<IncidentManagerProps, IncidentMana
 
     this.api = new IncidentApi();
 
-    this.viewIncident = this.viewIncident.bind(this);
     this.retryExternalTask = this.retryExternalTask.bind(this);
     this.viewErrorDetails = this.viewErrorDetails.bind(this);
     this.viewProcessInstance = this.viewProcessInstance.bind(this);
@@ -172,16 +171,6 @@ class IncidentManager extends React.Component<IncidentManagerProps, IncidentMana
     });
   }
 
-  viewIncident(key: string): void {
-    const { workflow: { incidents: { result } } } = this.props;
-
-    const record = result?.items.find(i => i.incidentId === key);
-
-    if (record) {
-      this.showRetryDialog(record);
-    }
-  }
-
   retryExternalTask(incident: Incident): void {
     this.setState({
       retry: true,
@@ -244,7 +233,6 @@ class IncidentManager extends React.Component<IncidentManagerProps, IncidentMana
               resetSelection={resetSelection}
               retryExternalTask={this.retryExternalTask}
               viewErrorDetails={this.viewErrorDetails}
-              viewIncident={this.viewIncident}
               viewProcessInstance={(processInstance: string) => this.viewProcessInstance(processInstance)}
               sorting={sorting}
               loading={loading}
