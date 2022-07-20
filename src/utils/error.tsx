@@ -25,7 +25,7 @@ const mapErrorCodeToText = (intl: IntlShape, message: Message, fieldMapper?: Fie
     case 'AdminMessageCode.IdpAccountDeleteFailed':
       return intl.formatMessage({ id: `error.${message.code}` });
 
-    case 'BasicMessageCode.Validation':
+    case 'BasicMessageCode.Validation': {
       switch (message.description) {
         case 'AdminMessageCode.CannotRevokeLastAdmin':
           return intl.formatMessage({ id: `error.${message.description}` });
@@ -79,6 +79,11 @@ const mapErrorCodeToText = (intl: IntlShape, message: Message, fieldMapper?: Fie
           }
           return intl.formatMessage({ id: `error.${message.code}.PasswordMismatch` });
       }
+      break;
+    }
+
+    case 'BpmnMessageCode.ProcessInstanceAlreadyExists':
+      return intl.formatMessage({ id: `error.${message.code}` });
 
   }
 

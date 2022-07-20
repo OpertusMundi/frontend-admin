@@ -606,6 +606,7 @@
     "AdminMessageCode.IdpAccountDeleteFailed": "Failed to delete IDP account",
     "AdminMessageCode.MarketplaceAccountExists": "Email {email} is already used by a marketplace account",
     "AdminMessageCode.OpenDatasetProviderAlreadyExists": "Open Dataset provider is already assigned to another user",
+    "BpmnMessageCode.ProcessInstanceAlreadyExists": "Process instances is already running",
     "validation": {
       "DecimalMin": "Value of field {field} must be greater than {min}"
     },
@@ -738,6 +739,7 @@
     "draft-manager": "Asset Drafts",
     "event-manager": "System Events",
     "settings-manager": "Settings",
+    "maintenance-tasks": "System Maintenance",
     "map": "Map",
     "message-inbox": "Messages",
     "message-inbox-helpdesk": "Helpdesk Inbox",
@@ -780,6 +782,18 @@
     "subtitle": "Sign into my account",
     "title": "Sign-in",
     "username": "Username"
+  },
+  "maintenance-tasks": {
+    "message": {
+      "clean-data-success": "Process instance has started successfully",
+      "clean-data-failure": "Failed to start process instance"
+    },
+    "tasks": {
+      "delete-orphan-file-system-entries": "Delete orphan filesystem entries",
+      "remove-orphan-catalogue-items": "Remove orphan catalogue items",
+      "resize-images": "Resize images"
+    },
+    "title": "Check Database & File System"
   },
   "menu": {
     "logout": "Logout",

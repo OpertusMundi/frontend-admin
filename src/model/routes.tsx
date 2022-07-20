@@ -32,7 +32,6 @@ import {
   mdiBugOutline,
   mdiChartBarStacked,
   mdiBellAlertOutline,
-  mdiCogOutline,
   mdiCogSyncOutline,
   mdiFaceAgent,
   mdiHandshakeOutline,
@@ -48,6 +47,7 @@ import {
   mdiFileSign,
   mdiAccountWrenchOutline,
   mdiClockFast,
+  mdiWrenchClock,
 } from '@mdi/js';
 
 /**
@@ -82,7 +82,7 @@ const DraftManager = '/drafts';
 const EventManager = '/events';
 const HelpdeskAccountManager = '/helpdesk/users';
 const IncidentManager = '/workflow/incidents'
-const SettingsManager = '/settings';
+const MaintenanceTasks = '/maintenance';
 const Map = '/map';
 const MarketplaceAccountManager = '/marketplace/users'
 const MessageInboxHelpdesk = '/messages/inbox/helpdesk';
@@ -95,7 +95,7 @@ const ProcessInstanceTaskManager = '/workflows/process-instance-tasks';
 const ProcessInstanceHistoryManager = '/workflows/process-instances-history';
 const Profile = '/profile';
 const ProviderManager = '/providers'
-const Settings = '/settings';
+const SettingsManager = '/settings';
 const SubscriptionBillingManager = '/billing/subscription-billing';
 const TransferManager = '/billing/transfers';
 
@@ -105,6 +105,7 @@ export const StaticRoutes = {
   ContractManager,
   Dashboard,
   IncidentManager,
+  MaintenanceTasks,
   Map,
   MessageInboxHelpdesk,
   MessageInboxUser,
@@ -113,7 +114,6 @@ export const StaticRoutes = {
   PayOutManager,
   Profile,
   ProviderManager,
-  Settings,
   HelpdeskAccountManager,
   MarketplaceAccountManager,
   DraftManager,
@@ -320,13 +320,6 @@ export const routes: RouteRegistry = {
     defaultTitle: 'Providers',
     links: defaultLinks
   },
-  [Settings]: {
-    icon: (className?: string) => (<Icon path={mdiCogOutline} size="1.5rem" className={className} />),
-    description: 'Settings',
-    title: 'links.settings',
-    defaultTitle: 'Settings',
-    links: defaultLinks
-  },
   [HelpdeskAccountManager]: {
     icon: (className?: string) => (<Icon path={mdiFaceAgent} size="1.5rem" className={className} />),
     description: 'Manage helpdesk accounts',
@@ -377,6 +370,14 @@ export const routes: RouteRegistry = {
     description: 'View BPM Server incidents',
     title: 'links.workflow.incident.manager',
     defaultTitle: 'Incident Management',
+    roles: [EnumRole.ADMIN],
+    links: [Dashboard, ProcessInstanceManager],
+  },
+  [MaintenanceTasks] :{
+    icon: (className?: string) => (<Icon path={mdiWrenchClock} size="1.5rem" className={className} />),
+    description: 'System Maintenance Tasks',
+    title: 'links.maintenance-tasks',
+    defaultTitle: 'System Maintenance Tasks',
     roles: [EnumRole.ADMIN],
     links: [Dashboard, ProcessInstanceManager],
   },

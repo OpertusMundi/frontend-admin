@@ -63,6 +63,7 @@ import {
   mdiMenu,
   mdiAccountWrenchOutline,
   mdiClockFast,
+  mdiWrenchClock,
 } from '@mdi/js';
 
 // Utilities
@@ -384,7 +385,7 @@ class Home extends React.Component<HomeProps, HomeState> {
         this.onNavigate(null, StaticRoutes.Profile)
         break;
       case 'Settings':
-        this.onNavigate(null, StaticRoutes.Settings)
+        this.onNavigate(null, StaticRoutes.SettingsManager)
         break;
       case 'Logout':
         this.props.logout();
@@ -808,6 +809,17 @@ class Home extends React.Component<HomeProps, HomeState> {
                               <Icon path={mdiProgressWrench} size="1.5rem" />
                             </ListItemIcon>
                             <ListItemText primary={_t({ id: routes[StaticRoutes.SettingsManager].title })} />
+                          </ListItem>
+                        </SecureContent>
+
+                        <SecureContent roles={[EnumRole.ADMIN]}>
+                          <ListItem button
+                            className={open[EnumSection.Drawer] ? classes.nested : ''}
+                            onClick={(e) => this.onNavigate(e, StaticRoutes.MaintenanceTasks)}>
+                            <ListItemIcon>
+                              <Icon path={mdiWrenchClock} size="1.5rem" />
+                            </ListItemIcon>
+                            <ListItemText primary={_t({ id: routes[StaticRoutes.MaintenanceTasks].title })} />
                           </ListItem>
                         </SecureContent>
 

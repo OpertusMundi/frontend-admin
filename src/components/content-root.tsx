@@ -25,6 +25,7 @@ import Home from 'components/home';
 import IncidentManager from 'components/workflow/incident-manager';
 import Login from 'components/login';
 import SettingsManager from 'components/system/settings-manager';
+import MaintenanceTasks from 'components/system/maintenance-tasks';
 import MapViewerComponent from 'components/map-viewer';
 import MarketplaceAccountManager from 'components/account-marketplace/account-grid';
 import MarketplaceAccountView from 'components/account-marketplace/account-form';
@@ -131,11 +132,11 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             <Route path={StaticRoutes.SubscriptionBillingManager} element={<SubscriptionBillingManager />} />
             <Route path={StaticRoutes.TransferManager} element={<TransferManager />} />
             <Route path={StaticRoutes.SettingsManager} element={<SettingsManager />} />
+            <Route path={StaticRoutes.MaintenanceTasks} element={<MaintenanceTasks />} />
             <Route path={StaticRoutes.Map} element={<MapViewerComponent />} />
             <Route path={StaticRoutes.MessageInboxHelpdesk} element={<MessageInboxHelpdesk />} />
             <Route path={StaticRoutes.MessageInboxUser} element={<MessageInboxUser />} />
             <Route path={StaticRoutes.Profile} element={<Profile />} />
-            <Route path={StaticRoutes.Settings} element={<PlaceHolder />} />
 
             {/* Secured paths */}
             <Route path={StaticRoutes.HelpdeskAccountManager} element={<SecureRoute roles={[EnumRole.ADMIN]} />}>
