@@ -16,6 +16,7 @@ import Icon from '@mdi/react';
 import {
   mdiCommentAlertOutline,
   mdiEmailMultipleOutline,
+  mdiEmailOpenMultipleOutline,
   mdiEmailOutline,
   mdiTrayFull,
 } from '@mdi/js';
@@ -23,7 +24,7 @@ import {
 
 // Model
 import { PageRequest, PageResult, Sorting } from 'model/response';
-import { EnumMessageSortField, MessageQuery, ClientMessage, ClientContact, EnumMessageStatus } from 'model/chat';
+import { EnumMessageSortField, MessageQuery, ClientMessage, ClientContact, EnumMessageView } from 'model/chat';
 
 // Services
 import message from 'service/message';
@@ -82,9 +83,9 @@ class MessageFilters extends React.Component<MessageFiltersProps> {
     });
   }
 
-  onChangeReadStatus(event: React.MouseEvent<HTMLElement>, status: EnumMessageStatus) {
+  onChangeReadStatus(event: React.MouseEvent<HTMLElement>, view: EnumMessageView) {
     this.props.setFilter({
-      status,
+      view,
     });
     this.props.find();
   }
@@ -96,18 +97,21 @@ class MessageFilters extends React.Component<MessageFiltersProps> {
       <Grid container spacing={2} item alignItems='center'>
         <Grid item>
           <ToggleButtonGroup
-            value={query.status}
+            value={query.view}
             exclusive
             onChange={this.onChangeReadStatus}
             aria-label="text alignment"
           >
-            <ToggleButton value={EnumMessageStatus.ALL} aria-label="left aligned">
+            <ToggleButton value={EnumMessageView.ALL} aria-label="left aligned">
               <Icon path={mdiTrayFull} size="1.65rem" title={'All'} />
             </ToggleButton>
-            <ToggleButton value={EnumMessageStatus.UNREAD} aria-label="centered" title={'Only unread'}>
+            <ToggleButton value={EnumMessageView.UNREAD} aria-label="centered" title={'Only unread'}>
               <Icon path={mdiEmailOutline} size="1.65rem" />
             </ToggleButton>
-            <ToggleButton value={EnumMessageStatus.THREAD_ONLY} aria-label="centered" title={'Only threads'}>
+            <ToggleButton value={EnumMessageView.THREAD_ONLY} aria-label="centered" title={'Only threads'}>
+              <Icon path={mdiEmailOpenMultipleOutline} size="1.65rem" />
+            </ToggleButton>
+            <ToggleButton value={EnumMessageView.THREAD_ONLY_UNREAD} aria-label="centered" title={'Only threads with unread messages'}>
               <Icon path={mdiEmailMultipleOutline} size="1.65rem" />
             </ToggleButton>
           </ToggleButtonGroup>

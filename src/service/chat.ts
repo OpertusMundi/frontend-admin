@@ -95,7 +95,7 @@ export default class MessageApi extends Api {
 
         // Inject contacts
         if (serverResponse.success) {
-          serverResponse.result = serverResponse.result!.map((item) => ({
+          serverResponse.result!.messages = serverResponse.result!.messages.map((item) => ({
             ...item,
             recipient: item.recipientId ? serverResponse.contacts[item.recipientId] : null || null,
             sender: serverResponse.contacts[item.senderId] || null,

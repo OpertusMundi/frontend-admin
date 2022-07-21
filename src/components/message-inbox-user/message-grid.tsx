@@ -227,7 +227,7 @@ class MessageManager extends React.Component<MessageManagerProps> {
             <Grid container item xs={7} direction={'column'}>
               {thread && thread.result &&
                 <PerfectScrollbar className={classes.messageList} options={{ suppressScrollX: true }}>
-                  {thread.result!.map((m, index) => (
+                  {thread.result!.messages.map((m, index) => (
                     <Grid container item key={m.id}>
                       <Message
                         align={profile!.key === m.senderId ? 'right' : 'left'}
@@ -241,7 +241,7 @@ class MessageManager extends React.Component<MessageManagerProps> {
                   <Grid container item>
                     <MessageSend
                       align={'right'}
-                      message={thread.result![thread.result!.length - 1] || null}
+                      message={thread.result!.messages[thread.result!.messages.length - 1] || null}
                       readOnly={loading}
                       send={this.sendMessage}
                     />

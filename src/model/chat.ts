@@ -13,7 +13,7 @@ export enum EnumMessageSortField {
   SENDER = 'RECIPIENT',
 }
 
-export enum EnumMessageStatus {
+export enum EnumMessageView {
   ALL = 'ALL',
   UNREAD = 'UNREAD',
   THREAD_ONLY = 'THREAD_ONLY',
@@ -24,7 +24,7 @@ export interface MessageQuery {
   contact: string | null;
   dateFrom: Moment;
   dateTo: Moment;
-  status: EnumMessageStatus;
+  view: EnumMessageView;
 }
 
 export interface ClientContact {
@@ -59,6 +59,25 @@ export interface ClientMessage extends ClientBaseMessage {
   thread: string;
 }
 
+export interface ClientMessageThread {
+  count: number;
+  key: string;
+  messages: ClientMessage[];
+  modifiedAt: Moment;
+  owner: string;
+  subject: string;
+  text: string;
+  unread: number;
+}
+
+export interface ClientMessageThreadResponse extends ObjectResponse<ClientMessageThread> {
+  contacts: { [key: string]: ClientContact };
+}
+
+export interface ClientMessageCollectionResponse extends ObjectResponse<PageResult<ClientMessage>> {
+  contacts: { [key: string]: ClientContact };
+}
+
 export enum EnumNotificationType {
   CATALOGUE_ASSET_UNPUBLISHED = 'CATALOGUE_ASSET_UNPUBLISHED',
   CATALOGUE_HARVEST_COMPLETED = 'CATALOGUE_HARVEST_COMPLETED',
@@ -71,12 +90,4 @@ export interface ClientNotification extends ClientBaseMessage {
   recipient?: ClientContact | null;
   senderId: string | null;
   sender?: ClientContact | null;
-}
-
-export interface ClientMessageThreadResponse extends ObjectResponse<ClientMessage[]> {
-  contacts: { [key: string]: ClientContact };
-}
-
-export interface ClientMessageCollectionResponse extends ObjectResponse<PageResult<ClientMessage>> {
-  contacts: { [key: string]: ClientContact };
 }

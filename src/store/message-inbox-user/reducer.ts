@@ -3,7 +3,7 @@ import _ from 'lodash';
 import moment from 'utils/moment-localized';
 
 import { Order } from 'model/response';
-import { EnumMessageSortField, EnumMessageStatus } from 'model/chat';
+import { EnumMessageSortField, EnumMessageView } from 'model/chat';
 
 import {
   LOGOUT_INIT,
@@ -48,7 +48,7 @@ const initialState: MessageManagerState = {
     size: 10,
   },
   query: {
-    status: EnumMessageStatus.ALL,
+    view: EnumMessageView.ALL,
   },
   messages: null,
   thread: null,
