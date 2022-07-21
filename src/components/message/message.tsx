@@ -20,6 +20,8 @@ import Typography from '@material-ui/core/Typography';
 // Icons
 import Icon from '@mdi/react';
 import {
+  mdiEmailOpenOutline,
+  mdiEmailOutline,
   mdiTrayPlus,
 } from '@mdi/js';
 
@@ -52,6 +54,9 @@ const styles = (theme: Theme) => createStyles({
   },
   cardContent: {
     padding: theme.spacing(1, 2, 0.5),
+  },
+  icon: {
+    marginTop: theme.spacing(2),
   },
   selected: {
     borderRadius: 0,
@@ -89,11 +94,33 @@ class Message extends React.Component<MessageProps> {
     size: 'sm' as Size,
   }
 
-  render() {
+  renderAction() {
     const _fm = this.props.intl.formatMessage;
+    const { classes, message, assign } = this.props;
+    const { recipientId, read, threadCountUnread = 0 } = message;
+
+    if (recipientId === null) {
+      return (
+        <IconButton
+          aria-label="assign"
+          onClick={() => assign ? assign(message.id) : null}
+          title={_fm({ id: 'inbox.helpdesk.tooltip.assign-message' })}
+        >
+          <Icon path={mdiTrayPlus} size="1.5rem" />
+        </IconButton>
+      );
+    }
+
+    return read && threadCountUnread === 0
+      ? (<Icon path={mdiEmailOpenOutline} size="1.2rem" className={classes.icon} />)
+      : (<Icon path={mdiEmailOutline} size="1.2rem" className={classes.icon} />);
+
+  }
+
+  render() {
     const _ft = this.props.intl.formatTime;
-    const { align, classes, hideHeader, message, assign, selected, size } = this.props;
-    const { createdAt, sender, subject, text, recipientId } = message;
+    const { align, classes, hideHeader, message, selected, size } = this.props;
+    const { createdAt, sender, subject, text, } = message;
 
     const url = sender && sender.logoImage ? `data:${sender.logoImageMimeType};base64,${sender.logoImage}` : null;
 
@@ -115,15 +142,7 @@ class Message extends React.Component<MessageProps> {
               }
             </Avatar>
           }
-          action={recipientId === null &&
-            <IconButton
-              aria-label="assign"
-              onClick={() => assign ? assign(message.id) : null}
-              title={_fm({ id: 'inbox.helpdesk.tooltip.assign-message' })}
-            >
-              <Icon path={mdiTrayPlus} size="1.5rem" />
-            </IconButton>
-          }
+          action={this.renderAction()}
           className={classes.cardHeader}
           title={sender!.name}
           subheader={

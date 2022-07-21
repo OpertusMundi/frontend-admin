@@ -29,14 +29,28 @@ import MessageApi from 'service/chat';
 // Store
 import { RootState } from 'store';
 import {
-  addToSelection, removeFromSelection, resetFilter, resetSelection, setFilter, setPager, setSorting,
+  addToSelection,
+  removeFromSelection,
+  resetFilter,
+  resetSelection,
+  setFilter,
+  setPager,
+  setSorting,
 } from 'store/message-inbox-user/actions';
-import { find, readMessage, replyToMessage, sendMessage, getThreadMessages, findContacts } from 'store/message-inbox-user/thunks';
+import {
+  find,
+  readMessage,
+  readThread,
+  replyToMessage,
+  sendMessage,
+  getThreadMessages,
+  findContacts,
+} from 'store/message-inbox-user/thunks';
 import { countNewMessages } from 'store/message-inbox-user/thunks';
 
 // Model
-import { PageRequest, Sorting } from 'model/response';
-import { EnumMessageSortField, ClientMessage, ClientMessageCommand, MessageQuery } from 'model/chat';
+import { PageRequest, PageResult, Sorting } from 'model/response';
+import { EnumMessageSortField, ClientMessage, ClientMessageCommand, MessageQuery, EnumMessageView } from 'model/chat';
 
 // Components
 import MessageFilters from './grid/filter';
@@ -96,11 +110,13 @@ class MessageManager extends React.Component<MessageManagerProps> {
     this.find();
   }
 
-  find(): void {
-    this.props.find().then((result) => {
+  find(): Promise<PageResult<ClientMessage> | null> {
+    return this.props.find().then((result) => {
       if (!result) {
         message.errorHtml("Find operation has failed", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
       }
+
+      return result;
     });
   }
 
@@ -115,6 +131,12 @@ class MessageManager extends React.Component<MessageManagerProps> {
     });
   }
 
+  readThread(threadKey: string): void {
+    this.props.readThread(threadKey).then(() => {
+      this.props.countNewMessages();
+    });
+  }
+
   sendMessage(userKey: string, messageKey: string, threadKey: string, subject: string, text: string): Promise<ClientMessage | null> {
     if (threadKey) {
       return this.props.replyToMessage(threadKey, { subject, text })
@@ -123,13 +145,14 @@ class MessageManager extends React.Component<MessageManagerProps> {
             <FormattedMessage id="inbox.user.message-sent" />,
             () => (<Icon path={mdiSendOutline} size="2rem" />)
           );
-
           return m;
         })
         .then((m) => {
           this.find();
+          return m;
+        })
+        .then((m) => {
           this.props.getThreadMessages(messageKey, threadKey);
-
           return m;
         });
     }
@@ -138,13 +161,21 @@ class MessageManager extends React.Component<MessageManagerProps> {
   }
 
   selectMessage(message: ClientMessage): void {
+    const { inbox: { query } } = this.props;
+    const { threadCountUnread = 0 } = message;
+    const threadView = query.view === EnumMessageView.THREAD_ONLY || query.view === EnumMessageView.THREAD_ONLY_UNREAD;
+
     this.props.resetSelection();
     this.props.addToSelection([message]);
 
     if (this.readTimer !== null) {
       window.clearTimeout(this.readTimer);
     }
-    if (!message.read) {
+    if (threadView && threadCountUnread > 0) {
+      this.readTimer = window.setTimeout(() => {
+        this.readThread(message.thread);
+      }, 2000);
+    } else if (!message.read) {
       this.readTimer = window.setTimeout(() => {
         this.readMessage(message.id);
       }, 2000);
@@ -215,7 +246,6 @@ class MessageManager extends React.Component<MessageManagerProps> {
                     <MessageHeader
                       key={m.id}
                       message={m}
-                      read={(id: string) => this.readMessage(id)}
                       select={(message: ClientMessage) => this.selectMessage(message)}
                       selected={!!selectedMessages.find((s) => s.id === m.id)}
                     />
@@ -270,6 +300,7 @@ const mapDispatch = {
   find: (pageRequest?: PageRequest, sorting?: Sorting<EnumMessageSortField>[]) => find(pageRequest, sorting),
   findContacts: (email: string) => findContacts(email),
   readMessage: (messageKey: string) => readMessage(messageKey),
+  readThread: (threadKey: string) => readThread(threadKey),
   removeFromSelection,
   replyToMessage: (threadKey: string, command: ClientMessageCommand) => replyToMessage(threadKey, command),
   resetFilter,

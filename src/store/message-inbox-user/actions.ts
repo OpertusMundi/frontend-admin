@@ -28,9 +28,12 @@ import {
   COUNT_INIT,
   COUNT_FAILURE,
   COUNT_SUCCESS,
-  READ_INIT,
-  READ_FAILURE,
-  READ_SUCCESS,
+  READ_MESSAGE_INIT,
+  READ_MESSAGE_FAILURE,
+  READ_MESSAGE_SUCCESS,
+  READ_THREAD_INIT,
+  READ_THREAD_FAILURE,
+  READ_THREAD_SUCCESS,
   SEND_INIT,
   SEND_FAILURE,
   SEND_SUCCESS,
@@ -113,7 +116,7 @@ export function resetSelection(): MessageActions {
   };
 }
 
-export function loadThreadInit(messageKey: string, threadKey: string): MessageActions {
+export function loadThreadInit(messageKey: string | null, threadKey: string): MessageActions {
   return {
     type: LOAD_THREAD_INIT,
     messageKey,
@@ -127,9 +130,10 @@ export function loadThreadFailure(): MessageActions {
   };
 }
 
-export function loadThreadSuccess(response: ClientMessageThreadResponse): MessageActions {
+export function loadThreadSuccess(response: ClientMessageThreadResponse, messageKey: string): MessageActions {
   return {
     type: LOAD_THREAD_SUCCESS,
+    messageKey,
     response,
   };
 }
@@ -153,23 +157,43 @@ export function countSuccess(count: number): MessageActions {
   };
 }
 
-export function readInit(messageKey: string): MessageActions {
+export function readMessageInit(messageKey: string): MessageActions {
   return {
-    type: READ_INIT,
+    type: READ_MESSAGE_INIT,
     messageKey,
   };
 }
 
-export function readFailure(): MessageActions {
+export function readMessageFailure(): MessageActions {
   return {
-    type: READ_FAILURE,
+    type: READ_MESSAGE_FAILURE,
   };
 }
 
-export function readSuccess(message: ClientMessage): MessageActions {
+export function readMessageSuccess(message: ClientMessage): MessageActions {
   return {
-    type: READ_SUCCESS,
+    type: READ_MESSAGE_SUCCESS,
     message,
+  };
+}
+
+export function readThreadInit(threadKey: string): MessageActions {
+  return {
+    type: READ_THREAD_INIT,
+    threadKey,
+  };
+}
+
+export function readThreadFailure(): MessageActions {
+  return {
+    type: READ_THREAD_FAILURE,
+  };
+}
+
+export function readThreadSuccess(response: ClientMessageThreadResponse): MessageActions {
+  return {
+    type: READ_THREAD_SUCCESS,
+    response,
   };
 }
 

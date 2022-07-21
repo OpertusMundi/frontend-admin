@@ -25,9 +25,9 @@ import {
   LOAD_THREAD_FAILURE,
   LOAD_THREAD_SUCCESS,
   COUNT_SUCCESS,
-  READ_INIT,
-  READ_FAILURE,
-  READ_SUCCESS,
+  READ_MESSAGE_INIT,
+  READ_MESSAGE_FAILURE,
+  READ_MESSAGE_SUCCESS,
   SEND_INIT,
   SEND_FAILURE,
   SEND_SUCCESS,
@@ -35,6 +35,9 @@ import {
   MessageManagerState,
   GET_CONTACTS_INIT,
   GET_CONTACTS_COMPLETE,
+  READ_THREAD_INIT,
+  READ_THREAD_FAILURE,
+  READ_THREAD_SUCCESS,
 } from './types';
 
 const initialState: MessageManagerState = {
@@ -191,6 +194,8 @@ export function userInboxReducer(
       return {
         ...state,
         loading: false,
+        activeMessage: action.messageKey,
+        selectedMessages: action.response.result?.messages.filter(m => m.id === action.messageKey) || [],
         thread: action.response,
       };
 
@@ -200,22 +205,31 @@ export function userInboxReducer(
         count: action.count
       };
 
-    case READ_INIT:
+    case READ_MESSAGE_INIT:
       return {
         ...state,
         loading: true,
       };
 
-    case READ_FAILURE:
+    case READ_MESSAGE_FAILURE:
       return {
         ...state,
         loading: false,
       };
 
-    case READ_SUCCESS:
+    case READ_MESSAGE_SUCCESS:
       return {
         ...state,
         loading: false,
+        thread: state.thread ? {
+          ...state.thread,
+          result: state.thread.result ? {
+            ...state.thread.result,
+            messages: state.thread.result!.messages.map((m) =>
+              m.id === action.message.id ? action.message : m
+            ),
+          } : undefined,
+        } : null,
         messages: state.messages ? {
           ...state.messages,
           result: state.messages.result ? {
@@ -226,6 +240,36 @@ export function userInboxReducer(
           } : undefined,
         } : null,
       };
+
+    case READ_THREAD_INIT:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case READ_THREAD_FAILURE:
+      return {
+        ...state,
+        loading: false,
+      };
+
+    case READ_THREAD_SUCCESS: {
+      const lastMessage = action.response.result!.messages[action.response.result!.messages.length - 1];
+      return {
+        ...state,
+        loading: false,
+        thread: action.response,
+        messages: state.messages ? {
+          ...state.messages,
+          result: state.messages.result ? {
+            ...state.messages.result,
+            items: state.messages.result!.items.map((m) =>
+              m.id === lastMessage.id ? lastMessage : m
+            )
+          } : undefined,
+        } : null,
+      };
+    }
 
     case SEND_INIT:
       return {

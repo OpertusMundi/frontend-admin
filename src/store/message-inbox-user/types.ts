@@ -53,9 +53,13 @@ export const COUNT_INIT = 'message/user-inbox/COUNT_INIT';
 export const COUNT_FAILURE = 'message/user-inbox/COUNT_FAILURE';
 export const COUNT_SUCCESS = 'message/user-inbox/COUNT_SUCCESS';
 
-export const READ_INIT = 'message/user-inbox/READ_INIT';
-export const READ_FAILURE = 'message/user-inbox/READ_FAILURE';
-export const READ_SUCCESS = 'message/user-inbox/READ_SUCCESS';
+export const READ_MESSAGE_INIT = 'message/user-inbox/READ_MESSAGE_INIT';
+export const READ_MESSAGE_FAILURE = 'message/user-inbox/READ_MESSAGE_FAILURE';
+export const READ_MESSAGE_SUCCESS = 'message/user-inbox/READ_MESSAGE_SUCCESS';
+
+export const READ_THREAD_INIT = 'message/user-inbox/READ_THREAD_INIT';
+export const READ_THREAD_FAILURE = 'message/user-inbox/READ_THREAD_FAILURE';
+export const READ_THREAD_SUCCESS = 'message/user-inbox/READ_THREAD_SUCCESS';
 
 export const SEND_INIT = 'message/user-inbox/SEND_INIT';
 export const SEND_FAILURE = 'message/user-inbox/SEND_FAILURE';
@@ -117,12 +121,13 @@ export interface ResetSelectionAction {
 
 export interface LoadThreadInitAction {
   type: typeof LOAD_THREAD_INIT;
-  messageKey: string;
+  messageKey: string | null;
   threadKey: string;
 }
 
 export interface LoadThreadCompleteAction {
   type: typeof LOAD_THREAD_SUCCESS;
+  messageKey: string;
   response: ClientMessageThreadResponse;
 }
 
@@ -143,19 +148,34 @@ export interface CountFailureAction {
   type: typeof COUNT_FAILURE;
 }
 
-export interface ReadInitAction {
-  type: typeof READ_INIT;
+export interface ReadMessageInitAction {
+  type: typeof READ_MESSAGE_INIT;
   messageKey: string;
 }
 
-export interface ReadCompleteAction {
-  type: typeof READ_SUCCESS;
+export interface ReadMessageCompleteAction {
+  type: typeof READ_MESSAGE_SUCCESS
   message: ClientMessage;
 }
 
-export interface ReadFailureAction {
-  type: typeof READ_FAILURE;
+export interface ReadMessageFailureAction {
+  type: typeof READ_MESSAGE_FAILURE;
 }
+
+export interface ReadThreadInitAction {
+  type: typeof READ_THREAD_INIT;
+  threadKey: string;
+}
+
+export interface ReadThreadCompleteAction {
+  type: typeof READ_THREAD_SUCCESS
+  response: ClientMessageThreadResponse;
+}
+
+export interface ReadThreadFailureAction {
+  type: typeof READ_THREAD_FAILURE;
+}
+
 
 export interface SendInitAction {
   type: typeof SEND_INIT;
@@ -199,9 +219,12 @@ export type MessageActions =
   | CountInitAction
   | CountCompleteAction
   | CountFailureAction
-  | ReadInitAction
-  | ReadCompleteAction
-  | ReadFailureAction
+  | ReadMessageInitAction
+  | ReadMessageCompleteAction
+  | ReadMessageFailureAction
+  | ReadThreadInitAction
+  | ReadThreadCompleteAction
+  | ReadThreadFailureAction
   | SendInitAction
   | SendCompleteAction
   | SendFailureAction

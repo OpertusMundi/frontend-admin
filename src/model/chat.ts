@@ -57,6 +57,8 @@ export interface ClientMessage extends ClientBaseMessage {
   sender?: ClientContact | null;
   subject: string | null;
   thread: string;
+  threadCount?: number;
+  threadCountUnread?: number;
 }
 
 export interface ClientMessageThread {

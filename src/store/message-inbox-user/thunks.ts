@@ -7,7 +7,8 @@ import {
   searchInit, searchComplete, searchFailure, setSorting, setPager,
   loadThreadInit, loadThreadSuccess, loadThreadFailure,
   countInit, countFailure, countSuccess,
-  readInit, readFailure, readSuccess,
+  readMessageInit, readMessageFailure, readMessageSuccess,
+  readThreadInit, readThreadFailure, readThreadSuccess,
   sendInit, sendFailure, sendSuccess, getContactsInit, getContactsComplete,
 } from './actions';
 
@@ -16,7 +17,7 @@ import MessageApi from 'service/chat';
 
 // Model
 import { PageRequest, Sorting, PageResult } from 'model/response';
-import { ClientContact, ClientMessage, ClientMessageCommand, ClientMessageThreadResponse, EnumMessageSortField } from 'model/chat';
+import { ClientContact, ClientMessage, ClientMessageCommand, ClientMessageThreadResponse, EnumMessageSortField, EnumMessageView } from 'model/chat';
 
 // Helper thunk result type
 type ThunkResult<R> = ThunkAction<Promise<R>, RootState, unknown, MessageActions>;
@@ -71,7 +72,12 @@ export const getThreadMessages = (messageKey: string, threadKey: string): ThunkR
 
   // Update state
   if (response.data.success) {
-    dispatch(loadThreadSuccess(response.data));
+    const inbox = getState().message.userInbox;
+    const activeMessageKey = inbox.query.view === EnumMessageView.THREAD_ONLY || inbox.query.view === EnumMessageView.THREAD_ONLY_UNREAD
+      ? response.data.result!.messages[response.data.result!.messages.length - 1].id
+      : inbox.activeMessage || messageKey;
+
+    dispatch(loadThreadSuccess(response.data, activeMessageKey));
     return response.data;
   }
 
@@ -99,7 +105,7 @@ export const countNewMessages = (): ThunkResult<number | null> => async (dispatc
 }
 
 export const readMessage = (messageKey: string): ThunkResult<ClientMessage | null> => async (dispatch, getState) => {
-  dispatch(readInit(messageKey));
+  dispatch(readMessageInit(messageKey));
   // Get response
   const api = new MessageApi();
 
@@ -107,11 +113,29 @@ export const readMessage = (messageKey: string): ThunkResult<ClientMessage | nul
 
   // Update state
   if (response.data.success) {
-    dispatch(readSuccess(response.data.result!));
+    dispatch(readMessageSuccess(response.data.result!));
     return response.data.result!;
   }
 
-  dispatch(readFailure());
+  dispatch(readMessageFailure());
+
+  return null;
+}
+
+export const readThread = (threadKey: string): ThunkResult<ClientMessageThreadResponse | null> => async (dispatch, getState) => {
+  dispatch(readThreadInit(threadKey));
+  // Get response
+  const api = new MessageApi();
+
+  const response = await api.readThread(threadKey);
+
+  // Update state
+  if (response.data.success) {
+    dispatch(readThreadSuccess(response!.data));
+    return response.data;
+  }
+
+  dispatch(readThreadFailure());
 
   return null;
 }

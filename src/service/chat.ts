@@ -91,19 +91,22 @@ export default class MessageApi extends Api {
 
     return this.get<ClientMessageThreadResponse>(url)
       .then((response: AxiosResponse<ClientMessageThreadResponse>) => {
-        const { data: serverResponse } = response;
-
-        // Inject contacts
-        if (serverResponse.success) {
-          serverResponse.result!.messages = serverResponse.result!.messages.map((item) => ({
-            ...item,
-            recipient: item.recipientId ? serverResponse.contacts[item.recipientId] : null || null,
-            sender: serverResponse.contacts[item.senderId] || null,
-          }));
-        }
-
+        this.setContacts(response);
         return response;
       });
+  }
+
+  private setContacts(response: AxiosResponse<ClientMessageThreadResponse>): void {
+    const { data: serverResponse } = response;
+
+    // Inject contacts
+    if (serverResponse.success) {
+      serverResponse.result!.messages = serverResponse.result!.messages.map((item) => ({
+        ...item,
+        recipient: item.recipientId ? serverResponse.contacts[item.recipientId] : null || null,
+        sender: serverResponse.contacts[item.senderId] || null,
+      }));
+    }
   }
 
   public async assignUserToMessage(messageKey: string): Promise<AxiosObjectResponse<ClientMessage>> {
@@ -116,6 +119,17 @@ export default class MessageApi extends Api {
     const url = `${baseUri}/${messageKey}`;
 
     return this.put<unknown, ObjectResponse<ClientMessage>>(url, null);
+  }
+
+  public async readThread(threadKey: string): Promise<AxiosResponse<ClientMessageThreadResponse>> {
+    const url = `${baseUri}/thread/${threadKey}`;
+
+    return this.put<unknown, ClientMessageThreadResponse>(url, null)
+      .then((response: AxiosResponse<ClientMessageThreadResponse>) => {
+        this.setContacts(response);
+
+        return response;
+      });
   }
 
   public async sendMessageToUser(userKey: string, command: ClientMessageCommand): Promise<AxiosObjectResponse<ClientMessage>> {

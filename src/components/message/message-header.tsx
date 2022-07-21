@@ -87,7 +87,6 @@ const styles = (theme: Theme) => createStyles({
 interface MessageHeaderProps extends WithStyles<typeof styles> {
   intl: IntlShape;
   message: ClientMessage;
-  read?: (id: string) => void;
   select?: (message: ClientMessage) => void;
   selected: boolean;
 }
@@ -100,7 +99,7 @@ class MessageHeader extends React.Component<MessageHeaderProps> {
   render() {
     const _t = this.props.intl.formatTime;
     const { classes, message, selected } = this.props;
-    const { createdAt, sender, recipient, subject, text, read } = message;
+    const { createdAt, sender, recipient, subject, text, read, threadCountUnread = 0 } = message;
 
     const urlSender = sender && sender.logoImage ? `data:${sender.logoImageMimeType};base64,${sender.logoImage}` : null;
     const urlRecipient = recipient && recipient.logoImage ? `data:${recipient.logoImageMimeType};base64,${recipient.logoImage}` : null;
@@ -112,7 +111,7 @@ class MessageHeader extends React.Component<MessageHeaderProps> {
       >
         <CardHeader
           className={classes.cardHeader}
-          action={read
+          action={read && threadCountUnread === 0
             ? <Icon path={mdiEmailOpenOutline} size="1.2rem" className={classes.icon} />
             : <Icon path={mdiEmailOutline} size="1.2rem" className={classes.icon} />
           }
