@@ -343,7 +343,12 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
       >
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <FormattedMessage id="view.shared.message.delete-confirm" values={{ name: (<b>{record.email}</b>) }} />
+            <Typography variant="body1" gutterBottom component={'p'}>
+              <FormattedMessage id="account-marketplace.message.delete-confirm" values={{ name: (<b>{record.email}</b>) }} />
+            </Typography>
+            <Typography variant="caption" color="secondary" component={'p'}>
+              <FormattedMessage id="account-marketplace.message.delete-confirm-data-details" />
+            </Typography>
           </Grid>
           <Grid item xs={12}>
             <FormControlLabel
@@ -360,6 +365,9 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
               }
               label={_t({ id: 'account-marketplace.confirm-delete-dialog.delete-file-system' })}
             />
+            <Typography variant="caption" component={'p'}>
+              <FormattedMessage id="account-marketplace.message.delete-confirm-filesystem-details" />
+            </Typography>
           </Grid>
           <Grid item xs={12}>
             <FormControlLabel
@@ -375,6 +383,9 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
               }
               label={_t({ id: 'account-marketplace.confirm-delete-dialog.delete-account' })}
             />
+            <Typography variant="caption" component={'p'}>
+              <FormattedMessage id="account-marketplace.message.delete-confirm-account-details" />
+            </Typography>
           </Grid>
         </Grid>
       </Dialog>
