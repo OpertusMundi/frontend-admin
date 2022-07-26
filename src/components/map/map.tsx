@@ -15,7 +15,7 @@ import { defaults as defaultControls } from 'ol/control';
 
 interface MapProps {
   altShiftDragRotate?: boolean;
-  center?: [number, number];
+  center?: number[];
   children?: React.ReactNode;
   className?: string;
   click?: (e: MapBrowserEvent<MouseEvent>, map: OpenLayersMap) => void;

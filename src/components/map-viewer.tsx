@@ -10,6 +10,7 @@ import Grid from '@material-ui/core/Grid';
 
 // Components
 import OpenLayers from 'components/map';
+import { fromLonLat } from 'ol/proj';
 
 // Store
 import { RootState } from 'store';
@@ -30,13 +31,13 @@ class MapViewerComponent extends React.Component<MapViewerComponentProps> {
 
   render() {
     const { classes, config } = this.props;
+    const center = config.map?.center ? fromLonLat(config.map!.center) : [2522457.20, 4743383.34];
 
     return (
       <Grid container className={classes.container}>
         <Grid item xs={12}>
           <OpenLayers.Map
-            center={[2522457.20, 4743383.34]}
-            extent={[2023227.29, 4023104.66, 3569089.78, 5482314.24]}
+            center={center}
             maxZoom={19}
             minZoom={6}
             zoom={6}
