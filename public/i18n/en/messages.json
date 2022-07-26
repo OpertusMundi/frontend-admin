@@ -606,7 +606,7 @@
     "AdminMessageCode.IdpAccountDeleteFailed": "Failed to delete IDP account",
     "AdminMessageCode.MarketplaceAccountExists": "Email {email} is already used by a marketplace account",
     "AdminMessageCode.OpenDatasetProviderAlreadyExists": "Open Dataset provider is already assigned to another user",
-    "BpmnMessageCode.ProcessInstanceAlreadyExists": "Process instances is already running",
+    "BpmnMessageCode.ProcessInstanceAlreadyExists": "Process instance is already running",
     "validation": {
       "DecimalMin": "Value of field {field} must be greater than {min}"
     },
