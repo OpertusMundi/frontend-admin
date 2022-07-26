@@ -17,14 +17,15 @@ import {
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
+import { ProcessInstanceHeader } from 'components/workflow/common';
 
 import {
   SET_ERROR_TASKS,
   EnumProcessInstanceSortField,
   ProcessInstance,
   ProcessInstanceQuery,
-  EnumWorkflow,
 } from 'model/bpm-process-instance';
+
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 // Helper methods
@@ -36,49 +37,6 @@ enum EnumAction {
   View = 'view',
 };
 
-function getVariable(row: ProcessInstance, name: string): string {
-  const vIndex = row.variableNames.indexOf(name);
-  const value = row.variableValues[vIndex] || '';
-
-  return value;
-}
-
-function getProcessInstanceName(row: ProcessInstance) {
-  switch (row.processDefinitionKey) {
-    case EnumWorkflow.CONSUMER_REGISTRATION:
-    case EnumWorkflow.PROVIDER_REGISTRATION: {
-      const userName = getVariable(row, 'userName');
-      return (
-        <span>{row.processDefinitionName}<br /><b>{userName}</b></span>
-      );
-    }
-
-    case EnumWorkflow.PROVIDER_PUBLISH_ASSET:
-      const assetTitle = getVariable(row, 'assetTitle');
-      const assetVersion = getVariable(row, 'assetVersion');
-      const assetType = getVariable(row, 'assetType');
-      return (
-        <span>{row.processDefinitionName}<br /><b>{assetType}: {assetTitle} {assetVersion}</b></span>
-      );
-
-    case EnumWorkflow.SYSTEM_REMOVE_ALL_USER_DATA: {
-      const userName = getVariable(row, 'userName');
-      return (
-        <span>{row.processDefinitionName}<br /><b>{userName}</b></span>
-      );
-    }
-
-    case EnumWorkflow.PUBLISH_USER_SERVICE:
-      const serviceTitle = getVariable(row, 'serviceTitle');
-      return (
-        <span>{row.processDefinitionName}<br /><b>{serviceTitle}</b></span>
-      );
-
-  }
-  return (
-    <span>{row.processDefinitionName}</span>
-  );
-}
 function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Column<ProcessInstance, EnumProcessInstanceSortField>[] {
   const { classes } = props;
 
@@ -139,7 +97,7 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
         row: ProcessInstance,
         handleAction?: cellActionHandler<ProcessInstance, EnumProcessInstanceSortField>
       ): React.ReactNode => (
-        getProcessInstanceName(row)
+        <ProcessInstanceHeader instance={row} />
       ),
     }, {
       header: intl.formatMessage({ id: 'workflow.header.instance.process-definition-version' }),
