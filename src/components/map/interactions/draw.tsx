@@ -7,7 +7,7 @@ import Geometry from 'ol/geom/Geometry';
 import Collection from 'ol/Collection';
 import Draw, { DrawEvent } from 'ol/interaction/Draw';
 
-import GeometryType from 'ol/geom/GeometryType';
+import { Type as GeometryType } from 'ol/geom/Geometry';
 import { StyleLike } from 'ol/style/Style';
 
 interface DrawProps {
@@ -18,7 +18,7 @@ interface DrawProps {
   // Allow drawing only a single feature
   single?: boolean;
   // Geometry type
-  type: string;
+  type: GeometryType;
   // Event handlers
   onDrawStart?: (feature: Feature<Geometry>) => void;
   onDrawEnd?: (feature: Feature<Geometry>) => void;
@@ -42,10 +42,10 @@ class DrawInteraction extends React.Component<DrawProps> {
   static defaultProps = {
     active: true,
     single: true,
-    type: GeometryType.POLYGON,
+    type: 'Polygon'
   }
 
-  createInteraction(type: string, active: boolean) {
+  createInteraction(type: GeometryType, active: boolean) {
     const { map = null, onDrawEnd, onDrawStart, single, style } = this.props;
 
     this.removeInteraction();
@@ -99,18 +99,18 @@ class DrawInteraction extends React.Component<DrawProps> {
       return;
     }
 
-    this.createInteraction(type || GeometryType.POLYGON, active);
+    this.createInteraction(type || 'Polygon', active);
   }
 
   componentDidUpdate(prevProps: DrawProps) {
     const {
       active: currActive = true,
-      type: currType = GeometryType.POLYGON
+      type: currType = 'Polygon',
     } = this.props;
 
     const {
       active: prevActive = true,
-      type: prevType = GeometryType.POLYGON
+      type: prevType = 'Polygon',
     } = prevProps;
 
     if (currActive !== prevActive) {

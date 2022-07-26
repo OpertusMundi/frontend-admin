@@ -27,7 +27,7 @@ import { indigo, red } from '@material-ui/core/colors';
 import Icon from '@mdi/react';
 import {
   mdiAccountOutline,
-  mdiEmailSendOutline,
+  mdiEmailEditOutline,
   mdiRestart,
   mdiRestartOff,
   mdiUndoVariant,
@@ -223,7 +223,7 @@ class ReviewErrorTask extends React.Component<ReviewErrorTaskProps, ReviewErrorT
           {
             key: EnumDialogAction.Accept,
             label: _t({ id: 'view.shared.action.send' }),
-            iconClass: () => (<Icon path={mdiEmailSendOutline} size="1.5rem" />),
+            iconClass: () => (<Icon path={mdiEmailEditOutline} size="1.5rem" />),
             color: 'primary',
             disabled: loading && !!providerMessage
           }, {

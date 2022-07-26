@@ -11,7 +11,6 @@ import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
 import Circle from 'ol/style/Circle';
 import Feature, { FeatureLike } from 'ol/Feature';
-import GeometryType from 'ol/geom/GeometryType';
 import Geometry from 'ol/geom/Geometry';
 import GeoJSON, { GeoJSONGeometry } from 'ol/format/GeoJSON';
 
@@ -223,7 +222,7 @@ class GeometryEditor extends React.Component<GeometryEditorProps, GeometryEditor
                 this.onFeatureChange(feature);
               }}
               style={drawStyle}
-              type={GeometryType.POLYGON}
+              type={'Polygon'}
             />
             <OpenLayers.Interaction.Modify
               active={this.state.features.getLength() !== 0}
