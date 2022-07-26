@@ -106,6 +106,7 @@ function orderColumns(intl: IntlShape, props: OrderTableProps): Column<Order, En
       id: 'status',
       sortable: true,
       sortColumn: EnumOrderSortField.STATUS,
+      width: 200,
       cell: (
         rowIndex: number, column: Column<Order, EnumOrderSortField>, row: Order, handleAction?: cellActionHandler<Order, EnumOrderSortField>
       ): React.ReactNode => {
@@ -278,6 +279,8 @@ const styles = (theme: Theme) => createStyles({
     borderRadius: theme.spacing(0.5),
     justifyContent: 'center',
     width: '100%',
+    maxWidth: 180,
+    textAlign: 'center',
   },
   labelDeliveryMethod: {
     display: 'flex',

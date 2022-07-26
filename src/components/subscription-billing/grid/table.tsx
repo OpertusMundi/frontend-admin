@@ -362,7 +362,7 @@ const statusToBackGround = (status: EnumSubscriptionBillingStatus): string => {
       return '#E64A19';
     case EnumSubscriptionBillingStatus.PAID:
     case EnumSubscriptionBillingStatus.NO_CHARGE:
-      return '#388E3C';
+      return '#4CAF50';
   }
 };
 

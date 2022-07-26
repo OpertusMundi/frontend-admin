@@ -106,7 +106,7 @@ class CustomerDetails extends React.Component<CustomerDetailsProps> {
       case EnumKycLevel.LIGHT:
         return '#FBC02D';
       case EnumKycLevel.REGULAR:
-        return '#388E3C';
+        return '#4CAF50';
     }
   }
 
