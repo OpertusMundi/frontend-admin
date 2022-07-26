@@ -59,11 +59,11 @@ import {
   mdiTray,
   mdiTrayFull,
   mdiWalletOutline,
-  mdiProgressWrench,
+  mdiTuneVariant,
   mdiMenu,
   mdiAccountWrenchOutline,
   mdiClockFast,
-  mdiWrenchClock,
+  mdiWrenchClockOutline,
 } from '@mdi/js';
 
 // Utilities
@@ -806,7 +806,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                             className={open[EnumSection.Drawer] ? classes.nested : ''}
                             onClick={(e) => this.onNavigate(e, StaticRoutes.SettingsManager)}>
                             <ListItemIcon>
-                              <Icon path={mdiProgressWrench} size="1.5rem" />
+                              <Icon path={mdiTuneVariant} size="1.5rem" />
                             </ListItemIcon>
                             <ListItemText primary={_t({ id: routes[StaticRoutes.SettingsManager].title })} />
                           </ListItem>
@@ -817,7 +817,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                             className={open[EnumSection.Drawer] ? classes.nested : ''}
                             onClick={(e) => this.onNavigate(e, StaticRoutes.MaintenanceTasks)}>
                             <ListItemIcon>
-                              <Icon path={mdiWrenchClock} size="1.5rem" />
+                              <Icon path={mdiWrenchClockOutline} size="1.5rem" />
                             </ListItemIcon>
                             <ListItemText primary={_t({ id: routes[StaticRoutes.MaintenanceTasks].title })} />
                           </ListItem>

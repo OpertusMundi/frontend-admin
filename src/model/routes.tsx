@@ -43,11 +43,11 @@ import {
   mdiTrayFull,
   mdiViewDashboardOutline,
   mdiWalletOutline,
-  mdiProgressWrench,
+  mdiTuneVariant,
   mdiFileSign,
   mdiAccountWrenchOutline,
   mdiClockFast,
-  mdiWrenchClock,
+  mdiWrenchClockOutline,
 } from '@mdi/js';
 
 /**
@@ -374,7 +374,7 @@ export const routes: RouteRegistry = {
     links: [Dashboard, ProcessInstanceManager],
   },
   [MaintenanceTasks] :{
-    icon: (className?: string) => (<Icon path={mdiWrenchClock} size="1.5rem" className={className} />),
+    icon: (className?: string) => (<Icon path={mdiWrenchClockOutline} size="1.5rem" className={className} />),
     description: 'System Maintenance Tasks',
     title: 'links.maintenance-tasks',
     defaultTitle: 'System Maintenance Tasks',
@@ -396,7 +396,7 @@ export const routes: RouteRegistry = {
     links: [Dashboard],
   },
   [SettingsManager]: {
-    icon: (className?: string) => (<Icon path={mdiProgressWrench} size="1.5rem" className={className} />),
+    icon: (className?: string) => (<Icon path={mdiTuneVariant} size="1.5rem" className={className} />),
     description: 'Settings',
     title: 'links.settings-manager',
     defaultTitle: 'Settings',
