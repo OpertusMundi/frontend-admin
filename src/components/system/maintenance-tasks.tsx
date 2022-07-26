@@ -21,9 +21,9 @@ import IconButton from '@material-ui/core/IconButton';
 // Icon
 import Icon from '@mdi/react';
 import {
+  mdiCogPlayOutline,
   mdiCommentAlertOutline,
   mdiDatabaseCogOutline,
-  mdiTrashCanOutline,
 } from '@mdi/js';
 
 // Store
@@ -57,6 +57,7 @@ const styles = (theme: Theme) => createStyles({
 });
 
 interface MaintenanceTasksState {
+  loading: boolean;
   tasks: Tasks;
 }
 
@@ -75,6 +76,7 @@ class MaintenanceTasks extends React.Component<MaintenanceTasksProps, Maintenanc
   }
 
   state: MaintenanceTasksState = {
+    loading: false,
     tasks: {
       deleteOrphanFileSystemEntries: false,
       removeOrphanCatalogueItems: false,
@@ -102,6 +104,8 @@ class MaintenanceTasks extends React.Component<MaintenanceTasksProps, Maintenanc
   async cleanUpData(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
 
+    this.setState({ loading: true });
+
     const { tasks } = this.state;
     const response = await this.maintenanceApi.cleanData({ ...tasks });
     const { success } = response.data;
@@ -117,14 +121,16 @@ class MaintenanceTasks extends React.Component<MaintenanceTasksProps, Maintenanc
         }
       });
     } else {
-      const messages = localizeErrorCodes(this.props.intl, response.data);
+      const messages = localizeErrorCodes(this.props.intl, response.data, false);
       message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
     }
+
+    this.setState({ loading: false });
   }
 
   render() {
     const { classes } = this.props;
-    const { tasks } = this.state;
+    const { loading, tasks } = this.state;
     const _t = this.props.intl.formatMessage;
 
     return (
@@ -142,8 +148,8 @@ class MaintenanceTasks extends React.Component<MaintenanceTasksProps, Maintenanc
                 title={_t({ id: 'maintenance-tasks.title' }, { referenceNumber: 'd' })}
                 action={
                   <div>
-                    <IconButton onClick={(e) => this.cleanUpData(e)} title="Start" disabled={!this.tasksSelected}>
-                      <Icon path={mdiTrashCanOutline} size="1.5rem" />
+                    <IconButton onClick={(e) => this.cleanUpData(e)} title="Start" disabled={!this.tasksSelected || loading}>
+                      <Icon path={mdiCogPlayOutline} size="1.5rem" />
                     </IconButton>
                   </div>
                 }
