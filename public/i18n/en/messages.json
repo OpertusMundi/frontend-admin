@@ -123,6 +123,10 @@
       }
     },
     "message": {
+      "delete-confirm": "All data for the account {name} will be deleted. Would you like to continue?",
+      "delete-confirm-data-details": "The data for deletion include all database records that reference this account and all catalogue items published by this account.",
+      "delete-confirm-filesystem-details": "Select this option if you want to delete all the directories created and files uploaded by this account",
+      "delete-confirm-account-details": "Select this option if you want to delete the account",
       "delete-user-started": "Workflow for deleting user has started successfully",
       "delete-user-data-started": "Workflow for deleting all user data has started successfully",
       "external-provider-confirm": "Are you sure you want to update provider roles?",
