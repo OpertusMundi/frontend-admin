@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy } from 'react';
 
 import { connect, ConnectedProps } from 'react-redux';
 import { Route, Routes, Navigate } from 'react-router-dom';
@@ -11,50 +11,52 @@ import { RootState } from 'store';
 import { toggleSendMessageDialog } from 'store/message/actions';
 
 // Components
-import AccountForm from 'components/account/account-form';
-import AssetDraftManager from 'components/draft/draft-grid';
-import ConsumerManager from 'components/consumer/consumer-grid';
-import ContractForm from 'components/contract/contract-form';
-import ContractManager from 'components/contract/contract-grid';
 import DashboardComponent from 'components/dashboard';
-import DraftContractViewer from 'components/draft/contract-viewer/contract-viewer';
 import ErrorPage from 'components/error-page';
-import EventManager from 'components/event/event-manager';
-import HelpdeskAccountManager from 'components/account/account-grid';
 import Home from 'components/home';
-import IncidentManager from 'components/workflow/incident-manager';
 import Login from 'components/login';
-import SettingsManager from 'components/system/settings-manager';
-import MaintenanceTasks from 'components/system/maintenance-tasks';
-import MapViewerComponent from 'components/map-viewer';
-import MarketplaceAccountManager from 'components/account-marketplace/account-grid';
-import MarketplaceAccountView from 'components/account-marketplace/account-form';
-import MessageDialogComponent from 'components/message/message-send-dialog';
-import MessageInboxHelpdesk from 'components/message-inbox-helpdesk/message-grid';
-import MessageInboxUser from 'components/message-inbox-user/message-grid';
-import PayInDetails from 'components/payin/payin-details';
-import PayInManager from 'components/payin/payin-manager';
-import PayOutDetails from 'components/payout/payout-details';
-import PayOutManager from 'components/payout/payout-manager';
 import PlaceHolder from 'components/placeholder';
-import ProcessInstanceForm from 'components/workflow/process-instance-form';
-import ProcessInstanceTaskForm from 'components/workflow/process-instance-task-form';
-import ProcessInstanceHistoryForm from 'components/workflow/process-instance-history-form';
-import ProcessInstanceManager from 'components/workflow/process-instance-manager';
-import ProcessInstanceTaskManager from 'components/workflow/task-manager';
-import ProcessInstanceHistoryManager from 'components/workflow/process-instance-history-manager';
-import Profile from 'components/profile';
-import ProviderManager from 'components/provider/provider-grid';
-import OrderDetails from 'components/order/order-details';
-import OrderManager from 'components/order/order-manager';
-import QueryEditor from './analytics/query-editor';
-import SecureRoute from 'components/secure-route';
-import SubscriptionBillingManager from 'components/subscription-billing-batch/billing-manager';
-import TransferManager from 'components/transfer/transfer-grid';
 
 // Model
 import { DynamicRoutes, ErrorPages, Pages, StaticRoutes } from 'model/routes';
 import { EnumHelpdeskRole as EnumRole } from 'model/role';
+
+// Lazy loaded components
+const AccountForm = lazy(() => import('components/account/account-form'));
+const AssetDraftManager = lazy(() => import('components/draft/draft-grid'));
+const ConsumerManager = lazy(() => import('components/consumer/consumer-grid'));
+const ContractForm = lazy(() => import('components/contract/contract-form'));
+const ContractManager = lazy(() => import('components/contract/contract-grid'));
+const DraftContractViewer = lazy(() => import('components/draft/contract-viewer/contract-viewer'));
+const EventManager = lazy(() => import('components/event/event-manager'));
+const HelpdeskAccountManager = lazy(() => import('components/account/account-grid'));
+const IncidentManager = lazy(() => import('components/workflow/incident-manager'));
+const SettingsManager = lazy(() => import('components/system/settings-manager'));
+const MaintenanceTasks = lazy(() => import('components/system/maintenance-tasks'));
+const MapViewerComponent = lazy(() => import('components/map-viewer'));
+const MarketplaceAccountManager = lazy(() => import('components/account-marketplace/account-grid'));
+const MarketplaceAccountView = lazy(() => import('components/account-marketplace/account-form'));
+const MessageDialogComponent = lazy(() => import('components/message/message-send-dialog'));
+const MessageInboxHelpdesk = lazy(() => import('components/message-inbox-helpdesk/message-grid'));
+const MessageInboxUser = lazy(() => import('components/message-inbox-user/message-grid'));
+const PayInDetails = lazy(() => import('components/payin/payin-details'));
+const PayInManager = lazy(() => import('components/payin/payin-manager'));
+const PayOutDetails = lazy(() => import('components/payout/payout-details'));
+const PayOutManager = lazy(() => import('components/payout/payout-manager'));
+const ProcessInstanceForm = lazy(() => import('components/workflow/process-instance-form'));
+const ProcessInstanceTaskForm = lazy(() => import('components/workflow/process-instance-task-form'));
+const ProcessInstanceHistoryForm = lazy(() => import('components/workflow/process-instance-history-form'));
+const ProcessInstanceManager = lazy(() => import('components/workflow/process-instance-manager'));
+const ProcessInstanceTaskManager = lazy(() => import('components/workflow/task-manager'));
+const ProcessInstanceHistoryManager = lazy(() => import('components/workflow/process-instance-history-manager'));
+const Profile = lazy(() => import('components/profile'));
+const ProviderManager = lazy(() => import('components/provider/provider-grid'));
+const OrderDetails = lazy(() => import('components/order/order-details'));
+const OrderManager = lazy(() => import('components/order/order-manager'));
+const QueryEditor = lazy(() => import('./analytics/query-editor'));
+const SecureRoute = lazy(() => import('components/secure-route'));
+const SubscriptionBillingManager = lazy(() => import('components/subscription-billing-batch/billing-manager'));
+const TransferManager = lazy(() => import('components/transfer/transfer-grid'));
 
 class ContentRoot extends React.Component<PropsFromRedux> {
 

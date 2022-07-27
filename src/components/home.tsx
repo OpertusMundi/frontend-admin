@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 
 import { connect, ConnectedProps } from 'react-redux';
 import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
@@ -77,9 +77,9 @@ import { HelpdeskAccount } from 'model/account';
 // Components
 import Breadcrumb from './breadcrumb';
 import MapViewerConfigComponent from 'components/map-viewer-config';
-import SecureContent from 'components/secure-content';
-
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import SecureContent from 'components/secure-content';
+import Spinner from 'components/spinner';
 
 // Store
 import { RootState } from 'store';
@@ -835,7 +835,9 @@ class Home extends React.Component<HomeProps, HomeState> {
           <div className={classes.appBarSpacer} />
           <PerfectScrollbar className={classes.outletContainerWrapper}>
             <Container maxWidth={false} className={classes.container}>
-              <Outlet />
+              <Suspense fallback={<Spinner />}>
+                <Outlet />
+              </Suspense>
             </Container>
           </PerfectScrollbar>
         </main>

@@ -11,14 +11,14 @@ const styles = (theme: Theme) => createStyles({
     position: 'relative',
     top: '30%',
     margin: '100px auto',
-    width: '50px',
-    height: '40px',
+    width: '70px',
+    height: '60px',
     textAlign: 'center',
     fontSize: '10px',
     '& > div': {
       backgroundColor: '#1e88e5',
       height: '100%',
-      width: '6px',
+      width: '10px',
       display: 'inline-block',
       margin: '0px 2px',
       'animation': `$stretchDelay 1.2s infinite ${theme.transitions.easing.easeInOut}`,
@@ -39,15 +39,19 @@ const styles = (theme: Theme) => createStyles({
   '@keyframes stretchDelay': {
     '0%': {
       transform: 'scaleY(0.4)',
+      opacity: 0.5,
     },
     "40%": {
       transform: 'scaleY(0.4)',
+      opacity: 0.7,
     },
     '100%': {
       transform: 'scaleY(0.4)',
+      opacity: 0.9,
     },
     '20%': {
       transform: 'scaleY(1)',
+      opacity: 1,
     }
   },
 });
