@@ -5,6 +5,7 @@ export const PUBLISH_CATALOGUE_ASSET_SET_ERROR = "task-publish-catalogue-asset-s
 export const PUBLISH_USER_SERVICE_SET_ERROR = "task-publish-user-service-set-error";
 
 export enum EnumWorkflow {
+  ACCOUNT_REGISTRATION = 'account-registration',
   CONSUMER_REGISTRATION = 'consumer-registration',
   PROVIDER_PUBLISH_ASSET = 'provider-publish-asset',
   PROVIDER_REGISTRATION = 'provider-registration',

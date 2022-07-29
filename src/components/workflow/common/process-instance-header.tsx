@@ -3,7 +3,7 @@ import { EnumWorkflow, ProcessInstance } from 'model/bpm-process-instance';
 
 const getVariable = (instance: ProcessInstance, name: string): string => {
   const vIndex = instance.variableNames.indexOf(name);
-  const value = instance.variableValues[vIndex] || '';
+  const value = vIndex === -1 ? '' : instance.variableValues[vIndex] || '';
 
   return value;
 }
@@ -12,11 +12,13 @@ const ProcessInstanceHeader = (props: { instance: ProcessInstance }) => {
   const { instance } = props;
 
   switch (instance.processDefinitionKey) {
+    case EnumWorkflow.ACCOUNT_REGISTRATION:
     case EnumWorkflow.CONSUMER_REGISTRATION:
     case EnumWorkflow.PROVIDER_REGISTRATION: {
       const userName = getVariable(instance, 'userName');
+      const idpName = getVariable(instance, 'idpName');
       return (
-        <span>{instance.processDefinitionName}<br /><b>{userName}</b></span>
+        <span>{instance.processDefinitionName}<br /><b>{userName}</b>{idpName ? ` (${idpName})` : ''}</span>
       );
     }
 
