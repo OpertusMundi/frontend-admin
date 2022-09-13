@@ -114,8 +114,11 @@ export default class MarketplaceAccountApi extends Api {
   }
 
 
-  public async deleteAllUserData(key: string, accountDeleted = false, fileSystemDeleted = false): Promise<AxiosSimpleResponse> {
-    const url = `/action/marketplace/accounts/${key}?accountDeleted=${accountDeleted}&fileSystemDeleted=${fileSystemDeleted}`;
+  public async deleteAllUserData(
+    key: string, accountDeleted = false, fileSystemDeleted = false, contractsDeleted = false
+  ): Promise<AxiosSimpleResponse> {
+    const params = `accountDeleted=${accountDeleted}&fileSystemDeleted=${fileSystemDeleted}&contractsDeleted=${contractsDeleted}`;
+    const url = `/action/marketplace/accounts/${key}?${params}`;
 
     return this.delete<ObjectResponse<MarketplaceAccount>>(url);
   }

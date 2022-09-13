@@ -68,6 +68,7 @@ const styles = (theme: Theme) => createStyles({
 interface AccountManagerState {
   accountDeleted: boolean;
   confirmDelete: boolean;
+  contractsDeleted: boolean;
   fileSystemDeleted: boolean;
   record: MarketplaceAccountSummary | null;
 }
@@ -95,6 +96,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
   state: AccountManagerState = {
     accountDeleted: false,
     confirmDelete: false,
+    contractsDeleted: false,
     fileSystemDeleted: false,
     record: null,
   }
@@ -124,10 +126,10 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
   confirmDeleteDialogHandler(action: DialogAction): void {
     switch (action.key) {
       case EnumDialogAction.Yes:
-        const { record, accountDeleted, fileSystemDeleted } = this.state;
+        const { record, accountDeleted, fileSystemDeleted, contractsDeleted } = this.state;
 
         if (record) {
-          this.api.deleteAllUserData(record.key, accountDeleted, fileSystemDeleted)
+          this.api.deleteAllUserData(record.key, accountDeleted, fileSystemDeleted, contractsDeleted)
             .then((response) => {
               if (response.data!.success) {
                 message.infoHtml(
@@ -216,14 +218,17 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
       });
   }
 
+  contractsDeletedChanged(contractsDeleted: boolean): void {
+    this.setState({ contractsDeleted });
+  }
+
   fileSystemDeletedChanged(fileSystemDeleted: boolean): void {
-    this.setState({
-      fileSystemDeleted,
-    });
+    this.setState({ fileSystemDeleted });
   }
 
   accountDeletedChanged(accountDeleted: boolean): void {
     this.setState((state) => ({
+      contractsDeleted: accountDeleted ? true : state.contractsDeleted,
       fileSystemDeleted: accountDeleted ? true : state.fileSystemDeleted,
       accountDeleted,
     }));
@@ -311,7 +316,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
   renderConfirmDeleteDialog() {
     const _t = this.props.intl.formatMessage;
 
-    const { confirmDelete, record, accountDeleted, fileSystemDeleted } = this.state;
+    const { confirmDelete, record, accountDeleted, fileSystemDeleted, contractsDeleted } = this.state;
 
     if (!confirmDelete || !record) {
       return null;
@@ -359,7 +364,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
                   onChange={
                     (event) => this.fileSystemDeletedChanged(event.target.checked)
                   }
-                  name="checkedB"
+                  name="fileSystemDeleted"
                   color="primary"
                 />
               }
@@ -373,11 +378,30 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
             <FormControlLabel
               control={
                 <Checkbox
+                  checked={contractsDeleted}
+                  disabled={accountDeleted}
+                  onChange={
+                    (event) => this.contractsDeletedChanged(event.target.checked)
+                  }
+                  name="contractsDeleted"
+                  color="primary"
+                />
+              }
+              label={_t({ id: 'account-marketplace.confirm-delete-dialog.delete-contracts' })}
+            />
+            <Typography variant="caption" component={'p'}>
+              <FormattedMessage id="account-marketplace.message.delete-confirm-contracts-details" />
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={
+                <Checkbox
                   checked={accountDeleted}
                   onChange={
                     (event) => this.accountDeletedChanged(event.target.checked)
                   }
-                  name="checkedB"
+                  name="accountDeleted"
                   color="primary"
                 />
               }
