@@ -22,6 +22,7 @@ import {
 
 // Services
 import WorkflowApi from 'service/bpm-workflow';
+import { convertMomentToString } from 'utils/moment-utils';
 
 // Model
 import {
@@ -103,6 +104,9 @@ export const findOne = (
 
   // Update state
   if (response.data.success) {
+    // Replace Moment objects with ISO strings
+    convertMomentToString(response.data.result!.resource);
+
     dispatch(loadSuccess(response.data.result!));
   } else {
     dispatch(loadFailure());

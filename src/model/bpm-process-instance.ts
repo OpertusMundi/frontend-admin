@@ -6,10 +6,21 @@ export const PUBLISH_USER_SERVICE_SET_ERROR = "task-publish-user-service-set-err
 
 export enum EnumWorkflow {
   ACCOUNT_REGISTRATION = 'account-registration',
+  CATALOGUE_HARVEST = 'catalogue-harvest',
+  CONSUMER_COPY_RESOURCE_TO_DRIVE = 'consumer-copy-resource-to-drive',
+  CONSUMER_PURCHASE_ASSET_WITH_PAYIN = 'consumer-purchase-asset-with-payin',
+  CONSUMER_PURCHASE_ASSET_WITHOUT_PAYIN = 'consumer-purchase-asset-without-payin',
   CONSUMER_REGISTRATION = 'consumer-registration',
+  PROVIDER_PAYOUT = 'provider-payout',
   PROVIDER_PUBLISH_ASSET = 'provider-publish-asset',
   PROVIDER_REGISTRATION = 'provider-registration',
+  PROVIDER_REMOVE_ASSET = 'provider-remove-asset',
   PUBLISH_USER_SERVICE = 'user-publish-service',
+  REMOVE_USER_SERVICE = 'user-remove-service',
+  SUBSCRIPTION_BILLING = 'workflow-subscription-billing',
+  VENDOR_ACCOUNT_REGISTRATION = 'vendor-account-registration',
+  // System Maintenance workflows
+  SYSTEM_MAINTENANCE = 'system-maintenance',
   SYSTEM_REMOVE_ALL_USER_DATA = 'system-maintenance-remove-all-user-data',
 }
 
@@ -212,12 +223,29 @@ export interface BpmActivity {
   rootProcessInstanceId: string;
 }
 
+export enum EnumResourceType {
+  ACCOUNT = 'ACCOUNT',
+  ASSET = 'ASSET',
+  CONSUMER = 'CONSUMER',
+  DRAFT = 'DRAFT',
+  PAYIN = 'PAYIN',
+  PAYOUT = 'PAYOUT',
+  PROVIDER = 'PROVIDER',
+  USER_SERVICE = 'USER_SERVICE',
+}
+
+export interface Resource {
+  type: EnumResourceType,
+  value: object;
+}
+
 export interface ProcessInstanceDetails {
   activities: BpmActivity[];
   bpmn2Xml?: string;
   errorDetails: { [activity: string]: string };
   instance: BpmProcessInstance;
   owner?: MarketplaceAccount;
+  resource?: Resource;
   variables: BpmVariable[];
 }
 

@@ -9,6 +9,8 @@ import { injectIntl, IntlShape } from 'react-intl';
 import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
 
 // Components
+import ReactJson from 'react-json-view'
+
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
@@ -39,10 +41,11 @@ import {
 // Icons
 import Icon from '@mdi/react';
 import {
-  mdiTimelineClockOutline,
-  mdiDatabaseCogOutline,
-  mdiClockFast,
   mdiAccountOutline,
+  mdiClockFast,
+  mdiCodeJson,
+  mdiDatabaseCogOutline,
+  mdiTimelineClockOutline,
   mdiXml,
 } from '@mdi/js';
 
@@ -225,6 +228,9 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
           >
             <Tab icon={<Icon path={mdiDatabaseCogOutline} size="1.5rem" />} label="Process" />
             <Tab icon={<Icon path={mdiXml} size="1.5rem" />} label="Workflow" />
+            {processInstance?.resource?.value &&
+              <Tab icon={<Icon path={mdiCodeJson} size="1.5rem" />} label="Resource" />
+            }
           </Tabs>
         </Grid>
         {tabIndex === 0 &&
@@ -260,6 +266,14 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
           <Grid item xs={12}>
             <ProcessDefinitionDiagram config={config} instance={processInstance} />
           </Grid>
+        }
+        {tabIndex === 2 && processInstance?.resource?.value &&
+          <ReactJson
+            collapsed={1}
+            name={null}
+            sortKeys={true}
+            src={processInstance.resource!.value}
+          />
         }
       </Grid>
     );

@@ -102,6 +102,7 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
     }, {
       header: intl.formatMessage({ id: 'workflow.header.instance.process-definition-version' }),
       id: 'processDefinitionVersion',
+      width: 110,
       sortable: false,
       cell: (
         rowIndex: number,
@@ -114,6 +115,7 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
     }, {
       header: intl.formatMessage({ id: 'workflow.header.instance.process-definition-deployed-on' }),
       id: 'processDefinitionDeployedOn',
+      width: 130,
       sortable: false,
       cell: (
         rowIndex: number,
