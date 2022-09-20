@@ -304,7 +304,7 @@ class ReviewErrorTask extends React.Component<ReviewErrorTaskProps, ReviewErrorT
           ></CardHeader>
           <CardContent>
             <Grid container item xs={12}>
-              <Typography variant="caption" display="block" gutterBottom >
+              <Typography variant="caption" display="block" gutterBottom style={{ flex: '100%' }}>
                 System messages:
               </Typography>
               <List disablePadding>
