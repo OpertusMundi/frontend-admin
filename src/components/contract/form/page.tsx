@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Localization
-import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
+import { injectIntl, IntlShape } from 'react-intl';
 
 // Styles
 import { createStyles, WithStyles } from '@material-ui/core';
