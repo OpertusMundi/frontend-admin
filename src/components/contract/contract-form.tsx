@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Localization, Routing
-import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
+import { injectIntl, IntlShape } from 'react-intl';
 import { useNavigate, useLocation, useParams, NavigateFunction, Location } from 'react-router-dom';
 
 // Styles
@@ -737,7 +737,7 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
           className={classes.section}
           style={{ paddingLeft: section.indent }}
         >
-          <FormattedMessage id={`${section.id! + 1}`} defaultMessage={sectionTitle} />
+          {sectionTitle}
         </div>
       );
     });
@@ -788,16 +788,13 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         <Grid container item xs={2} className={classes.outerOutline}>
           <Paper className={classes.paper && classes.outline}>
             <div className={classes.columnTitle}>
-              <FormattedMessage id="document.outline" defaultMessage={'Document Outline'} />
+              {'Document Outline'}
             </div>
             <div className={classes.documentTitle}>
-              <FormattedMessage id="document.outline.title" defaultMessage={contract.title} />
+              {contract.title}
             </div>
             <div className={classes.documentSubtitle}>
-              <FormattedMessage id="document.outline.subtitle" defaultMessage="{documentSubtitle}"
-                values={{
-                  documentSubtitle: contract.subtitle,
-                }} />
+              {contract.subtitle}
             </div>
             {outline}
           </Paper>
@@ -805,10 +802,9 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         <Grid container item xs={5} className={classes.contractGrid}>
           <Paper className={classes.paper}>
             <div className={classes.columnTitle}>
-              <FormattedMessage id="document.title" defaultMessage={'Contract structure'} />
+              {'Contract structure'}
               <div className={classes.columnSubtitle}>
-                <FormattedMessage id="document.toolbar.subtitle" defaultMessage={`Here you can preview your master contract
-                  as you build it and manage it's structure.`} />
+                {`Here you can preview your master contract as you build it and manage it's structure.`}
               </div>
             </div>
             <PageComponent
@@ -830,14 +826,14 @@ class ContractFormComponent extends React.Component<ContractFormComponentProps, 
         <Grid container item xs={4} className={classes.grid}>
           <Paper className={classes.paper}>
             <div className={classes.columnTitle}>
-              <FormattedMessage id="document.toolbar" defaultMessage={'Toolbar'} />
+              {'Toolbar'}
               <div className={classes.columnSubtitle}>
-                <FormattedMessage id="document.toolbar.subtitle" defaultMessage={'For selected elements, all available actions appear here'} />
+                {'For selected elements, all available actions appear here'}
               </div>
             </div>
 
             <div className={classes.columnTitle}>
-              <FormattedMessage id="document.elements" defaultMessage={'Document elements'} />
+              {'Document elements'}
             </div>
             {toolbarActions}
             <Grid container item xs={12}>

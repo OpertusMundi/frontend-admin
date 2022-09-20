@@ -400,19 +400,23 @@
       "user": "Owner",
       "version": "Version"
     },
-    "last-update": "Last updated: ",
     "master": {
       "title": "Master contract editor",
       "section": "Section"
     },
+    "message": {
+      "default-contract-set": "Default contract has been set",
+      "last-update": "Last updated: "
+    },
     "tooltip": {
-      "edit": "Edit",
-      "create-version": "Create new version",
-      "delete": "Delete",
-      "deactivate": "Deactivate",
-      "publish": "Publish draft",
       "clone": "Clone as draft",
-      "download": "Download contract"
+      "create-version": "Create new version",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "download": "Download contract",
+      "edit": "Edit",
+      "publish": "Publish draft",
+      "set-default": "Set default contract"
     }
   },
   "draft": {
@@ -736,7 +740,8 @@
       },
       "list": {
         "title": "Master Contract List "
-      }
+      },
+      "update": "Update master contract"
     },
     "dashboard": "Overview",
     "draft": {

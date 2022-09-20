@@ -92,7 +92,7 @@ class PageComponent extends React.Component<PageComponentProps, PageComponentSta
     let subtitle;
     if (this.props.documentSubtitle) {
       subtitle = <div className={classes.title} >
-        <FormattedMessage id="document.subtitle" defaultMessage={this.props.documentSubtitle} />
+        {this.props.documentSubtitle}
         <IconButton style={{ width: 20, height: 20, float: "right" }}
           onClick={() =>
             this.props.deleteSubtitle()
@@ -115,31 +115,31 @@ class PageComponent extends React.Component<PageComponentProps, PageComponentSta
       <Grid style={{ paddingLeft: section.indent, marginTop: '30px' }} key={section.id} container item xs={12} >
         <Grid className={classes.contract} container item xs={10} key={`section-${section.id}`}>
           <SectionComponent {...section} editSection={this.props.editSection.bind(this)} />
-          {i < this.props.sectionList.length-1 && 
+          {i < this.props.sectionList.length - 1 &&
             <div className={classes.middleControls}>
-            <Tooltip title="Add normal section">
-              <IconButton
-                onClick={() =>
-                  this.props.addMiddleSection(section.index, section.indent, false )
-                }
-              >
-                <AddIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Add variable section">
-              <IconButton
-                onClick={() =>
-                  this.props.addMiddleSection(section.index, section.indent, true)
-                }
-              >
-                <AddBoxIcon />
-              </IconButton>
-            </Tooltip>
-          </div>
+              <Tooltip title="Add normal section">
+                <IconButton
+                  onClick={() =>
+                    this.props.addMiddleSection(section.index, section.indent, false)
+                  }
+                >
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Add variable section">
+                <IconButton
+                  onClick={() =>
+                    this.props.addMiddleSection(section.index, section.indent, true)
+                  }
+                >
+                  <AddBoxIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
           }
         </Grid>
         <div className={classes.controls}>
-          <IconButton style={{ height: 20 }}
+          <IconButton
             onClick={() =>
               this.props.moveSectionUp(section)
             }
@@ -179,10 +179,9 @@ class PageComponent extends React.Component<PageComponentProps, PageComponentSta
     return (
       <div>
         <Grid container item xs={12}>
-          <Paper className={classes.paper} style={{overflow: 'hidden'}}>
+          <Paper className={classes.paper} style={{ overflow: 'hidden' }}>
             <div className={classes.title}>
-              <FormattedMessage id="document.title" defaultMessage={this.props.documentTitle} />
-
+              {this.props.documentTitle}
               <IconButton className="controls" style={{ width: 20, height: 20, float: "right" }}
                 onClick={() =>
                   this.props.openEdit(EditFieldEnum.Title)

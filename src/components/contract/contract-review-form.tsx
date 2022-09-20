@@ -170,7 +170,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
     this.api = new ContractApi();
   }
 
-  scrollToSection(id: string){
+  scrollToSection(id: string) {
     var section_to_scroll_to = document.getElementById(id);
     section_to_scroll_to!.scrollIntoView();
   }
@@ -197,18 +197,18 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
       }
 
       return (<div key={section.id} className={classes.section} style={{ paddingLeft: section.indent }}
-              onClick={() => this.scrollToSection(section.id!.toString())}>
+        onClick={() => this.scrollToSection(section.id!.toString())}>
         <FormattedMessage id={`${section.id! + 1}`} defaultMessage={sectionTitle} />
       </div>)
     });
 
     const structure = contract.sections.map((section) => {
-      let body, renderedSuboptions: any, icon, shortDescription: any, length = 0, sectionTitle = '' ;
+      let body, renderedSuboptions: any, icon, shortDescription: any, length = 0, sectionTitle = '';
 
       if (section.dynamic) {
         body = section.options.map((option, index) => {
-          icon = <div/>
-          shortDescription = <div/>
+          icon = <div />
+          shortDescription = <div />
           var subOptionsArray = section.options[index].subOptions!;
           let subOptionBlock = [];
           if (subOptionsArray) {
@@ -233,11 +233,11 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
             });
 
           };
-          if (section.options[index].icon){
+          if (section.options[index].icon) {
             const enumIcon = config.contractIcons!.find(c => c.icon === section.options[index].icon);
             icon = <img alt="" className={classes.logoImage} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
           }
-          if (section.options[index].shortDescription){
+          if (section.options[index].shortDescription) {
             shortDescription = <div className={classes.shortDescription} >{section.options[index].shortDescription}</div>
           }
 
@@ -282,11 +282,11 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
               )
             });
           }
-          if (section.options[0].icon){
+          if (section.options[0].icon) {
             const enumIcon = config.contractIcons!.find(c => c.icon === section.options[0].icon);
-            icon = <img  alt="" className={classes.logoImage} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
+            icon = <img alt="" className={classes.logoImage} src={`data:image/svg+xml;base64,${enumIcon?.image}`} />
           }
-          if (section.options[0].shortDescription){
+          if (section.options[0].shortDescription) {
             shortDescription = <div className={classes.shortDescription} >{section.options[0].shortDescription}</div>
           }
           body = <div className={classes.optionBlock}>
@@ -304,11 +304,11 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
         sectionTitle = 'Section ' + section.index
       }
       return (<div>
-        <div id={section.id!.toString()}  key={section.id} className={classes.section && classes.columnTitle}>
+        <div id={section.id!.toString()} key={section.id} className={classes.section && classes.columnTitle}>
           <FormattedMessage id={`${section.id! + 1}`} defaultMessage={sectionTitle} />
         </div>
         <div>
-              {body}
+          {body}
         </div>
       </div>
       )
@@ -335,8 +335,7 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
           <div className={classes.columnTitle} >
             <FormattedMessage id="document.review" defaultMessage={'Review'} />
             <div className={classes.columnSubtitle} >
-              <FormattedMessage id="document.toolbar.subtitle" defaultMessage={`Here you can review the master contract
-              you created.`} />
+              {'Here you can review the master contract you created.'}
             </div>
           </div>
           <Grid id="renderedContract" className={classes.structure}>
@@ -362,10 +361,10 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
           Confirm and Save
         </Button>
         <Button className={classes.previous}
-            variant="contained"
-            onClick={(e) => this.props.setEdit()}
-          >
-            Previous
+          variant="contained"
+          onClick={(e) => this.props.setEdit()}
+        >
+          Previous
         </Button>
       </Grid>
     </Grid>);
