@@ -145,8 +145,8 @@ class ContractListComponent extends React.Component<ContractListComponentProps, 
       });
   }
 
-  createDraftFromTemplate(contract: MasterContractHistory) {
-    this.api.createDraftFromTemplate(contract.id)
+  createDraftForTemplate(contract: MasterContractHistory) {
+    this.api.createDraftForTemplate(contract.id)
       .then((response) => {
         if (response.data.success) {
           const url = buildPath(DynamicRoutes.ContractUpdate, [response.data.result!.id.toString()]);
@@ -321,7 +321,7 @@ class ContractListComponent extends React.Component<ContractListComponentProps, 
                 type="button"
                 variant="contained"
                 className={classes.editBtn}
-                onClick={() => this.createDraftFromTemplate(contract)}
+                onClick={() => this.createDraftForTemplate(contract)}
               >
                 <FormattedMessage id="view.shared.action.new-version" defaultMessage="New version" />
               </Button>

@@ -1,8 +1,16 @@
 import { Moment } from 'moment';
 
+import { ObjectResponse, PageRequest, SimpleResponse, Sorting } from 'model/response';
+
+import {
+  EnumMasterContractSortField,
+  MasterContract,
+  MasterContractHistory,
+  MasterContractHistoryResult,
+  MasterContractQuery,
+} from 'model/contract';
+
 import { LogoutInitAction } from 'store/security/types';
-import { PageResult, PageRequest, Sorting, ObjectResponse, SimpleResponse } from 'model/response';
-import { MasterContract, MasterContractQuery, EnumMasterContractSortField, MasterContractHistory } from 'model/contract';
 
 // State
 export interface ContractManagerState {
@@ -10,7 +18,7 @@ export interface ContractManagerState {
   lastUpdated: Moment | null;
   pagination: PageRequest;
   query: MasterContractQuery;
-  result: PageResult<MasterContractHistory> | null;
+  result: MasterContractHistoryResult | null;
   selected: MasterContractHistory[];
   sorting: Sorting<EnumMasterContractSortField>[];
   response: ObjectResponse<MasterContract> | null;
@@ -78,7 +86,7 @@ export interface SearchFailureAction {
 
 export interface SearchCompleteAction {
   type: typeof SEARCH_COMPLETE;
-  result: PageResult<MasterContractHistory>;
+  result: MasterContractHistoryResult;
 }
 
 export interface SaveInitAction {

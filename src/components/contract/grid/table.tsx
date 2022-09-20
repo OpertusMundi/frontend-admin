@@ -7,10 +7,11 @@ import { injectIntl, IntlShape, FormattedTime } from 'react-intl';
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
+import Chip from '@material-ui/core/Chip';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import Icon from '@mdi/react';
-import { mdiPencilOutline, mdiSourceBranchCheck, mdiSourceBranchMinus, mdiSourceBranchPlus, mdiTrashCanOutline, mdiContentCopy, mdiDownload } from '@mdi/js';
+import { mdiPencilOutline, mdiSourceBranchCheck, mdiSourceBranchRemove, mdiSourceBranchPlus, mdiTrashCanOutline, mdiContentCopy, mdiDownload, mdiPinOutline } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 
@@ -19,18 +20,20 @@ import {
   EnumContractStatus,
   EnumMasterContractSortField,
   MasterContractHistory,
+  MasterContractHistoryResult,
   MasterContractQuery,
 } from 'model/contract';
 import { PageRequest, PageResult, Sorting, ObjectResponse } from 'model/response';
 
 enum EnumAction {
+  Clone = 'clone',
   CreateVersion = 'create-version',
   Deactivate = 'deactivate',
   Delete = 'delete',
+  Download = 'download',
   Edit = 'edit',
   Publish = 'publish',
-  Clone = 'clone',
-  Download = 'download'
+  SetDefault = 'set-default',
 };
 
 const styles = (theme: Theme) => createStyles({
@@ -49,6 +52,9 @@ const styles = (theme: Theme) => createStyles({
   },
   link: {
     color: 'inherit',
+  },
+  mr12: {
+    marginRight: theme.spacing(1.5),
   },
   roles: {
     display: 'flex',
@@ -89,7 +95,8 @@ const statusToBackGround = (status: EnumContractStatus): string => {
   return '#0277BD';
 };
 
-function contractColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<MasterContractHistory, EnumMasterContractSortField>[] {
+function contractColumns(props: ContractTableProps): Column<MasterContractHistory, EnumMasterContractSortField>[] {
+  const { intl, classes, result } = props;
   return (
     [{
       header: intl.formatMessage({ id: 'contract.header.actions' }),
@@ -104,7 +111,7 @@ function contractColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.Edit, rowIndex, column, row) : null}
               >
-                <Icon path={mdiPencilOutline} className={classes.classes.rowIcon} />
+                <Icon path={mdiPencilOutline} className={classes.rowIcon} />
               </i>
             </Tooltip>
           }
@@ -113,7 +120,7 @@ function contractColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.CreateVersion, rowIndex, column, row) : null}
               >
-                <Icon path={mdiSourceBranchPlus} className={classes.classes.rowIcon} />
+                <Icon path={mdiSourceBranchPlus} className={classes.rowIcon} />
               </i>
             </Tooltip>
           }
@@ -122,7 +129,7 @@ function contractColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.Delete, rowIndex, column, row) : null}
               >
-                <Icon path={mdiTrashCanOutline} className={classes.classes.rowIcon} />
+                <Icon path={mdiTrashCanOutline} className={classes.rowIcon} />
               </i>
             </Tooltip>
           }
@@ -131,7 +138,7 @@ function contractColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.Publish, rowIndex, column, row) : null}
               >
-                <Icon path={mdiSourceBranchCheck} className={classes.classes.rowIcon} />
+                <Icon path={mdiSourceBranchCheck} className={classes.rowIcon} />
               </i>
             </Tooltip>
           }
@@ -140,7 +147,7 @@ function contractColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.Deactivate, rowIndex, column, row) : null}
               >
-                <Icon path={mdiSourceBranchMinus} className={classes.classes.rowIcon} />
+                <Icon path={mdiSourceBranchRemove} className={classes.rowIcon} />
               </i>
             </Tooltip>
           }
@@ -149,7 +156,7 @@ function contractColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.Clone, rowIndex, column, row) : null}
               >
-                <Icon path={mdiContentCopy} className={classes.classes.rowIcon} />
+                <Icon path={mdiContentCopy} className={classes.rowIcon} />
               </i>
             </Tooltip>
           }
@@ -158,7 +165,16 @@ function contractColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.Download, rowIndex, column, row) : null}
               >
-                <Icon path={mdiDownload} className={classes.classes.rowIcon} />
+                <Icon path={mdiDownload} className={classes.rowIcon} />
+              </i>
+            </Tooltip>
+          }
+          {row.status === EnumContractStatus.ACTIVE && result && !result.defaultContract &&
+            <Tooltip title={intl.formatMessage({ id: 'contract.tooltip.set-default' })}>
+              <i
+                onClick={() => handleAction ? handleAction(EnumAction.SetDefault, rowIndex, column, row) : null}
+              >
+                <Icon path={mdiPinOutline} className={classes.rowIcon} />
               </i>
             </Tooltip>
           }
@@ -176,10 +192,10 @@ function contractColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
       ): React.ReactNode => {
 
         return (
-          <div className={classes.classes.compositeLabel}>
+          <div className={classes.compositeLabel}>
             {row?.status &&
               <div
-                className={classes.classes.labelContractStatus}
+                className={classes.labelContractStatus}
                 style={{ background: statusToBackGround(row.status) }}
               >
                 {intl.formatMessage({ id: `enum.contract-status.${row.status}` })}
@@ -191,24 +207,37 @@ function contractColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
     }, {
       header: intl.formatMessage({ id: 'contract.header.title' }),
       id: 'title',
-      width: 150,
       sortable: true,
       sortColumn: EnumMasterContractSortField.TITLE,
       cell: (
         rowIndex: number, column: Column<MasterContractHistory, EnumMasterContractSortField>, row: MasterContractHistory, handleAction?: cellActionHandler<MasterContractHistory, EnumMasterContractSortField>
       ): React.ReactNode => (
         row.status === EnumContractStatus.DRAFT ?
-          <Link to={buildPath(DynamicRoutes.ContractUpdate, [row.id + ''])} className={classes.classes.link}>
-            {row.title}
-          </Link>
+          <>
+            <>
+              {row.defaultContract &&
+                <Chip
+                  label={'Default'}
+                  className={classes.mr12}
+                />
+              }
+            </>
+            <Link to={buildPath(DynamicRoutes.ContractUpdate, [row.id + ''])} className={classes.link}>
+              {row.title}
+            </Link>
+          </>
           :
-          <span>{row.title}</span>
+          <>
+            {row.defaultContract &&
+              <Chip
+                label={'Default'}
+                color={row.status === EnumContractStatus.ACTIVE ? 'primary' : 'secondary'}
+                className={classes.mr12}
+              />
+            }
+            <span>{row.title}</span>
+          </>
       ),
-    }, {
-      header: intl.formatMessage({ id: 'contract.header.subtitle' }),
-      id: 'subtitle',
-      accessor: 'subtitle',
-      sortable: false,
     }, {
       header: intl.formatMessage({ id: 'contract.header.version' }),
       id: 'version',
@@ -239,8 +268,8 @@ function contractColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
 interface ContractTableProps extends WithStyles<typeof styles> {
   intl: IntlShape;
   addToSelection: (rows: MasterContractHistory[]) => void;
-  createDraftFromTemplate: (contract: MasterContractHistory) => void;
-  createClonedDraftFromTemplate: (contract: MasterContractHistory) => void;
+  createDraftForTemplate: (contract: MasterContractHistory) => void;
+  cloneDraftFromTemplate: (contract: MasterContractHistory) => void;
   downloadPublishedTemplate: (contract: MasterContractHistory) => void;
   deactivateTemplate: (contract: MasterContractHistory) => void;
   deleteDraft: (contract: MasterContractHistory) => void;
@@ -253,10 +282,11 @@ interface ContractTableProps extends WithStyles<typeof styles> {
   setSorting: (sorting: Sorting<EnumMasterContractSortField>[]) => void;
   removeFromSelection: (rows: MasterContractHistory[]) => void;
   resetSelection: () => void;
+  setDefaultContract: (contract: MasterContractHistory) => void;
   loading?: boolean;
   pagination: PageRequest;
   query: MasterContractQuery;
-  result: PageResult<MasterContractHistory> | null;
+  result: MasterContractHistoryResult | null;
   selected: MasterContractHistory[];
   sorting: Sorting<EnumMasterContractSortField>[];
 }
@@ -273,7 +303,7 @@ class ContractTable extends React.Component<ContractTableProps> {
     if (row.id) {
       switch (action) {
         case EnumAction.CreateVersion:
-          this.props.createDraftFromTemplate(row);
+          this.props.createDraftForTemplate(row);
           break;
         case EnumAction.Deactivate:
           this.props.deactivateTemplate(row);
@@ -288,10 +318,13 @@ class ContractTable extends React.Component<ContractTableProps> {
           this.props.publishDraft(row);
           break;
         case EnumAction.Clone:
-          this.props.createClonedDraftFromTemplate(row);
+          this.props.cloneDraftFromTemplate(row);
           break;
         case EnumAction.Download:
           this.props.downloadPublishedTemplate(row);
+          break;
+        case EnumAction.SetDefault:
+          this.props.setDefaultContract(row);
           break;
         default:
           // No action
@@ -301,12 +334,12 @@ class ContractTable extends React.Component<ContractTableProps> {
   }
 
   render() {
-    const { intl, classes, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
+    const { intl, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
 
     return (
       <MaterialTable<MasterContractHistory, EnumMasterContractSortField>
         intl={intl}
-        columns={contractColumns(intl, { classes })}
+        columns={contractColumns(this.props)}
         rows={result ? result.items : []}
         pagination={{
           rowsPerPageOptions: [10, 20, 50],

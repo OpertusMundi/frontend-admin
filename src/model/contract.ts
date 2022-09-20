@@ -1,6 +1,7 @@
 import { Moment } from 'moment';
 
 import { SimpleHelpdeskAccount } from 'model/account';
+import { PageResult } from './response';
 
 export const ContractItemTypes = {
   Section: 'Section',
@@ -101,6 +102,7 @@ export interface MasterContractCommand {
 
 export interface MasterContract {
   createdAt: Moment | null;
+  defaultContract: boolean;
   id: number;
   key: string;
   modifiedAt: Moment | null;
@@ -119,4 +121,8 @@ export interface MasterContractHistory extends MasterContract {
 export interface MasterContractQuery {
   status: EnumContractStatus[];
   title: string;
+}
+
+export interface MasterContractHistoryResult extends PageResult<MasterContractHistory> {
+  defaultContract: boolean;
 }

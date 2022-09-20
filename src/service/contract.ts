@@ -1,18 +1,25 @@
-import { saveAs } from 'file-saver';
 import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { Api } from 'utils/api';
+import { saveAs } from 'file-saver';
+
 import {
-  AxiosObjectResponse, AxiosPageResponse,
-  ObjectResponse, PageRequest, Sorting, PageResult, AxiosSimpleResponse, SimpleResponse,
+  AxiosObjectResponse,
+  AxiosSimpleResponse,
+  ObjectResponse,
+  PageRequest,
+  SimpleResponse,
+  Sorting
 } from 'model/response';
+
 import {
-  MasterContractQuery,
-  MasterContractCommand, MasterContract, MasterContractHistory,
-  EnumMasterContractSortField
+  EnumMasterContractSortField,
+  MasterContract,
+  MasterContractCommand,
+  MasterContractHistoryResult,
+  MasterContractQuery
 } from 'model/contract';
-import {
-  blobToJson,
-} from 'utils/file';
+
+import { Api } from 'utils/api';
+import { blobToJson } from 'utils/file';
 
 export default class ContractApi extends Api {
 
@@ -40,7 +47,7 @@ export default class ContractApi extends Api {
 
   public async findHistory(
     query: Partial<MasterContractQuery>, pageRequest: PageRequest, sorting: Sorting<EnumMasterContractSortField>[]
-  ): Promise<AxiosPageResponse<MasterContractHistory>> {
+  ): Promise<AxiosObjectResponse<MasterContractHistoryResult>> {
     const { page, size } = pageRequest;
     const { id: field, order } = sorting[0];
 
@@ -51,38 +58,19 @@ export default class ContractApi extends Api {
 
     const url = `/action/contract/history?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
 
-    const response = this.get<ObjectResponse<PageResult<MasterContractHistory>>>(url);
+    const response = this.get<ObjectResponse<MasterContractHistoryResult>> (url);
 
     return response;
   }
 
-  public async findTemplates(
-    pageRequest: PageRequest, sorting: Sorting<EnumMasterContractSortField>[]
-  ): Promise<AxiosPageResponse<MasterContract>> {
-    const { page, size } = pageRequest;
-    const { id: field, order } = sorting[0];
-
-    const url = `/action/contract/templates?page=${page}&size=${size}&orderBy=${field}&order=${order}`;
-
-    var response = this.get<ObjectResponse<PageResult<MasterContract>>>(url);
-
-    return response;
-  }
-
-  public async findTemplate(id: number): Promise<AxiosObjectResponse<MasterContract>> {
-    const url = `/action/contract/templates/${id}`;
-
-    return this.get<ObjectResponse<MasterContract>>(url);
-  }
-
-  public async createDraftFromTemplate(id: number): Promise<AxiosObjectResponse<MasterContract>> {
+  public async createDraftForTemplate(id: number): Promise<AxiosObjectResponse<MasterContract>> {
     const url = `/action/contract/history/${id}`;
 
     return this.post<unknown, ObjectResponse<MasterContract>>(url, null);
   }
 
-  public async createClonedDraftFromTemplate(id: number): Promise<AxiosObjectResponse<MasterContract>> {
-    const url = `/action/contract/history/clone/${id}`;
+  public async cloneDraftFromTemplate(id: number): Promise<AxiosObjectResponse<MasterContract>> {
+    const url = `/action/contract/history/${id}/clone`;
 
     return this.post<unknown, ObjectResponse<MasterContract>>(url, null);
   }
@@ -93,17 +81,10 @@ export default class ContractApi extends Api {
     return this.delete(url);
   }
 
-  public async findDrafts(
-    pageRequest: PageRequest, sorting: Sorting<EnumMasterContractSortField>[]
-  ): Promise<AxiosPageResponse<MasterContract>> {
-    const { page, size } = pageRequest;
-    const { id: field, order } = sorting[0];
+  public async setDefaultContract(id: number): Promise<AxiosObjectResponse<MasterContract>> {
+    const url = `/action/contract/history/${id}/set-default`;
 
-    const url = `/action/contract/drafts?page=${page}&size=${size}&orderBy=${field}&order=${order}`;
-
-    var response = this.get<ObjectResponse<PageResult<MasterContract>>>(url);
-
-    return response;
+    return this.post<unknown, ObjectResponse<MasterContract>>(url, null);
   }
 
   public async findDraft(id: number): Promise<AxiosObjectResponse<MasterContract>> {
@@ -113,7 +94,7 @@ export default class ContractApi extends Api {
   }
 
   public async downloadPublished(id: number, title: string): Promise<SimpleResponse> {
-    const url = `/action/contract/print/${id}`;
+    const url = `/action/contract/history/${id}/print`;
 
     return this.get<Blob>(url, {
       responseType: 'blob',

@@ -1,5 +1,5 @@
-import { PageResult, Sorting, ObjectResponse, SimpleResponse } from 'model/response';
-import { EnumMasterContractSortField, MasterContract, MasterContractHistory, MasterContractQuery } from 'model/contract';
+import { Sorting, ObjectResponse, SimpleResponse } from 'model/response';
+import { EnumMasterContractSortField, MasterContract, MasterContractHistory, MasterContractHistoryResult, MasterContractQuery } from 'model/contract';
 
 import {
   ContractActions,
@@ -70,7 +70,7 @@ export function searchFailure(response: SimpleResponse): ContractActions {
   };
 }
 
-export function searchComplete(result: PageResult<MasterContractHistory>): ContractActions {
+export function searchComplete(result: MasterContractHistoryResult): ContractActions {
   return {
     type: SEARCH_COMPLETE,
     result,

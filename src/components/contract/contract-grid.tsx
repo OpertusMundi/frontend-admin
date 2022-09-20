@@ -10,13 +10,14 @@ import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-in
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
+import Alert from '@material-ui/lab/Alert';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 // Icons
 import Icon from '@mdi/react';
-import { mdiCommentAlertOutline, mdiTrashCan, mdiUndoVariant } from '@mdi/js';
+import { mdiCommentAlertOutline, mdiPinOutline, mdiTrashCan, mdiUndoVariant } from '@mdi/js';
 
 // Services
 import message from 'service/message';
@@ -42,6 +43,9 @@ import ContractFilters from './grid/filter';
 import ContractTable from './grid/table';
 
 const styles = (theme: Theme) => createStyles({
+  alert: {
+    margin: theme.spacing(1),
+  },
   container: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -86,12 +90,13 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
     this.api = new ContractApi();
 
     this.confirmDraftDelete = this.confirmDraftDelete.bind(this);
-    this.createDraftFromTemplate = this.createDraftFromTemplate.bind(this);
-    this.createClonedDraftFromTemplate = this.createClonedDraftFromTemplate.bind(this);
+    this.createDraftForTemplate = this.createDraftForTemplate.bind(this);
+    this.cloneDraftFromTemplate = this.cloneDraftFromTemplate.bind(this);
     this.deactivateTemplate = this.deactivateTemplate.bind(this);
     this.editDraft = this.editDraft.bind(this);
     this.publishDraft = this.publishDraft.bind(this);
     this.downloadPublishedTemplate = this.downloadPublishedTemplate.bind(this);
+    this.setDefaultContract = this.setDefaultContract.bind(this);
   }
 
   state: ContractManagerState = {
@@ -136,8 +141,8 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
     });
   }
 
-  createDraftFromTemplate(contract: MasterContractHistory): void {
-    this.api.createDraftFromTemplate(contract.id)
+  createDraftForTemplate(contract: MasterContractHistory): void {
+    this.api.createDraftForTemplate(contract.id)
       .then((response) => {
         if (response.data.success) {
           const url = buildPath(DynamicRoutes.ContractUpdate, [response.data.result!.id.toString()]);
@@ -153,14 +158,37 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
       });
   }
 
-  createClonedDraftFromTemplate(contract: MasterContractHistory): void {
-    this.api.createClonedDraftFromTemplate(contract.id)
+  cloneDraftFromTemplate(contract: MasterContractHistory): void {
+    this.api.cloneDraftFromTemplate(contract.id)
       .then((response) => {
         if (response.data.success) {
           const url = buildPath(DynamicRoutes.ContractUpdate, [response.data.result!.id.toString()]);
           this.props.navigate(url);
         } else {
           const messages = localizeErrorCodes(this.props.intl, response.data, true);
+          message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+        }
+      })
+      .catch((err: AxiosError<SimpleResponse>) => {
+        const messages = localizeErrorCodes(this.props.intl, err.response?.data, true);
+        message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
+      });
+  }
+
+  setDefaultContract(contract: MasterContractHistory): void {
+    this.api.setDefaultContract(contract.id)
+      .then((response) => {
+        if (response.data.success) {
+          message.infoHtml(
+            <FormattedMessage
+              id={'contract.message.default-contract-set'}
+            />,
+            () => (<Icon path={mdiPinOutline} size="3rem" />),
+          );
+
+          return this.find();
+        } else {
+          const messages = response.data.messages.map((m, index) => <p key={`error-${index}`}> {m.description} </p>);
           message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />), 10000);
         }
       })
@@ -290,7 +318,7 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Typography variant="caption" display="block" gutterBottom className={classes.caption}>
-                    <FormattedMessage id="contract.last-update" />
+                    <FormattedMessage id="contract.message.last-update" />
                     <FormattedTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
                   </Typography>
                 </Grid>
@@ -298,21 +326,28 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
             }
           </Paper>
 
+          {result && !result.defaultContract &&
+            <Grid item xs={12}>
+              <Alert className={classes.alert} severity="warning">Default contract is not set</Alert>
+            </Grid>
+          }
+
           <Paper className={classes.paperTable}>
             <ContractTable
               addToSelection={addToSelection}
-              createDraftFromTemplate={this.createDraftFromTemplate}
+              createDraftForTemplate={this.createDraftForTemplate}
               deactivateTemplate={this.deactivateTemplate}
               deleteDraft={this.confirmDraftDelete}
               editDraft={this.editDraft}
               find={find}
               publishDraft={this.publishDraft}
-              createClonedDraftFromTemplate={this.createClonedDraftFromTemplate}
+              cloneDraftFromTemplate={this.cloneDraftFromTemplate}
               downloadPublishedTemplate={this.downloadPublishedTemplate}
               setPager={setPager}
               setSorting={(sorting: Sorting<EnumMasterContractSortField>[]) => this.setSorting(sorting)}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
+              setDefaultContract={this.setDefaultContract}
               loading={loading}
               pagination={pagination}
               query={query}
