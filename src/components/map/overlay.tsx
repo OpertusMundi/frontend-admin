@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import OpenLayersMap from 'ol/Map';
-import Overlay from 'ol/Overlay';
+import Overlay, { Options as OverlayOptions } from 'ol/Overlay';
 
 interface ReactOverlayProps {
   autoPan: boolean;
@@ -47,15 +47,17 @@ class ReactOverlay extends React.Component<ReactOverlayProps> {
     const { autoPan, map = null, position } = this.props;
 
     if (map) {
-      this.overlay = new Overlay({
-        autoPan,
-        autoPanAnimation: {
-          duration: 250
-        },
+      const options: OverlayOptions = {
+        autoPan: autoPan ? {
+          animation: {
+            duration: 250,
+          },
+        } : undefined,
         element: this.element as HTMLElement,
         id: this.id,
         position,
-      });
+      };
+      this.overlay = new Overlay(options);
 
       map.addOverlay(this.overlay);
     }
@@ -88,7 +90,7 @@ class ReactOverlay extends React.Component<ReactOverlayProps> {
     const position = this.overlay?.getPosition();
 
     // NOTE: Although setPosition is declared with arguments (Coordinate|undefined), Typescript does not recognize the undefined option
-    this.overlay?.setPosition(undefined as unknown as number[]);
+    this.overlay?.setPosition(undefined);
 
     if (this.props.close) {
       this.props.close(position);

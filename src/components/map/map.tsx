@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { MapOptions } from 'ol/PluggableMap';
+import { MapOptions } from 'ol/Map';
 import { ViewOptions } from 'ol/View';
 import BaseEvent from 'ol/events/Event';
 import MapEvent from 'ol/MapEvent';
