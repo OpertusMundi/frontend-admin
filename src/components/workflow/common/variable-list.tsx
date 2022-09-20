@@ -196,11 +196,13 @@ class ProcessInstanceVariables extends React.Component<ProcessInstanceVariablesP
                       {typeof value !== 'boolean' && v.value &&
                         this.renderVariableValue(v)
                       }
-                      <ListItemSecondaryAction className={classes.secondaryAction}>
-                        <IconButton edge="end" aria-label="delete" onClick={() => this.copyValueToClipboard(v.value)}>
-                          <Icon path={mdiContentCopy} size="1.2rem" />
-                        </IconButton>
-                      </ListItemSecondaryAction>
+                      {typeof value !== 'boolean' && v.value &&
+                        <ListItemSecondaryAction className={classes.secondaryAction}>
+                          <IconButton edge="end" aria-label="delete" onClick={() => this.copyValueToClipboard(v.value)}>
+                            <Icon path={mdiContentCopy} size="1.2rem" />
+                          </IconButton>
+                        </ListItemSecondaryAction>
+                      }
                     </ListItem>
                   </div>
                 );
