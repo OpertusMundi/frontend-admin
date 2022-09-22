@@ -171,7 +171,7 @@ export interface CatalogueItemCommand extends BaseCatalogueItem {
   contractAnnexes?: ContractAnnex[];
   contractTemplateKey: string | null;
   contractTemplateType: EnumContractType;
-  ingested: boolean;
+  dataProfilingRequired: boolean;
   pricingModels: BasePricingModelCommand[];
   source: string;
 }
@@ -225,14 +225,14 @@ export interface AssetDraft {
   assetPublished: string;
   command: CatalogueItemCommand;
   createdOn: Moment;
-  status: EnumDraftStatus;
+  dataProfilingEnabled: boolean;
   helpdeskRejectionReason: string;
-  ingested: boolean;
   key: string;
   modifiedOn: Moment;
   providerRejectionReason: string;
   publisher: Publisher,
   source: string;
+  status: EnumDraftStatus;
   title: string;
   type: string;
   version: string;
