@@ -1,6 +1,8 @@
 import { Moment } from 'moment';
 import { MarketplaceAccount } from './account-marketplace';
 
+export const CONSUMER_REGISTRATION_SET_ERROR = "task-consumer-registration-set-error";
+export const PROVIDER_REGISTRATION_SET_ERROR = "task-provider-registration-set-error";
 export const PUBLISH_CATALOGUE_ASSET_SET_ERROR = "task-publish-catalogue-asset-set-error";
 export const PUBLISH_USER_SERVICE_SET_ERROR = "task-publish-user-service-set-error";
 
@@ -25,6 +27,8 @@ export enum EnumWorkflow {
 }
 
 export const SET_ERROR_TASKS = [
+  CONSUMER_REGISTRATION_SET_ERROR,
+  PROVIDER_REGISTRATION_SET_ERROR,
   PUBLISH_CATALOGUE_ASSET_SET_ERROR,
   PUBLISH_USER_SERVICE_SET_ERROR,
 ];
@@ -261,7 +265,7 @@ export interface CompleteTaskTaskCommand {
   taskName: string;
 }
 
-export interface SetPublishErrorTaskCommand extends CompleteTaskTaskCommand {
+export interface SetErrorTaskCommand extends CompleteTaskTaskCommand {
   message: string;
 }
 

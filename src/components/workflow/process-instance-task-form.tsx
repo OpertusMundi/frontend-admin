@@ -44,7 +44,14 @@ import { findOne } from 'store/process-instance-task/thunks'
 // Model
 import { ErrorPages } from 'model/routes';
 import { SimpleResponse } from 'model/response';
-import { CompleteTaskTaskCommand, ModificationCommand, PUBLISH_CATALOGUE_ASSET_SET_ERROR, PUBLISH_USER_SERVICE_SET_ERROR, } from 'model/bpm-process-instance';
+import {
+  CompleteTaskTaskCommand,
+  ModificationCommand,
+  CONSUMER_REGISTRATION_SET_ERROR,
+  PROVIDER_REGISTRATION_SET_ERROR,
+  PUBLISH_CATALOGUE_ASSET_SET_ERROR,
+  PUBLISH_USER_SERVICE_SET_ERROR,
+} from 'model/bpm-process-instance';
 import { MarketplaceAccount } from 'model/account-marketplace';
 
 // Service
@@ -291,6 +298,8 @@ class ProcessInstanceTask extends React.Component<ProcessInstanceTaskProps, Proc
     }
 
     switch (taskName) {
+      case CONSUMER_REGISTRATION_SET_ERROR:
+      case PROVIDER_REGISTRATION_SET_ERROR:
       case PUBLISH_CATALOGUE_ASSET_SET_ERROR:
       case PUBLISH_USER_SERVICE_SET_ERROR:
         return (

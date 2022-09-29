@@ -40,7 +40,7 @@ import {
   ActiveProcessInstanceDetails,
   CompleteTaskTaskCommand,
   ModificationCommand,
-  SetPublishErrorTaskCommand,
+  SetErrorTaskCommand,
 } from 'model/bpm-process-instance';
 
 // Components
@@ -166,7 +166,7 @@ class ReviewErrorTask extends React.Component<ReviewErrorTaskProps, ReviewErrorT
 
     switch (action.key) {
       case EnumDialogAction.Accept: {
-        const command: SetPublishErrorTaskCommand = {
+        const command: SetErrorTaskCommand = {
           taskName,
           message: providerMessage,
         };
