@@ -553,6 +553,8 @@
     },
     "process-instance": {
       "task": {
+        "task-consumer-registration-set-error":"Consumer Registration Error",
+        "task-provider-registration-set-error":"Provider Registration Error",
         "task-publish-catalogue-asset-set-error": "Publish Asset Error",
         "task-publish-user-service-set-error": "Publish User Service Error"
       }
