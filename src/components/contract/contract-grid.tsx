@@ -326,9 +326,14 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
             }
           </Paper>
 
-          {result && !result.defaultContract &&
+          {result && result.defaultContractCount === 0 &&
             <Grid item xs={12}>
-              <Alert className={classes.alert} severity="warning">Default contract is not set</Alert>
+              <Alert className={classes.alert} severity="warning">No default contract is set</Alert>
+            </Grid>
+          }
+          {result && result.defaultContractCount !== 0 &&
+            <Grid item xs={12}>
+              <Alert className={classes.alert} severity="info">{result.defaultContractCount} contracts assigned as default</Alert>
             </Grid>
           }
 

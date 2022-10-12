@@ -169,7 +169,7 @@ function contractColumns(props: ContractTableProps): Column<MasterContractHistor
               </i>
             </Tooltip>
           }
-          {row.status === EnumContractStatus.ACTIVE && result && !result.defaultContract &&
+          {row.status === EnumContractStatus.ACTIVE && result &&
             <Tooltip title={intl.formatMessage({ id: 'contract.tooltip.set-default' })}>
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.SetDefault, rowIndex, column, row) : null}

@@ -124,5 +124,5 @@ export interface MasterContractQuery {
 }
 
 export interface MasterContractHistoryResult extends PageResult<MasterContractHistory> {
-  defaultContract: boolean;
+  defaultContractCount: number;
 }
