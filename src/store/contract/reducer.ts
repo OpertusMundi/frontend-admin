@@ -31,6 +31,7 @@ import { Order } from 'model/response';
 const initialState: ContractManagerState = {
   loading: false,
   query: {
+    defaultContract: null,
     title: '',
     status: [],
   },

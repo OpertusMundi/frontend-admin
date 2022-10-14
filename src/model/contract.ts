@@ -119,6 +119,7 @@ export interface MasterContractHistory extends MasterContract {
 }
 
 export interface MasterContractQuery {
+  defaultContract: boolean | null;
   status: EnumContractStatus[];
   title: string;
 }

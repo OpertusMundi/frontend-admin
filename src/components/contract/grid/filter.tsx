@@ -8,8 +8,12 @@ import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
 import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
+
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 // Icons
 import Icon from '@mdi/react';
@@ -17,7 +21,12 @@ import { mdiCommentAlertOutline } from '@mdi/js';
 
 // Model
 import { PageRequest, PageResult, Sorting, ObjectResponse } from 'model/response';
-import { EnumMasterContractSortField, MasterContractHistory, MasterContractQuery } from 'model/contract';
+import {
+  EnumContractStatus,
+  EnumMasterContractSortField,
+  MasterContractHistory,
+  MasterContractQuery,
+} from 'model/contract';
 
 // Services
 import message from 'service/message';
@@ -49,12 +58,22 @@ interface ContractFiltersProps extends WithStyles<typeof styles> {
 
 class ContractFilters extends React.Component<ContractFiltersProps> {
 
+  statusOptions: { value: EnumContractStatus, label: string }[];
+
   constructor(props: ContractFiltersProps) {
     super(props);
 
     this.clear = this.clear.bind(this);
     this.search = this.search.bind(this);
     this.create = this.create.bind(this);
+
+    this.statusOptions = [{
+      value: EnumContractStatus.DRAFT, label: 'Draft'
+    }, {
+      value: EnumContractStatus.ACTIVE, label: 'Active'
+    }, {
+      value: EnumContractStatus.INACTIVE, label: 'Inactive'
+    }];
   }
 
   find(): void {
@@ -87,7 +106,7 @@ class ContractFilters extends React.Component<ContractFiltersProps> {
     return (
       <form onSubmit={this.search} noValidate autoComplete="off">
         <Grid container spacing={3} justifyContent={'space-between'}>
-          <Grid item sm={4} xs={12}>
+          <Grid item sm={2} xs={12}>
             <TextField
               id="name"
               label={_t({ id: 'contract.filter.title' })}
@@ -99,7 +118,45 @@ class ContractFilters extends React.Component<ContractFiltersProps> {
             />
           </Grid>
 
-          <Grid container item sm={8} xs={12} justifyContent={'flex-end'}>
+          <Grid item sm={5} xs={12} style={{ marginTop: 9 }}>
+            <Autocomplete
+              multiple
+              options={this.statusOptions}
+              getOptionLabel={(option) => option.label}
+              value={this.statusOptions.filter(o => query.status.includes(o.value)) || null}
+              onChange={(event, value) => {
+                setFilter({ status: value.map(v => v.value) });
+                this.find();
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="standard"
+                  label={_t({ id: 'contract.filter.status' })}
+                />
+              )}
+            />
+          </Grid>
+
+          <Grid item sm={2} xs={12} style={{ alignSelf: 'flex-end' }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="defaultContract"
+                  checked={query.defaultContract === true}
+                  indeterminate={query.defaultContract === null}
+                  onChange={e => {
+                    setFilter({ defaultContract: query.defaultContract === false ? null : e.target.checked });
+                    this.find();
+                  }}
+                  color="primary"
+                />
+              }
+              label={_t({ id: 'contract.filter.default-contract' })}
+            />
+          </Grid>
+
+          <Grid container item sm={3} xs={12} justifyContent={'flex-end'}>
             <Button
               type="submit"
               variant="contained"
