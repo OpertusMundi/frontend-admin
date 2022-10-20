@@ -111,6 +111,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
     this.setState({
       accountDeleted: false,
       confirmDelete: true,
+      contractsDeleted: false,
       fileSystemDeleted: false,
       record,
     });
@@ -118,7 +119,10 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
 
   hideConfirmDeleteDialog(): void {
     this.setState({
+      accountDeleted: false,
       confirmDelete: false,
+      contractsDeleted: false,
+      fileSystemDeleted: false,
       record: null,
     });
   }
