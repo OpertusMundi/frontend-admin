@@ -1,3 +1,5 @@
+import moment from 'utils/moment-localized';
+
 import React from 'react';
 
 // State, routing and localization
@@ -13,31 +15,59 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
+import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+
+// Handle Moment dates for material UI pickers
+import DateFnsUtils from '@date-io/moment';
+
 // Icons
 import Icon from '@mdi/react';
-import { mdiCommentAlertOutline } from '@mdi/js';
+import {
+  mdiCalendarCheckOutline,
+  mdiCalendarRemoveOutline,
+  mdiCalendarStartOutline,
+  mdiCheck,
+  mdiCommentAlertOutline,
+  mdiUndoVariant,
+} from '@mdi/js';
 
 // Services
 import message from 'service/message';
 
 // Store
 import { RootState } from 'store';
-import { resetFilter, setFilter, setPager, setSorting } from 'store/subscription-billing/actions';
-import { find } from 'store/subscription-billing/thunks';
+import {
+  resetFilter,
+  setFilter,
+  setPager,
+  setSorting,
+  toggleBillingTaskForm,
+  setBillingTaskParams,
+} from 'store/subscription-billing/actions';
+import { find, create } from 'store/subscription-billing/thunks';
 
 // Model
+import { Message } from 'model/message';
+import { FieldMapperFunc, localizeErrorCodes } from 'utils/error';
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
 import { EnumSubscriptionBillingBatchSortField } from 'model/subscription-billing';
 
 // Components
+import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
+
 import SubscriptionBillingFilters from './grid/filter';
 import SubscriptionBillingTable from './grid/table';
 
 const styles = (theme: Theme) => createStyles({
-  container: {
+  caption: {
+    paddingLeft: 8,
+    fontSize: '0.7rem',
+  },
+  dialogHeader: {
     display: 'flex',
-    flexWrap: 'wrap',
+    alignItems: 'center',
   },
   paper: {
     padding: theme.spacing(1),
@@ -52,11 +82,21 @@ const styles = (theme: Theme) => createStyles({
     borderRadius: 0,
     overflowX: 'auto',
   },
-  caption: {
-    paddingLeft: 8,
-    fontSize: '0.7rem',
-  }
+  title: {
+    marginTop: theme.spacing(2),
+  },
 });
+
+const mapErrorCodeToText = (intl: IntlShape, message: Message, fieldMapper?: FieldMapperFunc) => {
+  switch (message.code) {
+    case 'PaymentMessageCode.QUOTATION_INTERVAL_MONTH':
+    case 'PaymentMessageCode.SUBSCRIPTION_BILLING_RUNNING':
+    case 'PaymentMessageCode.VALIDATION_ERROR':
+      return message.description;
+  }
+
+  return null;
+};
 
 interface SubscriptionBillingManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
   intl: IntlShape;
@@ -92,6 +132,57 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
   setSorting(sorting: Sorting<EnumSubscriptionBillingBatchSortField>[]): void {
     this.props.setSorting(sorting);
     this.find();
+  }
+
+  createBillingTask(action: DialogAction): void {
+    switch (action.key) {
+      case EnumDialogAction.Yes: {
+        const { year, month } = this.props.configureTask!;
+        if (year === null || month === null) {
+          return;
+        }
+
+        this.props.create(year, month)
+          .then((response) => {
+            if (response === null) {
+              return;
+            }
+            const { success } = response;
+            if (success) {
+              message.infoHtml(
+                <FormattedMessage
+                  id={'billing.subscription-billing-batch.message.create-success'}
+                  values={{ interval: (<b>{month + 1}{' / '}{year}</b>) }}
+                />,
+                () => (<Icon path={mdiCalendarCheckOutline} size="3rem" />),
+              );
+
+              this.find();
+
+              this.props.toggleBillingTaskForm(false);
+            } else {
+              const messages = localizeErrorCodes(
+                this.props.intl, response, true, undefined, mapErrorCodeToText
+              );
+              message.errorHtml(messages, () => (<Icon path={mdiCalendarRemoveOutline} size="3rem" />));
+            }
+          })
+          .catch((err) => {
+            message.errorHtml("Failed to create subscription billing task", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+          })
+          .finally(() => {
+            this.setState({
+              processing: false,
+            });
+          });
+        break;
+      }
+
+      default:
+        this.props.toggleBillingTaskForm(false);
+        break;
+    }
+
   }
 
   render() {
@@ -141,8 +232,68 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
               viewProcessInstance={this.viewProcessInstance}
             />
           </Paper>
-        </div >
+        </div>
+        {this.renderCreateBillingTaskForm()}
       </>
+    );
+  }
+
+  renderCreateBillingTaskForm() {
+    const _t = this.props.intl.formatMessage;
+    const { classes, configureTask } = this.props;
+
+    if (!configureTask) {
+      return null;
+    }
+
+    const { year, month } = configureTask;
+    const today = moment();
+    const todayYear = today.year();
+    const todayMonth = today.month();
+    const maxYear = todayMonth === 0 ? todayYear - 1 : todayYear;
+    const maxMonth = todayMonth === 0 ? 11 : todayMonth - 1;
+
+    return (
+      <Dialog
+        actions={[
+          {
+            key: EnumDialogAction.Yes,
+            label: _t({ id: 'view.shared.action.yes' }),
+            iconClass: () => (<Icon path={mdiCheck} size="1.5rem" />),
+            color: 'primary',
+          }, {
+            key: EnumDialogAction.No,
+            label: _t({ id: 'view.shared.action.no' }),
+            iconClass: () => (<Icon path={mdiUndoVariant} size="1.5rem" />)
+          }
+        ]}
+        handleClose={() => this.props.toggleBillingTaskForm(false)}
+        handleAction={(action) => this.createBillingTask(action)}
+        header={
+          <div className={classes.dialogHeader}>
+            <Icon path={mdiCalendarStartOutline} size="1.5rem" style={{ marginRight: 16 }} />
+            <FormattedMessage id="billing.subscription-billing-batch.dialog.title" />
+          </div>
+        }
+        open={configureTask !== null}
+      >
+        <MuiPickersUtilsProvider libInstance={moment} utils={DateFnsUtils}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <DatePicker
+                views={["year", "month"]}
+                label="Year and Month"
+                minDate={moment('2020-01-01')}
+                maxDate={moment([maxYear, maxMonth, 1])}
+                value={year === null || month === null ? moment([maxYear, maxMonth, 1]) : moment([year, month, 1])}
+                onChange={(date: MaterialUiPickersDate): void => {
+                  this.props.setBillingTaskParams(date?.year() || maxYear, date?.month() ?? maxMonth);
+                }}
+              />
+            </Grid>
+          </Grid>
+        </MuiPickersUtilsProvider>
+      </Dialog>
     );
   }
 
@@ -150,15 +301,19 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
 
 const mapState = (state: RootState) => ({
   config: state.config,
+  configureTask: state.billing.subscriptionBilling.configureTask,
   explorer: state.billing.subscriptionBilling,
 });
 
 const mapDispatch = {
   find: (pageRequest?: PageRequest, sorting?: Sorting<EnumSubscriptionBillingBatchSortField>[]) => find(pageRequest, sorting),
+  create: (year: number, month: number) => create(year, month),
   resetFilter,
+  setBillingTaskParams,
   setFilter,
   setPager,
   setSorting,
+  toggleBillingTaskForm,
 };
 
 const connector = connect(

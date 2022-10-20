@@ -20,12 +20,15 @@ import {
   LOAD_RECORD_FAILURE,
   SubscriptionBillingBatchActions,
   SubscriptionBillingBatchManagerState,
+  TOGGLE_BILLING_TASK_FORM,
+  SET_BILLING_TASK_PARAMS,
 } from 'store/subscription-billing/types';
 import {
   EnumSubscriptionBillingBatchSortField,
 } from 'model/subscription-billing';
 
 const initialState: SubscriptionBillingBatchManagerState = {
+  configureTask: null,
   lastUpdated: null,
   loading: false,
   pagination: {
@@ -141,6 +144,25 @@ export function subscriptionBillingReducer(
       return {
         ...state,
         record: action.record,
+      };
+
+    case TOGGLE_BILLING_TASK_FORM:
+      const today = moment();
+      return {
+        ...state,
+        configureTask: action.show ? {
+          year: today.month() === 0 ? today.year() - 1 : today.year(),
+          month: today.month() === 0 ? 11 : today.month() - 1,
+        } : null,
+      };
+
+    case SET_BILLING_TASK_PARAMS:
+      return {
+        ...state,
+        configureTask: {
+          year: action.year,
+          month: action.month,
+        }
       };
 
     default:

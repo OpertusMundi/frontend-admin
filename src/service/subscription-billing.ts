@@ -37,8 +37,8 @@ export default class SubscriptionBillingApi extends Api {
     return this.get<ObjectResponse<SubscriptionBillingBatch>>(url);
   }
 
-  public async createPayOut(year: number, month: number, quotationOnly = false): Promise<AxiosObjectResponse<SubscriptionBillingBatch>> {
-    const url = `/action/subscription-billing/quotations/providers`;
+  public async create(year: number, month: number, quotationOnly = false): Promise<AxiosObjectResponse<SubscriptionBillingBatch>> {
+    const url = `/action/subscription-billing/quotations`;
 
     const command: SubscriptionBillingBatchCommand = {
       year,

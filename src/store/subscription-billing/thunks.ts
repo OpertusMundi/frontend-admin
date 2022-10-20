@@ -4,15 +4,24 @@ import { ThunkAction } from 'redux-thunk'
 import { RootState } from 'store';
 import { SubscriptionBillingBatchActions } from './types';
 import {
-  searchInit, searchComplete, searchFailure, setSorting, setPager,
-  loadRecordInit, loadRecordSuccess, loadRecordFailure,
+  searchInit,
+  searchComplete,
+  searchFailure,
+  setSorting,
+  setPager,
+  loadRecordInit,
+  loadRecordSuccess,
+  loadRecordFailure,
+  createBillingTaskInit,
+  createBillingTaskSuccess,
+  createBillingTaskFailure,
 } from './actions';
 
 // Services
 import SubscriptionBillingApi from 'service/subscription-billing';
 
 // Model
-import { PageRequest, Sorting, PageResult } from 'model/response';
+import { PageRequest, Sorting, PageResult, ObjectResponse } from 'model/response';
 import { EnumSubscriptionBillingBatchSortField, SubscriptionBillingBatch } from 'model/subscription-billing';
 
 // Helper thunk result type
@@ -74,4 +83,22 @@ export const findOne = (key: string): ThunkResult<SubscriptionBillingBatch | nul
 
   dispatch(loadRecordFailure());
   return null;
+}
+
+export const create = (
+  year: number, month: number
+): ThunkResult<ObjectResponse<SubscriptionBillingBatch> | null> => async (dispatch, getState) => {
+  dispatch(createBillingTaskInit(year, month));
+  const api = new SubscriptionBillingApi();
+
+  // Server-side month is 1-based
+  const response = await api.create(year, month + 1);
+
+  if (response.data.success) {
+    dispatch(createBillingTaskSuccess(year, month, response.data));
+    return response.data;
+  }
+
+  dispatch(createBillingTaskFailure(year, month, response.data));
+  return response.data;
 }

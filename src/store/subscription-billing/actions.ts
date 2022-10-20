@@ -1,4 +1,4 @@
-import { PageResult, Sorting } from 'model/response';
+import { ObjectResponse, PageResult, Sorting } from 'model/response';
 
 import {
   SubscriptionBillingBatchActions,
@@ -13,6 +13,11 @@ import {
   LOAD_RECORD_INIT,
   LOAD_RECORD_SUCCESS,
   LOAD_RECORD_FAILURE,
+  TOGGLE_BILLING_TASK_FORM,
+  SET_BILLING_TASK_PARAMS,
+  CREATE_BILLING_TASK_INIT,
+  CREATE_BILLING_TASK_SUCCESS,
+  CREATE_BILLING_TASK_FAILURE
 } from './types';
 import {
   EnumSubscriptionBillingBatchSortField,
@@ -92,5 +97,50 @@ export function loadRecordSuccess(record: SubscriptionBillingBatch): Subscriptio
 export function loadRecordFailure(): SubscriptionBillingBatchActions {
   return {
     type: LOAD_RECORD_FAILURE,
+  };
+}
+
+export function toggleBillingTaskForm(show: boolean): SubscriptionBillingBatchActions {
+  return {
+    type: TOGGLE_BILLING_TASK_FORM,
+    show,
+  };
+}
+
+export function setBillingTaskParams(year: number, month: number): SubscriptionBillingBatchActions {
+  return {
+    type: SET_BILLING_TASK_PARAMS,
+    year,
+    month,
+  };
+}
+
+export function createBillingTaskInit(year: number, month: number): SubscriptionBillingBatchActions {
+  return {
+    type: CREATE_BILLING_TASK_INIT,
+    year,
+    month,
+  };
+}
+
+export function createBillingTaskSuccess(
+  year: number, month: number, response: ObjectResponse<SubscriptionBillingBatch>
+): SubscriptionBillingBatchActions {
+  return {
+    type: CREATE_BILLING_TASK_SUCCESS,
+    year,
+    month,
+    response,
+  };
+}
+
+export function createBillingTaskFailure(
+  year: number, month: number, response: ObjectResponse<SubscriptionBillingBatch | null> | null
+): SubscriptionBillingBatchActions {
+  return {
+    type: CREATE_BILLING_TASK_FAILURE,
+    year,
+    month,
+    response,
   };
 }

@@ -18,6 +18,8 @@ import PayInToolbar from 'components/payin/toolbar/payin-toolbar';
 import PayOutToolbar from 'components/payout/toolbar/payout-toolbar';
 import ProcessInstanceToolbar from 'components/workflow/toolbar/process-instance';
 import ProcessInstanceHistoryToolbar from 'components/workflow/toolbar/process-instance-history';
+import SubscriptionBillingToolbar from 'components/subscription-billing-batch/toolbar';
+
 /**
  * Icons
  */
@@ -297,7 +299,12 @@ export const routes: RouteRegistry = {
     description: 'Subscription Billing',
     title: 'links.subscription-billing-manager',
     defaultTitle: 'Subscription Billing',
-    links: defaultLinks
+    links: defaultLinks,
+    toolbarComponent: (route: Route): React.ReactNode => {
+      return (
+        <SubscriptionBillingToolbar route={route} />
+      );
+    }
   },
   [TransferManager]: {
     icon: (className?: string) => (<Icon path={mdiWalletOutline} size="1.5rem" className={className} />),
@@ -373,7 +380,7 @@ export const routes: RouteRegistry = {
     roles: [EnumRole.ADMIN],
     links: [Dashboard, ProcessInstanceManager],
   },
-  [MaintenanceTasks] :{
+  [MaintenanceTasks]: {
     icon: (className?: string) => (<Icon path={mdiWrenchClockOutline} size="1.5rem" className={className} />),
     description: 'System Maintenance Tasks',
     title: 'links.maintenance-tasks',
