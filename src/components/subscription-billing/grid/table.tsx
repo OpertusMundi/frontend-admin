@@ -68,6 +68,12 @@ const styles = (theme: Theme) => createStyles({
   alightRight: {
     textAlign: 'right',
   },
+  assetDescription: {
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    maxWidth: 350,
+  },
   compositeLabel: {
     display: 'flex',
     alignItems: 'center',
@@ -247,7 +253,7 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
                 <Grid item xs={12}>
                   <Typography variant="body1">{row.subscription?.item!.title}</Typography>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.assetDescription} title={row.subscription?.item!.abstractText}>
                   <Typography variant="caption">{row.subscription?.item!.abstractText}</Typography>
                 </Grid>
               </Grid>

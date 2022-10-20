@@ -60,6 +60,12 @@ const getCustomerName = (subscription: AccountSubscription, type: EnumCustomerTy
 }
 
 const styles = (theme: Theme) => createStyles({
+  assetDescription: {
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    maxWidth: 350,
+  },
   compositeLabel: {
     display: 'flex',
     alignItems: 'center',
@@ -220,7 +226,7 @@ function subscriptionColumns(intl: IntlShape, props: AccountSubscriptionTablePro
                 <Grid item xs={12}>
                   <Typography variant="body1">{row.item!.title}</Typography>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.assetDescription} title={row.item!.abstractText}>
                   <Typography variant="caption">{row.item!.abstractText}</Typography>
                 </Grid>
               </Grid>
