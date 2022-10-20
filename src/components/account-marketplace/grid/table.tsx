@@ -69,38 +69,34 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccountSumm
               </i>
             </Tooltip>
           }
-          {row.type === EnumAccountType.OPERTUSMUNDI &&
-            <>
-              {(row.consumer || row.provider) &&
-                <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.kyc-refresh' })}>
-                  <i
-                    onClick={() => handleAction ? handleAction(EnumAction.KycRefresh, rowIndex, column, row) : null}
-                  >
-                    <Icon path={mdiShieldRefreshOutline} className={classes.rowIconAction} />
-                  </i>
-                </Tooltip>
-              }
-              {row.roles.includes(EnumMarketplaceRole.ROLE_TESTER) &&
-                <Tooltip title={intl.formatMessage({
-                  id: row.activeTask === EnumAccountActiveTask.NONE
-                    ? 'account.marketplace.tooltip.delete-execute'
-                    : 'account.marketplace.tooltip.delete-processing'
-                })}>
-                  <i
-                    onClick={() => handleAction && row.activeTask === EnumAccountActiveTask.NONE
-                      ? handleAction(EnumAction.DeleteAllUserData, rowIndex, column, row)
-                      : null
-                    }
-                  >
-                    <Icon
-                      path={row.activeTask === EnumAccountActiveTask.NONE ? mdiTrashCanOutline : mdiCogOutline}
-                      className={row.activeTask === EnumAccountActiveTask.NONE ? classes.rowIconAction : classes.rowIcon}
-                      spin={row.activeTask !== EnumAccountActiveTask.NONE}
-                    />
-                  </i>
-                </Tooltip>
-              }
-            </>
+          {row.type === EnumAccountType.OPERTUSMUNDI && (row.consumer || row.provider) &&
+            <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.kyc-refresh' })}>
+              <i
+                onClick={() => handleAction ? handleAction(EnumAction.KycRefresh, rowIndex, column, row) : null}
+              >
+                <Icon path={mdiShieldRefreshOutline} className={classes.rowIconAction} />
+              </i>
+            </Tooltip>
+          }
+          {row.roles.includes(EnumMarketplaceRole.ROLE_TESTER) &&
+            <Tooltip title={intl.formatMessage({
+              id: row.activeTask === EnumAccountActiveTask.NONE
+                ? 'account.marketplace.tooltip.delete-execute'
+                : 'account.marketplace.tooltip.delete-processing'
+            })}>
+              <i
+                onClick={() => handleAction && row.activeTask === EnumAccountActiveTask.NONE
+                  ? handleAction(EnumAction.DeleteAllUserData, rowIndex, column, row)
+                  : null
+                }
+              >
+                <Icon
+                  path={row.activeTask === EnumAccountActiveTask.NONE ? mdiTrashCanOutline : mdiCogOutline}
+                  className={row.activeTask === EnumAccountActiveTask.NONE ? classes.rowIconAction : classes.rowIcon}
+                  spin={row.activeTask !== EnumAccountActiveTask.NONE}
+                />
+              </i>
+            </Tooltip>
           }
         </div>
       ),
@@ -248,7 +244,7 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccountSumm
         row: MarketplaceAccountSummary,
         handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => (
-        row.type !== EnumAccountType.VENDOR && row.activeTask === EnumAccountActiveTask.NONE
+        row.activeTask === EnumAccountActiveTask.NONE
           ? <Switch
             checked={row.roles.includes(EnumMarketplaceRole.ROLE_TESTER)}
             onChange={() => handleAction && handleAction(EnumAction.ToggleTester, rowIndex, column, row)}
