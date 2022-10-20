@@ -345,6 +345,9 @@
       }
     },
     "subscription-billing-batch": {
+      "dialog": {
+        "title": "Create Subscription Billing Task"
+      },
       "filter": {
         "status": "Status"
       },
@@ -357,6 +360,9 @@
         "total-price": "Total"
       },
       "last-update": "Last updated: ",
+      "message": {
+        "create-success": "Subscription billing task has started successfully for month {interval}"
+      },
       "tooltip": {
         "view-process-instance": "View process instance"
       }
@@ -507,10 +513,8 @@
       "FIXED": "Fixed price. {years} years of updates included.",
       "FIXED_PER_ROWS": "{rows} rows included.",
       "FIXED_FOR_POPULATION": "{population}% of the population is covered.",
-      "PER_CALL_WITH_PREPAID": "Per service call. Selected tier: {count} rows for {discount} discount",
-      "PER_CALL_WITH_BLOCK_RATE": "Per service call with block rate",
-      "PER_ROW_WITH_PREPAID": "Per service data row. Selected tier: {count} rows for {discount} discount",
-      "PER_ROW_WITH_BLOCK_RATE": "Per service data row with block rate",
+      "PER_CALL": "Per service call. Selected tier: {count} rows for {discount} discount",
+      "PER_ROW": "Per service data row. Selected tier: {count} rows for {discount} discount",
       "SENTINEL_HUB_SUBSCRIPTION": "Sentinel Hub subscription ({frequency})",
       "SENTINEL_HUB_IMAGES": "Sentinel Hub images"
     },
