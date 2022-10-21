@@ -1,4 +1,4 @@
-import React, { lazy } from 'react';
+import React, { lazy, Suspense } from 'react';
 
 import { connect, ConnectedProps } from 'react-redux';
 import { Route, Routes, Navigate } from 'react-router-dom';
@@ -181,12 +181,14 @@ class ContentRoot extends React.Component<PropsFromRedux> {
           icon={false}
         />
         {sendMessageContact &&
-          <MessageDialogComponent
-            close={() => this.closeSendMessageDialog()}
-            contact={sendMessageContact}
-            defaultSubject={sendMessageSubject}
-            open={true}
-          />
+          <Suspense>
+            <MessageDialogComponent
+              close={() => this.closeSendMessageDialog()}
+              contact={sendMessageContact}
+              defaultSubject={sendMessageSubject}
+              open={true}
+            />
+          </Suspense>
         }
       </div>
     );
