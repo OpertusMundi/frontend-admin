@@ -87,7 +87,7 @@ const mapErrorCodeToText = (intl: IntlShape, message: Message, fieldMapper?: Fie
 
   }
 
-  return null;
+  return message?.description || null;
 };
 
 export const localizeErrorCodes = (
