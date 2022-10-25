@@ -33,12 +33,13 @@ export interface ApplicationConfiguration {
   authProviders: EnumAuthProvider[];
   bingMaps?: BingMapsConfiguration;
   clientId?: string;
+  contractIcons?: ContractIcon[];
   externalProviders?: ExternalDataProvider[];
   map?: MapConfiguration;
   marketplaceUrl: string;
   osm?: OsmConfiguration;
   processDefinitions?: ProcessDefinition[];
-  contractIcons?: ContractIcon[];
+  quotationMinOffset?: number;
 }
 
 export enum EnumService {

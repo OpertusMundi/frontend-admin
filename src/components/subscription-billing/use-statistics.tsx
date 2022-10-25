@@ -69,7 +69,7 @@ class UseStatistics extends React.Component<UseStatisticsProps> {
       case EnumPricingModel.PER_CALL:
       case EnumPricingModel.PER_ROW:
         const price = model.price;
-        const blocks = model.discountRates;
+        const blocks = model.discountRates || [];
 
         let callsLeft = record.totalCalls - record.skuTotalCalls;
 

@@ -5,7 +5,7 @@ import React from 'react';
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
 import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
-import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
+import { FormattedDate, FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -92,6 +92,7 @@ const mapErrorCodeToText = (intl: IntlShape, message: Message, fieldMapper?: Fie
     case 'PaymentMessageCode.QUOTATION_INTERVAL_MONTH':
     case 'PaymentMessageCode.SUBSCRIPTION_BILLING_RUNNING':
     case 'PaymentMessageCode.VALIDATION_ERROR':
+    case 'PaymentMessageCode.USE_STATS_NOT_READY':
       return message.description;
   }
 
@@ -240,18 +241,20 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
 
   renderCreateBillingTaskForm() {
     const _t = this.props.intl.formatMessage;
-    const { classes, configureTask } = this.props;
+    const { classes, config: { quotationMinOffset = 0 }, configureTask } = this.props;
 
     if (!configureTask) {
       return null;
     }
 
-    const { year, month } = configureTask;
     const today = moment();
     const todayYear = today.year();
     const todayMonth = today.month();
     const maxYear = todayMonth === 0 ? todayYear - 1 : todayYear;
     const maxMonth = todayMonth === 0 ? 11 : todayMonth - 1;
+    const year = configureTask.year || maxYear;
+    const month = configureTask.month || maxMonth;
+    const statsReadyDate = moment(month === 11 ? [year + 1, 0, quotationMinOffset] : [year, month + 1, quotationMinOffset]);
 
     return (
       <Dialog
@@ -285,10 +288,16 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
                 label="Year and Month"
                 minDate={moment('2020-01-01')}
                 maxDate={moment([maxYear, maxMonth, 1])}
-                value={year === null || month === null ? moment([maxYear, maxMonth, 1]) : moment([year, month, 1])}
+                value={moment([year, month, 1])}
                 onChange={(date: MaterialUiPickersDate): void => {
                   this.props.setBillingTaskParams(date?.year() || maxYear, date?.month() ?? maxMonth);
                 }}
+                helperText={
+                  <span>
+                    <span>Subscription use statistics will be available after </span>
+                    <b><FormattedDate value={statsReadyDate.toDate()} day='numeric' month='numeric' year='numeric' /></b>
+                  </span>
+                }
               />
             </Grid>
           </Grid>
