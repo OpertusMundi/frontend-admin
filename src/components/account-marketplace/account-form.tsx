@@ -82,6 +82,7 @@ import AccountApi from 'service/account-marketplace';
 
 // Utilities
 import { FieldMapperFunc, localizeErrorCodes } from 'utils/error';
+import { getContactFromPayOut } from 'utils/chat';
 
 // Model
 import { buildPath, DynamicRoutes, StaticRoutes } from 'model/routes';
@@ -110,6 +111,7 @@ import {
   SubscriptionBilling,
   Order,
   PayInType,
+  PayOut,
 } from 'model/order';
 
 // Components
@@ -592,6 +594,11 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     return null;
   }
 
+  showSendPayOutMessageDialog(row: PayOut) {
+    const contact = getContactFromPayOut(row);
+    this.props.toggleSendMessageDialog(contact, `Payment`);
+  }
+
   renderAccountData() {
     const { account = null, classes } = this.props;
     const _t = this.props.intl.formatMessage;
@@ -865,6 +872,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
                   pagination={payouts.pagination}
                   query={payouts.query}
                   selected={[]}
+                  sendMessage={(row: PayOut) => this.showSendPayOutMessageDialog(row)}
                   setPager={this.props.setPayOutPager}
                   setSorting={(sorting: Sorting<EnumPayOutSortField>[]) => this.setPayOutSorting(sorting)}
                   result={payouts.items}

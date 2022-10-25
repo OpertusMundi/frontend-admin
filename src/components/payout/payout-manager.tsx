@@ -20,15 +20,27 @@ import { mdiCommentAlertOutline } from '@mdi/js';
 // Services
 import message from 'service/message';
 
+// Utils
+import { getContactFromPayOut } from 'utils/chat';
+
 // Store
 import { RootState } from 'store';
-import { addToSelection, removeFromSelection, resetFilter, resetSelection, setFilter, setPager, setSorting } from 'store/payout/actions';
+import {
+  addToSelection,
+  removeFromSelection,
+  resetFilter,
+  resetSelection,
+  setFilter,
+  setPager,
+  setSorting,
+} from 'store/payout/actions';
 import { find } from 'store/payout/thunks';
+import { toggleSendMessageDialog } from 'store/message/actions';
 
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
-import { EnumPayOutSortField } from 'model/order';
+import { EnumPayOutSortField, PayOut } from 'model/order';
 
 // Components
 import PayOutFilters from './grid/filter';
@@ -94,6 +106,11 @@ class PayOutManager extends React.Component<PayOutManagerProps> {
     this.find();
   }
 
+  showSendMessageDialog(row: PayOut) {
+    const contact = getContactFromPayOut(row);
+    this.props.toggleSendMessageDialog(contact, `Payout`);
+  }
+
   render() {
     const {
       addToSelection,
@@ -139,6 +156,7 @@ class PayOutManager extends React.Component<PayOutManagerProps> {
               query={query}
               resetSelection={resetSelection}
               selected={selected}
+              sendMessage={(row: PayOut) => this.showSendMessageDialog(row)}
               setPager={setPager}
               setSorting={(sorting: Sorting<EnumPayOutSortField>[]) => this.setSorting(sorting)}
               result={result}
@@ -167,6 +185,7 @@ const mapDispatch = {
   setFilter,
   setPager,
   setSorting,
+  toggleSendMessageDialog,
 };
 
 const connector = connect(

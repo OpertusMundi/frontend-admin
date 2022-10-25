@@ -18,6 +18,7 @@ import Icon from '@mdi/react';
 import {
   mdiContentCopy,
   mdiDatabaseCogOutline,
+  mdiMessageTextOutline,
 } from '@mdi/js';
 
 // Model
@@ -31,6 +32,7 @@ import { copyToClipboard } from 'utils/clipboard';
 
 enum EnumAction {
   CopyReferenceNumber = 'copy-bankwire-ref',
+  SendMessage = 'send-message',
   ViewProcessInstance = 'view-process-instance',
 };
 
@@ -159,6 +161,13 @@ function payoutColumns(intl: IntlShape, props: PayOutTableProps): Column<PayOut,
         rowIndex: number, column: Column<PayOut, EnumPayOutSortField>, row: PayOut, handleAction?: cellActionHandler<PayOut, EnumPayOutSortField>
       ): React.ReactNode => (
         <div className={classes.compositeLabelLeft}>
+          <Tooltip title={intl.formatMessage({ id: 'billing.order.tooltip.send-message' })}>
+            <i
+              onClick={() => handleAction ? handleAction(EnumAction.SendMessage, rowIndex, column, row) : null}
+            >
+              <Icon path={mdiMessageTextOutline} className={classes.rowIconAction} style={{ marginTop: 2 }} />
+            </i>
+          </Tooltip>
           {row.processInstance &&
             <Tooltip title={intl.formatMessage({ id: 'billing.order.tooltip.view-process-instance' })}>
               <i
@@ -301,6 +310,7 @@ interface PayOutTableProps extends WithStyles<typeof styles> {
     pageRequest?: PageRequest, sorting?: Sorting<EnumPayOutSortField>[]
   ) => Promise<PageResult<PayOut> | null>,
   removeFromSelection?: (rows: PayOut[]) => void,
+  sendMessage: (row: PayOut) => void;
   resetSelection?: () => void;
   setPager: (page: number, size: number) => void,
   setSorting: (sorting: Sorting<EnumPayOutSortField>[]) => void,
@@ -326,6 +336,10 @@ class PayOutTable extends React.Component<PayOutTableProps> {
           const value = row.bankwireRef;
 
           copyToClipboard(value);
+          break;
+
+        case EnumAction.SendMessage:
+          this.props.sendMessage(row);
           break;
 
         case EnumAction.ViewProcessInstance:
