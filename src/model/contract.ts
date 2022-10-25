@@ -126,4 +126,5 @@ export interface MasterContractQuery {
 
 export interface MasterContractHistoryResult extends PageResult<MasterContractHistory> {
   defaultContractCount: number;
+  operationPending: boolean;
 }

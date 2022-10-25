@@ -84,6 +84,8 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
 
   private api: ContractApi;
 
+  private refreshCountersInterval: number | null = null;
+
   constructor(props: ContractManagerProps) {
     super(props);
 
@@ -131,6 +133,17 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
 
   componentDidMount() {
     this.find();
+
+    this.refreshCountersInterval = window.setInterval(() => {
+      this.props.find();
+    }, 5 * 60 * 1000);
+  }
+
+  componentWillUnmount() {
+    if (this.refreshCountersInterval != null) {
+      clearInterval(this.refreshCountersInterval);
+      this.refreshCountersInterval = null;
+    }
   }
 
   find(): void {
@@ -328,12 +341,22 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
 
           {result && result.defaultContractCount === 0 &&
             <Grid item xs={12}>
-              <Alert className={classes.alert} severity="warning">No default contract is set</Alert>
+              <Alert className={classes.alert} severity="warning">
+                <span>No default contract is set</span>
+                {result.operationPending &&
+                  <span>. <b>An update operation is in progress ...</b></span>
+                }
+              </Alert>
             </Grid>
           }
           {result && result.defaultContractCount !== 0 &&
             <Grid item xs={12}>
-              <Alert className={classes.alert} severity="info">{result.defaultContractCount} contracts assigned as default</Alert>
+              <Alert className={classes.alert} severity="info">
+                <span>{result.defaultContractCount} contracts assigned as default</span>
+                {result.operationPending &&
+                  <span>. <b>An update operation is in progress ...</b></span>
+                }
+              </Alert>
             </Grid>
           }
 

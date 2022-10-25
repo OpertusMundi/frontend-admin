@@ -50,6 +50,9 @@ const styles = (theme: Theme) => createStyles({
     marginRight: 8,
     cursor: 'pointer',
   },
+  rowIconInactive: {
+    opacity: 0.5,
+  },
   link: {
     color: 'inherit',
   },
@@ -169,12 +172,15 @@ function contractColumns(props: ContractTableProps): Column<MasterContractHistor
               </i>
             </Tooltip>
           }
-          {row.status === EnumContractStatus.ACTIVE && result &&
+          {row.status === EnumContractStatus.ACTIVE && !row.defaultContract && result &&
             <Tooltip title={intl.formatMessage({ id: 'contract.tooltip.set-default' })}>
               <i
-                onClick={() => handleAction ? handleAction(EnumAction.SetDefault, rowIndex, column, row) : null}
+                onClick={() => handleAction && !result.operationPending
+                  ? handleAction(EnumAction.SetDefault, rowIndex, column, row)
+                  : null
+                }
               >
-                <Icon path={mdiPinOutline} className={classes.rowIcon} />
+                <Icon path={mdiPinOutline} className={result.operationPending ? classes.rowIconInactive : classes.rowIcon} />
               </i>
             </Tooltip>
           }
