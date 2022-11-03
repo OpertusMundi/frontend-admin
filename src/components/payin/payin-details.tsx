@@ -3,7 +3,7 @@ import React from 'react';
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
 import { useNavigate, useLocation, useParams, NavigateFunction, Location } from 'react-router-dom';
-import { FormattedMessage, FormattedTime, FormattedNumber, injectIntl, IntlShape } from 'react-intl';
+import { FormattedMessage, FormattedTime, FormattedNumber, injectIntl, IntlShape, FormattedDate } from 'react-intl';
 
 // Components
 import { Link } from 'react-router-dom';
@@ -54,7 +54,9 @@ import {
   CardDirectPayIn,
   Transfer,
   FreePayIn,
+  SubscriptionBilling,
 } from 'model/order';
+import { EnumPricingModel } from 'model/pricing-model';
 
 // Service
 import PayInApi from 'service/payin';
@@ -623,11 +625,89 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
           </Grid>
         </Grid>
         <Divider className={classes.divider} />
-      </div >
+      </div>
     ));
   }
 
-  renderPayInSubscriptionItem(index: number, item: SubscriptionBillingPayInItem) {
+  renderPayInSubscriptionItem(index: number, payInItem: SubscriptionBillingPayInItem) {
+    const { classes, config } = this.props;
+    const record = payInItem.subscriptionBilling;
+    const subscription = record.subscription!;
+
+    return (
+      <div key={`subscription-billing-${index}`}>
+        <Grid container>
+          <Grid item xs={3}>
+            <Typography variant="caption">Interval</Typography>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              <FormattedDate value={record.fromDate.toDate()} day='numeric' month='numeric' year='numeric' />
+              {' - '}
+              <FormattedDate value={record.toDate.toDate()} day='numeric' month='numeric' year='numeric' />
+            </Typography>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography variant="caption">Asset</Typography>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              <a className={classes.link} href={`${config.marketplaceUrl}/catalogue/${subscription.assetId}`} target="_blank" rel="noreferrer">
+                {`${subscription.assetTitle} - ${subscription.assetVersion}`}
+              </a>
+            </Typography>
+            <Typography variant="caption">
+              {this.renderUseStats(record)}
+            </Typography>
+          </Grid>
+          <Grid item xs={4}>
+            <Typography variant="caption">Provider</Typography>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [subscription.provider!.key])} className={classes.link}>
+                {(subscription.provider! as CustomerProfessional).name}
+              </Link>
+            </Typography>
+          </Grid>
+          <Grid container item xs={2} justifyContent={"flex-end"}>
+            <Typography variant="body2" className={classes.alignCenter}>
+              <FormattedNumber value={record.totalPrice} style={'currency'} currency={'EUR'} />
+            </Typography>
+          </Grid>
+        </Grid>
+        <Divider className={classes.divider} />
+      </div>
+    );
+  }
+
+  renderUseStats(record: SubscriptionBilling) {
+    const { pricingModel } = record;
+    switch (pricingModel.type) {
+      case EnumPricingModel.PER_CALL:
+        return (
+          <>
+            <span>Total calls <b>{record.totalCalls}</b></span>
+            {record.skuTotalCalls > 0 &&
+              <span>, SKU calls <b>{record.skuTotalCalls}</b></span>
+            }
+          </>
+        );
+
+      case EnumPricingModel.PER_ROW:
+        return (
+          <>
+            <span>Total rows <b>{record.totalRows}</b></span>
+            {record.skuTotalRows > 0 &&
+              <span>, SKU rows <b>{record.skuTotalRows}</b></span>
+            }
+          </>
+        );
+    }
+
     return null;
   }
 
@@ -705,12 +785,78 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
           </Grid>
         </Grid>
         <Divider className={classes.divider} />
-      </div >
+      </div>
     ));
   }
 
-  renderTransferSubscriptionItem(index: number, item: SubscriptionBillingPayInItem) {
-    return null;
+  renderTransferSubscriptionItem(index: number, payInItem: SubscriptionBillingPayInItem) {
+    const { classes, config } = this.props;
+    const record = payInItem.subscriptionBilling;
+    const subscription = record.subscription!;
+    const transfer = payInItem.transfer;
+
+    return (
+      <div key={`subscription-billing-transfer-${index}`}>
+        <Grid container>
+          <Grid item xs={2}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              <span className={classes.underline} onClick={() => this.showMangopayTransferPage(transfer!)}>{transfer?.providerId}</span>
+            </Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              {transfer
+                ? <FormattedTime value={transfer.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
+                : <span>-</span>
+              }
+            </Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              <a className={classes.link} href={`${config.marketplaceUrl}/catalogue/${subscription.assetId}`} target="_blank" rel="noreferrer">
+                {`${subscription.assetTitle} - ${subscription.assetVersion}`}
+              </a>
+            </Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [subscription.provider!.key])} className={classes.link}>
+                {(subscription.provider! as CustomerProfessional).name}
+              </Link>
+            </Typography>
+          </Grid>
+          <Grid container item xs={2} justifyContent={"flex-end"}>
+            <Typography variant="body2" className={classes.alignCenter}>
+              {transfer
+                ? <FormattedNumber value={transfer.fees} style={'currency'} currency={'EUR'} />
+                : <span>-</span>
+              }
+            </Typography>
+          </Grid>
+          <Grid container item xs={2} justifyContent={"flex-end"}>
+            <Typography variant="body2" className={classes.alignCenter}>
+              {transfer
+                ? <FormattedNumber value={transfer.creditedFunds} style={'currency'} currency={'EUR'} />
+                : <span>-</span>
+              }
+            </Typography>
+          </Grid>
+        </Grid>
+        <Divider className={classes.divider} />
+      </div>
+    );
   }
 
   renderPayInItems() {
@@ -721,7 +867,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     if (!payin) {
       return null;
     }
-
+    console.log(payin.items);
     return (
       <Card className={classes.card}>
         <CardHeader

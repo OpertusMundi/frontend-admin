@@ -7,8 +7,8 @@ import { EnumSubscriptionBillingBatchSortField, SubscriptionBillingBatch, Subscr
 // State
 export interface SubscriptionBillingBatchManagerState {
   configureTask: {
-    year: number | null,
-    month: number | null,
+    month: number | null;
+    year: number | null;
   } | null;
   lastUpdated: Moment | null;
   loading: boolean;

@@ -438,6 +438,14 @@ export interface AccountSubscription {
    */
   assetId: string;
   /**
+   * Asset title
+   */
+  assetTitle: string;
+  /**
+   * Asset version
+   */
+  assetVersion: string;
+  /**
    * Catalogue item
    */
   item?: CatalogueItem;

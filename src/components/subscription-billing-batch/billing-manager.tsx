@@ -65,6 +65,9 @@ const styles = (theme: Theme) => createStyles({
     paddingLeft: 8,
     fontSize: '0.7rem',
   },
+  red700: {
+    color: '#D32F2F',
+  },
   dialogHeader: {
     display: 'flex',
     alignItems: 'center',
@@ -107,6 +110,8 @@ interface SubscriptionBillingManagerProps extends PropsFromRedux, WithStyles<typ
 
 class SubscriptionBillingManager extends React.Component<SubscriptionBillingManagerProps> {
 
+  private refreshCountersInterval: number | null = null;
+
   constructor(props: SubscriptionBillingManagerProps) {
     super(props);
 
@@ -115,6 +120,17 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
 
   componentDidMount() {
     this.find();
+
+    this.refreshCountersInterval = window.setInterval(() => {
+      this.props.find();
+    }, 5 * 60 * 1000);
+  }
+
+  componentWillUnmount() {
+    if (this.refreshCountersInterval != null) {
+      clearInterval(this.refreshCountersInterval);
+      this.refreshCountersInterval = null;
+    }
   }
 
   find(): void {
@@ -136,6 +152,8 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
   }
 
   createBillingTask(action: DialogAction): void {
+    const _fm = this.props.intl.formatMessage;
+
     switch (action.key) {
       case EnumDialogAction.Yes: {
         const { year, month } = this.props.configureTask!;
@@ -153,7 +171,7 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
               message.infoHtml(
                 <FormattedMessage
                   id={'billing.subscription-billing-batch.message.create-success'}
-                  values={{ interval: (<b>{month + 1}{' / '}{year}</b>) }}
+                  values={{ interval: (<b>{_fm({ id: `enum.month.${month + 1}` })}{' '}{year}</b>) }}
                 />,
                 () => (<Icon path={mdiCalendarCheckOutline} size="3rem" />),
               );
@@ -241,7 +259,7 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
 
   renderCreateBillingTaskForm() {
     const _t = this.props.intl.formatMessage;
-    const { classes, config: { quotationMinOffset = 0 }, configureTask } = this.props;
+    const { classes, config: { quotationMinOffset = 0 }, configureTask, explorer: { loading } } = this.props;
 
     if (!configureTask) {
       return null;
@@ -253,8 +271,8 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
     const maxYear = todayMonth === 0 ? todayYear - 1 : todayYear;
     const maxMonth = todayMonth === 0 ? 11 : todayMonth - 1;
     const year = configureTask.year || maxYear;
-    const month = configureTask.month || maxMonth;
-    const statsReadyDate = moment(month === 11 ? [year + 1, 0, quotationMinOffset] : [year, month + 1, quotationMinOffset]);
+    const month = configureTask.month ?? maxMonth;
+    const statsReadyDate = moment(month === 11 ? [year + 1, 0, quotationMinOffset + 1] : [year, month + 1, quotationMinOffset + 1]);
 
     return (
       <Dialog
@@ -264,10 +282,12 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
             label: _t({ id: 'view.shared.action.yes' }),
             iconClass: () => (<Icon path={mdiCheck} size="1.5rem" />),
             color: 'primary',
+            disabled: loading
           }, {
             key: EnumDialogAction.No,
             label: _t({ id: 'view.shared.action.no' }),
-            iconClass: () => (<Icon path={mdiUndoVariant} size="1.5rem" />)
+            iconClass: () => (<Icon path={mdiUndoVariant} size="1.5rem" />),
+            disabled: loading
           }
         ]}
         handleClose={() => this.props.toggleBillingTaskForm(false)}
@@ -293,8 +313,8 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
                   this.props.setBillingTaskParams(date?.year() || maxYear, date?.month() ?? maxMonth);
                 }}
                 helperText={
-                  <span>
-                    <span>Subscription use statistics will be available after </span>
+                  <span className={statsReadyDate.isAfter(today) ? classes.red700 : ''}>
+                    <span>Subscription use statistics will be available on </span>
                     <b><FormattedDate value={statsReadyDate.toDate()} day='numeric' month='numeric' year='numeric' /></b>
                   </span>
                 }

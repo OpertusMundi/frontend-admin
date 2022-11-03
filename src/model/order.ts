@@ -185,7 +185,7 @@ export interface SubscriptionBilling {
   /**
    * Subscription billing payin
    */
-  payin?: PayInType;
+  payIn?: PayInType;
   /**
    * Pricing model used for the quotation
    */

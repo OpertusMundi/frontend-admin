@@ -144,7 +144,7 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
               </i>
             </Tooltip>
           }
-          {row?.payin &&
+          {row?.payIn &&
             <Tooltip title={intl.formatMessage({ id: 'billing.subscription-billing.tooltip.view-payin' })}>
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.ViewPayIn, rowIndex, column, row) : null}
@@ -423,8 +423,8 @@ class SubscriptionBillingTable extends React.Component<SubscriptionBillingTableP
         }
 
         case EnumAction.ViewPayIn:
-          if (row.payin) {
-            this.props.viewPayIn(row.payin.key);
+          if (row.payIn) {
+            this.props.viewPayIn(row.payIn.key);
           }
           break;
 

@@ -22,6 +22,9 @@ import {
   SubscriptionBillingBatchManagerState,
   TOGGLE_BILLING_TASK_FORM,
   SET_BILLING_TASK_PARAMS,
+  CREATE_BILLING_TASK_INIT,
+  CREATE_BILLING_TASK_FAILURE,
+  CREATE_BILLING_TASK_SUCCESS,
 } from 'store/subscription-billing/types';
 import {
   EnumSubscriptionBillingBatchSortField,
@@ -163,6 +166,19 @@ export function subscriptionBillingReducer(
           year: action.year,
           month: action.month,
         }
+      };
+
+    case CREATE_BILLING_TASK_INIT:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case CREATE_BILLING_TASK_SUCCESS:
+    case CREATE_BILLING_TASK_FAILURE:
+      return {
+        ...state,
+        loading: false,
       };
 
     default:
