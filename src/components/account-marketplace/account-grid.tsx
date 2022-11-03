@@ -311,7 +311,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
               view={(key: string) => this.viewRow(key)}
             />
           </Paper>
-        </div >
+        </div>
         {this.renderConfirmDeleteDialog()}
       </>
     );

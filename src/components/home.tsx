@@ -851,7 +851,7 @@ class Home extends React.Component<HomeProps, HomeState> {
         >
           <MapViewerConfigComponent />
         </Drawer>
-      </div >
+      </div>
     );
   }
 }

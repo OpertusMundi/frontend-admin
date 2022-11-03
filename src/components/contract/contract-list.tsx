@@ -376,7 +376,7 @@ class ContractListComponent extends React.Component<ContractListComponentProps, 
         </Button>
         {contracts}
         {this.renderConfirm()}
-      </div >
+      </div>
     );
   }
 

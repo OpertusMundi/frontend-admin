@@ -238,7 +238,7 @@ class IncidentManager extends React.Component<IncidentManagerProps, IncidentMana
               loading={loading}
             />
           </Paper>
-        </div >
+        </div>
         {this.renderRetryTaskDialog()}
         <Drawer anchor={'top'} open={errorDetails} onClose={() => this.viewErrorDetails(null, false)}>
           {this.renderErrorDetails()}

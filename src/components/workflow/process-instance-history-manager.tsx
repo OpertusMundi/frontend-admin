@@ -222,7 +222,7 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
               loading={loading}
             />
           </Paper>
-        </div >
+        </div>
         {this.renderReviewDialog()}
       </>
     );

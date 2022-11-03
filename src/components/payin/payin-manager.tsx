@@ -257,7 +257,7 @@ class PayInManager extends React.Component<PayInManagerProps> {
               viewProcessInstance={this.viewProcessInstance}
             />
           </Paper>
-        </div >
+        </div>
       </>
     );
   }

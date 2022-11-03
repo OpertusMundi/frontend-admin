@@ -358,7 +358,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
               updateRow={this.updateRow}
             />
           </Paper>
-        </div >
+        </div>
         {this.renderDeleteConfirm()}
         {this.renderIdpConfirm()}
         {this.renderResetPasswordDialog()}

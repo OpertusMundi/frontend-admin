@@ -384,7 +384,7 @@ class ContractManager extends React.Component<ContractManagerProps, ContractMana
               sorting={sorting}
             />
           </Paper>
-        </div >
+        </div>
         {this.renderConfirm()}
       </>
     );

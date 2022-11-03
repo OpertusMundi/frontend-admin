@@ -164,7 +164,7 @@ class PayOutManager extends React.Component<PayOutManagerProps> {
               viewProcessInstance={this.viewProcessInstance}
             />
           </Paper>
-        </div >
+        </div>
       </>
     );
   }

@@ -154,7 +154,7 @@ class ProcessDiagram extends React.Component<ProcessDiagramProps> {
         >
           <Icon path={mdiMagnifyExpand} size="1.2rem" />
         </IconButton>
-      </div >
+      </div>
     );
   }
 }

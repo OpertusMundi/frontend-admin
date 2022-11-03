@@ -127,7 +127,7 @@ class TransferManager extends React.Component<TransferManagerProps> {
               sorting={sorting}
             />
           </Paper>
-        </div >
+        </div>
       </>
     );
   }

@@ -204,7 +204,7 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
               viewProcessInstanceTask={this.viewProcessInstanceTask}
             />
           </Paper>
-        </div >
+        </div>
       </>
     );
   }

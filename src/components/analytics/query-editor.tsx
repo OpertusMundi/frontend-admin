@@ -105,7 +105,7 @@ class QueryEditor extends React.Component<QueryEditorProps, QueryEditorState> {
             />
           </Paper>
         }
-      </div >
+      </div>
     );
   }
 

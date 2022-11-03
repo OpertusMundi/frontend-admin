@@ -40,7 +40,7 @@ class ToastTemplate extends React.Component<ToastTemplateProps> {
             </tr>
           </tbody>
         </table>
-      </div >
+      </div>
     );
   }
 }

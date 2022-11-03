@@ -286,7 +286,7 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
               loading={loading}
             />
           </Paper>
-        </div >
+        </div>
         {this.renderReviewDialog()}
       </>
     );

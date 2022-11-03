@@ -216,7 +216,7 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccountSumm
             <div className={classes.statusLabel}>
               <div className={classes.statusLabelText}>{providers[0].name}</div>
             </div>
-          </div >
+          </div>
         )
       },
     }, {

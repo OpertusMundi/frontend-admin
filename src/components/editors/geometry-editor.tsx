@@ -249,7 +249,7 @@ class GeometryEditor extends React.Component<GeometryEditorProps, GeometryEditor
             }}
           />
         </OpenLayers.Map>
-      </div >
+      </div>
     );
   }
 }

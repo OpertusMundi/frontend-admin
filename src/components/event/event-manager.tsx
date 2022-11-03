@@ -192,7 +192,7 @@ class EventManager extends React.Component<EventManagerProps, EventManagerState>
               />
             </PerfectScrollbar>
           </Paper>
-        </div >
+        </div>
         <Drawer anchor={'top'} open={errorDetails} onClose={() => this.viewException(null, false)}>
           {this.renderException()}
         </Drawer>

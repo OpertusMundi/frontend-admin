@@ -267,7 +267,7 @@ class MaterialTable<R, S> extends React.Component<MaterialTableProps<R, S>> {
             onRowsPerPageChange={(e) => handleRowsPerPageChange ? handleRowsPerPageChange(+e.target.value) : null}
           />
         }
-      </div >
+      </div>
     );
   }
 }

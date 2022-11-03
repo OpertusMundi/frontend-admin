@@ -317,7 +317,7 @@ class ProviderManager extends React.Component<ProviderManagerProps, ProviderMana
               loading={loading}
             />
           </Paper>
-        </div >
+        </div>
         {this.renderPayOutForm()}
       </>
     );
