@@ -12,7 +12,11 @@ import {
   SET_FILTER,
   RESET_FILTER,
   SEARCH_INIT,
-  SEARCH_COMPLETE,
+  SEARCH_FAILURE,
+  SEARCH_SUCCESS,
+  LOAD_INIT,
+  LOAD_FAILURE,
+  LOAD_SUCCESS,
   ADD_SELECTED,
   REMOVE_SELECTED,
   RESET_SELECTED,
@@ -21,34 +25,45 @@ import {
   ContractManagerState,
   SAVE_COMPLETE,
   SAVE_INIT,
-  SET_SELECTED_CONTRACT,
-  SET_SELECTED_CONTRACT_STATE,
-  SET_MODIFIED_CONTRACT
+  GET_PROVIDERS_INIT,
+  GET_PROVIDERS_COMPLETE,
+  TOGGLE_PROVIDER_DIALOG,
+  SET_PROVIDER,
+  CREATE_DRAFT,
+  MODIFY_CONTRACT,
 } from 'store/contract/types';
 import { EnumMasterContractSortField } from 'model/contract';
 import { Order } from 'model/response';
 
 const initialState: ContractManagerState = {
+  contract: null,
+  contractViewModel: null,
+  contractId: null,
+  contractProvider: null,
+  contractProviderDialog: false,
+  lastUpdated: null,
   loading: false,
+  pagination: {
+    page: 0,
+    size: 10,
+  },
+  providers: {
+    query: '',
+    result: [],
+    selected: null,
+  },
   query: {
     defaultContract: null,
     title: '',
     status: [],
   },
-  pagination: {
-    page: 0,
-    size: 10,
-  },
+  response: null,
+  result: null,
+  selected: [],
   sorting: [{
     id: EnumMasterContractSortField.MODIFIED_ON,
     order: Order.DESC,
   }],
-  result: null,
-  selected: [],
-  lastUpdated: null,
-  response: null,
-  contract: null,
-  contractId: null,
   state: null
 };
 
@@ -114,7 +129,14 @@ export function contractReducer(
         loading: true,
       };
 
-    case SEARCH_COMPLETE:
+    case SEARCH_FAILURE:
+      return {
+        ...state,
+        lastUpdated: moment(),
+        loading: false,
+      };
+
+    case SEARCH_SUCCESS:
       return {
         ...state,
         result: action.result,
@@ -125,6 +147,60 @@ export function contractReducer(
         lastUpdated: moment(),
         loading: false,
       };
+
+    case CREATE_DRAFT:
+      return {
+        ...state,
+        contractViewModel: {
+          id: null,
+          provider: null,
+          title: 'Document title',
+          subtitle: 'Document subtitle',
+          sections: [],
+        },
+      };
+
+    case LOAD_INIT:
+      return {
+        ...state,
+        contract: null,
+        contractProvider: null,
+        loading: true,
+      };
+
+    case LOAD_FAILURE:
+      return {
+        ...state,
+        loading: false,
+      };
+
+    case LOAD_SUCCESS: {
+      const contract = action.contract;
+
+      return {
+        ...state,
+        contract,
+        contractViewModel: {
+          id: contract.id,
+          provider: contract.provider || null,
+          title: contract.title,
+          subtitle: contract.subtitle || '',
+          sections: [...(contract.sections || [])],
+        },
+        contractProvider: action.contract.provider || null,
+        loading: false,
+      };
+    }
+
+    case MODIFY_CONTRACT: {
+      return {
+        ...state,
+        contractViewModel: {
+          ...state.contractViewModel!,
+          ...action.contractViewModel,
+        }
+      };
+    }
 
     case ADD_SELECTED:
       return {
@@ -155,28 +231,42 @@ export function contractReducer(
         ...state,
         response: action.response,
         loading: false,
-      }
+      };
 
-    case SET_SELECTED_CONTRACT:
+    case TOGGLE_PROVIDER_DIALOG:
       return {
         ...state,
-        contract: action.contract,
-        loading: false,
-      }
+        contractProviderDialog: !state.contractProviderDialog,
+      };
 
-    case SET_SELECTED_CONTRACT_STATE:
+    case GET_PROVIDERS_INIT:
       return {
         ...state,
-        state: action.state,
-        loading: false,
-      }
+        loading: true,
+      };
 
-    case SET_MODIFIED_CONTRACT:
+    case GET_PROVIDERS_COMPLETE: {
+      const { query, selected } = state.providers;
+
       return {
         ...state,
-        contract: action.contract,
-        loading: false,
-      }
+        providers: {
+          query,
+          result: action.providers,
+          selected: action.providers.find(p => p.id === selected?.id) || null,
+        }
+      };
+    }
+
+    case SET_PROVIDER:
+      return {
+        ...state,
+        contractViewModel: {
+          ...state.contractViewModel!,
+          provider: action.provider,
+        },
+      };
+
     default:
       return state;
   }

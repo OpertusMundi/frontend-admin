@@ -25,7 +25,6 @@ import { connect, ConnectedProps } from 'react-redux';
 
 // Store
 import { RootState } from 'store';
-import { setSelectedContract } from 'store/contract/actions';
 import { find } from 'store/contract/thunks';
 
 // Services
@@ -391,7 +390,6 @@ const mapState = (state: RootState) => ({
 
 const mapDispatch = {
   find: (pageRequest?: PageRequest, sorting?: Sorting<EnumMasterContractSortField>[]) => find(pageRequest, sorting),
-  setSelectedContract,
 };
 
 const connector = connect(

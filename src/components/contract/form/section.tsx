@@ -28,7 +28,7 @@ const styles = (theme: Theme) => createStyles({
     borderStyle: 'dashed',
     borderWidth: '0.5px',
     padding: theme.spacing(1),
-    margin: theme.spacing(1),
+    margin: theme.spacing(1, 1, 1, 0),
     background: '#F4F4F4 0% 0% no-repeat padding-box',
   },
   text: {

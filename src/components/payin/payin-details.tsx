@@ -867,7 +867,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     if (!payin) {
       return null;
     }
-    console.log(payin.items);
+
     return (
       <Card className={classes.card}>
         <CardHeader

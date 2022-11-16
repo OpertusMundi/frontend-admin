@@ -14,13 +14,16 @@ import { RootState } from 'store';
 import { connect, ConnectedProps } from 'react-redux';
 
 // Model
-import { MasterContractCommand } from 'model/contract';
+import { MasterContractViewModel } from 'model/contract';
 
 // Services
 import ContractApi from 'service/contract';
 
 
 const styles = (theme: Theme) => createStyles({
+  container: {
+    display: 'flex',
+  },
   paper: {
     paddingLeft: '30px',
     paddingRight: '30px',
@@ -99,26 +102,24 @@ const styles = (theme: Theme) => createStyles({
     marginBottom: '10px',
   },
   save: {
-    backgroundColor: '#190AFF',
-    color: '#fff',
+    borderRadius: 0,
+    display: 'flex',
     width: '170px',
     height: '45px',
     marginTop: '115px',
-    //marginLeft: '50px',
-    display: 'block',
-    borderRadius: '25px'
   },
   previous: {
-    backgroundColor: '#190AFF',
-    color: '#fff',
+    borderRadius: 0,
+    display: 'flex',
     width: '170px',
     height: '45px',
     marginTop: '50px',
-    //marginLeft: '50px',
-    display: 'block',
-    borderRadius: '25px'
   },
   controlButtons: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    flex: '225px',
     marginLeft: 'auto',
     marginRight: 'auto',
   },
@@ -149,7 +150,7 @@ const styles = (theme: Theme) => createStyles({
 
 interface ContractReviewFormComponentProps extends PropsFromRedux, WithStyles<typeof styles> {
   intl: IntlShape;
-  contract: MasterContractCommand;
+  contract: MasterContractViewModel;
   saveContract: () => void;
   setEdit: () => void;
 }
@@ -313,61 +314,67 @@ class ContractReviewFormComponent extends React.Component<ContractReviewFormComp
       </div>
       )
     });
-    return (<Grid container >
-      <Grid container item xs={3}>
-        <Paper className={classes.paper && classes.outline} >
-          <div className={classes.columnTitle} >
-            <FormattedMessage id="document.outline" defaultMessage={'Document Outline'} />
-          </div>
-          <div className={classes.documentTitle} >
-            <FormattedMessage id="document.outline.title" defaultMessage={contract.title} />
-          </div><div className={classes.documentSubtitle} >
-            <FormattedMessage id="document.outline.subtitle" defaultMessage="{documentSubtitle}"
-              values={{
-                documentSubtitle: contract.subtitle,
-              }} />
-          </div>
-          {outline}
-        </Paper>
-      </Grid>
-      <Grid container item xs={6}>
-        <Paper className={classes.paper}>
-          <div className={classes.columnTitle} >
-            <FormattedMessage id="document.review" defaultMessage={'Review'} />
-            <div className={classes.columnSubtitle} >
-              {'Here you can review the master contract you created.'}
-            </div>
-          </div>
-          <Grid id="renderedContract" className={classes.structure}>
-            <div className={classes.columnTitle} >
-              <FormattedMessage id="document.outline.title" defaultMessage={contract!.title} />
-            </div>
-            <div className={classes.contractSubtitle} >
-              <FormattedMessage id="document.outline.subtitle" defaultMessage="{documentSubtitle}"
-                values={{
-                  documentSubtitle: contract!.subtitle,
-                }} />
-            </div>
-            {structure}
+    return (
+      <div className={classes.container}>
+        <Grid container>
+          <Grid container item xs={3}>
+            <Paper className={classes.paper && classes.outline} >
+              <div className={classes.columnTitle} >
+                <FormattedMessage id="document.outline" defaultMessage={'Document Outline'} />
+              </div>
+              <div className={classes.documentTitle} >
+                <FormattedMessage id="document.outline.title" defaultMessage={contract.title} />
+              </div><div className={classes.documentSubtitle} >
+                <FormattedMessage id="document.outline.subtitle" defaultMessage="{documentSubtitle}"
+                  values={{
+                    documentSubtitle: contract.subtitle,
+                  }} />
+              </div>
+              {outline}
+            </Paper>
           </Grid>
-        </Paper>
-      </Grid>
-      <Grid className={classes.controlButtons}>
-        <Button
-          className={classes.save}
-          variant="contained"
-          onClick={() => this.props.saveContract()}
-        >
-          Confirm and Save
-        </Button>
-        <Button className={classes.previous}
-          variant="contained"
-          onClick={(e) => this.props.setEdit()}
-        >
-          Previous
-        </Button>
-      </Grid>
-    </Grid>);
+          <Grid container item xs={9}>
+            <Paper className={classes.paper}>
+              <div className={classes.columnTitle} >
+                <FormattedMessage id="document.review" defaultMessage={'Review'} />
+                <div className={classes.columnSubtitle} >
+                  {'Here you can review the master contract you created.'}
+                </div>
+              </div>
+              <Grid id="renderedContract" className={classes.structure}>
+                <div className={classes.columnTitle} >
+                  <FormattedMessage id="document.outline.title" defaultMessage={contract!.title} />
+                </div>
+                <div className={classes.contractSubtitle} >
+                  <FormattedMessage id="document.outline.subtitle" defaultMessage="{documentSubtitle}"
+                    values={{
+                      documentSubtitle: contract!.subtitle,
+                    }} />
+                </div>
+                {structure}
+              </Grid>
+            </Paper>
+          </Grid>
+        </Grid>
+        <div className={classes.controlButtons}>
+          <Button
+            className={classes.save}
+            variant="contained"
+            color="primary"
+            onClick={() => this.props.saveContract()}
+          >
+            Confirm and Save
+          </Button>
+          <Button className={classes.previous}
+            variant="contained"
+            color="primary"
+            onClick={(e) => this.props.setEdit()}
+          >
+            Previous
+          </Button>
+        </div>
+      </div>
+    );
   }
 }
 

@@ -19,6 +19,7 @@ import { EditorState, ContentBlock, ContentState, convertFromRaw, CompositeDecor
 import { OrderedSet } from 'immutable';
 
 // Material UI
+import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
@@ -42,7 +43,6 @@ const styles = (theme: Theme) => createStyles({
   },
   title: {
     width: '100%',
-    margin: theme.spacing(1)
   },
   editor: {
     height: '20vh',
@@ -92,15 +92,10 @@ const styles = (theme: Theme) => createStyles({
     marginTop: '5px'
   },
   doneBtn: {
-    backgroundColor: '#000',
-    color: '#fff',
-    //position: 'absolute',
-    //right: '2vh',
-    //marginTop: '50px',
     display: 'inline-block',
     width: '100px',
     height: '40px',
-    borderRadius: '25px',
+    borderRadius: '0px',
     borderColor: '#000',
     marginLeft: '50px',
   },
@@ -155,7 +150,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
   constructor(props: EditAreaComponentProps) {
     super(props);
-    let section, title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = null, shortDescription = '', mutexSuboptions=true;
+    let section, title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = null, shortDescription = '', mutexSuboptions = true;
     // if editing section or titles
     if (this.props.editField === EditFieldEnum.Section) {
       title = this.props.section!.title;
@@ -192,8 +187,8 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     if (prevProps.section !== this.props.section) {
       //save previous section and edit new
       this.props.saveContent(this.state.section?.id!, this.state.editorState.getCurrentContent(),
-          this.state.title, this.state.option, this.state.subOption, this.state.summary, this.state.descriptionOfChange,
-          this.state.icon, this.state.shortDescription, this.state.editField, this.state.mutexSuboptions, false)
+        this.state.title, this.state.option, this.state.subOption, this.state.summary, this.state.descriptionOfChange,
+        this.state.icon, this.state.shortDescription, this.state.editField, this.state.mutexSuboptions, false)
 
       let section, title, editorState, show, summary = '', descriptionOfChange = '', variable = false, optional = false, dynamic = false, icon = null, shortDescription = '', mutexSuboptions = true;
       // if editing section or titles
@@ -239,10 +234,10 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     if (selection === 'optional') {
       this.props.editSection({ id: id, optional: true, dynamic: false, })
       var section = this.state.section!;
-      if (section.options.length > 1){
+      if (section.options.length > 1) {
         section.options.splice(1);
       }
-      this.setState({ optional: true, dynamic: false , section});
+      this.setState({ optional: true, dynamic: false, section });
     }
     else if (selection === 'dynamic') {
       this.props.addOptions(id, 2);
@@ -381,14 +376,14 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     if (contentState.getPlainText()) {
       htmlContent = stateToHTML(contentState);
     }
-    if (this.state.editField === EditFieldEnum.Section){
+    if (this.state.editField === EditFieldEnum.Section) {
       section.options[this.state.option].body = raw
       section.options[this.state.option].bodyHtml = htmlContent
       section.options[this.state.option].icon = this.state.icon
       section.options[this.state.option].shortDescription = this.state.shortDescription
 
     }
-    else if (this.state.editField === EditFieldEnum.SubOption){
+    else if (this.state.editField === EditFieldEnum.SubOption) {
       section.options[this.state.option].subOptions![this.state.subOption].body = raw
       section.options[this.state.option].subOptions![this.state.subOption].bodyHtml = htmlContent
 
@@ -448,7 +443,7 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
     const { editorState } = this.state;
     const { classes, config } = this.props;
     let editor, iconSelector, type_buttons, options, subOptions, editOption, editSubOption, summary,
-      shortDescription, editingOptionTitle , subOptionSize = 0, selectedIcon;
+      shortDescription, editingOptionTitle, subOptionSize = 0, selectedIcon;
     if (this.state.variable) {
       var type = 'Option ', currentOption = this.state.option;
       if (!this.state.editingOption) {
@@ -639,12 +634,14 @@ class EditAreaComponent extends React.Component<EditAreaComponentProps, EditArea
 
         {shortDescription}
 
-        <button className={classes.doneBtn}
+        <Button className={classes.doneBtn}
+          variant="contained"
+          color="primary"
           onClick={() => this.finishEdit(editorState)
 
           }>
           DONE
-        </button>
+        </Button>
       </Grid>
     );
   }

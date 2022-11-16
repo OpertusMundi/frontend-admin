@@ -1,6 +1,7 @@
 import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { saveAs } from 'file-saver';
 
+import { ClientContact } from 'model/chat';
 import {
   AxiosObjectResponse,
   AxiosSimpleResponse,
@@ -21,28 +22,30 @@ import {
 import { Api } from 'utils/api';
 import { blobToJson } from 'utils/file';
 
+const baseUri = '/action/contract';
+
 export default class ContractApi extends Api {
 
   constructor(config: AxiosRequestConfig = {}) {
     super(config);
   }
 
-  public createNew(): MasterContractCommand {
-    return {
-      id: null,
-      title: 'Document title',
-      subtitle: 'Document subtitle',
-      sections: [],
-    };
-  }
+  public async findProviders(email: string): Promise<ClientContact[]> {
+    if (!email || email.length < 3) {
+      return Promise.resolve([]);
+    }
+    const url = `${baseUri}/providers?email=${email}`;
 
-  public contractToCommand(contract: MasterContract): MasterContractCommand {
-    return {
-      id: contract.id,
-      title: contract.title,
-      subtitle: contract.subtitle || '',
-      sections: [...(contract.sections || [])],
-    };
+    return this.get<ObjectResponse<ClientContact[]>>(url)
+      .then((response: AxiosObjectResponse<ClientContact[]>) => {
+        if (response.data.success) {
+          return response.data.result!;
+        }
+        return [];
+      })
+      .catch(() => {
+        return [];
+      });
   }
 
   public async findHistory(
@@ -56,45 +59,45 @@ export default class ContractApi extends Api {
         return query[key] !== null ? [...result, `${key}=${query[key]}`] : result;
       }, []);
 
-    const url = `/action/contract/history?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
+    const url = `${baseUri}/history?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
 
-    const response = this.get<ObjectResponse<MasterContractHistoryResult>> (url);
+    const response = this.get<ObjectResponse<MasterContractHistoryResult>>(url);
 
     return response;
   }
 
   public async createDraftForTemplate(id: number): Promise<AxiosObjectResponse<MasterContract>> {
-    const url = `/action/contract/history/${id}`;
+    const url = `${baseUri}/history/${id}`;
 
     return this.post<unknown, ObjectResponse<MasterContract>>(url, null);
   }
 
   public async cloneDraftFromTemplate(id: number): Promise<AxiosObjectResponse<MasterContract>> {
-    const url = `/action/contract/history/${id}/clone`;
+    const url = `${baseUri}/history/${id}/clone`;
 
     return this.post<unknown, ObjectResponse<MasterContract>>(url, null);
   }
 
   public async deactivateTemplate(id: number): Promise<AxiosSimpleResponse> {
-    const url = `/action/contract/history/${id}`;
+    const url = `${baseUri}/history/${id}`;
 
     return this.delete(url);
   }
 
   public async setDefaultContract(id: number): Promise<AxiosObjectResponse<MasterContract>> {
-    const url = `/action/contract/history/${id}/set-default`;
+    const url = `${baseUri}/history/${id}/set-default`;
 
     return this.post<unknown, ObjectResponse<MasterContract>>(url, null);
   }
 
   public async findDraft(id: number): Promise<AxiosObjectResponse<MasterContract>> {
-    const url = `/action/contract/drafts/${id}`;
+    const url = `${baseUri}/drafts/${id}`;
 
     return this.get<ObjectResponse<MasterContract>>(url);
   }
 
   public async downloadPublished(id: number, title: string): Promise<SimpleResponse> {
-    const url = `/action/contract/history/${id}/print`;
+    const url = `${baseUri}/history/${id}/print`;
 
     return this.get<Blob>(url, {
       responseType: 'blob',
@@ -112,14 +115,14 @@ export default class ContractApi extends Api {
   }
 
   public async createDraft(command: MasterContractCommand): Promise<AxiosObjectResponse<MasterContract>> {
-    const url = `/action/contract/drafts`;
+    const url = `${baseUri}/drafts`;
 
     // Add html content to sections
     return this.post<MasterContractCommand, ObjectResponse<MasterContract>>(url, command);
   }
 
   public async updateDraft(id: number, command: MasterContractCommand): Promise<AxiosObjectResponse<MasterContract>> {
-    const url = `/action/contract/drafts/${id}`;
+    const url = `${baseUri}/drafts/${id}`;
 
     /*for (var i = 0; i < sections.length; i++) {
 
@@ -139,13 +142,13 @@ export default class ContractApi extends Api {
   }
 
   public async deleteDraft(id: number): Promise<AxiosObjectResponse<MasterContract>> {
-    const url = `/action/contract/drafts/${id}`;
+    const url = `${baseUri}/drafts/${id}`;
 
     return this.delete<ObjectResponse<MasterContract>>(url);
   }
 
   public async publishDraft(id: number): Promise<AxiosSimpleResponse> {
-    const url = `/action/contract/drafts/${id}`;
+    const url = `${baseUri}/drafts/${id}`;
 
     return this.put<unknown, ObjectResponse<MasterContract>>(url, null);
   }

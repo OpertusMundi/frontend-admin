@@ -1,5 +1,13 @@
 import { Sorting, ObjectResponse, SimpleResponse } from 'model/response';
-import { EnumMasterContractSortField, MasterContract, MasterContractHistory, MasterContractHistoryResult, MasterContractQuery } from 'model/contract';
+import { ClientContact } from 'model/chat';
+import {
+  EnumMasterContractSortField,
+  MasterContract,
+  MasterContractHistory,
+  MasterContractHistoryResult,
+  MasterContractQuery,
+  MasterContractViewModel,
+} from 'model/contract';
 
 import {
   ContractActions,
@@ -9,18 +17,23 @@ import {
   RESET_FILTER,
   SEARCH_INIT,
   SEARCH_FAILURE,
-  SEARCH_COMPLETE,
+  SEARCH_SUCCESS,
+  CREATE_DRAFT,
+  LOAD_INIT,
+  LOAD_FAILURE,
+  LOAD_SUCCESS,
   ADD_SELECTED,
   REMOVE_SELECTED,
   SET_SORTING,
   RESET_SELECTED,
   SAVE_INIT,
   SAVE_COMPLETE,
-  SET_SELECTED_CONTRACT,
-  SET_SELECTED_CONTRACT_STATE,
-  SET_MODIFIED_CONTRACT
+  TOGGLE_PROVIDER_DIALOG,
+  GET_PROVIDERS_INIT,
+  GET_PROVIDERS_COMPLETE,
+  SET_PROVIDER,
+  MODIFY_CONTRACT,
 } from './types';
-
 
 // Action Creators
 export function setPager(page: number, size: number): ContractActions {
@@ -70,10 +83,43 @@ export function searchFailure(response: SimpleResponse): ContractActions {
   };
 }
 
-export function searchComplete(result: MasterContractHistoryResult): ContractActions {
+export function searchSuccess(result: MasterContractHistoryResult): ContractActions {
   return {
-    type: SEARCH_COMPLETE,
+    type: SEARCH_SUCCESS,
     result,
+  };
+}
+
+export function createDraft(): ContractActions {
+  return {
+    type: CREATE_DRAFT,
+  };
+}
+
+export function loadInit(): ContractActions {
+  return {
+    type: LOAD_INIT,
+  };
+}
+
+export function loadFailure(response: SimpleResponse): ContractActions {
+  return {
+    type: LOAD_FAILURE,
+    response,
+  };
+}
+
+export function loadSuccess(contract: MasterContract): ContractActions {
+  return {
+    type: LOAD_SUCCESS,
+    contract,
+  };
+}
+
+export function modifyContract(contractViewModel: Partial<MasterContractViewModel>): ContractActions {
+  return {
+    type: MODIFY_CONTRACT,
+    contractViewModel,
   };
 }
 
@@ -110,23 +156,28 @@ export function resetSelection(): ContractActions {
   };
 }
 
-export function setSelectedContract(contract: MasterContractHistory | null): ContractActions {
+export function toggleProviderDialog(): ContractActions {
   return {
-    type: SET_SELECTED_CONTRACT,
-    contract,
+    type: TOGGLE_PROVIDER_DIALOG,
   };
 }
 
-export function setSelectedContractState(state: string | null): ContractActions {
+export function getProvidersInit(): ContractActions {
   return {
-    type: SET_SELECTED_CONTRACT_STATE,
-    state,
+    type: GET_PROVIDERS_INIT,
   };
 }
 
-export function setModifiedContract(contract: MasterContract): ContractActions {
+export function getProvidersComplete(providers: ClientContact[]): ContractActions {
   return {
-    type: SET_MODIFIED_CONTRACT,
-    contract,
+    type: GET_PROVIDERS_COMPLETE,
+    providers,
+  };
+}
+
+export function setProvider(provider: ClientContact | null): ContractActions {
+  return {
+    type: SET_PROVIDER,
+    provider,
   };
 }

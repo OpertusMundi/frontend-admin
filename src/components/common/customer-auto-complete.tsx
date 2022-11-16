@@ -3,7 +3,7 @@ import React from 'react';
 
 import TextField from '@material-ui/core/TextField';
 
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import Autocomplete, { AutocompleteRenderOptionState } from '@material-ui/lab/Autocomplete';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { ClientContact } from 'model/chat';
@@ -24,6 +24,7 @@ interface AsyncCustomerAutoCompleteProps {
   getOptionLabel: (option: ClientContact) => string;
   loadOptions: (value: string) => Promise<ClientContact[]>;
   onChange?: (value: ClientContact | null) => void;
+  renderOption?: (option: ClientContact) => React.ReactNode;
 }
 
 class AsyncCustomerAutoComplete extends React.Component<AsyncCustomerAutoCompleteProps, AsyncCustomerAutoCompleteState> {
@@ -42,6 +43,7 @@ class AsyncCustomerAutoComplete extends React.Component<AsyncCustomerAutoComplet
       getOptionLabel,
       loadOptions,
       onChange,
+      renderOption,
       error,
       label,
       loadingText,
@@ -97,6 +99,12 @@ class AsyncCustomerAutoComplete extends React.Component<AsyncCustomerAutoComplet
             }}
           />
         )}
+        renderOption={(option: ClientContact, state: AutocompleteRenderOptionState) => {
+          if (renderOption) {
+            return renderOption(option);
+          }
+          return (<span>{getOptionLabel(option)}</span>);
+        }}
       />
     );
   }

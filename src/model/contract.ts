@@ -2,6 +2,7 @@ import { Moment } from 'moment';
 
 import { SimpleHelpdeskAccount } from 'model/account';
 import { PageResult } from './response';
+import { ClientContact } from './chat';
 
 export const ContractItemTypes = {
   Section: 'Section',
@@ -54,6 +55,7 @@ export enum EnumContractStatus {
 export enum EnumMasterContractSortField {
   CREATED_ON = 'CREATED_ON',
   MODIFIED_ON = 'MODIFIED_ON',
+  PROVIDER = 'PROVIDER',
   STATUS = 'STATUS',
   TITLE = 'TITLE',
   VERSION = 'VERSION',
@@ -85,7 +87,6 @@ export interface Option {
   summary?: string;
   icon?: EnumContractIcon | null;
   shortDescription?: string;
-
 }
 
 export interface SubOption {
@@ -95,6 +96,15 @@ export interface SubOption {
 
 export interface MasterContractCommand {
   id: number | null;
+  providerKey: string | null;
+  title: string;
+  subtitle: string;
+  sections: Section[];
+}
+
+export interface MasterContractViewModel {
+  id: number | null;
+  provider: ClientContact | null;
   title: string;
   subtitle: string;
   sections: Section[];
@@ -108,6 +118,7 @@ export interface MasterContract {
   modifiedAt: Moment | null;
   owner: SimpleHelpdeskAccount;
   parentId?: number;
+  provider: ClientContact | null;
   sections: Section[],
   subtitle?: string;
   title: string;

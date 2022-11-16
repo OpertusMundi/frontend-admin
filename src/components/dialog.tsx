@@ -14,6 +14,7 @@ export const EnumDialogAction = {
   Accept: 'Accept',
   Reject: 'Reject',
   Cancel: 'Cancel',
+  Reset: 'Reset',
 };
 
 interface DialogState {

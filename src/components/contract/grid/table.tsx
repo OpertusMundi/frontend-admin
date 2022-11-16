@@ -7,8 +7,11 @@ import { injectIntl, IntlShape, FormattedTime } from 'react-intl';
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
+import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
+import Grid from '@material-ui/core/Grid';
 import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
 
 import Icon from '@mdi/react';
 import { mdiPencilOutline, mdiSourceBranchCheck, mdiSourceBranchRemove, mdiSourceBranchPlus, mdiTrashCanOutline, mdiContentCopy, mdiDownload, mdiPinOutline } from '@mdi/js';
@@ -37,13 +40,13 @@ enum EnumAction {
 };
 
 const styles = (theme: Theme) => createStyles({
-  root: {
-    display: 'flex',
-    padding: 0,
-  },
   avatar: {
     width: theme.spacing(4),
     height: theme.spacing(4),
+  },
+  inline: {
+    display: 'inline',
+    marginRight: theme.spacing(2),
   },
   rowIcon: {
     width: 18,
@@ -209,6 +212,34 @@ function contractColumns(props: ContractTableProps): Column<MasterContractHistor
             }
           </div>
         )
+      },
+    }, {
+      header: intl.formatMessage({ id: 'contract.header.provider' }),
+      id: 'provider',
+      sortable: false,
+      width: 300,
+      cell: (
+        rowIndex: number, column: Column<MasterContractHistory, EnumMasterContractSortField>, row: MasterContractHistory, handleAction?: cellActionHandler<MasterContractHistory, EnumMasterContractSortField>
+      ): React.ReactNode => {
+        const provider = row.provider;
+        if (!provider) {
+          return null;
+        }
+        const avatar = provider.logoImage && provider.logoImageMimeType
+          ? `data:${provider.logoImageMimeType};base64,${provider.logoImage}`
+          : '';
+
+        return (
+          <Grid container>
+            <Grid item xs={2}>
+              <Avatar alt={provider.name} src={avatar} variant="circular" className={classes.avatar} />
+            </Grid>
+            <Grid container item xs={10} direction={'column'}>
+              <Typography className={classes.inline}>{provider.name}</Typography>
+              <Typography className={classes.inline} variant="caption">{provider.email}</Typography>
+            </Grid>
+          </Grid>
+        );
       },
     }, {
       header: intl.formatMessage({ id: 'contract.header.title' }),

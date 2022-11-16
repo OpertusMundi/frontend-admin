@@ -3,14 +3,15 @@ import { ThunkAction } from 'redux-thunk'
 // Redux
 import { RootState } from 'store';
 import { ContractActions } from './types';
-import { searchInit, searchComplete, searchFailure, setSorting, setPager } from './actions';
+import { searchInit, searchSuccess, searchFailure, setSorting, setPager, getProvidersInit, getProvidersComplete, loadInit, loadSuccess, loadFailure } from './actions';
 
 // Services
 import ContractApi from 'service/contract';
 
 // Model
 import { PageRequest, Sorting, PageResult, ObjectResponse } from 'model/response';
-import { EnumMasterContractSortField, MasterContractHistory } from 'model/contract';
+import { ClientContact } from 'model/chat';
+import { EnumMasterContractSortField, MasterContract, MasterContractHistory } from 'model/contract';
 
 // Helper thunk result type
 type ThunkResult<R> = ThunkAction<Promise<R>, RootState, unknown, ContractActions>;
@@ -47,10 +48,34 @@ export const find = (
 
   // Update state
   if (response.data.success) {
-    dispatch(searchComplete(response.data.result!));
+    dispatch(searchSuccess(response.data.result!));
     return response.data;
   }
 
   dispatch(searchFailure(response.data));
   return null;
+}
+
+export const getDraft = (id: number): ThunkResult<ObjectResponse<MasterContract>> => async (dispatch, getState) => {
+  dispatch(loadInit());
+
+  const api = new ContractApi();
+  const response = await api.findDraft(id);
+
+  if (response.data.success) {
+    dispatch(loadSuccess(response.data.result!))
+  } else {
+    dispatch(loadFailure(response.data));
+  }
+  return response.data;
+}
+
+export const findProviders = (email: string): ThunkResult<ClientContact[]> => async (dispatch, getState) => {
+  dispatch(getProvidersInit());
+
+  const api = new ContractApi();
+  const providers = await api.findProviders(email);
+
+  dispatch(getProvidersComplete(providers))
+  return providers;
 }

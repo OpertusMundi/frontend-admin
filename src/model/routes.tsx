@@ -10,6 +10,7 @@ import * as pathToRegexp from 'path-to-regexp';
  */
 import AccountManagerToolbar from 'components/account/toolbar';
 import AnalyticsToolbar from 'components/analytics/toolbar';
+import ContractToolbar from 'components/contract/toolbar';
 import MarketplaceAccountToolbar from 'components/account-marketplace/form/toolbar';
 import MessageInboxHelpdeskToolbar from 'components/message-inbox-helpdesk/toolbar';
 import MessageInboxUserToolbar from 'components/message-inbox-user/toolbar';
@@ -78,7 +79,7 @@ export const Pages = {
 
 const Analytics = '/analytics/query-editor';
 const ConsumerManager = '/consumers';
-const ContractManager = '/contract/list';
+const ContractManager = '/contract';
 const Dashboard = '/dashboard';
 const DraftManager = '/drafts';
 const EventManager = '/events';
@@ -437,19 +438,33 @@ export const routes: RouteRegistry = {
   },
   [ContractCreate]: {
     description: 'Create a new draft',
+    displayDefaultActions: false,
+    icon: (className?: string) => (<Icon path={mdiSignatureFreehand} size="1.5rem" className={className} />),
     title: 'links.contract.create',
     defaultTitle: 'Create master contract',
     roles: [EnumRole.ADMIN],
     links: defaultLinks,
     progressBar: true,
+    toolbarComponent: (route: Route): React.ReactNode => {
+      return (
+        <ContractToolbar route={route} />
+      );
+    },
   },
   [ContractUpdate]: {
     description: 'Update a draft',
+    displayDefaultActions: false,
+    icon: (className?: string) => (<Icon path={mdiSignatureFreehand} size="1.5rem" className={className} />),
     title: 'links.contract.update',
     defaultTitle: 'Update master contract',
     roles: [EnumRole.ADMIN],
     links: defaultLinks,
     progressBar: true,
+    toolbarComponent: (route: Route): React.ReactNode => {
+      return (
+        <ContractToolbar route={route} />
+      );
+    },
   },
   [DraftContractViewer]: {
     icon: (className?: string) => (<Icon path={mdiFileSign} size="1.5rem" className={className} />),
