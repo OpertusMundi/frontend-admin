@@ -402,6 +402,7 @@
     "header": {
       "actions": "Actions",
       "modified-on": "Modified On",
+      "provider": "Provider",
       "status": "Status",
       "title": "Title",
       "subtitle": "Subtitle",
@@ -415,6 +416,10 @@
     "message": {
       "default-contract-set": "Default contract has been set",
       "last-update": "Last updated: "
+    },
+    "provider-dialog": {
+      "title": "Set contract provider",
+      "message": "Set provider for contract {name}. Only the selected provider will be able to view and use this contract template."
     },
     "tooltip": {
       "clone": "Clone as draft",
@@ -774,11 +779,13 @@
     "settings": "Settings",
     "subscription-billing-manager": "Subscription Billing",
     "workflow": {
+      "section": "Workflows",
       "incident": {
         "manager": "Incidents"
       },
       "process-instance": {
         "manager": {
+          "deployments": "Workflow Deployments",
           "runtime": "Active Processes",
           "tasks": "Tasks",
           "history": "Process History"
@@ -984,11 +991,17 @@
     },
     "last-update": "Last updated: ",
     "message": {
-      "delete-confirm.1": "The process instance {id} of type {type} will be deleted.",
-      "delete-confirm.2": "This action is irreversible.",
-      "delete-confirm.3": "To continue, type the business key of the process instance in the text box below.",
-      "delete-failure": "Delete operation has failed",
-      "delete-success": "Process instance has been deleted",
+      "delete-process-instance-confirm.1": "The process instance {id} of type {type} will be deleted.",
+      "delete-process-instance-confirm.2": "This action is irreversible.",
+      "delete-process-instance-confirm.3": "To continue, type the business key of the process instance in the text box below.",
+      "delete-process-instance-failure": "Delete operation has failed",
+      "delete-process-instance-success": "Process instance has been deleted",
+      "delete-deployment-confirm.1": "The deployment instance {name} at {date} will be deleted.",
+      "delete-deployment-confirm.2": "This action is irreversible.",
+      "delete-deployment-cascade": "Delete cascade",
+      "delete-deployment-cascade-details": "Delete all process instances, historic process instances and jobs for this deployment.",
+      "delete-deployment-failure": "Delete operation has failed",
+      "delete-deployment-success": "Process instance has been deleted",
       "retry": "Would you like to increase the retry counter for process instance of type [{type}] with business key [{businessKey}]?",
       "task-not-supported": "Task is not supported",
       "review-error": {
