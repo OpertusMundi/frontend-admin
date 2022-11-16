@@ -43,6 +43,7 @@ const PayInDetails = lazy(() => import('components/payin/payin-details'));
 const PayInManager = lazy(() => import('components/payin/payin-manager'));
 const PayOutDetails = lazy(() => import('components/payout/payout-details'));
 const PayOutManager = lazy(() => import('components/payout/payout-manager'));
+const ProcessDeploymentManager = lazy(() => import('components/workflow/process-deployment-manager'));
 const ProcessInstanceForm = lazy(() => import('components/workflow/process-instance-form'));
 const ProcessInstanceTaskForm = lazy(() => import('components/workflow/process-instance-task-form'));
 const ProcessInstanceHistoryForm = lazy(() => import('components/workflow/process-instance-history-form'));
@@ -155,6 +156,9 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             </Route>
             <Route path={StaticRoutes.ProcessInstanceTaskManager} element={<SecureRoute roles={[EnumRole.ADMIN]} />}>
               <Route path={StaticRoutes.ProcessInstanceTaskManager} element={<ProcessInstanceTaskManager />} />
+            </Route>
+            <Route path={StaticRoutes.ProcessDeploymentManager} element={<SecureRoute roles={[EnumRole.ADMIN]} />}>
+              <Route path={StaticRoutes.ProcessDeploymentManager} element={<ProcessDeploymentManager />} />
             </Route>
             <Route path={StaticRoutes.ProcessInstanceHistoryManager} element={<SecureRoute roles={[EnumRole.ADMIN]} />}>
               <Route path={StaticRoutes.ProcessInstanceHistoryManager} element={<ProcessInstanceHistoryManager />} />

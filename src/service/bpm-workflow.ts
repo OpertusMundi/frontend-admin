@@ -15,6 +15,9 @@ import {
 
 import {
   ActiveProcessInstanceDetails,
+  CompleteTaskTaskCommand,
+  Deployment,
+  EnumDeploymentSortField,
   EnumProcessInstanceSortField,
   EnumProcessInstanceHistorySortField,
   EnumProcessInstanceTaskSortField,
@@ -24,7 +27,6 @@ import {
   ProcessInstanceQuery,
   ProcessInstanceTask,
   ProcessInstanceTaskQuery,
-  CompleteTaskTaskCommand,
   ModificationCommand,
 } from 'model/bpm-process-instance';
 
@@ -32,6 +34,19 @@ export default class WorkflowApi extends Api {
 
   constructor(config: AxiosRequestConfig = {}) {
     super(config);
+  }
+
+  public async getDeployments(sorting: Sorting<EnumDeploymentSortField>[]): Promise<AxiosObjectResponse<Deployment[]>> {
+    const { id: field, order } = sorting[0];
+    const url = `/action/workflows/deployments?sortBy=${field}&sortOrder=${order}`;
+
+    return this.get<ObjectResponse<Deployment[]>>(url);
+  }
+
+  public async deleteDeployment(id: string, cascade: boolean = false): Promise<AxiosSimpleResponse> {
+    const url = `/action/workflows/deployments/${id}?cascade=${cascade}`;
+
+    return this.delete<SimpleResponse>(url);
   }
 
   public async getProcessDefinitions(): Promise<AxiosObjectResponse<ProcessDefinition[]>> {

@@ -92,6 +92,7 @@ const MessageInboxUser = '/messages/inbox/user';
 const OrderManager = '/billing/orders';
 const PayInManager = '/billing/payins';
 const PayOutManager = '/billing/payouts';
+const ProcessDeploymentManager = '/workflows/deployments';
 const ProcessInstanceManager = '/workflows/process-instances';
 const ProcessInstanceTaskManager = '/workflows/process-instance-tasks';
 const ProcessInstanceHistoryManager = '/workflows/process-instances-history';
@@ -120,6 +121,7 @@ export const StaticRoutes = {
   MarketplaceAccountManager,
   DraftManager,
   EventManager,
+  ProcessDeploymentManager,
   ProcessInstanceManager,
   ProcessInstanceHistoryManager,
   ProcessInstanceTaskManager,
@@ -187,6 +189,7 @@ export interface Route {
   breadcrumb?: boolean;
   progressBar?: boolean
   description: string;
+  displayDefaultActions?: boolean;
   icon?: iconFunc;
   title?: string;
   defaultTitle?: string;
@@ -347,6 +350,14 @@ export const routes: RouteRegistry = {
     defaultTitle: 'Marketplace Account Management',
     roles: [EnumRole.ADMIN],
     links: [Dashboard],
+  },
+  [ProcessDeploymentManager]: {
+    icon: (className?: string) => (<Icon path={mdiPackageVariantClosed} size="1.5rem" className={className} />),
+    description: 'Manage workflow deployments',
+    title: 'links.workflow.process-instance.manager.deployments',
+    defaultTitle: 'Deployments',
+    roles: [EnumRole.ADMIN],
+    links: [Dashboard, ProcessInstanceManager, IncidentManager],
   },
   [ProcessInstanceManager]: {
     icon: (className?: string) => (<Icon path={mdiCogSyncOutline} size="1.5rem" className={className} />),

@@ -64,6 +64,7 @@ import {
   mdiAccountWrenchOutline,
   mdiClockFast,
   mdiWrenchClockOutline,
+  mdiCogs,
 } from '@mdi/js';
 
 // Utilities
@@ -96,6 +97,7 @@ enum EnumSection {
   Drawer = 'Drawer',
   MapDrawer = 'MapDrawer',
   Message = 'Message',
+  Workflow = 'Workflow',
 };
 
 const drawerWidth = 280;
@@ -234,6 +236,7 @@ interface HomeState {
     [EnumSection.Drawer]: boolean;
     [EnumSection.MapDrawer]: boolean;
     [EnumSection.Message]: boolean;
+    [EnumSection.Workflow]: boolean;
   },
   menuAnchor: HTMLElement | null,
   isMenuOpen: boolean,
@@ -267,6 +270,7 @@ class Home extends React.Component<HomeProps, HomeState> {
       [EnumSection.Drawer]: true,
       [EnumSection.MapDrawer]: false,
       [EnumSection.Message]: false,
+      [EnumSection.Workflow]: false,
     },
     menuAnchor: null,
     isMenuOpen: false,
@@ -291,6 +295,15 @@ class Home extends React.Component<HomeProps, HomeState> {
     }
 
     return '';
+  }
+
+  get displayDefaultActions(): boolean {
+    const { location } = this.props;
+    const route = getRoute(location.pathname);
+    if (!route) {
+      return true;
+    }
+    return route.displayDefaultActions === undefined || route.displayDefaultActions === true;
   }
 
   componentDidMount() {
@@ -355,6 +368,7 @@ class Home extends React.Component<HomeProps, HomeState> {
         [EnumSection.Admin]: this.state.open[key] ? this.state.open[EnumSection.Admin] : false,
         [EnumSection.Billing]: this.state.open[key] ? this.state.open[EnumSection.Billing] : false,
         [EnumSection.Message]: this.state.open[key] ? this.state.open[EnumSection.Message] : false,
+        [EnumSection.Workflow]: this.state.open[key] ? this.state.open[EnumSection.Workflow] : false,
         [key]: !this.state.open[key],
       }
     });
@@ -431,15 +445,6 @@ class Home extends React.Component<HomeProps, HomeState> {
       return null;
     }
 
-    // const { toolbarComponent: create = null } = route;
-    // if (create !== null) {
-    //   return (
-    //     <>
-    //       {create()}
-    //     </>
-    //   );
-    // }
-
     return (
       <>
         {route &&
@@ -480,27 +485,31 @@ class Home extends React.Component<HomeProps, HomeState> {
             <div className={classes.toolbarContent}>
               <Breadcrumb />
               <div>
-                {taskCounter != null && taskCounter > 0 &&
-                  <IconButton title="BPM Server Tasks" color="inherit" onClick={() => this.props.navigate(StaticRoutes.ProcessInstanceTaskManager)}>
-                    <Badge overlap="rectangular" badgeContent={taskCounter} color="secondary">
-                      <Icon path={mdiAccountWrenchOutline} size="1.5rem" />
-                    </Badge>
-                  </IconButton>
-                }
-                {incidentCounter != null && incidentCounter > 0 &&
-                  <IconButton title="BPM Server Incidents" color="inherit" onClick={() => this.props.navigate(StaticRoutes.IncidentManager)}>
-                    <Badge overlap="rectangular" badgeContent={incidentCounter} color="secondary">
-                      <Icon path={mdiCogSyncOutline} size="1.5rem" />
-                    </Badge>
-                  </IconButton>
-                }
-                {this.props.location.pathname === StaticRoutes.Map &&
-                  <IconButton
-                    color="inherit"
-                    onClick={() => this.onDrawerOpen(EnumSection.MapDrawer)}
-                  >
-                    <Icon path={mdiLayers} size="1.5rem" />
-                  </IconButton>
+                {this.displayDefaultActions &&
+                  <>
+                    {taskCounter != null && taskCounter > 0 &&
+                      <IconButton title="BPM Server Tasks" color="inherit" onClick={() => this.props.navigate(StaticRoutes.ProcessInstanceTaskManager)}>
+                        <Badge overlap="rectangular" badgeContent={taskCounter} color="secondary">
+                          <Icon path={mdiAccountWrenchOutline} size="1.5rem" />
+                        </Badge>
+                      </IconButton>
+                    }
+                    {incidentCounter != null && incidentCounter > 0 &&
+                      <IconButton title="BPM Server Incidents" color="inherit" onClick={() => this.props.navigate(StaticRoutes.IncidentManager)}>
+                        <Badge overlap="rectangular" badgeContent={incidentCounter} color="secondary">
+                          <Icon path={mdiCogSyncOutline} size="1.5rem" />
+                        </Badge>
+                      </IconButton>
+                    }
+                    {this.props.location.pathname === StaticRoutes.Map &&
+                      <IconButton
+                        color="inherit"
+                        onClick={() => this.onDrawerOpen(EnumSection.MapDrawer)}
+                      >
+                        <Icon path={mdiLayers} size="1.5rem" />
+                      </IconButton>
+                    }
+                  </>
                 }
                 <IconButton
                   edge="end"
@@ -713,16 +722,28 @@ class Home extends React.Component<HomeProps, HomeState> {
 
                 <SecureContent roles={[EnumRole.ADMIN]}>
                   <>
-                    <ListItem button onClick={() => this.onSectionToggle(EnumSection.Admin)}>
+                    <ListItem button onClick={() => this.onSectionToggle(EnumSection.Workflow)}>
                       <ListItemIcon>
-                        <Icon path={mdiTools} size="1.5rem" />
+                        <Icon path={mdiCogs} size="1.5rem" />
                       </ListItemIcon>
-                      <ListItemText primary={_t({ id: 'links.admin' })} />
-                      {open[EnumSection.Admin] ? <ExpandLess /> : <ExpandMore />}
+                      <ListItemText primary={_t({ id: 'links.workflow.section' })} />
+                      {open[EnumSection.Workflow] ? <ExpandLess /> : <ExpandMore />}
                     </ListItem>
 
-                    <Collapse in={open[EnumSection.Admin]} timeout="auto" unmountOnExit className={classes.collapse}>
+                    <Collapse in={open[EnumSection.Workflow]} timeout="auto" unmountOnExit className={classes.collapse}>
                       <List component="div" disablePadding className={open[EnumSection.Drawer] ? '' : classes.childMenu}>
+
+                        <SecureContent roles={[EnumRole.ADMIN]}>
+                          <ListItem button
+                            className={open[EnumSection.Drawer] ? classes.nested : ''}
+                            onClick={(e) => this.onNavigate(e, StaticRoutes.ProcessDeploymentManager)}>
+                            <ListItemIcon>
+                              <Icon path={mdiPackageVariantClosed} size="1.5rem" />
+                            </ListItemIcon>
+                            <ListItemText primary={_t({ id: 'links.workflow.process-instance.manager.deployments' })} />
+                          </ListItem>
+                        </SecureContent>
+
 
                         <SecureContent roles={[EnumRole.ADMIN]}>
                           <ListItem button
@@ -767,6 +788,23 @@ class Home extends React.Component<HomeProps, HomeState> {
                             <ListItemText primary={_t({ id: 'links.workflow.incident.manager' })} />
                           </ListItem>
                         </SecureContent>
+                      </List>
+                    </Collapse>
+                  </>
+                </SecureContent>
+
+                <SecureContent roles={[EnumRole.ADMIN]}>
+                  <>
+                    <ListItem button onClick={() => this.onSectionToggle(EnumSection.Admin)}>
+                      <ListItemIcon>
+                        <Icon path={mdiTools} size="1.5rem" />
+                      </ListItemIcon>
+                      <ListItemText primary={_t({ id: 'links.admin' })} />
+                      {open[EnumSection.Admin] ? <ExpandLess /> : <ExpandMore />}
+                    </ListItem>
+
+                    <Collapse in={open[EnumSection.Admin]} timeout="auto" unmountOnExit className={classes.collapse}>
+                      <List component="div" disablePadding className={open[EnumSection.Drawer] ? '' : classes.childMenu}>
 
                         <SecureContent roles={[EnumRole.ADMIN]}>
                           <ListItem button

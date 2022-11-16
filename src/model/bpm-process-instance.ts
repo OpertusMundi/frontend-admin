@@ -33,6 +33,11 @@ export const SET_ERROR_TASKS = [
   PUBLISH_USER_SERVICE_SET_ERROR,
 ];
 
+export enum EnumDeploymentSortField {
+  NAME = 'name',
+  DEPLOYMENT_TIME = 'deploymentTime',
+}
+
 export enum EnumProcessInstanceSortField {
   BUSINESS_KEY = 'BUSINESS_KEY',
   INCIDENT_COUNT = 'INCIDENT_COUNT',
@@ -54,6 +59,13 @@ export enum EnumProcessInstanceHistorySortField {
   COMPLETED_ON = 'COMPLETED_ON',
   PROCESS_DEFINITION = 'PROCESS_DEFINITION',
   STARTED_ON = 'STARTED_ON',
+}
+
+export interface Deployment {
+  id: string;
+  name: string;
+  source: string;
+  deploymentTime: Moment;
 }
 
 export interface ProcessDefinition {

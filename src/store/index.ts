@@ -19,6 +19,7 @@ import { marketplaceAccountReducer } from './account-marketplace/reducer';
 import { orderReducer } from './order/reducer';
 import { payInReducer } from './payin/reducer';
 import { payOutReducer } from './payout/reducer';
+import { processDeploymentReducer } from './process-deployment/reducer';
 import { processInstanceReducer } from './process-instance/reducer';
 import { processInstanceTaskReducer } from './process-instance-task/reducer';
 import { processInstanceHistoryReducer } from './process-instance-history/reducer';
@@ -60,6 +61,7 @@ export const rootReducer = Redux.combineReducers({
   security: securityReducer,
   viewport: viewportReducer,
   workflow: Redux.combineReducers({
+    deployments: processDeploymentReducer,
     instances: Redux.combineReducers({
       runtime: processInstanceReducer,
       history: processInstanceHistoryReducer,
