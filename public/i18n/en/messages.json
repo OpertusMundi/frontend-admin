@@ -942,7 +942,10 @@
           "running": "Waiting for time event",
           "error": "Failed to process time intermediate Event at {timestamp}"
         },
-        "eventBasedGateway": "Event based gateway completed at {timestamp}",
+        "eventBasedGateway":  {
+          "running": "Event based gateway pending ...",
+          "completed": "Event based gateway completed at {timestamp}"
+        },
         "duration": "Duration {duration}"
       },
       "state": {

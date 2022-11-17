@@ -113,8 +113,9 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
       case 'eventBasedGateway':
         return (
           <FormattedMessage
-            id={`workflow.instance.activity.${activity.activityType}`} values={{
-              timestamp: _t(activity.endTime.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }),
+            id={`workflow.instance.activity.${activity.activityType}.${activity.endTime ? 'completed' : 'running'}`}
+            values={{
+              timestamp: _t(activity.endTime?.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }),
             }}
           />
         );
