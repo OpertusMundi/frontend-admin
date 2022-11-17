@@ -182,12 +182,12 @@ class ProcessDeploymentManager extends React.Component<WorkflowManagerProps, Wor
 
   render() {
     const {
-      workflow: { deployments: { result: deployments } },
+      classes, workflow: { deployments: { result: deployments } },
     } = this.props;
 
     return (
       <>
-        <div>
+        <div className={classes.container}>
           {deployments?.map((d, index) => (
             <DeploymentCard
               key={d.id}
