@@ -132,7 +132,7 @@ class ProcessDeploymentManager extends React.Component<WorkflowManagerProps, Wor
                 this.props.find();
               } else {
                 message.errorHtml(
-                  _t({ id: 'workflow.message.delete-deployment-failure' }),
+                  r.messages[0]?.description || _t({ id: 'workflow.message.delete-deployment-failure' }),
                   () => (<Icon path={mdiCommentAlertOutline} size="3rem" />)
                 );
               }
