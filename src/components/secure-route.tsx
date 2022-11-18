@@ -5,7 +5,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { Outlet, Navigate, RouteProps } from 'react-router-dom';
 import { RootState } from 'store';
 
-interface SecureRouteProps extends PropsFromRedux, RouteProps {
+type SecureRouteProps = PropsFromRedux & RouteProps & {
   roles: EnumRole[];
 }
 

@@ -1,12 +1,12 @@
 import React from 'react';
 
 import TextField from '@material-ui/core/TextField';
-import NumberFormat, { NumberFormatProps } from 'react-number-format';
+import {NumericFormat, NumericFormatProps } from 'react-number-format';
 
 import { FieldProps } from 'formik';
 
 interface NumberFormatCustomProps {
-  inputRef: (instance: NumberFormat<unknown> | null) => void;
+  inputRef: (instance: typeof NumericFormat | null) => void;
   onChange: (event: { target: { name: string; value: string } }) => void;
   name: string;
   thousandSeparator?: string;
@@ -24,7 +24,7 @@ class NumberFormatCustom extends React.Component<NumberFormatCustomProps> {
     const { inputRef, onChange, ...other } = this.props;
 
     return (
-      <NumberFormat
+      <NumericFormat
         {...other}
         getInputRef={inputRef}
         onValueChange={(values) => {
@@ -35,7 +35,7 @@ class NumberFormatCustom extends React.Component<NumberFormatCustomProps> {
             },
           });
         }}
-        isNumericString
+        valueIsNumericString
       />
     );
   }
@@ -53,7 +53,7 @@ interface InputProps {
   min?: number;
 }
 
-interface NumberFormikProps extends FieldProps, Omit<NumberFormatProps<any>, 'name' | 'value' | 'error'> {
+interface NumberFormikProps extends FieldProps, Omit<NumericFormatProps<any>, 'name' | 'value' | 'error'> {
   inputProps: InputProps;
   onChange?: (value: string) => void;
   readOnly?: boolean;
