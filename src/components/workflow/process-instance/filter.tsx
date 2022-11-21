@@ -110,9 +110,12 @@ class ProcessInstanceFilters extends React.Component<WorkflowInstanceProps> {
                 <MenuItem value="">
                   <em>All</em>
                 </MenuItem>
-                {_.uniqBy(processDefinitions, 'name').map((def) => (
-                  <MenuItem key={def.key} value={def.key}>{def.name}</MenuItem>
-                ))}
+                {_.uniqBy(processDefinitions, 'name')
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map((def) => (
+                    <MenuItem key={def.key} value={def.key}>{def.name}</MenuItem>
+                  ))
+                }
               </Select>
             </FormControl>
           </Grid>
