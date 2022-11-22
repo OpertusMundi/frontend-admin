@@ -26,6 +26,7 @@ const AccountForm = lazy(() => import('components/account/account-form'));
 const AssetDraftManager = lazy(() => import('components/draft/draft-grid'));
 const ConsumerManager = lazy(() => import('components/consumer/consumer-grid'));
 const ContractForm = lazy(() => import('components/contract/contract-form'));
+const ContactFormManager = lazy(() => import('components/contact-form/contact-form-grid'));
 const ContractManager = lazy(() => import('components/contract/contract-grid'));
 const DraftContractViewer = lazy(() => import('components/draft/contract-viewer/contract-viewer'));
 const EventManager = lazy(() => import('components/event/event-manager'));
@@ -125,6 +126,7 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             <Route path={StaticRoutes.Analytics} element={<QueryEditor />} />
             <Route path={StaticRoutes.Dashboard} element={<DashboardComponent />} />
             <Route path={StaticRoutes.ConsumerManager} element={<ConsumerManager />} />
+            <Route path={StaticRoutes.ContactFormManager} element={<ContactFormManager />} />
             <Route path={StaticRoutes.ContractManager} element={<ContractManager />} />
             <Route path={StaticRoutes.DraftManager} element={<AssetDraftManager />} />
             <Route path={StaticRoutes.EventManager} element={<EventManager />} />

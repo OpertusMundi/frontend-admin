@@ -10,6 +10,7 @@ import * as pathToRegexp from 'path-to-regexp';
  */
 import AccountManagerToolbar from 'components/account/toolbar';
 import AnalyticsToolbar from 'components/analytics/toolbar';
+import ContactFormToolbar from 'components/contact-form/toolbar';
 import ContractToolbar from 'components/contract/toolbar';
 import MarketplaceAccountToolbar from 'components/account-marketplace/form/toolbar';
 import MessageInboxHelpdeskToolbar from 'components/message-inbox-helpdesk/toolbar';
@@ -51,6 +52,7 @@ import {
   mdiAccountWrenchOutline,
   mdiClockFast,
   mdiWrenchClockOutline,
+  mdiCardAccountPhoneOutline,
 } from '@mdi/js';
 
 /**
@@ -80,6 +82,7 @@ export const Pages = {
 const Analytics = '/analytics/query-editor';
 const ConsumerManager = '/consumers';
 const ContractManager = '/contract';
+const ContactFormManager = '/contact-forms';
 const Dashboard = '/dashboard';
 const DraftManager = '/drafts';
 const EventManager = '/events';
@@ -106,6 +109,7 @@ const TransferManager = '/billing/transfers';
 export const StaticRoutes = {
   Analytics,
   ConsumerManager,
+  ContactFormManager,
   ContractManager,
   Dashboard,
   IncidentManager,
@@ -226,6 +230,18 @@ export const routes: RouteRegistry = {
     title: 'links.consumer-manager',
     defaultTitle: 'Consumers',
     links: defaultLinks
+  },
+  [ContactFormManager]: {
+    icon: (className?: string) => (<Icon path={mdiCardAccountPhoneOutline} size="1.5rem" className={className} />),
+    description: 'Contact Forms',
+    title: 'links.contact-forms',
+    defaultTitle: 'Contact Forms',
+    links: [Dashboard],
+    toolbarComponent: (route: Route): React.ReactNode => {
+      return (
+        <ContactFormToolbar route={route} />
+      );
+    }
   },
   [ContractManager]: {
     icon: (className?: string) => (<Icon path={mdiSignatureFreehand} size="1.5rem" className={className} />),

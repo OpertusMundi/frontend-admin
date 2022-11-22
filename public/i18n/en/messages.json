@@ -747,6 +747,7 @@
       }
     },
     "consumer-manager": "Consumers",
+    "contact-forms": "Contact Forms",
     "contract": {
       "master": {
         "title": "Master Contract"
@@ -942,7 +943,7 @@
           "running": "Waiting for time event",
           "error": "Failed to process time intermediate Event at {timestamp}"
         },
-        "eventBasedGateway":  {
+        "eventBasedGateway": {
           "running": "Event based gateway pending ...",
           "completed": "Event based gateway completed at {timestamp}"
         },

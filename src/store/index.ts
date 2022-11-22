@@ -7,6 +7,7 @@ import { loadingBarReducer } from 'react-redux-loading-bar';
 import { analyticsReducer } from './analytics/reducer';
 import { configurationReducer } from './config/reducer';
 import { consumerReducer } from './consumer/reducer';
+import { contactFormReducer } from './contact-form/reducer';
 import { contractReducer } from './contract/reducer';
 import { draftReducer } from './draft/reducer';
 import { eventReducer } from './event/reducer';
@@ -48,6 +49,7 @@ export const rootReducer = Redux.combineReducers({
     transfer: transferReducer,
   }),
   message: Redux.combineReducers({
+    contactForms: contactFormReducer,
     helpdeskInbox: helpdeskInboxReducer,
     sendMessageDialog: sendMessageDialogReducer,
     userInbox: userInboxReducer,

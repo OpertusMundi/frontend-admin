@@ -65,6 +65,7 @@ import {
   mdiClockFast,
   mdiWrenchClockOutline,
   mdiCogs,
+  mdiCardAccountPhoneOutline,
 } from '@mdi/js';
 
 // Utilities
@@ -467,6 +468,7 @@ class Home extends React.Component<HomeProps, HomeState> {
 
     const unassigned = this.props.messages.helpdeskInbox.count;
     const unread = this.props.messages.userInbox.count;
+    const pendingForms = this.props.messages.contactForms.count;
     const total = unassigned + unread;
 
     return (
@@ -707,6 +709,16 @@ class Home extends React.Component<HomeProps, HomeState> {
                         </Badge>
                       </ListItemIcon>
                       <ListItemText primary={_t({ id: 'links.message-inbox-user' })} />
+                    </ListItem>
+
+                    <ListItem button
+                      onClick={(e) => this.onNavigate(e, StaticRoutes.ContactFormManager)}>
+                      <ListItemIcon>
+                        <Badge overlap="rectangular" badgeContent={pendingForms} color="secondary" invisible={pendingForms === 0 || !open[EnumSection.Message]}>
+                          <Icon path={mdiCardAccountPhoneOutline} size="1.5rem" />
+                        </Badge>
+                      </ListItemIcon>
+                      <ListItemText primary={_t({ id: 'links.contact-forms' })} />
                     </ListItem>
 
                   </List>
