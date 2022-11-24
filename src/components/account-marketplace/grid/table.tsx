@@ -14,7 +14,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Icon from '@mdi/react';
 import {
   mdiCogOutline,
-  mdiCogSyncOutline,
+  mdiDatabaseCogOutline,
   mdiDomain,
   mdiEmailAlertOutline,
   mdiMessageTextOutline,
@@ -148,22 +148,27 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccountSumm
         return (
           <div className={classes.compositeLabel}>
             <div className={classes.marginRight}>{row.consumerName}</div>
-            {row.consumer &&
+            {row.consumer && row.type === EnumAccountType.OPERTUSMUNDI &&
               <div
-                className={row.consumerKycLevel === EnumKycLevel.LIGHT ? classes.statusLabelWarning : classes.statusLabel}
+                className={row.consumerUpdatePending
+                  ? classes.compositeLabelPending
+                  : row.consumerKycLevel === EnumKycLevel.LIGHT ? classes.statusLabelWarning : classes.statusLabel
+                }
+                onClick={() => row.consumerUpdatePending ? props.viewProcessInstance(row.consumerProcessInstance) : null}
               >
                 <div className={classes.statusLabelTextWithMargin}>{row.consumerKycLevel}</div>
                 {row.consumerUpdatePending &&
-                  <Icon path={mdiCogSyncOutline} className={classes.rowIcon} />
+                  <Icon path={mdiDatabaseCogOutline} className={classes.rowIcon} />
                 }
               </div>
             }
-            {!row.consumer && row.consumerUpdatePending &&
+            {!row.consumer && row.consumerUpdatePending && row.type === EnumAccountType.OPERTUSMUNDI &&
               <div
-                className={classes.statusLabelWarning}
+                className={classes.compositeLabelPending}
+                onClick={() => props.viewProcessInstance(row.providerProcessInstance)}
               >
                 <div className={classes.statusLabelTextWithMargin}>{EnumKycLevel.LIGHT}</div>
-                <Icon path={mdiCogSyncOutline} className={classes.rowIcon} />
+                <Icon path={mdiDatabaseCogOutline} className={classes.rowIcon} />
               </div>
             }
           </div>
@@ -179,22 +184,27 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccountSumm
         return (
           <div className={classes.compositeLabel}>
             <div className={classes.marginRight}>{row.providerName}</div>
-            {row.provider &&
+            {row.provider && row.type === EnumAccountType.OPERTUSMUNDI &&
               <div
-                className={row.providerKycLevel === EnumKycLevel.LIGHT ? classes.statusLabelWarning : classes.statusLabel}
+                className={row.providerUpdatePending
+                  ? classes.compositeLabelPending
+                  : row.providerKycLevel === EnumKycLevel.LIGHT ? classes.statusLabelWarning : classes.statusLabel
+                }
+                onClick={() => row.providerUpdatePending ? props.viewProcessInstance(row.providerProcessInstance) : null}
               >
                 <div className={classes.statusLabelTextWithMargin}>{row.providerKycLevel}</div>
                 {row.providerUpdatePending &&
-                  <Icon path={mdiCogSyncOutline} className={classes.rowIcon} />
+                  <Icon path={mdiDatabaseCogOutline} className={classes.rowIcon} />
                 }
               </div>
             }
-            {!row.provider && row.providerUpdatePending &&
+            {!row.provider && row.providerUpdatePending && row.type === EnumAccountType.OPERTUSMUNDI &&
               <div
-                className={classes.statusLabelWarning}
+                className={classes.compositeLabelPending}
+                onClick={() => props.viewProcessInstance(row.providerProcessInstance)}
               >
                 <div className={classes.statusLabelTextWithMargin}>{EnumKycLevel.LIGHT}</div>
-                <Icon path={mdiCogSyncOutline} className={classes.rowIcon} />
+                <Icon path={mdiDatabaseCogOutline} className={classes.rowIcon} />
               </div>
             }
           </div>
@@ -278,6 +288,15 @@ const styles = (theme: Theme) => createStyles({
   marginRight: {
     marginRight: theme.spacing(1),
   },
+  compositeLabelPending: {
+    cursor: 'pointer',
+    display: 'flex',
+    marginRight: theme.spacing(2),
+    background: '#616161',
+    color: '#ffffff',
+    padding: theme.spacing(0.5),
+    borderRadius: theme.spacing(0.5),
+  },
   rowIcon: {
     width: 18,
     marginRight: 8,
@@ -296,6 +315,7 @@ const styles = (theme: Theme) => createStyles({
     borderRadius: theme.spacing(0.5),
   },
   statusLabelText: {
+
   },
   statusLabelWarning: {
     display: 'flex',
@@ -332,6 +352,7 @@ interface AccountTableProps extends WithStyles<typeof styles> {
   setSorting: (sorting: Sorting<EnumMarketplaceAccountSortField>[]) => void;
   toggleTester: (row: MarketplaceAccountSummary) => void;
   view: (key: string) => void;
+  viewProcessInstance: (businessKey: string) => void;
 }
 
 class AccountTable extends React.Component<AccountTableProps> {

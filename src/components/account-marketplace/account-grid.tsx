@@ -107,6 +107,11 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
     this.props.navigate(path);
   }
 
+  viewProcessInstance(businessKey: string): void {
+    const path = buildPath(DynamicRoutes.ProcessInstanceView, null, { businessKey });
+    this.props.navigate(path);
+  }
+
   showConfirmDeleteDialog(record: MarketplaceAccountSummary): void {
     this.setState({
       accountDeleted: false,
@@ -309,6 +314,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
               setSorting={(sorting: Sorting<EnumMarketplaceAccountSortField>[]) => this.setSorting(sorting)}
               toggleTester={this.toggleTester}
               view={(key: string) => this.viewRow(key)}
+              viewProcessInstance={(businessKey: string) => this.viewProcessInstance(businessKey)}
             />
           </Paper>
         </div>

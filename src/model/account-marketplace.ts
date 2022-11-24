@@ -344,6 +344,7 @@ export interface MarketplaceAccountSummary {
   consumerFunds: number;
   consumerKycLevel: EnumKycLevel;
   consumerName: string;
+  consumerProcessInstance:string;
   consumerUpdatePending: boolean;
   email: string;
   emailVerified: boolean;
@@ -358,6 +359,7 @@ export interface MarketplaceAccountSummary {
   providerFunds: number;
   providerKycLevel: EnumKycLevel;
   providerName: string;
+  providerProcessInstance: string;
   providerUpdatePending: boolean;
   registeredOn: Moment;
   roles: EnumRole[];
