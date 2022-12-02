@@ -17,6 +17,8 @@ import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 
+import { DateTime } from 'components/common';
+
 // Icons
 import Icon from '@mdi/react';
 import {
@@ -118,7 +120,6 @@ class Message extends React.Component<MessageProps> {
   }
 
   render() {
-    const _ft = this.props.intl.formatTime;
     const { align, classes, hideHeader, message, selected, size } = this.props;
     const { createdAt, sender, subject, text, } = message;
 
@@ -150,7 +151,7 @@ class Message extends React.Component<MessageProps> {
               variant="caption" color="textSecondary" component="p"
               className={classes.text}
             >
-              {_ft(createdAt.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' })}
+              {<DateTime value={createdAt.toDate()} day='numeric' month='numeric' year='numeric' />}
             </Typography>
           }
         />

@@ -4,7 +4,7 @@ import { AxiosError } from 'axios';
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
 import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
-import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -38,6 +38,7 @@ import { HelpdeskAccount, EnumHelpdeskAccountSortField } from 'model/account';
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
+import { DateTime } from 'components/common';
 
 import AccountFilters from './grid/filter';
 import AccountTable from './grid/table';
@@ -331,7 +332,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
                 <Grid item xs={12}>
                   <Typography variant="caption" display="block" gutterBottom className={classes.caption}>
                     <FormattedMessage id="account.helpdesk.last-update" />
-                    <FormattedTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
+                    <DateTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
                   </Typography>
                 </Grid>
               </Grid>

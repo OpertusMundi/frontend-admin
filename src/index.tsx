@@ -17,7 +17,7 @@ import { refreshProfile } from 'store/security/thunks';
 import { bindActionCreators } from 'redux';
 
 // TODO: read from non-HttpOnly "language" cookie
-const locale = 'el';
+const locale = 'en';
 
 // Get initial value of the CSRF token
 const token = document.querySelector("meta[name=_csrf]")?.getAttribute('content') || null;

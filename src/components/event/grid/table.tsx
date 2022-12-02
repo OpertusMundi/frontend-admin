@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { injectIntl, IntlShape, FormattedTime } from 'react-intl';
+import { injectIntl, IntlShape } from 'react-intl';
 
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
@@ -21,6 +21,7 @@ import {
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
+import DateTime from 'components/common/date-time';
 
 import { EnumEventLevel, EnumEventSortField, Event, EventQuery } from 'model/event';
 import { PageRequest, PageResult, Sorting } from 'model/response';
@@ -167,7 +168,7 @@ function eventColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
         row: Event,
         handleAction?: cellActionHandler<Event, EnumEventSortField>
       ): React.ReactNode => (
-        <FormattedTime value={row.timestamp.toDate()} day='numeric' month='numeric' year='numeric' />
+        <DateTime value={row.timestamp.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
     }, {
       header: intl.formatMessage({ id: 'event.header.message' }),

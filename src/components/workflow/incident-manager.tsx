@@ -3,7 +3,7 @@ import React from 'react';
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
 import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
-import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -42,6 +42,7 @@ import { EnumIncidentSortField, Incident } from 'model/bpm-incident';
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
+import DateTime from 'components/common/date-time';
 
 import IncidentFilters from './incident/filter';
 import IncidentTable from './incident/table';
@@ -212,7 +213,7 @@ class IncidentManager extends React.Component<IncidentManagerProps, IncidentMana
                 <Grid item xs={12}>
                   <Typography variant="caption" display="block" gutterBottom className={classes.caption}>
                     <FormattedMessage id="workflow.last-update" />
-                    <FormattedTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
+                    <DateTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
                   </Typography>
                 </Grid>
               </Grid>

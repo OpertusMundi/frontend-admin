@@ -40,7 +40,6 @@ class App extends React.Component<PropsFromRedux> {
   private viewportListener?: () => void;
 
   static defaultProps = {
-    locale: 'en',
     messages: {},
   }
 

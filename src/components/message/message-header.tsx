@@ -16,6 +16,8 @@ import CardContent from '@material-ui/core/CardContent';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 
+import { DateTime } from 'components/common';
+
 // Icons
 import Icon from '@mdi/react';
 import {
@@ -97,7 +99,6 @@ class MessageHeader extends React.Component<MessageHeaderProps> {
     selected: false,
   }
   render() {
-    const _t = this.props.intl.formatTime;
     const { classes, message, selected } = this.props;
     const { createdAt, sender, recipient, subject, text, read, threadCountUnread = 0 } = message;
 
@@ -181,7 +182,7 @@ class MessageHeader extends React.Component<MessageHeaderProps> {
             variant="caption" color="textSecondary" component="p"
             className={clsx(classes.text, !read && classes.textBold)}
           >
-            {_t(createdAt.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' })}
+            {<DateTime value={createdAt.toDate()} day='numeric' month='numeric' year='numeric' />}
           </Typography>
           <Typography
             variant="body1" color="primary" component="p"

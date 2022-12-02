@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 
-import { injectIntl, IntlShape, FormattedMessage, FormattedTime } from 'react-intl';
+import { injectIntl, IntlShape, FormattedMessage } from 'react-intl';
 
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
@@ -14,6 +14,7 @@ import Icon from '@mdi/react';
 import { mdiFormTextboxPassword, mdiPencilOutline, mdiSecurity, mdiTrashCanOutline } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
+import DateTime from 'components/common/date-time';
 
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { EnumHelpdeskAccountSortField, HelpdeskAccount, HelpdeskAccountQuery } from 'model/account';
@@ -133,7 +134,7 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
       cell: (
         rowIndex: number, column: Column<HelpdeskAccount, EnumHelpdeskAccountSortField>, row: HelpdeskAccount, handleAction?: cellActionHandler<HelpdeskAccount, EnumHelpdeskAccountSortField>
       ): React.ReactNode => (
-        <FormattedTime value={row?.modifiedOn?.toDate()} day='numeric' month='numeric' year='numeric' />
+        <DateTime value={row?.modifiedOn?.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
     }]);
 }

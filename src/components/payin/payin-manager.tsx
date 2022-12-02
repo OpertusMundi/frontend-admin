@@ -3,7 +3,7 @@ import React from 'react';
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
 import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
-import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -35,6 +35,7 @@ import { ClientContact } from 'model/chat';
 import { CustomerIndividual, CustomerProfessional, EnumMangopayUserType } from 'model/account-marketplace';
 
 // Components
+import DateTime from 'components/common/date-time';
 import PayInFilters from './grid/filter';
 import PayInTable from './grid/table';
 
@@ -230,7 +231,7 @@ class PayInManager extends React.Component<PayInManagerProps> {
                 <Grid item xs={12}>
                   <Typography variant="caption" display="block" gutterBottom className={classes.caption}>
                     <FormattedMessage id="billing.payin.last-update" />
-                    <FormattedTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
+                    <DateTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
                   </Typography>
                 </Grid>
               </Grid>

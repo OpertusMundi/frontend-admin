@@ -3,7 +3,7 @@ import React from 'react';
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
 import { useNavigate, useLocation, useParams, NavigateFunction, Location } from 'react-router-dom';
-import { FormattedMessage, FormattedTime, FormattedNumber, injectIntl, IntlShape } from 'react-intl';
+import { FormattedMessage, FormattedNumber, injectIntl, IntlShape } from 'react-intl';
 
 // Components
 import { Link } from 'react-router-dom';
@@ -19,6 +19,8 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
 import { grey, indigo } from '@material-ui/core/colors';
+
+import DateTime from 'components/common/date-time';
 
 // Icons
 import Icon from '@mdi/react';
@@ -193,7 +195,7 @@ class PayOutDetails extends React.Component<PayOutDetailsProps> {
           <Typography className={classes.inline} variant="caption">Created On</Typography>
           <Typography gutterBottom>
             {payout.createdOn
-              ? <FormattedTime value={payout.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
+              ? <DateTime value={payout.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
               : <span>-</span>
             }
           </Typography>
@@ -202,7 +204,7 @@ class PayOutDetails extends React.Component<PayOutDetailsProps> {
           <Typography className={classes.inline} variant="caption">Executed On</Typography>
           <Typography gutterBottom>
             {payout.executedOn
-              ? <FormattedTime value={payout.executedOn.toDate()} day='numeric' month='numeric' year='numeric' />
+              ? <DateTime value={payout.executedOn.toDate()} day='numeric' month='numeric' year='numeric' />
               : '-'
             }
           </Typography>

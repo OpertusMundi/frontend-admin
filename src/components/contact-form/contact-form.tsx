@@ -16,6 +16,8 @@ import CardContent from '@material-ui/core/CardContent';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 
+import { DateTime } from 'components/common';
+
 // Model
 import { ContactForm } from 'model/contact-form';
 
@@ -89,7 +91,6 @@ class ContactFormComponent extends React.Component<ContactFormComponentProps> {
     selected: false,
   }
   render() {
-    const _t = this.props.intl.formatTime;
     const { classes, form, selected } = this.props;
     const { email, firstName, lastName, message, createdAt } = form;
     const name = `${firstName} ${lastName}`;
@@ -135,7 +136,7 @@ class ContactFormComponent extends React.Component<ContactFormComponentProps> {
                     variant="caption" color="textSecondary" component="p"
                     className={clsx(classes.text, classes.textBold)}
                   >
-                    {_t(createdAt.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' })}
+                    {<DateTime value={createdAt.toDate()} day='numeric' month='numeric' year='numeric' />}
                   </Typography>
                 </Grid>
               </Grid>

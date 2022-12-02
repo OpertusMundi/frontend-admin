@@ -1,5 +1,5 @@
 import qs from 'qs';
-import moment from 'moment';
+import moment from 'utils/moment-localized';
 import React from 'react';
 import { AxiosError } from 'axios';
 

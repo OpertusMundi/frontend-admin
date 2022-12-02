@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { injectIntl, IntlShape, FormattedMessage, FormattedTime } from 'react-intl';
+import { injectIntl, IntlShape, FormattedMessage } from 'react-intl';
 
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
@@ -16,6 +16,7 @@ import {
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
+import DateTime from 'components/common/date-time';
 
 import { EnumProcessInstanceTaskSortField, ProcessInstanceTask, ProcessInstanceTaskQuery, SET_ERROR_TASKS } from 'model/bpm-process-instance';
 import { PageRequest, PageResult, Sorting } from 'model/response';
@@ -109,7 +110,7 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
         row: ProcessInstanceTask,
         handleAction?: cellActionHandler<ProcessInstanceTask, EnumProcessInstanceTaskSortField>
       ): React.ReactNode => (
-        <FormattedTime value={row.processDefinitionDeployedOn.toDate()} day='numeric' month='numeric' year='numeric' />
+        <DateTime value={row.processDefinitionDeployedOn.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
     }, {
       header: intl.formatMessage({ id: 'workflow.header.task.business-key' }),
@@ -143,7 +144,7 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
         row: ProcessInstanceTask,
         handleAction?: cellActionHandler<ProcessInstanceTask, EnumProcessInstanceTaskSortField>
       ): React.ReactNode => (
-        <FormattedTime value={row.startedOn.toDate()} day='numeric' month='numeric' year='numeric' />
+        <DateTime value={row.startedOn.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
     }]);
 }

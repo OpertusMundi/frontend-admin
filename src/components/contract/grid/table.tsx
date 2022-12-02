@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 
-import { injectIntl, IntlShape, FormattedTime } from 'react-intl';
+import { injectIntl, IntlShape } from 'react-intl';
 
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
@@ -17,6 +17,7 @@ import Icon from '@mdi/react';
 import { mdiPencilOutline, mdiSourceBranchCheck, mdiSourceBranchRemove, mdiSourceBranchPlus, mdiTrashCanOutline, mdiContentCopy, mdiDownload, mdiPinOutline } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
+import DateTime from 'components/common/date-time';
 
 import { buildPath, DynamicRoutes } from 'model/routes';
 import {
@@ -297,7 +298,7 @@ function contractColumns(props: ContractTableProps): Column<MasterContractHistor
       cell: (
         rowIndex: number, column: Column<MasterContractHistory, EnumMasterContractSortField>, row: MasterContractHistory, handleAction?: cellActionHandler<MasterContractHistory, EnumMasterContractSortField>
       ): React.ReactNode => (
-        <FormattedTime value={row.modifiedAt?.toDate()} day='numeric' month='numeric' year='numeric' />
+        <DateTime value={row.modifiedAt?.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
     }]);
 }

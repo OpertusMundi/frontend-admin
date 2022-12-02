@@ -3,7 +3,7 @@ import React from 'react';
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
 import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
-import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -30,6 +30,7 @@ import { PageRequest, Sorting } from 'model/response';
 import { EnumTransferSortField } from 'model/order';
 
 // Components
+import DateTime from 'components/common/date-time';
 import TransferFilters from './grid/filter';
 import TransferTable from './grid/table';
 
@@ -108,7 +109,7 @@ class TransferManager extends React.Component<TransferManagerProps> {
                 <Grid item xs={12}>
                   <Typography variant="caption" display="block" gutterBottom className={classes.caption}>
                     <FormattedMessage id="billing.transfer.last-update" />
-                    <FormattedTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
+                    <DateTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
                   </Typography>
                 </Grid>
               </Grid>

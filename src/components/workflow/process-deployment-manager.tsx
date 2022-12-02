@@ -3,7 +3,7 @@ import React from 'react';
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
 import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
-import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -32,6 +32,7 @@ import { EnumDeploymentSortField, Deployment } from 'model/bpm-process-instance'
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
+import DateTime from 'components/common/date-time';
 import DeploymentCard from './process-deployment/deployment-card';
 
 const styles = (theme: Theme) => createStyles({
@@ -244,7 +245,7 @@ class ProcessDeploymentManager extends React.Component<WorkflowManagerProps, Wor
               tagName={'p'}
               values={{
                 name: <b>{deployment.name}</b>,
-                date: <b><FormattedTime value={deployment.deploymentTime.toDate()} day='numeric' month='numeric' year='numeric' /></b>
+                date: <b><DateTime value={deployment.deploymentTime.toDate()} day='numeric' month='numeric' year='numeric' /></b>
               }}
             />
             <Typography variant="h5" display="block" gutterBottom color="secondary">

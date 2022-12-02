@@ -1,4 +1,4 @@
-import moment from 'utils/moment-localized';
+import moment, { longDateFormat } from 'utils/moment-localized';
 
 import {
   MESSAGES_LOAD_COMPLETE,
@@ -19,7 +19,9 @@ export function i18nReducer(
   switch (action.type) {
     case MESSAGES_LOAD_COMPLETE:
       // Update moment locale
-      moment.locale(action.locale);
+      moment.locale(action.locale, {
+        longDateFormat
+      });
 
       return {
         ...state,

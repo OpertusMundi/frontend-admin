@@ -3,16 +3,17 @@ import React from 'react';
 // Components
 import { Link } from 'react-router-dom';
 
-import { injectIntl, IntlShape, FormattedTime, FormattedNumber, FormattedDate } from 'react-intl';
+import { injectIntl, IntlShape, FormattedNumber, FormattedDate } from 'react-intl';
 
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
 import Grid from '@material-ui/core/Grid';
-import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
+import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
+import DateTime from 'components/common/date-time';
 
 import Icon from '@mdi/react';
 import {
@@ -274,7 +275,7 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
         row: SubscriptionBilling,
         handleAction?: cellActionHandler<SubscriptionBilling, EnumSubscriptionBillingSortField>
       ): React.ReactNode => (
-        <FormattedTime value={row.createdOn?.toDate()} day='numeric' month='numeric' year='numeric' />
+        <DateTime value={row.createdOn?.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
     }, {
       header: intl.formatMessage({ id: 'billing.subscription-billing.header.interval' }),

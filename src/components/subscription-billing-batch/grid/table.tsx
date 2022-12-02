@@ -3,7 +3,7 @@ import React from 'react';
 // Components
 import { Link } from 'react-router-dom';
 
-import { injectIntl, IntlShape, FormattedTime, FormattedDate, FormattedNumber } from 'react-intl';
+import { injectIntl, IntlShape, FormattedDate, FormattedNumber } from 'react-intl';
 
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
@@ -12,6 +12,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
+import DateTime from 'components/common/date-time';
 
 // Icons
 import Icon from '@mdi/react';
@@ -167,7 +168,7 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
         row: SubscriptionBillingBatch,
         handleAction?: cellActionHandler<SubscriptionBillingBatch, EnumSubscriptionBillingBatchSortField>
       ): React.ReactNode => (
-        <FormattedTime value={row.updatedOn.toDate()} day='numeric' month='numeric' year='numeric' />
+        <DateTime value={row.updatedOn.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
     }, {
       header: intl.formatMessage({ id: 'billing.subscription-billing-batch.header.total-price' }),

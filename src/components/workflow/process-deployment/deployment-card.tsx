@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FormattedTime, injectIntl, IntlShape } from 'react-intl';
+import { injectIntl, IntlShape } from 'react-intl';
 
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
@@ -23,6 +23,8 @@ import {
 import {
   Deployment,
 } from 'model/bpm-process-instance';
+
+import DateTime from 'components/common/date-time';
 
 const styles = (theme: Theme) => createStyles({
   avatarBlue: {
@@ -74,7 +76,7 @@ class DeploymentCard extends React.Component<DeploymentCardProps> {
             <Grid item xs={12}>
               <Typography className={classes.inline} variant="caption">Deployment Time</Typography>
               <Typography gutterBottom>
-                <FormattedTime value={deployment.deploymentTime.toDate()} day='numeric' month='numeric' year='numeric' />
+                <DateTime value={deployment.deploymentTime.toDate()} day='numeric' month='numeric' year='numeric' />
               </Typography>
             </Grid>
             <Grid item xs={12}>

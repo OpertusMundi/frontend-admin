@@ -3,7 +3,7 @@ import React from 'react';
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
 import { useNavigate, useLocation, useParams, NavigateFunction, Location } from 'react-router-dom';
-import { FormattedMessage, FormattedTime, FormattedNumber, injectIntl, IntlShape } from 'react-intl';
+import { FormattedMessage, FormattedNumber, injectIntl, IntlShape } from 'react-intl';
 
 // Components
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -69,7 +69,7 @@ import OrderApi from 'service/order';
 import { buildPath, DynamicRoutes } from 'model/routes';
 
 // Shared components
-import { CustomerDetails, PricingModelDetails } from 'components/common';
+import { CustomerDetails, DateTime, PricingModelDetails } from 'components/common';
 
 const styles = (theme: Theme) => createStyles({
   avatar: {
@@ -363,7 +363,7 @@ class OrderDetails extends React.Component<OrderTimelineProps> {
         <TimelineItem key={`status-${index}`}>
           <TimelineOppositeContent>
             <Typography variant="body2" color="textSecondary">
-              <FormattedTime value={h.statusUpdatedOn.toDate()} day='numeric' month='numeric' year='numeric' />
+              <DateTime value={h.statusUpdatedOn.toDate()} day='numeric' month='numeric' year='numeric' />
             </Typography>
           </TimelineOppositeContent>
           <TimelineSeparator>

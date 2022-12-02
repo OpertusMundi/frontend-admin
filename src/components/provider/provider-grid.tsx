@@ -2,7 +2,7 @@ import React from 'react';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
-import { FormattedMessage, FormattedTime, FormattedNumber, injectIntl, IntlShape } from 'react-intl';
+import { FormattedMessage, FormattedNumber, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -11,6 +11,8 @@ import { Theme, withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+
+import DateTime from 'components/common/date-time';
 
 // Icons
 import Icon from '@mdi/react';
@@ -292,7 +294,7 @@ class ProviderManager extends React.Component<ProviderManagerProps, ProviderMana
                 <Grid item xs={12}>
                   <Typography variant="caption" display="block" gutterBottom className={classes.caption}>
                     <FormattedMessage id="account.marketplace.last-update" />
-                    <FormattedTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
+                    <DateTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
                   </Typography>
                 </Grid>
               </Grid>

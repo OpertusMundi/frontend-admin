@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'utils/moment-localized';
 
 export function convertMomentToString(obj: any): void {
   // Check null

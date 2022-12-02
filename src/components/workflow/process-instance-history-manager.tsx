@@ -3,7 +3,7 @@ import React from 'react';
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
 import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
-import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -41,6 +41,7 @@ import { EnumProcessInstanceHistorySortField, ProcessInstance } from 'model/bpm-
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
+import DateTime from 'components/common/date-time';
 
 import ProcessInstanceFilters from './process-instance-history/filter';
 import ProcessInstanceTable from './process-instance-history/table';
@@ -198,7 +199,7 @@ class ProcessInstanceManager extends React.Component<WorkflowManagerProps, Workf
                 <Grid item xs={12}>
                   <Typography variant="caption" display="block" gutterBottom className={classes.caption}>
                     <FormattedMessage id="workflow.last-update" />
-                    <FormattedTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
+                    <DateTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
                   </Typography>
                 </Grid>
               </Grid>

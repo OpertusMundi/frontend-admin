@@ -2,7 +2,7 @@ import moment from 'moment';
 import React from 'react';
 
 // State, routing and localization
-import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 
 // Components
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -18,6 +18,8 @@ import TimelineContent from '@material-ui/lab/TimelineContent';
 import TimelineOppositeContent from '@material-ui/lab/TimelineOppositeContent';
 import TimelineDot from '@material-ui/lab/TimelineDot';
 import Typography from '@material-ui/core/Typography';
+
+import DateTime from 'components/common/date-time';
 
 // Icons
 import Icon from '@mdi/react';
@@ -91,7 +93,6 @@ const intermediateElements = [
 class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelineProps> {
 
   mapActivityToMessage(activity: BpmActivity, instance: ProcessInstanceDetails, incidents: TimelineIncident[]) {
-    const _t = this.props.intl.formatTime;
     const { classes } = this.props;
     const { errorDetails } = instance;
 
@@ -101,13 +102,17 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
       case 'startEvent':
         return (
           <FormattedMessage id={'workflow.instance.activity.started'} values={{
-            timestamp: _t(activity.startTime.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }),
+            timestamp: (
+              <DateTime value={activity.startTime.toDate()} day='numeric' month='numeric' year='numeric' />
+            ),
           }} />
         );
       case 'noneEndEvent':
         return (
           <FormattedMessage id={'workflow.instance.activity.completed'} values={{
-            timestamp: _t(activity.endTime.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }),
+            timestamp: (
+              <DateTime value={activity.endTime.toDate()} day='numeric' month='numeric' year='numeric' />
+            ),
           }} />
         );
       case 'eventBasedGateway':
@@ -115,7 +120,9 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
           <FormattedMessage
             id={`workflow.instance.activity.${activity.activityType}.${activity.endTime ? 'completed' : 'running'}`}
             values={{
-              timestamp: _t(activity.endTime?.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }),
+              timestamp: (
+                <DateTime value={activity.endTime?.toDate()} day='numeric' month='numeric' year='numeric' />
+              ),
             }}
           />
         );
@@ -129,7 +136,9 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
               id={`workflow.instance.activity.${activity.activityType}.error`}
               values={{
                 activity: activity.activityName,
-                timestamp: _t(incident.createTime.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }), //
+                timestamp: (
+                  <DateTime value={incident.createTime.toDate()} day='numeric' month='numeric' year='numeric' />
+                ),
               }}
             />
             {this.props.retryExternalTask && incident.externalTaskId &&
@@ -170,7 +179,9 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
                 <FormattedMessage
                   id={`workflow.instance.activity.resolved`}
                   values={{
-                    timestamp: _t(incident.endTime?.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }),
+                    timestamp: (
+                      <DateTime value={incident.endTime?.toDate()} day='numeric' month='numeric' year='numeric' />
+                    ),
                   }}
                 />
               </Typography>
@@ -185,7 +196,9 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
       return (
         <FormattedMessage id={`workflow.instance.activity.${activity.activityType}.${event}`} values={{
           activity: activity.activityName,
-          timestamp: _t(activity.endTime.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }),
+          timestamp: (
+            <DateTime value={activity.endTime.toDate()} day='numeric' month='numeric' year='numeric' />
+          ),
         }} />
       );
     } else {
@@ -236,7 +249,6 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
   }
 
   render() {
-    const _t = this.props.intl.formatTime;
     const { classes, activeProcessInstance, historyProcessInstance } = this.props;
     const processInstance: ProcessInstanceDetails | null = historyProcessInstance || activeProcessInstance || null;
 
@@ -279,7 +291,7 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
       <TimelineItem key={`status-${index}`}>
         <TimelineOppositeContent>
           <Typography variant="body2" color="textSecondary">
-            <FormattedTime value={a.startTime.toDate()} day='numeric' month='numeric' year='numeric' />
+            <DateTime value={a.startTime.toDate()} day='numeric' month='numeric' year='numeric' />
           </Typography>
           {a.endTime && intermediateElements.includes(a.activityType) &&
             <Typography variant="body2" color="textSecondary">
@@ -318,7 +330,7 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
         <TimelineItem key={`status-${instance.state}`}>
           <TimelineOppositeContent>
             <Typography variant="body2" color="textSecondary">
-              <FormattedTime value={instance.endTime.toDate()} day='numeric' month='numeric' year='numeric' />
+              <DateTime value={instance.endTime.toDate()} day='numeric' month='numeric' year='numeric' />
             </Typography>
           </TimelineOppositeContent>
           <TimelineSeparator>
@@ -332,7 +344,9 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
                 <FormattedMessage
                   id={`workflow.instance.state.${instance.state}`}
                   values={{
-                    timestamp: _t(instance.endTime.toDate(), { day: 'numeric', month: 'numeric', year: 'numeric' }),
+                    timestamp: (
+                      <DateTime value={instance.endTime.toDate()} day='numeric' month='numeric' year='numeric' />
+                    ),
                   }}
                 />
               </Typography>

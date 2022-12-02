@@ -4,7 +4,7 @@ import { AxiosError } from 'axios';
 
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
-import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 import { useNavigate, useLocation, useParams, NavigateFunction, Location } from 'react-router-dom';
 
 import { Link } from 'react-router-dom';
@@ -115,6 +115,7 @@ import {
 } from 'model/order';
 
 // Components
+import DateTime from 'components/common/date-time';
 import OrderTable from 'components/order/grid/table';
 import PayInTable from 'components/payin/grid/table';
 import PayOutTable from 'components/payout/grid/table';
@@ -696,7 +697,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
                       <FormattedMessage id={'account-marketplace.form.field.registeredAt'} />
                     </Typography>
                     <Typography gutterBottom>
-                      <FormattedTime value={account.registeredAt.toDate()} day='numeric' month='numeric' year='numeric' />
+                      <DateTime value={account.registeredAt.toDate()} day='numeric' month='numeric' year='numeric' />
                     </Typography>
                   </Grid>
                   <Grid item xs={4}>

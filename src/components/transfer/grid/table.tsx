@@ -3,12 +3,13 @@ import React from 'react';
 // Components
 import { Link } from 'react-router-dom';
 
-import { injectIntl, IntlShape, FormattedNumber, FormattedTime } from 'react-intl';
+import { injectIntl, IntlShape, FormattedNumber } from 'react-intl';
 
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
+import DateTime from 'components/common/date-time';
 
 // Icons
 import Icon from '@mdi/react';
@@ -282,7 +283,7 @@ function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTrans
         handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
       ): React.ReactNode => (
         row?.transfer?.executedOn ?
-          <FormattedTime value={row?.transfer?.executedOn?.toDate()} day='numeric' month='numeric' year='numeric' />
+          <DateTime value={row?.transfer?.executedOn?.toDate()} day='numeric' month='numeric' year='numeric' />
           :
           null
       ),

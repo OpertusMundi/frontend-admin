@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 
-import { injectIntl, IntlShape, FormattedTime } from 'react-intl';
+import { injectIntl, IntlShape } from 'react-intl';
 
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
@@ -23,6 +23,7 @@ import {
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
+import DateTime from 'components/common/date-time';
 
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { EnumMarketplaceAccountSortField, EnumKycLevel, MarketplaceAccountSummary, MarketplaceAccountQuery, EnumAccountType, EnumAccountActiveTask } from 'model/account-marketplace';
@@ -240,7 +241,7 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccountSumm
         row: MarketplaceAccountSummary,
         handleAction?: cellActionHandler<MarketplaceAccountSummary, EnumMarketplaceAccountSortField>
       ): React.ReactNode => (
-        <FormattedTime value={row?.registeredOn?.toDate()} day='numeric' month='numeric' year='numeric' />
+        <DateTime value={row?.registeredOn?.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
     }, {
       header: intl.formatMessage({ id: 'account.marketplace.header.tester' }),

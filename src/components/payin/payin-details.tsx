@@ -3,7 +3,7 @@ import React from 'react';
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
 import { useNavigate, useLocation, useParams, NavigateFunction, Location } from 'react-router-dom';
-import { FormattedMessage, FormattedTime, FormattedNumber, injectIntl, IntlShape, FormattedDate } from 'react-intl';
+import { FormattedMessage, FormattedNumber, injectIntl, IntlShape, FormattedDate } from 'react-intl';
 
 // Components
 import { Link } from 'react-router-dom';
@@ -24,6 +24,8 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
 import { grey, indigo } from '@material-ui/core/colors';
+
+import DateTime from 'components/common/date-time';
 
 // Icons
 import Icon from '@mdi/react';
@@ -309,14 +311,14 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Created On</Typography>
           <Typography gutterBottom>
-            <FormattedTime value={payin.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
+            <DateTime value={payin.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
           </Typography>
         </Grid>
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Executed On</Typography>
           <Typography gutterBottom>
             {payin.executedOn
-              ? <FormattedTime value={payin.executedOn.toDate()} day='numeric' month='numeric' year='numeric' />
+              ? <DateTime value={payin.executedOn.toDate()} day='numeric' month='numeric' year='numeric' />
               : '-'
             }
           </Typography>
@@ -345,14 +347,14 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Created On</Typography>
           <Typography gutterBottom>
-            <FormattedTime value={payin.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
+            <DateTime value={payin.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
           </Typography>
         </Grid>
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Executed On</Typography>
           <Typography gutterBottom>
             {payin.executedOn
-              ? <FormattedTime value={payin.executedOn.toDate()} day='numeric' month='numeric' year='numeric' />
+              ? <DateTime value={payin.executedOn.toDate()} day='numeric' month='numeric' year='numeric' />
               : '-'
             }
           </Typography>
@@ -415,14 +417,14 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Created On</Typography>
           <Typography gutterBottom>
-            <FormattedTime value={payin.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
+            <DateTime value={payin.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
           </Typography>
         </Grid>
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Executed On</Typography>
           <Typography gutterBottom>
             {payin.executedOn
-              ? <FormattedTime value={payin.executedOn.toDate()} day='numeric' month='numeric' year='numeric' />
+              ? <DateTime value={payin.executedOn.toDate()} day='numeric' month='numeric' year='numeric' />
               : '-'
             }
           </Typography>
@@ -472,7 +474,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
             <Grid item xs={4}>
               <Typography className={classes.inline} variant="caption">Created On</Typography>
               <Typography gutterBottom>
-                <FormattedTime value={payin.recurringPayment.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
+                <DateTime value={payin.recurringPayment.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
               </Typography>
             </Grid>
             <Grid item xs={4}>
@@ -485,7 +487,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
               <Typography className={classes.inline} variant="caption">Ended On</Typography>
               <Typography gutterBottom>
                 {payin.recurringPayment.endDate
-                  ? <FormattedTime value={payin.recurringPayment.endDate.toDate()} day='numeric' month='numeric' year='numeric' />
+                  ? <DateTime value={payin.recurringPayment.endDate.toDate()} day='numeric' month='numeric' year='numeric' />
                   : <span>-</span>
                 }
               </Typography>
@@ -742,7 +744,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
               color="textSecondary"
             >
               {transfer
-                ? <FormattedTime value={transfer.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
+                ? <DateTime value={transfer.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
                 : <span>-</span>
               }
             </Typography>
@@ -812,7 +814,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
               color="textSecondary"
             >
               {transfer
-                ? <FormattedTime value={transfer.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
+                ? <DateTime value={transfer.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
                 : <span>-</span>
               }
             </Typography>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { injectIntl, IntlShape, FormattedTime } from 'react-intl';
+import { injectIntl, IntlShape } from 'react-intl';
 
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
@@ -17,6 +17,8 @@ import {
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
+import DateTime from 'components/common/date-time';
+
 import { ProcessInstanceHeader } from 'components/workflow/common';
 
 import {
@@ -123,7 +125,7 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
         row: ProcessInstance,
         handleAction?: cellActionHandler<ProcessInstance, EnumProcessInstanceSortField>
       ): React.ReactNode => (
-        <FormattedTime value={row.processDefinitionDeployedOn.toDate()} day='numeric' month='numeric' year='numeric' />
+        <DateTime value={row.processDefinitionDeployedOn.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
     }, {
       header: intl.formatMessage({ id: 'workflow.header.instance.incident-count' }),
@@ -169,7 +171,7 @@ function workflowColumns(intl: IntlShape, props: ProcessInstanceTableProps): Col
         row: ProcessInstance,
         handleAction?: cellActionHandler<ProcessInstance, EnumProcessInstanceSortField>
       ): React.ReactNode => (
-        <FormattedTime value={row.startedOn.toDate()} day='numeric' month='numeric' year='numeric' />
+        <DateTime value={row.startedOn.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
     }]);
 }

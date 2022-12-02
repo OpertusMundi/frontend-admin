@@ -4,7 +4,7 @@ import { AxiosError } from 'axios';
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
 import { useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
-import { FormattedMessage, FormattedTime, injectIntl, IntlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -40,6 +40,7 @@ import { EnumSortField, AssetDraft, EnumDraftStatus, EnumContractType } from 'mo
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
+import DateTime from 'components/common/date-time';
 
 import DraftFilters from './grid/filter';
 import DraftTable from './grid/table';
@@ -259,7 +260,7 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
                 <Grid item xs={12}>
                   <Typography variant="caption" display="block" gutterBottom className={classes.caption}>
                     <FormattedMessage id="draft.manager.last-update" />
-                    <FormattedTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
+                    <DateTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
                   </Typography>
                 </Grid>
               </Grid>

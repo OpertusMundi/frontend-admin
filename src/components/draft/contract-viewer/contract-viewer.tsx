@@ -5,7 +5,7 @@ import { saveAs } from 'file-saver';
 // State, routing and localization
 import { connect, ConnectedProps } from 'react-redux';
 import { useNavigate, useLocation, useParams, NavigateFunction, Location } from 'react-router-dom';
-import { FormattedTime, injectIntl, IntlShape } from 'react-intl';
+import { injectIntl, IntlShape } from 'react-intl';
 
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
@@ -21,6 +21,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+
+import { DateTime } from 'components/common';
 
 // Icons
 import Icon from '@mdi/react';
@@ -213,7 +215,7 @@ class DraftContractViewer extends React.Component<AccountManagerProps, AccountMa
                     Modified On
                   </Typography>
                   <Typography variant="body1">
-                    <FormattedTime value={draft.modifiedOn.toDate()} day='numeric' month='numeric' year='numeric' />
+                    <DateTime value={draft.modifiedOn.toDate()} day='numeric' month='numeric' year='numeric' />
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
