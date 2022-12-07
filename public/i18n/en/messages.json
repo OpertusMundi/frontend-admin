@@ -630,6 +630,10 @@
     "AdminMessageCode.MarketplaceAccountExists": "Email {email} is already used by a marketplace account",
     "AdminMessageCode.OpenDatasetProviderAlreadyExists": "Open Dataset provider is already assigned to another user",
     "BpmnMessageCode.ProcessInstanceAlreadyExists": "Process instance is already running",
+    "QuotationMessageCode.DISCOUNT_RATE_COUNT_ORDER": "Discount rate count values must be ordered",
+    "QuotationMessageCode.DISCOUNT_RATE_DISCOUNT_ORDER": "Discount rate discount values must be ordered",
+    "QuotationMessageCode.PREPAID_COUNT_ORDER": "Prepaid tier count values must be ordered",
+    "QuotationMessageCode.PREPAID_DISCOUNT_ORDER": "Prepaid tier discount values must be ordered",
     "validation": {
       "DecimalMin": "Value of field {field} must be greater than {min}"
     },
@@ -771,9 +775,11 @@
     "message-inbox-user": "My Inbox",
     "message-sent-user": "Sent Items",
     "order-manager": "Orders",
-    "orders-billing": "Orders and Billing",
+    "orders": "Orders",
+    "subscriptions": "Subscriptions",
     "payin-manager": "Pay Ins",
     "payout-manager": "Pay Outs",
+    "pricing-model-manager": "Pricing Models",
     "transfer-manager": "Transfers",
     "profile": "Profile",
     "provider-manager": "Providers",
@@ -835,6 +841,26 @@
     "password-reset-success": "Password has been reset",
     "settings-changed": "Settings has been updated"
   },
+  "pdf-viewer": {
+    "pagination": "Page {pageNumber} of {numPages}"
+  },
+  "pricing-model": {
+    "add-discount-rate": "Add discount rate",
+    "price-per-call": "Price per call",
+    "remove-discount-rate": "Delete",
+    "discount-rate": {
+      "count-calls": "Number of Calls",
+      "count-rows": "Number of rows",
+      "discount": "Discount"
+    }
+  },
+  "pricing-model-ogc-service": "Private OGC services",
+  "profile": {
+    "form": {
+      "avatar-image-title": "Select image",
+      "set-user-password": "Change user password"
+    }
+  },
   "send-message-dialog": {
     "title": "Send Message",
     "action": {
@@ -846,16 +872,6 @@
       "failure": "Failed to sent message to {recipient}"
     }
   },
-  "pdf-viewer": {
-    "pagination": "Page {pageNumber} of {numPages}"
-  },
-  "profile": {
-    "form": {
-      "avatar-image-title": "Select image",
-      "set-user-password": "Change user password"
-    }
-  },
-  "provider-manager": {},
   "settings": {
     "marketplace": {
       "announcement": {

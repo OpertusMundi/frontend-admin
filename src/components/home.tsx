@@ -66,6 +66,8 @@ import {
   mdiWrenchClockOutline,
   mdiCogs,
   mdiCardAccountPhoneOutline,
+  mdiCalendarClockOutline,
+  mdiCashClock,
 } from '@mdi/js';
 
 // Utilities
@@ -98,6 +100,7 @@ enum EnumSection {
   Drawer = 'Drawer',
   MapDrawer = 'MapDrawer',
   Message = 'Message',
+  Subscriptions = 'Subscriptions',
   Workflow = 'Workflow',
 };
 
@@ -184,6 +187,9 @@ const styles = (theme: Theme) => createStyles({
     marginRight: 36,
     marginLeft: -19,
   },
+  multilineListItem: {
+    whiteSpace: 'pre-wrap',
+  },
   nested: {
     paddingLeft: theme.spacing(4),
   },
@@ -237,6 +243,7 @@ interface HomeState {
     [EnumSection.Drawer]: boolean;
     [EnumSection.MapDrawer]: boolean;
     [EnumSection.Message]: boolean;
+    [EnumSection.Subscriptions]: boolean;
     [EnumSection.Workflow]: boolean;
   },
   menuAnchor: HTMLElement | null,
@@ -271,6 +278,7 @@ class Home extends React.Component<HomeProps, HomeState> {
       [EnumSection.Drawer]: true,
       [EnumSection.MapDrawer]: false,
       [EnumSection.Message]: false,
+      [EnumSection.Subscriptions]: false,
       [EnumSection.Workflow]: false,
     },
     menuAnchor: null,
@@ -369,6 +377,7 @@ class Home extends React.Component<HomeProps, HomeState> {
         [EnumSection.Admin]: this.state.open[key] ? this.state.open[EnumSection.Admin] : false,
         [EnumSection.Billing]: this.state.open[key] ? this.state.open[EnumSection.Billing] : false,
         [EnumSection.Message]: this.state.open[key] ? this.state.open[EnumSection.Message] : false,
+        [EnumSection.Subscriptions]: this.state.open[key] ? this.state.open[EnumSection.Subscriptions] : false,
         [EnumSection.Workflow]: this.state.open[key] ? this.state.open[EnumSection.Workflow] : false,
         [key]: !this.state.open[key],
       }
@@ -618,7 +627,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                   <ListItemIcon>
                     <Icon path={mdiFinance} size="1.5rem" />
                   </ListItemIcon>
-                  <ListItemText primary={_t({ id: 'links.orders-billing' })} />
+                  <ListItemText primary={_t({ id: 'links.orders' })} />
                   {open[EnumSection.Billing] ? <ExpandLess /> : <ExpandMore />}
                 </ListItem>
 
@@ -661,6 +670,20 @@ class Home extends React.Component<HomeProps, HomeState> {
                       <ListItemText primary={_t({ id: 'links.payout-manager' })} />
                     </ListItem>
 
+                  </List>
+                </Collapse>
+
+                <ListItem button onClick={() => this.onSectionToggle(EnumSection.Subscriptions)}>
+                  <ListItemIcon>
+                    <Icon path={mdiCalendarClockOutline} size="1.5rem" />
+                  </ListItemIcon>
+                  <ListItemText primary={_t({ id: 'links.subscriptions' })} />
+                  {open[EnumSection.Subscriptions] ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
+
+                <Collapse in={open[EnumSection.Subscriptions]} timeout="auto" unmountOnExit className={classes.collapse}>
+                  <List component="div" disablePadding className={open[EnumSection.Drawer] ? '' : classes.childMenu}>
+
                     <ListItem button
                       className={open[EnumSection.Drawer] ? classes.nested : ''}
                       onClick={(e) => this.onNavigate(e, StaticRoutes.SubscriptionBillingManager)}>
@@ -668,6 +691,15 @@ class Home extends React.Component<HomeProps, HomeState> {
                         <Icon path={mdiClockFast} size="1.5rem" />
                       </ListItemIcon>
                       <ListItemText primary={_t({ id: 'links.subscription-billing-manager' })} />
+                    </ListItem>
+
+                    <ListItem button
+                      className={open[EnumSection.Drawer] ? classes.nested : ''}
+                      onClick={(e) => this.onNavigate(e, StaticRoutes.PricingModelManager)}>
+                      <ListItemIcon>
+                        <Icon path={mdiCashClock} size="1.5rem" />
+                      </ListItemIcon>
+                      <ListItemText className={classes.multilineListItem} primary={_t({ id: 'links.pricing-model-manager' })} />
                     </ListItem>
 
                   </List>

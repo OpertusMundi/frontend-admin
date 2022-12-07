@@ -1,13 +1,26 @@
 import { AxiosRequestConfig } from 'axios';
 
 import { Api } from 'utils/api';
-import { ObjectResponse, PageRequest, Sorting, AxiosPageResponse, PageResult, AxiosObjectResponse } from 'model/response';
+import {
+  AxiosObjectResponse,
+  AxiosPageResponse,
+  ObjectResponse,
+  PageRequest,
+  PageResult,
+  SimpleResponse,
+  Sorting,
+} from 'model/response';
 import {
   EnumSubscriptionBillingBatchSortField,
   SubscriptionBillingBatch,
   SubscriptionBillingBatchCommand,
   SubscriptionBillingBatchQuery,
 } from 'model/subscription-billing';
+import {
+  PerCallPricingModelCommand,
+} from 'model/pricing-model';
+
+const baseUri = '/action/subscription-billing';
 
 export default class SubscriptionBillingApi extends Api {
 
@@ -26,19 +39,19 @@ export default class SubscriptionBillingApi extends Api {
         return query[key] !== null ? [...result, `${key}=${query[key]}`] : result;
       }, []);
 
-    const url = `/action/subscription-billing/quotations?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
+    const url = `${baseUri}/quotations?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
 
     return this.get<ObjectResponse<PageResult<SubscriptionBillingBatch>>>(url);
   }
 
   public async findOne(key: string): Promise<AxiosObjectResponse<SubscriptionBillingBatch>> {
-    const url = `/action/subscription-billing/quotations/${key}`;
+    const url = `${baseUri}/quotations/${key}`;
 
     return this.get<ObjectResponse<SubscriptionBillingBatch>>(url);
   }
 
   public async create(year: number, month: number, quotationOnly = false): Promise<AxiosObjectResponse<SubscriptionBillingBatch>> {
-    const url = `/action/subscription-billing/quotations`;
+    const url = `${baseUri}/quotations`;
 
     const command: SubscriptionBillingBatchCommand = {
       year,
@@ -47,5 +60,19 @@ export default class SubscriptionBillingApi extends Api {
     };
 
     return this.post<SubscriptionBillingBatchCommand, ObjectResponse<SubscriptionBillingBatch>>(url, command);
+  }
+
+  public async getDefaultPricingModel(): Promise<ObjectResponse<PerCallPricingModelCommand>> {
+    const url = `${baseUri}/default-pricing-model`;
+
+    return this.get<ObjectResponse<PerCallPricingModelCommand>>(url)
+      .then((response) => response.data);
+  }
+
+  public async setDefaultPricingModel(command: PerCallPricingModelCommand): Promise<SimpleResponse> {
+    const url = `${baseUri}/default-pricing-model`;
+
+    return this.put<PerCallPricingModelCommand, SimpleResponse>(url, command)
+      .then((response) => response.data);
   }
 }

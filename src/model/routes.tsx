@@ -53,6 +53,7 @@ import {
   mdiClockFast,
   mdiWrenchClockOutline,
   mdiCardAccountPhoneOutline,
+  mdiCashClock,
 } from '@mdi/js';
 
 /**
@@ -96,6 +97,7 @@ const MessageInboxUser = '/messages/inbox/user';
 const OrderManager = '/billing/orders';
 const PayInManager = '/billing/payins';
 const PayOutManager = '/billing/payouts';
+const PricingModelManager = '/billing/pricing-models';
 const ProcessDeploymentManager = '/workflows/deployments';
 const ProcessInstanceManager = '/workflows/process-instances';
 const ProcessInstanceTaskManager = '/workflows/process-instance-tasks';
@@ -126,6 +128,7 @@ export const StaticRoutes = {
   MarketplaceAccountManager,
   DraftManager,
   EventManager,
+  PricingModelManager,
   ProcessDeploymentManager,
   ProcessInstanceManager,
   ProcessInstanceHistoryManager,
@@ -292,6 +295,13 @@ export const routes: RouteRegistry = {
         <MessageInboxUserToolbar route={route} />
       );
     }
+  },
+  [PricingModelManager]: {
+    icon: (className?: string) => (<Icon path={mdiCashClock} size="1.5rem" className={className} />),
+    description: 'OGC Service Pricing Model',
+    title: 'links.pricing-model-manager',
+    defaultTitle: 'OGC Service Pricing Model',
+    links: [Dashboard, SubscriptionBillingManager],
   },
   [OrderManager]: {
     icon: (className?: string) => (<Icon path={mdiPackageVariantClosed} size="1.5rem" className={className} />),

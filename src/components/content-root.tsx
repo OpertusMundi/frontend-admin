@@ -40,6 +40,7 @@ const MarketplaceAccountView = lazy(() => import('components/account-marketplace
 const MessageDialogComponent = lazy(() => import('components/message/message-send-dialog'));
 const MessageInboxHelpdesk = lazy(() => import('components/message-inbox-helpdesk/message-grid'));
 const MessageInboxUser = lazy(() => import('components/message-inbox-user/message-grid'));
+const PricingModelManager = lazy(() => import('components/pricing-model/pricing-model-manager'));
 const PayInDetails = lazy(() => import('components/payin/payin-details'));
 const PayInManager = lazy(() => import('components/payin/payin-manager'));
 const PayOutDetails = lazy(() => import('components/payout/payout-details'));
@@ -130,6 +131,7 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             <Route path={StaticRoutes.ContractManager} element={<ContractManager />} />
             <Route path={StaticRoutes.DraftManager} element={<AssetDraftManager />} />
             <Route path={StaticRoutes.EventManager} element={<EventManager />} />
+            <Route path={StaticRoutes.PricingModelManager} element={<PricingModelManager />} />
             <Route path={StaticRoutes.OrderManager} element={<OrderManager />} />
             <Route path={StaticRoutes.PayInManager} element={<PayInManager />} />
             <Route path={StaticRoutes.PayOutManager} element={<PayOutManager />} />
