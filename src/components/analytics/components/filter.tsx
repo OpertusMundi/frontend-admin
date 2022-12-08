@@ -144,166 +144,164 @@ class QueryEditorFilters extends React.Component<QueryEditorFiltersProps> {
 
     return (
       <form onSubmit={this.executeQuery} noValidate autoComplete="off">
-        <MuiPickersUtilsProvider libInstance={moment} utils={DateFnsUtils}>
-          <Grid container spacing={3} justifyContent={'space-between'} alignItems={'flex-end'}>
-            <Grid item sm={2} xs={12} className={classes.item}>
-              <InputLabel htmlFor="groupBySegment">Group By Segment</InputLabel>
-              <Switch
-                checked={query.segments?.enabled || false}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-                  setFilter(
-                    { segments: { enabled: checked, segments: query.segments?.segments || [] } }
-                  );
-                }}
-                name="groupBySegment"
-                color="primary"
-              />
-            </Grid>
-            <Grid item sm={4} xs={12} className={classes.item}>
-              <Autocomplete
-                fullWidth
-                style={{ marginTop: 16 }}
-                multiple
-                options={this.segments}
-                getOptionLabel={(option) => option.label}
-                value={this.segments.filter(o => query.segments!.segments!.includes(o.value)) || null}
-                onChange={(event, value) => {
-                  setFilter({ segments: { enabled: query.segments?.enabled || false, segments: value.map(v => v.value) } });
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="standard"
-                    label={_t({ id: 'analytics.filter.segments' })}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item sm={2} xs={12} className={classes.item}>
-              <InputLabel htmlFor="groupByCountry">Group By Country</InputLabel>
-              <Switch
-                checked={query.areas?.enabled || false}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-                  setFilter(
-                    { areas: { enabled: checked, codes: query.areas?.codes || [] } }
-                  );
-                }}
-                name="groupByCountry"
-                color="primary"
-              />
-            </Grid>
-            <Grid item sm={4} xs={12} className={classes.item}>
-              <Autocomplete
-                fullWidth
-                style={{ marginTop: 16 }}
-                multiple
-                options={this.countries}
-                getOptionLabel={(option) => option.label}
-                value={this.countries.filter(o => query.areas!.codes!.includes(o.value)) || null}
-                onChange={(event, value) => {
-                  setFilter({ areas: { enabled: query.areas?.enabled || false, codes: value.map(v => v.value) } });
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="standard"
-                    label={_t({ id: 'analytics.filter.countries' })}
-                  />
-                )}
-              />
-            </Grid>
+        <Grid container spacing={3} justifyContent={'space-between'} alignItems={'flex-end'}>
+          <Grid item sm={2} xs={12} className={classes.item}>
+            <InputLabel htmlFor="groupBySegment">Group By Segment</InputLabel>
+            <Switch
+              checked={query.segments?.enabled || false}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+                setFilter(
+                  { segments: { enabled: checked, segments: query.segments?.segments || [] } }
+                );
+              }}
+              name="groupBySegment"
+              color="primary"
+            />
           </Grid>
-          <Grid container spacing={3} justifyContent={'space-between'} alignItems={'flex-end'}>
-            <Grid item sm={6} xs={12} className={classes.item}>
-              <RadioGroup
-                row name="timeUnit"
-                value={query?.time?.unit ? query.time!.unit! as string : ''}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>, value: string): void => {
-                  if (value) {
-                    setFilter({ time: { ...query.time, unit: value as EnumTemporalUnit } });
-                  } else {
-                    setFilter({ time: { ...query.time, unit: undefined } });
-                  }
-                }}
-              >
-                <FormControlLabel
-                  value=""
-                  control={<Radio color="primary" />}
-                  label="None"
+          <Grid item sm={4} xs={12} className={classes.item}>
+            <Autocomplete
+              fullWidth
+              style={{ marginTop: 16 }}
+              multiple
+              options={this.segments}
+              getOptionLabel={(option) => option.label}
+              value={this.segments.filter(o => query.segments!.segments!.includes(o.value)) || null}
+              onChange={(event, value) => {
+                setFilter({ segments: { enabled: query.segments?.enabled || false, segments: value.map(v => v.value) } });
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="standard"
+                  label={_t({ id: 'analytics.filter.segments' })}
                 />
-                <FormControlLabel
-                  value={EnumTemporalUnit.YEAR as string}
-                  control={<Radio color="primary" />}
-                  label="Year"
-                />
-                <FormControlLabel
-                  value={EnumTemporalUnit.MONTH as string}
-                  control={<Radio color="primary" />}
-                  label="Month"
-                />
-                <FormControlLabel
-                  value={EnumTemporalUnit.WEEK as string}
-                  control={<Radio color="primary" />}
-                  label="Week"
-                />
-                <FormControlLabel
-                  value={EnumTemporalUnit.DAY as string}
-                  control={<Radio color="primary" />}
-                  label="Day"
-                />
-              </RadioGroup>
-            </Grid>
-            {query?.time?.unit &&
-              <>
-                <Grid item sm={3} xs={12} className={classes.item}>
-                  <DatePicker
-                    clearable
-                    id="time-min"
-                    label="Date From"
-                    format={'DD/MM/YYYY'}
-                    value={query.time?.min || null}
-                    onChange={(date: MaterialUiPickersDate): void => {
-                      if (date) {
-                        setFilter({ time: { ...query.time, min: date } });
-                      } else {
-                        setFilter({ time: { ...query.time, min: undefined } });
-                      }
-                    }}
-                  />
-                </Grid>
-                <Grid item sm={3} xs={12} className={classes.item}>
-                  <DatePicker
-                    clearable
-                    id="time-max"
-                    label="Date To"
-                    format={'DD/MM/YYYY'}
-                    value={query.time?.max || null}
-                    onChange={(date: MaterialUiPickersDate): void => {
-                      if (date) {
-                        setFilter({ time: { ...query.time, max: date } });
-                      } else {
-                        setFilter({ time: { ...query.time, max: undefined } });
-                      }
-                    }}
-                  />
-                </Grid>
-              </>
-            }
+              )}
+            />
           </Grid>
-          {executeQuery &&
-            <Grid container item xs={12} justifyContent={'flex-end'}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                className={classes.button}
-                disabled={disabled}
-              >
-                <FormattedMessage id="view.shared.action.search" />
-              </Button>
-            </Grid>
+          <Grid item sm={2} xs={12} className={classes.item}>
+            <InputLabel htmlFor="groupByCountry">Group By Country</InputLabel>
+            <Switch
+              checked={query.areas?.enabled || false}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+                setFilter(
+                  { areas: { enabled: checked, codes: query.areas?.codes || [] } }
+                );
+              }}
+              name="groupByCountry"
+              color="primary"
+            />
+          </Grid>
+          <Grid item sm={4} xs={12} className={classes.item}>
+            <Autocomplete
+              fullWidth
+              style={{ marginTop: 16 }}
+              multiple
+              options={this.countries}
+              getOptionLabel={(option) => option.label}
+              value={this.countries.filter(o => query.areas!.codes!.includes(o.value)) || null}
+              onChange={(event, value) => {
+                setFilter({ areas: { enabled: query.areas?.enabled || false, codes: value.map(v => v.value) } });
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="standard"
+                  label={_t({ id: 'analytics.filter.countries' })}
+                />
+              )}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={3} justifyContent={'space-between'} alignItems={'flex-end'}>
+          <Grid item sm={6} xs={12} className={classes.item}>
+            <RadioGroup
+              row name="timeUnit"
+              value={query?.time?.unit ? query.time!.unit! as string : ''}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>, value: string): void => {
+                if (value) {
+                  setFilter({ time: { ...query.time, unit: value as EnumTemporalUnit } });
+                } else {
+                  setFilter({ time: { ...query.time, unit: undefined } });
+                }
+              }}
+            >
+              <FormControlLabel
+                value=""
+                control={<Radio color="primary" />}
+                label="None"
+              />
+              <FormControlLabel
+                value={EnumTemporalUnit.YEAR as string}
+                control={<Radio color="primary" />}
+                label="Year"
+              />
+              <FormControlLabel
+                value={EnumTemporalUnit.MONTH as string}
+                control={<Radio color="primary" />}
+                label="Month"
+              />
+              <FormControlLabel
+                value={EnumTemporalUnit.WEEK as string}
+                control={<Radio color="primary" />}
+                label="Week"
+              />
+              <FormControlLabel
+                value={EnumTemporalUnit.DAY as string}
+                control={<Radio color="primary" />}
+                label="Day"
+              />
+            </RadioGroup>
+          </Grid>
+          {query?.time?.unit &&
+            <MuiPickersUtilsProvider libInstance={moment} utils={DateFnsUtils}>
+              <Grid item sm={3} xs={12} className={classes.item}>
+                <DatePicker
+                  clearable
+                  id="time-min"
+                  label="Date From"
+                  format={'DD/MM/YYYY'}
+                  value={query.time?.min || null}
+                  onChange={(date: MaterialUiPickersDate): void => {
+                    if (date) {
+                      setFilter({ time: { ...query.time, min: date } });
+                    } else {
+                      setFilter({ time: { ...query.time, min: undefined } });
+                    }
+                  }}
+                />
+              </Grid>
+              <Grid item sm={3} xs={12} className={classes.item}>
+                <DatePicker
+                  clearable
+                  id="time-max"
+                  label="Date To"
+                  format={'DD/MM/YYYY'}
+                  value={query.time?.max || null}
+                  onChange={(date: MaterialUiPickersDate): void => {
+                    if (date) {
+                      setFilter({ time: { ...query.time, max: date } });
+                    } else {
+                      setFilter({ time: { ...query.time, max: undefined } });
+                    }
+                  }}
+                />
+              </Grid>
+            </MuiPickersUtilsProvider>
           }
-        </MuiPickersUtilsProvider>
+        </Grid>
+        {executeQuery &&
+          <Grid container item xs={12} justifyContent={'flex-end'}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              disabled={disabled}
+            >
+              <FormattedMessage id="view.shared.action.search" />
+            </Button>
+          </Grid>
+        }
       </form>
     );
   }
