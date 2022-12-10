@@ -442,7 +442,8 @@
         "PENDING_PROVIDER_REVIEW": "Pending Review Provider",
         "PROVIDER_REJECTED": "Rejected Provider",
         "POST_PROCESSING": "Post-Processing",
-        "PUBLISHED": "Published"
+        "PUBLISHED": "Published",
+        "CANCELLED": "Cancelled"
       },
       "filter": {
         "asset-status": "Asset Status"
@@ -963,7 +964,11 @@
           "running": "Event based gateway pending ...",
           "completed": "Event based gateway completed at {timestamp}"
         },
-        "duration": "Duration {duration}"
+        "signalStartEvent": {
+          "received": "Signal received"
+        },
+        "duration": "Duration {duration}",
+        "transmission": "Signal received"
       },
       "state": {
         "EXTERNALLY_TERMINATED": "The process has been externally terminated at {timestamp}",
