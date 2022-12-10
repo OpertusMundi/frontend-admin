@@ -43,6 +43,7 @@ import Icon from '@mdi/react';
 import {
   mdiAccountOutline,
   mdiClockFast,
+  mdiCloudOffOutline,
   mdiCodeJson,
   mdiDatabaseCogOutline,
   mdiTimelineClockOutline,
@@ -52,6 +53,9 @@ import {
 // Store
 import { RootState } from 'store';
 import { findOne } from 'store/process-instance-history/thunks'
+
+// Services
+import message from 'service/message';
 
 // Model
 import { MarketplaceAccount } from 'model/account-marketplace';
@@ -110,6 +114,12 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
 
     if (params['businessKey'] || params['processInstance']) {
       this.props.findOne(params['businessKey'] as string, params['processInstance'] as string)
+        .then((result) => {
+          if (!result) {
+            message.error('Record was not found', () => (<Icon path={mdiCloudOffOutline} size="3rem" />));
+            this.props.navigate(-1);
+          }
+        })
         .catch((err: AxiosError) => {
           console.log(err);
           // TODO: Redirect to grid view?

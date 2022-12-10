@@ -33,6 +33,7 @@ import {
   mdiClockOutline,
   mdiArrowDecisionOutline,
   mdiAutorenew,
+  mdiAntenna,
 } from '@mdi/js';
 
 // Model
@@ -78,6 +79,7 @@ const supportedTasks = [
   'noneEndEvent',
   'serviceTask',
   'startEvent',
+  'signalStartEvent',
   'userTask',
 ];
 
@@ -86,7 +88,12 @@ const intermediateElements = [
   'intermediateMessageCatch',
   'intermediateTimer',
   'serviceTask',
+  'signalStartEvent',
   'userTask',
+];
+
+const signalElements = [
+  'signalStartEvent',
 ];
 
 
@@ -119,6 +126,18 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
         return (
           <FormattedMessage
             id={`workflow.instance.activity.${activity.activityType}.${activity.endTime ? 'completed' : 'running'}`}
+            values={{
+              timestamp: (
+                <DateTime value={activity.endTime?.toDate()} day='numeric' month='numeric' year='numeric' />
+              ),
+            }}
+          />
+        );
+
+      case 'signalStartEvent':
+        return (
+          <FormattedMessage
+            id={`workflow.instance.activity.${activity.activityType}.received`}
             values={{
               timestamp: (
                 <DateTime value={activity.endTime?.toDate()} day='numeric' month='numeric' year='numeric' />
@@ -226,12 +245,17 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
         return (<Icon path={mdiArrowDecisionOutline} size="1.5rem" />);
       case 'intermediateTimer':
         return (<Icon path={mdiClockOutline} size="1.5rem" />);
+      case 'signalStartEvent':
+        return (<Icon path={mdiAntenna} size="1.5rem" />);
     }
   }
 
   mapActivityToColor(activity: BpmActivity, instance: ProcessInstanceDetails, incidents: TimelineIncident[]) {
     const incident = incidents.find((i) => i.activityId === activity.activityId) || null;
 
+    if (activity.activityType === 'signalStartEvent') {
+      return '#5E35B1';
+    }
     if (incident && ['userTask', 'serviceTask'].includes(activity.activityType)) {
       return incident.resolved ? '#757575' : '#f44336';
     }
@@ -296,7 +320,7 @@ class ProcessInstanceTimeline extends React.Component<ProcessInstanceTimelinePro
           {a.endTime && intermediateElements.includes(a.activityType) &&
             <Typography variant="body2" color="textSecondary">
               <FormattedMessage
-                id={'workflow.instance.activity.duration'}
+                id={`workflow.instance.activity.${signalElements.includes(a.activityType) ? 'transmission' : 'duration'}`}
                 values={{ duration: moment.duration(1000 * (a.endTime.unix() - a.startTime.unix())).humanize() }}
               />
             </Typography>

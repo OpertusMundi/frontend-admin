@@ -66,7 +66,11 @@ class AssetDraftFilters extends React.Component<AssetDraftFiltersProps> {
     }, {
       value: EnumDraftStatus.POST_PROCESSING, label: 'Post Processing'
     }, {
+      value: EnumDraftStatus.PUBLISHING, label: 'Preparing to Publish'
+    }, {
       value: EnumDraftStatus.PUBLISHED, label: 'Published'
+    }, {
+      value: EnumDraftStatus.CANCELLED, label: 'Cancelled'
     }];
   }
 

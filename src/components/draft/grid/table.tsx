@@ -21,6 +21,9 @@ import {
   mdiDatabaseCogOutline,
   mdiShoppingOutline,
   mdiFileSign,
+  mdiTrashCanOutline,
+  mdiDatabaseAlertOutline,
+  mdiBookOpenPageVariantOutline,
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
@@ -62,8 +65,16 @@ function statusToChip(value: EnumDraftStatus, classes: WithStyles<typeof styles>
     case EnumDraftStatus.POST_PROCESSING:
       path = mdiCogTransferOutline;
       break;
+    case EnumDraftStatus.PUBLISHING:
+      path = mdiBookOpenPageVariantOutline;
+      color = 'primary';
+      break;
     case EnumDraftStatus.PUBLISHED:
       path = mdiBookOpenVariant;
+      break;
+    case EnumDraftStatus.CANCELLED:
+      path = mdiTrashCanOutline;
+      color = 'secondary';
       break;
   }
 
@@ -92,7 +103,12 @@ function draftColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.ViewProcessInstance, rowIndex, column, row) : null}
               >
-                <Icon path={mdiDatabaseCogOutline} className={classes.classes.rowIcon} />
+                <Icon
+                  path={
+                    row.status === EnumDraftStatus.CANCELLED ? mdiDatabaseAlertOutline : mdiDatabaseCogOutline
+                  }
+                  className={classes.classes.rowIcon}
+                />
               </i>
             </Tooltip>
           }
