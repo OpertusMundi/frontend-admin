@@ -124,8 +124,6 @@ export interface ProcessInstanceTask {
   taskName: string,
 }
 
-export type ActivityType = 'startEvent' | 'serviceTask' | 'userTask' | 'noneEndEvent';
-
 export interface RetryExternalTaskCommand {
   processInstanceId: string;
   externalTaskId: string;
