@@ -20,7 +20,7 @@ import {
   PerCallPricingModelCommand,
 } from 'model/pricing-model';
 
-const baseUri = '/action/subscription-billing';
+const baseUri = '/action/service-billing';
 
 export default class SubscriptionBillingApi extends Api {
 

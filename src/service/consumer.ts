@@ -57,18 +57,18 @@ export default class ConsumerBillingApi extends Api {
     return this.get<ObjectResponse<PageResult<AccountSubscription>>>(url);
   }
 
-  public async findSubscriptionBilling(
+  public async findServiceBillingRecords(
     query: Partial<SubscriptionBillingQuery>, pageRequest: PageRequest, sorting: Sorting<EnumSubscriptionBillingSortField>[]
   ): Promise<AxiosPageResponse<SubscriptionBilling>> {
     const { page, size } = pageRequest;
     const { id: field, order } = sorting[0];
 
-    const queryString = (Object.keys(query) as Array<keyof SubscriptionQuery>)
-      .reduce((result: string[], key: keyof SubscriptionQuery) => {
+    const queryString = (Object.keys(query) as Array<keyof SubscriptionBillingQuery>)
+      .reduce((result: string[], key: keyof SubscriptionBillingQuery) => {
         return query[key] !== null ? [...result, `${key}=${query[key]}`] : result;
       }, []);
 
-    const url = `/action/consumer/subscription-billing?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
+    const url = `/action/consumer/service-billing?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
 
     return this.get<ObjectResponse<PageResult<SubscriptionBilling>>>(url);
   }

@@ -38,7 +38,7 @@ import { DiscountRate, EnumPricingModel, PerCallPricingModelCommand } from 'mode
 
 // Services
 import message from 'service/message';
-import SubscriptionBillingApi from 'service/subscription-billing';
+import SubscriptionBillingApi from 'service/service-billing';
 import { FieldMapperFunc, localizeErrorCodes } from 'utils/error';
 
 // Components

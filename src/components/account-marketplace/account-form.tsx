@@ -72,7 +72,7 @@ import {
   findTransfers,
   findPayOuts,
   findSubscriptions,
-  findSubscriptionBilling,
+  findServiceBillingRecords,
 } from 'store/account-marketplace/thunks';
 import { toggleSendMessageDialog } from 'store/message/actions';
 
@@ -389,7 +389,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
         // Subscriptions
         if (consumer && !subscriptions.loaded) {
           this.findSubscriptions();
-          this.findSubscriptionBilling();
+          this.findServiceBillingRecords();
         }
         break;
       case 4:
@@ -485,8 +485,8 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     });
   }
 
-  findSubscriptionBilling(): void {
-    this.props.findSubscriptionBilling().then((result) => {
+  findServiceBillingRecords(): void {
+    this.props.findServiceBillingRecords().then((result) => {
       if (!result) {
         message.errorHtml("Find operation has failed", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
       }
@@ -520,7 +520,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
 
   setSubBillingSorting(sorting: Sorting<EnumSubscriptionBillingSortField>[]): void {
     this.props.setSubBillingSorting(sorting);
-    this.findSubscriptionBilling();
+    this.findServiceBillingRecords();
   }
 
   viewProcessInstance(processInstance: string): void {
@@ -908,7 +908,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
                   <div className={classes.gridLabel}>Billing Records</div>
                   <SubscriptionBillingTable
                     config={this.props.config}
-                    find={this.props.findSubscriptionBilling}
+                    find={this.props.findServiceBillingRecords}
                     loading={loading}
                     mode={EnumBillingViewMode.CONSUMER}
                     pagination={subscriptionBilling.pagination}
@@ -973,9 +973,9 @@ const mapDispatch = {
   findTransfers: (pageRequest?: PageRequest, sorting?: Sorting<EnumTransferSortField>[]) => findTransfers(pageRequest, sorting),
   findPayOuts: (pageRequest?: PageRequest, sorting?: Sorting<EnumPayOutSortField>[]) => findPayOuts(pageRequest, sorting),
   findSubscriptions: (pageRequest?: PageRequest, sorting?: Sorting<EnumSubscriptionSortField>[]) => findSubscriptions(pageRequest, sorting),
-  findSubscriptionBilling: (
+  findServiceBillingRecords: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumSubscriptionBillingSortField>[]
-  ) => findSubscriptionBilling(pageRequest, sorting),
+  ) => findServiceBillingRecords(pageRequest, sorting),
   setOrderPager,
   setOrderSorting,
   setPayInPager,

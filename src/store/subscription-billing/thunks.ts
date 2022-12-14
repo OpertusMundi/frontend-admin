@@ -18,7 +18,7 @@ import {
 } from './actions';
 
 // Services
-import SubscriptionBillingApi from 'service/subscription-billing';
+import SubscriptionBillingApi from 'service/service-billing';
 
 // Model
 import { PageRequest, Sorting, PageResult, ObjectResponse } from 'model/response';

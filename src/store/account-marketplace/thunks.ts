@@ -360,12 +360,12 @@ export const findSubscriptions = (
   return null;
 }
 
-export const findSubscriptionBilling = (
+export const findServiceBillingRecords = (
   pageRequest?: PageRequest, sorting?: Sorting<EnumSubscriptionBillingSortField>[]
 ): ThunkResult<PageResult<SubscriptionBilling> | null> => async (dispatch, getState) => {
   // Get query form state (filters are always set synchronously)
   const query: Partial<SubscriptionBillingQuery> = {
-    consumerKey: getState().account.marketplace.account?.key,
+    ownerKey: getState().account.marketplace.account?.key,
   }
 
   // Update sorting or use the existing value
@@ -390,7 +390,7 @@ export const findSubscriptionBilling = (
   // Get response
   const api = new ConsumerBillingApi();
 
-  const response = await api.findSubscriptionBilling(query, pageRequest, sorting);
+  const response = await api.findServiceBillingRecords(query, pageRequest, sorting);
 
   // Update state
   if (response.data.success) {

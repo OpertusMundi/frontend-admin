@@ -123,6 +123,11 @@ export enum EnumSubscriptionBillingSortField {
   UPDATED_ON = 'UPDATED_ON',
 }
 
+export enum EnumBillableServiceType {
+  SUBSCRIPTION = 'SUBSCRIPTION',
+  PRIVATE_OGC_SERVICE = 'PRIVATE_OGC_SERVICE',
+}
+
 export enum EnumSubscriptionBillingStatus {
   /**
    * A billing record with 0 total price has been created
@@ -249,9 +254,10 @@ export interface SubscriptionBilling {
 }
 
 export interface SubscriptionBillingQuery {
-  consumerKey?: string;
-  providerKey?: string;
+  ownerKey?: string;
+  serviceKey?: string;
   status: EnumSubscriptionBillingStatus[];
+  type?: EnumBillableServiceType;
 }
 
 export interface PayInItem {
