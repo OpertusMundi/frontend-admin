@@ -30,10 +30,10 @@ import {
   setPayOutPager,
   searchPayOutComplete,
   searchPayOutFailure,
-  setSubscriptionSorting,
-  setSubscriptionPager,
-  searchSubscriptionComplete,
-  searchSubscriptionFailure,
+  setServiceSorting,
+  setServicePager,
+  searchServiceComplete,
+  searchServiceFailure,
   setSubBillingSorting,
   setSubBillingPager,
   searchSubBillingComplete,
@@ -51,16 +51,19 @@ import {
   AccountSubscription,
   EnumMarketplaceAccountSortField,
   EnumSubscriptionSortField,
+  EnumUserServiceSortField,
   ExternalProviderCommand,
   MarketplaceAccount,
   MarketplaceAccountSummary,
   SubscriptionQuery,
+  UserService,
+  UserServiceQuery,
 } from 'model/account-marketplace';
 import {
   EnumOrderSortField,
   EnumPayInSortField,
   EnumPayOutSortField,
-  EnumSubscriptionBillingSortField,
+  EnumServiceBillingSortField,
   EnumTransferSortField,
   Order,
   OrderQuery,
@@ -69,8 +72,8 @@ import {
   PayInType,
   PayOut,
   PayOutQuery,
-  SubscriptionBilling,
-  SubscriptionBillingQuery,
+  ServiceBilling,
+  ServiceBillingQuery,
   TransferQuery,
 } from 'model/order';
 
@@ -328,7 +331,7 @@ export const findSubscriptions = (
 
   // Update sorting or use the existing value
   if (sorting) {
-    dispatch(setSubscriptionSorting(sorting));
+    dispatch(setServiceSorting(sorting));
   } else {
     sorting = getState().account.marketplace.subscriptions.sorting;
   }
@@ -337,7 +340,7 @@ export const findSubscriptions = (
   if (pageRequest) {
     const { page, size } = pageRequest;
 
-    dispatch(setSubscriptionPager(page, size));
+    dispatch(setServicePager(page, size));
   } else {
     pageRequest = getState().account.marketplace.subscriptions.pagination;
   }
@@ -352,19 +355,61 @@ export const findSubscriptions = (
 
   // Update state
   if (response.data.success) {
-    dispatch(searchSubscriptionComplete(response.data.result!));
+    dispatch(searchServiceComplete(response.data.result!));
     return response.data.result!;
   }
 
-  dispatch(searchSubscriptionFailure());
+  dispatch(searchServiceFailure());
+  return null;
+}
+
+export const findUserServices = (
+  pageRequest?: PageRequest, sorting?: Sorting<EnumUserServiceSortField>[]
+): ThunkResult<PageResult<UserService> | null> => async (dispatch, getState) => {
+  // Get query form state (filters are always set synchronously)
+  const query: Partial<UserServiceQuery> = {
+    ownerKey: getState().account.marketplace.account?.key,
+  }
+
+  // Update sorting or use the existing value
+  if (sorting) {
+    dispatch(setServiceSorting(sorting));
+  } else {
+    sorting = getState().account.marketplace.userServices.sorting;
+  }
+
+  // Update page or user the existing value (i.e. data page refresh)
+  if (pageRequest) {
+    const { page, size } = pageRequest;
+
+    dispatch(setServicePager(page, size));
+  } else {
+    pageRequest = getState().account.marketplace.userServices.pagination;
+  }
+
+  // Initialize search
+  dispatch(searchInit());
+
+  // Get response
+  const api = new ConsumerBillingApi();
+
+  const response = await api.findUserServices(query, pageRequest, sorting);
+
+  // Update state
+  if (response.data.success) {
+    dispatch(searchServiceComplete(response.data.result!));
+    return response.data.result!;
+  }
+
+  dispatch(searchServiceFailure());
   return null;
 }
 
 export const findServiceBillingRecords = (
-  pageRequest?: PageRequest, sorting?: Sorting<EnumSubscriptionBillingSortField>[]
-): ThunkResult<PageResult<SubscriptionBilling> | null> => async (dispatch, getState) => {
+  pageRequest?: PageRequest, sorting?: Sorting<EnumServiceBillingSortField>[]
+): ThunkResult<PageResult<ServiceBilling> | null> => async (dispatch, getState) => {
   // Get query form state (filters are always set synchronously)
-  const query: Partial<SubscriptionBillingQuery> = {
+  const query: Partial<ServiceBillingQuery> = {
     ownerKey: getState().account.marketplace.account?.key,
   }
 

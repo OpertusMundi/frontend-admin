@@ -83,7 +83,7 @@ function renderItems(payin: PayInType, props: PayInTableProps, intl: IntlShape) 
       case EnumPayInItemType.ORDER:
         orderCount++;
         break;
-      case EnumPayInItemType.SUBSCRIPTION_BILLING:
+      case EnumPayInItemType.SERVICE_BILLING:
         subCount++;
         break;
     }
@@ -102,7 +102,7 @@ function renderItems(payin: PayInType, props: PayInTableProps, intl: IntlShape) 
       {subCount !== 0 &&
         <Chip
           icon={<Icon path={mdiClockFast} size="1.5rem" />}
-          label={`${intl.formatMessage({ id: `enum.payin-item-type.${EnumPayInItemType.SUBSCRIPTION_BILLING}` })} ${subCount}`}
+          label={`${intl.formatMessage({ id: `enum.payin-item-type.${EnumPayInItemType.SERVICE_BILLING}` })} ${subCount}`}
           color="primary"
           variant="outlined"
         />

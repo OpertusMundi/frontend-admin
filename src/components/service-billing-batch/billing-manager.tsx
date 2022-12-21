@@ -44,22 +44,22 @@ import {
   setSorting,
   toggleBillingTaskForm,
   setBillingTaskParams,
-} from 'store/subscription-billing/actions';
-import { find, create } from 'store/subscription-billing/thunks';
+} from 'store/service-billing/actions';
+import { find, create } from 'store/service-billing/thunks';
 
 // Model
 import { Message } from 'model/message';
 import { FieldMapperFunc, localizeErrorCodes } from 'utils/error';
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
-import { EnumSubscriptionBillingBatchSortField } from 'model/subscription-billing';
+import { EnumServiceBillingBatchSortField } from 'model/service-billing';
 
 // Components
 import Dialog, { DialogAction, EnumDialogAction } from 'components/dialog';
 import DateTime from 'components/common/date-time';
 
-import SubscriptionBillingFilters from './grid/filter';
-import SubscriptionBillingTable from './grid/table';
+import ServiceBillingFilters from './grid/filter';
+import ServiceBillingTable from './grid/table';
 
 const styles = (theme: Theme) => createStyles({
   caption: {
@@ -103,17 +103,17 @@ const mapErrorCodeToText = (intl: IntlShape, message: Message, fieldMapper?: Fie
   return null;
 };
 
-interface SubscriptionBillingManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
+interface ServiceBillingManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
   intl: IntlShape;
   navigate: NavigateFunction;
   location: Location;
 }
 
-class SubscriptionBillingManager extends React.Component<SubscriptionBillingManagerProps> {
+class ServiceBillingManager extends React.Component<ServiceBillingManagerProps> {
 
   private refreshCountersInterval: number | null = null;
 
-  constructor(props: SubscriptionBillingManagerProps) {
+  constructor(props: ServiceBillingManagerProps) {
     super(props);
 
     this.viewProcessInstance = this.viewProcessInstance.bind(this);
@@ -147,7 +147,7 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
     this.props.navigate(path);
   }
 
-  setSorting(sorting: Sorting<EnumSubscriptionBillingBatchSortField>[]): void {
+  setSorting(sorting: Sorting<EnumServiceBillingBatchSortField>[]): void {
     this.props.setSorting(sorting);
     this.find();
   }
@@ -171,7 +171,7 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
             if (success) {
               message.infoHtml(
                 <FormattedMessage
-                  id={'billing.subscription-billing-batch.message.create-success'}
+                  id={'billing.service-billing-batch.message.create-success'}
                   values={{ interval: (<b>{_fm({ id: `enum.month.${month + 1}` })}{' '}{year}</b>) }}
                 />,
                 () => (<Icon path={mdiCalendarCheckOutline} size="3rem" />),
@@ -219,7 +219,7 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
       <>
         <div>
           <Paper className={classes.paper}>
-            <SubscriptionBillingFilters
+            <ServiceBillingFilters
               query={query}
               setFilter={setFilter}
               resetFilter={resetFilter}
@@ -230,7 +230,7 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Typography variant="caption" display="block" gutterBottom className={classes.caption}>
-                    <FormattedMessage id="billing.subscription-billing-batch.last-update" />
+                    <FormattedMessage id="billing.service-billing-batch.last-update" />
                     <DateTime value={lastUpdated.toDate()} day='numeric' month='numeric' year='numeric' />
                   </Typography>
                 </Grid>
@@ -239,14 +239,14 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
           </Paper>
 
           <Paper className={classes.paperTable}>
-            <SubscriptionBillingTable
+            <ServiceBillingTable
               find={this.props.find}
               loading={loading}
               pagination={pagination}
               query={query}
               selected={selected}
               setPager={setPager}
-              setSorting={(sorting: Sorting<EnumSubscriptionBillingBatchSortField>[]) => this.setSorting(sorting)}
+              setSorting={(sorting: Sorting<EnumServiceBillingBatchSortField>[]) => this.setSorting(sorting)}
               result={result}
               sorting={sorting}
               viewProcessInstance={this.viewProcessInstance}
@@ -296,7 +296,7 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
         header={
           <div className={classes.dialogHeader}>
             <Icon path={mdiCalendarStartOutline} size="1.5rem" style={{ marginRight: 16 }} />
-            <FormattedMessage id="billing.subscription-billing-batch.dialog.title" />
+            <FormattedMessage id="billing.service-billing-batch.dialog.title" />
           </div>
         }
         open={configureTask !== null}
@@ -331,12 +331,12 @@ class SubscriptionBillingManager extends React.Component<SubscriptionBillingMana
 
 const mapState = (state: RootState) => ({
   config: state.config,
-  configureTask: state.billing.subscriptionBilling.configureTask,
-  explorer: state.billing.subscriptionBilling,
+  configureTask: state.billing.serviceBilling.configureTask,
+  explorer: state.billing.serviceBilling,
 });
 
 const mapDispatch = {
-  find: (pageRequest?: PageRequest, sorting?: Sorting<EnumSubscriptionBillingBatchSortField>[]) => find(pageRequest, sorting),
+  find: (pageRequest?: PageRequest, sorting?: Sorting<EnumServiceBillingBatchSortField>[]) => find(pageRequest, sorting),
   create: (year: number, month: number) => create(year, month),
   resetFilter,
   setBillingTaskParams,
@@ -354,7 +354,7 @@ const connector = connect(
 type PropsFromRedux = ConnectedProps<typeof connector>
 
 // Apply styles
-const styledComponent = withStyles(styles)(SubscriptionBillingManager);
+const styledComponent = withStyles(styles)(ServiceBillingManager);
 
 // Inject i18n resources
 const LocalizedComponent = injectIntl(styledComponent);

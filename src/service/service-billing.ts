@@ -11,55 +11,55 @@ import {
   Sorting,
 } from 'model/response';
 import {
-  EnumSubscriptionBillingBatchSortField,
-  SubscriptionBillingBatch,
-  SubscriptionBillingBatchCommand,
-  SubscriptionBillingBatchQuery,
-} from 'model/subscription-billing';
+  EnumServiceBillingBatchSortField,
+  ServiceBillingBatch,
+  ServiceBillingBatchCommand,
+  ServiceBillingBatchQuery,
+} from 'model/service-billing';
 import {
   PerCallPricingModelCommand,
 } from 'model/pricing-model';
 
 const baseUri = '/action/service-billing';
 
-export default class SubscriptionBillingApi extends Api {
+export default class ServiceBillingApi extends Api {
 
   constructor(config: AxiosRequestConfig = {}) {
     super(config);
   }
 
   public async find(
-    query: Partial<SubscriptionBillingBatchQuery>, pageRequest: PageRequest, sorting: Sorting<EnumSubscriptionBillingBatchSortField>[]
-  ): Promise<AxiosPageResponse<SubscriptionBillingBatch>> {
+    query: Partial<ServiceBillingBatchQuery>, pageRequest: PageRequest, sorting: Sorting<EnumServiceBillingBatchSortField>[]
+  ): Promise<AxiosPageResponse<ServiceBillingBatch>> {
     const { page, size } = pageRequest;
     const { id: field, order } = sorting[0];
 
-    const queryString = (Object.keys(query) as Array<keyof SubscriptionBillingBatchQuery>)
-      .reduce((result: string[], key: keyof SubscriptionBillingBatchQuery) => {
+    const queryString = (Object.keys(query) as Array<keyof ServiceBillingBatchQuery>)
+      .reduce((result: string[], key: keyof ServiceBillingBatchQuery) => {
         return query[key] !== null ? [...result, `${key}=${query[key]}`] : result;
       }, []);
 
     const url = `${baseUri}/quotations?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
 
-    return this.get<ObjectResponse<PageResult<SubscriptionBillingBatch>>>(url);
+    return this.get<ObjectResponse<PageResult<ServiceBillingBatch>>>(url);
   }
 
-  public async findOne(key: string): Promise<AxiosObjectResponse<SubscriptionBillingBatch>> {
+  public async findOne(key: string): Promise<AxiosObjectResponse<ServiceBillingBatch>> {
     const url = `${baseUri}/quotations/${key}`;
 
-    return this.get<ObjectResponse<SubscriptionBillingBatch>>(url);
+    return this.get<ObjectResponse<ServiceBillingBatch>>(url);
   }
 
-  public async create(year: number, month: number, quotationOnly = false): Promise<AxiosObjectResponse<SubscriptionBillingBatch>> {
+  public async create(year: number, month: number, quotationOnly = false): Promise<AxiosObjectResponse<ServiceBillingBatch>> {
     const url = `${baseUri}/quotations`;
 
-    const command: SubscriptionBillingBatchCommand = {
+    const command: ServiceBillingBatchCommand = {
       year,
       month,
       quotationOnly,
     };
 
-    return this.post<SubscriptionBillingBatchCommand, ObjectResponse<SubscriptionBillingBatch>>(url, command);
+    return this.post<ServiceBillingBatchCommand, ObjectResponse<ServiceBillingBatch>>(url, command);
   }
 
   public async getDefaultPricingModel(): Promise<ObjectResponse<PerCallPricingModelCommand>> {

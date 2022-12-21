@@ -22,6 +22,9 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
 import { red } from '@material-ui/core/colors';
@@ -30,9 +33,11 @@ import Icon from '@mdi/react';
 import {
   mdiAccount,
   mdiAccountCircleOutline,
+  mdiAccountCogOutline,
   mdiAlertDecagramOutline,
   mdiBankTransferIn,
   mdiBankTransferOut,
+  mdiCalendarClockOutline,
   mdiCheckDecagramOutline,
   mdiClockFast,
   mdiCommentAlertOutline,
@@ -59,8 +64,9 @@ import {
   setTransferSorting,
   setPayOutPager,
   setPayOutSorting,
-  setSubscriptionPager,
-  setSubscriptionSorting,
+  setServiceType,
+  setServicePager,
+  setServiceSorting,
   setSubBillingPager,
   setSubBillingSorting,
   setTabIndex,
@@ -73,6 +79,7 @@ import {
   findPayOuts,
   findSubscriptions,
   findServiceBillingRecords,
+  findUserServices,
 } from 'store/account-marketplace/thunks';
 import { toggleSendMessageDialog } from 'store/message/actions';
 
@@ -98,6 +105,7 @@ import {
   EnumCustomerType,
   EnumMangopayUserType,
   EnumSubscriptionSortField,
+  EnumUserServiceSortField,
   MarketplaceAccount,
 } from 'model/account-marketplace';
 
@@ -107,11 +115,12 @@ import {
   EnumPayInSortField,
   EnumPayOutSortField,
   EnumTransferSortField,
-  EnumSubscriptionBillingSortField,
-  SubscriptionBilling,
+  EnumServiceBillingSortField,
+  ServiceBilling,
   Order,
   PayInType,
   PayOut,
+  EnumBillableServiceType,
 } from 'model/order';
 
 // Components
@@ -121,8 +130,9 @@ import PayInTable from 'components/payin/grid/table';
 import PayOutTable from 'components/payout/grid/table';
 import TransferTable from 'components/transfer/grid/table';
 import SubscriptionTable from 'components/subscription/grid/table';
-import SubscriptionBillingTable from 'components/subscription-billing/grid/table';
-import UseStatisticsState from 'components/subscription-billing/use-statistics';
+import ServiceBillingTable from 'components/service-billing/grid/table';
+import UserServiceTable from 'components/user-service/grid/table';
+import UseStatisticsState from 'components/service-billing/use-statistics';
 import { ClientContact } from 'model/chat';
 
 const styles = (theme: Theme) => createStyles({
@@ -200,7 +210,7 @@ interface MarketplaceAccountFormProps extends PropsFromRedux, WithStyles<typeof 
 }
 
 interface MarketplaceAccountFormState {
-  billingRecord: SubscriptionBilling | null;
+  billingRecord: ServiceBilling | null;
   confirmCompanyName: string;
   confirmExternalProviderUpdate: boolean;
   confirmOpenDatasetProviderUpdate: boolean,
@@ -238,6 +248,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
       loaded: false,
     };
 
+    this.changeServiceType = this.changeServiceType.bind(this);
     this.setExternalProvider = this.setExternalProvider.bind(this);
     this.setOpenDatasetProvider = this.setOpenDatasetProvider.bind(this);
     this.viewPayIn = this.viewPayIn.bind(this);
@@ -249,6 +260,12 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     const { key } = this.props.params;
 
     return key || null;
+  }
+
+  changeServiceType(event: React.MouseEvent<HTMLElement>, type: EnumBillableServiceType) {
+    this.props.setServiceType(type);
+    // Fetch data on the next event to refresh state first
+    setTimeout(() => this.loadTabContent(this.props.tabIndex), 0);
   }
 
   setExternalProvider(key: string, provider: EnumDataProvider): Promise<boolean> {
@@ -350,7 +367,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
   }
 
   loadTabContent(index: number) {
-    const { account, orders, payins, transfers, payouts, subscriptions } = this.props;
+    const { account, orders, payins, transfers, payouts, subscriptions, serviceType, userServices } = this.props;
     const consumer = account?.profile.consumer.current;
     const provider = account?.profile.provider.current;
 
@@ -387,10 +404,13 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
         break;
       case 3:
         // Subscriptions
-        if (consumer && !subscriptions.loaded) {
+        if (serviceType === EnumBillableServiceType.SUBSCRIPTION && consumer && !subscriptions.loaded) {
           this.findSubscriptions();
-          this.findServiceBillingRecords();
         }
+        if (serviceType === EnumBillableServiceType.PRIVATE_OGC_SERVICE && consumer && !userServices.loaded) {
+          this.findUserServices();
+        }
+        this.findServiceBillingRecords();
         break;
       case 4:
         // Transfers
@@ -485,6 +505,14 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     });
   }
 
+  findUserServices(): void {
+    this.props.findUserServices().then((result) => {
+      if (!result) {
+        message.errorHtml("Find operation has failed", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+      }
+    });
+  }
+
   findServiceBillingRecords(): void {
     this.props.findServiceBillingRecords().then((result) => {
       if (!result) {
@@ -513,12 +541,21 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     this.findPayOuts();
   }
 
-  setSubscriptionSorting(sorting: Sorting<EnumSubscriptionSortField>[]): void {
-    this.props.setSubscriptionSorting(sorting);
-    this.findSubscriptions();
+  setServiceSorting(sorting: Sorting<EnumSubscriptionSortField | EnumUserServiceSortField>[]): void {
+    const { serviceType } = this.props;
+    this.props.setServiceSorting(sorting);
+
+    switch (serviceType) {
+      case EnumBillableServiceType.SUBSCRIPTION:
+        this.findSubscriptions();
+        break;
+      case EnumBillableServiceType.PRIVATE_OGC_SERVICE:
+        this.findUserServices();
+        break;
+    }
   }
 
-  setSubBillingSorting(sorting: Sorting<EnumSubscriptionBillingSortField>[]): void {
+  setSubBillingSorting(sorting: Sorting<EnumServiceBillingSortField>[]): void {
     this.props.setSubBillingSorting(sorting);
     this.findServiceBillingRecords();
   }
@@ -533,7 +570,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     this.props.navigate(path);
   }
 
-  viewUseStatistics(billingRecord: SubscriptionBilling | null) {
+  viewUseStatistics(billingRecord: ServiceBilling | null) {
     this.setState({ billingRecord });
   }
 
@@ -685,9 +722,12 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
                   </Avatar>
                 }
                 title={
-                  <a className={classes.link} href={`/workflows/process-instances/record?businessKey=${account.key}`}>
+                  <Link
+                    to={buildPath(DynamicRoutes.ProcessInstanceView, null, { businessKey: account.key })}
+                    className={classes.link}
+                  >
                     <FormattedMessage id={'account-marketplace.form.section.registration'} />
-                  </a>
+                  </Link>
                 }
               ></CardHeader>
               <CardContent>
@@ -745,10 +785,12 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
       orders,
       payins,
       payouts,
+      serviceType,
       subscriptions,
       subscriptionBilling,
       transfers,
       tabIndex,
+      userServices,
     } = this.props;
     const {
       billingRecord,
@@ -783,7 +825,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
                 <Tab icon={<Icon path={mdiBankTransferIn} size="1.5rem" />} label="Pay Ins" />
               }
               {consumer &&
-                <Tab icon={<Icon path={mdiClockFast} size="1.5rem" />} label="Subscriptions" />
+                <Tab icon={<Icon path={mdiClockFast} size="1.5rem" />} label="Services" />
               }
               {provider &&
                 <Tab icon={<Icon path={mdiWalletPlusOutline} size="1.5rem" />} label="Transfers" />
@@ -887,26 +929,71 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
             <Grid container>
               <Grid item xs={12}>
                 <Paper className={classes.paperTable}>
-                  <div className={classes.gridLabel}>Subscriptions</div>
-                  <SubscriptionTable
-                    config={this.props.config}
-                    find={this.props.findSubscriptions}
-                    loading={loading}
-                    mode={EnumBillingViewMode.CONSUMER}
-                    pagination={subscriptions.pagination}
-                    query={subscriptions.query}
-                    selected={[]}
-                    setPager={this.props.setSubscriptionPager}
-                    setSorting={(sorting: Sorting<EnumSubscriptionSortField>[]) => this.setSubscriptionSorting(sorting)}
-                    result={subscriptions.items}
-                    sorting={subscriptions.sorting}
-                  />
+                  <div className={classes.gridLabel}>
+                    <FormattedMessage id={`enum.billable-service.${serviceType}`} />
+                  </div>
+
+                  <Grid container justifyContent={'flex-end'}>
+                    <ToggleButtonGroup
+                      value={serviceType}
+                      exclusive
+                      onChange={this.changeServiceType}
+                      aria-label="text alignment"
+                    >
+                      <Tooltip title={'Subscriptions'}>
+                        <ToggleButton
+                          value={EnumBillableServiceType.SUBSCRIPTION}
+                          selected={serviceType === EnumBillableServiceType.SUBSCRIPTION}>
+                          <Icon path={mdiCalendarClockOutline} size="1.65rem"
+                          />
+                        </ToggleButton>
+                      </Tooltip>
+                      <Tooltip title={'Private OGC Service'}>
+                        <ToggleButton
+                          value={EnumBillableServiceType.PRIVATE_OGC_SERVICE}
+                          selected={serviceType === EnumBillableServiceType.PRIVATE_OGC_SERVICE}
+                        >
+                          <Icon path={mdiAccountCogOutline} size="1.65rem" />
+                        </ToggleButton>
+                      </Tooltip>
+                    </ToggleButtonGroup>
+                  </Grid>
+
+                  {serviceType === EnumBillableServiceType.SUBSCRIPTION &&
+                    <SubscriptionTable
+                      config={this.props.config}
+                      find={this.props.findSubscriptions}
+                      loading={loading}
+                      mode={EnumBillingViewMode.CONSUMER}
+                      pagination={subscriptions.pagination}
+                      query={subscriptions.query}
+                      selected={[]}
+                      setPager={this.props.setServicePager}
+                      setSorting={(sorting: Sorting<EnumSubscriptionSortField>[]) => this.setServiceSorting(sorting)}
+                      result={subscriptions.items}
+                      sorting={subscriptions.sorting}
+                    />
+                  }
+                  {serviceType === EnumBillableServiceType.PRIVATE_OGC_SERVICE &&
+                    <UserServiceTable
+                      config={this.props.config}
+                      find={this.props.findUserServices}
+                      loading={loading}
+                      pagination={userServices.pagination}
+                      query={subscriptions.query}
+                      selected={[]}
+                      setPager={this.props.setServicePager}
+                      setSorting={(sorting: Sorting<EnumUserServiceSortField>[]) => this.setServiceSorting(sorting)}
+                      result={userServices.items}
+                      sorting={userServices.sorting}
+                    />
+                  }
                 </Paper>
               </Grid>
               <Grid item xs={12}>
                 <Paper className={classes.paperTable}>
                   <div className={classes.gridLabel}>Billing Records</div>
-                  <SubscriptionBillingTable
+                  <ServiceBillingTable
                     config={this.props.config}
                     find={this.props.findServiceBillingRecords}
                     loading={loading}
@@ -915,7 +1002,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
                     query={subscriptionBilling.query}
                     selected={[]}
                     setPager={this.props.setSubBillingPager}
-                    setSorting={(sorting: Sorting<EnumSubscriptionBillingSortField>[]) => this.setSubBillingSorting(sorting)}
+                    setSorting={(sorting: Sorting<EnumServiceBillingSortField>[]) => this.setSubBillingSorting(sorting)}
                     result={subscriptionBilling.items}
                     sorting={subscriptionBilling.sorting}
                     viewPayIn={this.viewPayIn}
@@ -925,10 +1012,11 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
               </Grid>
             </Grid>
           }
-          {(
-            (loaded && tabIndex === 3 && !consumer && provider) ||
-            (loaded && tabIndex === 6 && consumer && provider)
-          ) &&
+          {
+            (
+              (loaded && tabIndex === 3 && !consumer && provider) ||
+              (loaded && tabIndex === 6 && consumer && provider)
+            ) &&
             <MarketplaceAccountConfiguration
               account={account}
               config={config}
@@ -939,7 +1027,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
               setOpenDatasetProvider={this.setOpenDatasetProvider}
             />
           }
-        </Grid>
+        </Grid >
         <Drawer anchor={'right'} open={billingRecord !== null} onClose={() => this.viewUseStatistics(null)}
           classes={{
             paper: classes.statsDrawer,
@@ -960,10 +1048,12 @@ const mapState = (state: RootState) => ({
   orders: state.account.marketplace.orders,
   payins: state.account.marketplace.payins,
   payouts: state.account.marketplace.payouts,
+  serviceType: state.account.marketplace.billing.type,
   subscriptions: state.account.marketplace.subscriptions,
   subscriptionBilling: state.account.marketplace.billing.subscriptions,
   tabIndex: state.account.marketplace.tabIndex,
   transfers: state.account.marketplace.transfers,
+  userServices: state.account.marketplace.userServices,
 });
 
 const mapDispatch = {
@@ -973,8 +1063,9 @@ const mapDispatch = {
   findTransfers: (pageRequest?: PageRequest, sorting?: Sorting<EnumTransferSortField>[]) => findTransfers(pageRequest, sorting),
   findPayOuts: (pageRequest?: PageRequest, sorting?: Sorting<EnumPayOutSortField>[]) => findPayOuts(pageRequest, sorting),
   findSubscriptions: (pageRequest?: PageRequest, sorting?: Sorting<EnumSubscriptionSortField>[]) => findSubscriptions(pageRequest, sorting),
+  findUserServices: (pageRequest?: PageRequest, sorting?: Sorting<EnumUserServiceSortField>[]) => findUserServices(pageRequest, sorting),
   findServiceBillingRecords: (
-    pageRequest?: PageRequest, sorting?: Sorting<EnumSubscriptionBillingSortField>[]
+    pageRequest?: PageRequest, sorting?: Sorting<EnumServiceBillingSortField>[]
   ) => findServiceBillingRecords(pageRequest, sorting),
   setOrderPager,
   setOrderSorting,
@@ -984,8 +1075,9 @@ const mapDispatch = {
   setTransferSorting,
   setPayOutPager,
   setPayOutSorting,
-  setSubscriptionPager,
-  setSubscriptionSorting,
+  setServiceType,
+  setServicePager,
+  setServiceSorting,
   setSubBillingPager,
   setSubBillingSorting,
   setTabIndex,

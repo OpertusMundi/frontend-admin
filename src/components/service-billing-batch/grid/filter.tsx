@@ -20,11 +20,11 @@ import { mdiCommentAlertOutline } from '@mdi/js';
 // Model
 import { PageRequest, PageResult, Sorting } from 'model/response';
 import {
-  EnumSubscriptionBillingBatchSortField,
-  EnumSubscriptionBillingBatchStatus,
-  SubscriptionBillingBatch,
-  SubscriptionBillingBatchQuery,
-} from 'model/subscription-billing';
+  EnumServiceBillingBatchSortField,
+  EnumServiceBillingBatchStatus,
+  ServiceBillingBatch,
+  ServiceBillingBatchQuery,
+} from 'model/service-billing';
 
 // Services
 import message from 'service/message';
@@ -43,20 +43,20 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-interface SubscriptionBillingFiltersProps extends WithStyles<typeof styles> {
+interface ServiceBillingFiltersProps extends WithStyles<typeof styles> {
   intl: IntlShape,
-  query: SubscriptionBillingBatchQuery,
-  setFilter: (query: Partial<SubscriptionBillingBatchQuery>) => void,
+  query: ServiceBillingBatchQuery,
+  setFilter: (query: Partial<ServiceBillingBatchQuery>) => void,
   resetFilter: () => void,
   find: (
-    pageRequest?: PageRequest, sorting?: Sorting<EnumSubscriptionBillingBatchSortField>[]
-  ) => Promise<PageResult<SubscriptionBillingBatch> | null>,
+    pageRequest?: PageRequest, sorting?: Sorting<EnumServiceBillingBatchSortField>[]
+  ) => Promise<PageResult<ServiceBillingBatch> | null>,
   disabled: boolean,
 }
 
-class SubscriptionBillingFilters extends React.Component<SubscriptionBillingFiltersProps> {
+class ServiceBillingFilters extends React.Component<ServiceBillingFiltersProps> {
 
-  constructor(props: SubscriptionBillingFiltersProps) {
+  constructor(props: ServiceBillingFiltersProps) {
     super(props);
 
     this.clear = this.clear.bind(this);
@@ -65,14 +65,14 @@ class SubscriptionBillingFilters extends React.Component<SubscriptionBillingFilt
     const _t = props.intl.formatMessage;
 
     this.statusOptions = [];
-    for (const value in EnumSubscriptionBillingBatchStatus) {
+    for (const value in EnumServiceBillingBatchStatus) {
       this.statusOptions.push({
-        value: value as EnumSubscriptionBillingBatchStatus, label: _t({ id: `enum.subscription-billing-batch-status.${value}` })
+        value: value as EnumServiceBillingBatchStatus, label: _t({ id: `enum.service-billing-batch-status.${value}` })
       });
     }
   }
 
-  statusOptions: { value: EnumSubscriptionBillingBatchStatus, label: string }[];
+  statusOptions: { value: EnumServiceBillingBatchStatus, label: string }[];
 
   find(): void {
     this.props.find({ page: 0, size: 10 }).then((result) => {
@@ -114,7 +114,7 @@ class SubscriptionBillingFilters extends React.Component<SubscriptionBillingFilt
                 <TextField
                   {...params}
                   variant="standard"
-                  label={_t({ id: 'billing.subscription-billing-batch.filter.status' })}
+                  label={_t({ id: 'billing.service-billing-batch.filter.status' })}
                 />
               )}
             />
@@ -151,7 +151,7 @@ class SubscriptionBillingFilters extends React.Component<SubscriptionBillingFilt
 }
 
 // Apply styles
-const styledComponent = withStyles(styles)(SubscriptionBillingFilters);
+const styledComponent = withStyles(styles)(ServiceBillingFilters);
 
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);

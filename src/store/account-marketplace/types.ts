@@ -10,12 +10,16 @@ import {
   EnumSubscriptionSortField,
   AccountSubscription,
   SubscriptionQuery,
+  UserService,
+  UserServiceQuery,
+  EnumUserServiceSortField,
 } from 'model/account-marketplace';
 import {
+  EnumBillableServiceType,
   EnumOrderSortField,
   EnumPayInSortField,
   EnumPayOutSortField,
-  EnumSubscriptionBillingSortField,
+  EnumServiceBillingSortField,
   EnumTransferSortField,
   Order,
   OrderQuery,
@@ -24,21 +28,22 @@ import {
   PayInType,
   PayOut,
   PayOutQuery,
-  SubscriptionBilling,
-  SubscriptionBillingQuery,
+  ServiceBilling,
+  ServiceBillingQuery,
   TransferQuery,
 } from 'model/order';
 
 // State
 export interface MarketplaceAccountManagerState {
   account: MarketplaceAccount | null;
-  billing:{
+  billing: {
+    type: EnumBillableServiceType;
     subscriptions: {
-      items: PageResult<SubscriptionBilling> | null;
+      items: PageResult<ServiceBilling> | null;
       loaded: boolean;
       pagination: PageRequest;
-      query: SubscriptionBillingQuery,
-      sorting: Sorting<EnumSubscriptionBillingSortField>[];
+      query: ServiceBillingQuery,
+      sorting: Sorting<EnumServiceBillingSortField>[];
     },
   },
   lastUpdated: Moment | null;
@@ -84,6 +89,13 @@ export interface MarketplaceAccountManagerState {
     pagination: PageRequest;
     query: TransferQuery,
     sorting: Sorting<EnumTransferSortField>[];
+  },
+  userServices: {
+    items: PageResult<UserService> | null;
+    loaded: boolean;
+    pagination: PageRequest;
+    query: UserServiceQuery,
+    sorting: Sorting<EnumUserServiceSortField>[];
   },
 }
 
@@ -138,19 +150,21 @@ export const PAYOUT_SEARCH_INIT = 'marketplace-account/manager/PAYOUT_SEARCH_INI
 export const PAYOUT_SEARCH_FAILURE = 'marketplace-account/manager/PAYOUT_SEARCH_FAILURE';
 export const PAYOUT_SEARCH_COMPLETE = 'marketplace-account/manager/PAYOUT_SEARCH_COMPLETE';
 
-export const SUBSCRIPTION_SET_PAGER = 'marketplace-account/manager/SUBSCRIPTION_SET_PAGER';
-export const SUBSCRIPTION_RESET_PAGER = 'marketplace-account/manager/SUBSCRIPTION_RESET_PAGER';
-export const SUBSCRIPTION_SET_SORTING = 'marketplace-account/manager/SUBSCRIPTION_SET_SORTING';
-export const SUBSCRIPTION_SEARCH_INIT = 'marketplace-account/manager/SUBSCRIPTION_SEARCH_INIT';
-export const SUBSCRIPTION_SEARCH_FAILURE = 'marketplace-account/manager/SUBSCRIPTION_SEARCH_FAILURE';
-export const SUBSCRIPTION_SEARCH_COMPLETE = 'marketplace-account/manager/SUBSCRIPTION_SEARCH_COMPLETE';
+export const BILLABLE_SERVICE_SET_PAGER = 'marketplace-account/manager/BILLABLE_SERVICE_SET_PAGER';
+export const BILLABLE_SERVICE_RESET_PAGER = 'marketplace-account/manager/BILLABLE_SERVICE_RESET_PAGER';
+export const BILLABLE_SERVICE_SET_SORTING = 'marketplace-account/manager/BILLABLE_SERVICE_SET_SORTING';
+export const BILLABLE_SERVICE_SEARCH_INIT = 'marketplace-account/manager/BILLABLE_SERVICE_SEARCH_INIT';
+export const BILLABLE_SERVICE_SEARCH_FAILURE = 'marketplace-account/manager/BILLABLE_SERVICE_SEARCH_FAILURE';
+export const BILLABLE_SERVICE_SEARCH_COMPLETE = 'marketplace-account/manager/BILLABLE_SERVICE_SEARCH_COMPLETE';
 
-export const SUB_BILLING_SET_PAGER = 'marketplace-account/manager/SUB_BILLING_SET_PAGER';
-export const SUB_BILLING_RESET_PAGER = 'marketplace-account/manager/SUB_BILLING_RESET_PAGER';
-export const SUB_BILLING_SET_SORTING = 'marketplace-account/manager/SUB_BILLING_SET_SORTING';
-export const SUB_BILLING_SEARCH_INIT = 'marketplace-account/manager/SUB_BILLING_SEARCH_INIT';
-export const SUB_BILLING_SEARCH_FAILURE = 'marketplace-account/manager/SUB_BILLING_SEARCH_FAILURE';
-export const SUB_BILLING_SEARCH_COMPLETE = 'marketplace-account/manager/SUB_BILLING_SEARCH_COMPLETE';
+export const SERVICE_BILLING_SET_PAGER = 'marketplace-account/manager/SERVICE_BILLING_SET_PAGER';
+export const SERVICE_BILLING_RESET_PAGER = 'marketplace-account/manager/SERVICE_BILLING_RESET_PAGER';
+export const SERVICE_BILLING_SET_SORTING = 'marketplace-account/manager/SERVICE_BILLING_SET_SORTING';
+export const SERVICE_BILLING_SEARCH_INIT = 'marketplace-account/manager/SERVICE_BILLING_SEARCH_INIT';
+export const SERVICE_BILLING_SEARCH_FAILURE = 'marketplace-account/manager/SERVICE_BILLING_SEARCH_FAILURE';
+export const SERVICE_BILLING_SEARCH_COMPLETE = 'marketplace-account/manager/SERVICE_BILLING_SEARCH_COMPLETE';
+
+export const SET_SERVICE_TYPE = 'marketplace-account/manager/SET_SERVICE_TYPE';
 
 export interface SetPagerAction {
   type: typeof SET_PAGER;
@@ -344,32 +358,32 @@ export interface SetTabIndexAction {
   tabIndex: number;
 }
 
-export interface SetSubscriptionPagerAction {
-  type: typeof SUBSCRIPTION_SET_PAGER;
+export interface SetServicePagerAction {
+  type: typeof BILLABLE_SERVICE_SET_PAGER;
   page: number;
   size: number;
 }
 
-export interface ResetSubscriptionPagerAction {
-  type: typeof SUBSCRIPTION_RESET_PAGER
+export interface ResetServicePagerAction {
+  type: typeof BILLABLE_SERVICE_RESET_PAGER
 }
 
-export interface SetSubscriptionSortingAction {
-  type: typeof SUBSCRIPTION_SET_SORTING;
-  sorting: Sorting<EnumSubscriptionSortField>[];
+export interface SetServiceSortingAction {
+  type: typeof BILLABLE_SERVICE_SET_SORTING;
+  sorting: Sorting<EnumSubscriptionSortField | EnumUserServiceSortField>[];
 }
 
-export interface SearchSubscriptionInitAction {
-  type: typeof SUBSCRIPTION_SEARCH_INIT;
+export interface SearchServiceInitAction {
+  type: typeof BILLABLE_SERVICE_SEARCH_INIT;
 }
 
-export interface SearchSubscriptionFailureAction {
-  type: typeof SUBSCRIPTION_SEARCH_FAILURE;
+export interface SearchServiceFailureAction {
+  type: typeof BILLABLE_SERVICE_SEARCH_FAILURE;
 }
 
-export interface SearchSubscriptionCompleteAction {
-  type: typeof SUBSCRIPTION_SEARCH_COMPLETE;
-  result: PageResult<AccountSubscription>;
+export interface SearchServiceCompleteAction {
+  type: typeof BILLABLE_SERVICE_SEARCH_COMPLETE;
+  result: PageResult<AccountSubscription | UserService>;
 }
 
 export interface SetTabIndexAction {
@@ -378,31 +392,31 @@ export interface SetTabIndexAction {
 }
 
 export interface SetSubBillingPagerAction {
-  type: typeof SUB_BILLING_SET_PAGER;
+  type: typeof SERVICE_BILLING_SET_PAGER;
   page: number;
   size: number;
 }
 
 export interface ResetSubBillingPagerAction {
-  type: typeof SUB_BILLING_RESET_PAGER
+  type: typeof SERVICE_BILLING_RESET_PAGER
 }
 
 export interface SetSubBillingSortingAction {
-  type: typeof SUB_BILLING_SET_SORTING;
-  sorting: Sorting<EnumSubscriptionBillingSortField>[];
+  type: typeof SERVICE_BILLING_SET_SORTING;
+  sorting: Sorting<EnumServiceBillingSortField>[];
 }
 
 export interface SearchSubBillingInitAction {
-  type: typeof SUB_BILLING_SEARCH_INIT;
+  type: typeof SERVICE_BILLING_SEARCH_INIT;
 }
 
 export interface SearchSubBillingFailureAction {
-  type: typeof SUB_BILLING_SEARCH_FAILURE;
+  type: typeof SERVICE_BILLING_SEARCH_FAILURE;
 }
 
 export interface SearchSubBillingCompleteAction {
-  type: typeof SUB_BILLING_SEARCH_COMPLETE;
-  result: PageResult<SubscriptionBilling>;
+  type: typeof SERVICE_BILLING_SEARCH_COMPLETE;
+  result: PageResult<ServiceBilling>;
 }
 
 export interface SetTabIndexAction {
@@ -410,6 +424,10 @@ export interface SetTabIndexAction {
   tabIndex: number;
 }
 
+export interface SetServiceType {
+  type: typeof SET_SERVICE_TYPE;
+  serviceType: EnumBillableServiceType;
+}
 
 export type AccountActions =
   | LogoutInitAction
@@ -454,12 +472,12 @@ export type AccountActions =
   | SearchPayOutFailureAction
   | SearchPayOutCompleteAction
   | SetTabIndexAction
-  | SetSubscriptionPagerAction
-  | ResetSubscriptionPagerAction
-  | SetSubscriptionSortingAction
-  | SearchSubscriptionInitAction
-  | SearchSubscriptionFailureAction
-  | SearchSubscriptionCompleteAction
+  | SetServicePagerAction
+  | ResetServicePagerAction
+  | SetServiceSortingAction
+  | SearchServiceInitAction
+  | SearchServiceFailureAction
+  | SearchServiceCompleteAction
   | SetSubBillingPagerAction
   | ResetSubBillingPagerAction
   | SetSubBillingSortingAction
@@ -467,4 +485,5 @@ export type AccountActions =
   | SearchSubBillingFailureAction
   | SearchSubBillingCompleteAction
   | SetTabIndexAction
+  | SetServiceType
   ;

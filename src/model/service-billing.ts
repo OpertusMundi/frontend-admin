@@ -1,7 +1,7 @@
 import { Moment } from 'moment';
 import { SimpleHelpdeskAccount } from './account';
 
-export enum EnumSubscriptionBillingBatchSortField {
+export enum EnumServiceBillingBatchSortField {
   CREATED_ON = 'CREATED_ON',
   DUE_DATE = 'DUE_DATE',
   FROM_DATE = 'FROM_DATE',
@@ -10,17 +10,17 @@ export enum EnumSubscriptionBillingBatchSortField {
   UPDATED_ON = 'UPDATED_ON',
 }
 
-export enum EnumSubscriptionBillingBatchStatus {
+export enum EnumServiceBillingBatchStatus {
   RUNNING = 'RUNNING',
   SUCCEEDED = 'SUCCEEDED',
   FAILED = 'FAILED',
 }
 
-export interface SubscriptionBillingBatchQuery {
-  status: EnumSubscriptionBillingBatchStatus[];
+export interface ServiceBillingBatchQuery {
+  status: EnumServiceBillingBatchStatus[];
 }
 
-export interface SubscriptionBillingBatch {
+export interface ServiceBillingBatch {
   createdBy: SimpleHelpdeskAccount;
   createdOn: Moment;
   dueDate: Moment;
@@ -29,7 +29,7 @@ export interface SubscriptionBillingBatch {
   processDefinition: string;
   processInstance: string;
   updatedOn: Moment;
-  status: EnumSubscriptionBillingBatchStatus;
+  status: EnumServiceBillingBatchStatus;
   toDate: Moment;
   totalPrice: number;
   totalPriceExcludingTax: number;
@@ -37,7 +37,7 @@ export interface SubscriptionBillingBatch {
   totalSubscriptions: number;
 }
 
-export interface SubscriptionBillingBatchCommand {
+export interface ServiceBillingBatchCommand {
   year: number;
   month: number;
   quotationOnly: boolean;

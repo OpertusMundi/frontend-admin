@@ -8,6 +8,7 @@ import { injectIntl, IntlShape, FormattedNumber, FormattedDate } from 'react-int
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
+import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
@@ -33,9 +34,10 @@ import {
 } from 'model/account-marketplace';
 import {
   EnumBillingViewMode,
-  EnumSubscriptionBillingSortField,
-  EnumSubscriptionBillingStatus,
-  SubscriptionBilling, SubscriptionBillingQuery,
+  EnumServiceBillingSortField,
+  EnumServiceBillingStatus,
+  ServiceBilling,
+  ServiceBillingQuery,
 } from 'model/order';
 import { ApplicationConfiguration } from 'model/configuration';
 
@@ -45,7 +47,7 @@ enum EnumAction {
   ViewStatistics = 'view-statistics',
 };
 
-const getCustomerName = (record: SubscriptionBilling, type: EnumCustomerType): string => {
+const getCustomerName = (record: ServiceBilling, type: EnumCustomerType): string => {
   if (type === EnumCustomerType.PROVIDER && record?.subscription?.provider) {
     const p = record.subscription?.provider as CustomerProfessional;
     return p.name;
@@ -97,6 +99,15 @@ const styles = (theme: Theme) => createStyles({
     marginRight: 8,
     cursor: 'pointer',
   },
+  serviceType: {
+    borderRadius: theme.spacing(0.5),
+    fontSize: '0.6rem',
+    height: theme.spacing(2),
+    fontWight: 700,
+    '& span': {
+      padding: theme.spacing(0, 0.5, 0, 0.5),
+    }
+  },
   statusLabel: {
     display: 'flex',
     marginRight: theme.spacing(2),
@@ -117,19 +128,19 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingTableProps): Column<SubscriptionBilling, EnumSubscriptionBillingSortField>[] {
+function subscriptionBillingColumns(intl: IntlShape, props: ServiceBillingTableProps): Column<ServiceBilling, EnumServiceBillingSortField>[] {
   const { classes } = props;
 
   return (
     [{
-      header: intl.formatMessage({ id: 'billing.subscription-billing.header.actions' }),
+      header: intl.formatMessage({ id: 'billing.service-billing.header.actions' }),
       id: 'actions',
       width: 80,
       cell: (
-        rowIndex: number, column: Column<SubscriptionBilling, EnumSubscriptionBillingSortField>, row: SubscriptionBilling, handleAction?: cellActionHandler<SubscriptionBilling, EnumSubscriptionBillingSortField>
+        rowIndex: number, column: Column<ServiceBilling, EnumServiceBillingSortField>, row: ServiceBilling, handleAction?: cellActionHandler<ServiceBilling, EnumServiceBillingSortField>
       ): React.ReactNode => (
         <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-          <Tooltip title={intl.formatMessage({ id: 'billing.subscription-billing.tooltip.view-statistics' })}>
+          <Tooltip title={intl.formatMessage({ id: 'billing.service-billing.tooltip.view-statistics' })}>
             <i
               onClick={() => handleAction ? handleAction(EnumAction.ViewStatistics, rowIndex, column, row) : null}
             >
@@ -137,7 +148,7 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
             </i>
           </Tooltip>
           {row.subscription?.item && props.mode !== EnumBillingViewMode.CONSUMER &&
-            <Tooltip title={intl.formatMessage({ id: 'billing.subscription-billing.tooltip.view-asset' })}>
+            <Tooltip title={intl.formatMessage({ id: 'billing.service-billing.tooltip.view-asset' })}>
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.ViewAsset, rowIndex, column, row) : null}
               >
@@ -146,7 +157,7 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
             </Tooltip>
           }
           {row?.payIn &&
-            <Tooltip title={intl.formatMessage({ id: 'billing.subscription-billing.tooltip.view-payin' })}>
+            <Tooltip title={intl.formatMessage({ id: 'billing.service-billing.tooltip.view-payin' })}>
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.ViewPayIn, rowIndex, column, row) : null}
               >
@@ -157,13 +168,13 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
         </div>
       ),
     }, {
-      header: intl.formatMessage({ id: 'billing.subscription-billing.header.status' }),
+      header: intl.formatMessage({ id: 'billing.service-billing.header.status' }),
       id: 'status',
       sortable: true,
-      sortColumn: EnumSubscriptionBillingSortField.STATUS,
+      sortColumn: EnumServiceBillingSortField.STATUS,
       width: 150,
       cell: (
-        rowIndex: number, column: Column<SubscriptionBilling, EnumSubscriptionBillingSortField>, row: SubscriptionBilling, handleAction?: cellActionHandler<SubscriptionBilling, EnumSubscriptionBillingSortField>
+        rowIndex: number, column: Column<ServiceBilling, EnumServiceBillingSortField>, row: ServiceBilling, handleAction?: cellActionHandler<ServiceBilling, EnumServiceBillingSortField>
       ): React.ReactNode => {
 
         return (
@@ -173,19 +184,19 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
                 className={classes.statusLabel}
                 style={{ background: statusToBackGround(row.status) }}
               >
-                {intl.formatMessage({ id: `enum.subscription-billing-status.${row.status}` })}
+                {intl.formatMessage({ id: `enum.service-billing-status.${row.status}` })}
               </div>
             }
           </div>
         )
       },
     }, {
-      header: intl.formatMessage({ id: 'billing.subscription-billing.header.provider' }),
+      header: intl.formatMessage({ id: 'billing.service-billing.header.provider' }),
       id: 'provider',
       sortable: false,
       hidden: props.mode === EnumBillingViewMode.CONSUMER,
       cell: (
-        rowIndex: number, column: Column<SubscriptionBilling, EnumSubscriptionBillingSortField>, row: SubscriptionBilling, handleAction?: cellActionHandler<SubscriptionBilling, EnumSubscriptionBillingSortField>
+        rowIndex: number, column: Column<ServiceBilling, EnumServiceBillingSortField>, row: ServiceBilling, handleAction?: cellActionHandler<ServiceBilling, EnumServiceBillingSortField>
       ): React.ReactNode => {
 
         return (
@@ -210,12 +221,12 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
         )
       },
     }, {
-      header: intl.formatMessage({ id: 'billing.subscription-billing.header.consumer' }),
+      header: intl.formatMessage({ id: 'billing.service-billing.header.consumer' }),
       id: 'consumer',
       sortable: false,
       hidden: props.mode === EnumBillingViewMode.CONSUMER,
       cell: (
-        rowIndex: number, column: Column<SubscriptionBilling, EnumSubscriptionBillingSortField>, row: SubscriptionBilling, handleAction?: cellActionHandler<SubscriptionBilling, EnumSubscriptionBillingSortField>
+        rowIndex: number, column: Column<ServiceBilling, EnumServiceBillingSortField>, row: ServiceBilling, handleAction?: cellActionHandler<ServiceBilling, EnumServiceBillingSortField>
       ): React.ReactNode => {
 
         return (
@@ -240,17 +251,18 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
         )
       },
     }, {
-      header: intl.formatMessage({ id: 'billing.subscription-billing.header.item' }),
+      header: intl.formatMessage({ id: 'billing.service-billing.header.item' }),
       id: 'item',
       sortable: false,
       cell: (
-        rowIndex: number, column: Column<SubscriptionBilling, EnumSubscriptionBillingSortField>, row: SubscriptionBilling, handleAction?: cellActionHandler<SubscriptionBilling, EnumSubscriptionBillingSortField>
+        rowIndex: number, column: Column<ServiceBilling, EnumServiceBillingSortField>, row: ServiceBilling, handleAction?: cellActionHandler<ServiceBilling, EnumServiceBillingSortField>
       ): React.ReactNode => {
 
         return (
           <>
-            {row.subscription?.item ? (
+            {row.subscription?.item &&
               <Grid container>
+                <Chip label={'Subscription'} className={classes.serviceType} />
                 <Grid item xs={12}>
                   <Typography variant="body1">{row.subscription?.item!.title}</Typography>
                 </Grid>
@@ -258,36 +270,49 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
                   <Typography variant="caption">{row.subscription?.item!.abstractText}</Typography>
                 </Grid>
               </Grid>
-            ) : <span>-</span>
+            }
+            {row.userService &&
+              <Grid container>
+                <Chip label={'Private OGC Service'} className={classes.serviceType} />
+                <Grid item xs={12}>
+                  <Typography variant="body1">{row.userService.title}</Typography>
+                </Grid>
+                <Grid item xs={12} className={classes.assetDescription} title={row.subscription?.item!.abstractText}>
+                  <Typography variant="caption">{row.userService.abstractText}</Typography>
+                </Grid>
+              </Grid>
+            }
+            {!row.subscription && !row.userService &&
+              <span>-</span>
             }
           </>
         )
       },
     }, {
-      header: intl.formatMessage({ id: 'billing.subscription-billing.header.created-on' }),
+      header: intl.formatMessage({ id: 'billing.service-billing.header.created-on' }),
       id: 'createdOn',
       sortable: true,
-      sortColumn: EnumSubscriptionBillingSortField.CREATED_ON,
+      sortColumn: EnumServiceBillingSortField.CREATED_ON,
       width: 170,
       cell: (
         rowIndex: number,
-        column: Column<SubscriptionBilling, EnumSubscriptionBillingSortField>,
-        row: SubscriptionBilling,
-        handleAction?: cellActionHandler<SubscriptionBilling, EnumSubscriptionBillingSortField>
+        column: Column<ServiceBilling, EnumServiceBillingSortField>,
+        row: ServiceBilling,
+        handleAction?: cellActionHandler<ServiceBilling, EnumServiceBillingSortField>
       ): React.ReactNode => (
         <DateTime value={row.createdOn?.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
     }, {
-      header: intl.formatMessage({ id: 'billing.subscription-billing.header.interval' }),
+      header: intl.formatMessage({ id: 'billing.service-billing.header.interval' }),
       id: 'interval',
       sortable: true,
-      sortColumn: EnumSubscriptionBillingSortField.FROM_DATE,
+      sortColumn: EnumServiceBillingSortField.FROM_DATE,
       width: 200,
       cell: (
         rowIndex: number,
-        column: Column<SubscriptionBilling, EnumSubscriptionBillingSortField>,
-        row: SubscriptionBilling,
-        handleAction?: cellActionHandler<SubscriptionBilling, EnumSubscriptionBillingSortField>
+        column: Column<ServiceBilling, EnumServiceBillingSortField>,
+        row: ServiceBilling,
+        handleAction?: cellActionHandler<ServiceBilling, EnumServiceBillingSortField>
       ): React.ReactNode => (
         <>
           <FormattedDate value={row.fromDate.toDate()} day='numeric' month='numeric' year='numeric' />
@@ -296,28 +321,28 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
         </>
       ),
     }, {
-      header: intl.formatMessage({ id: 'billing.subscription-billing.header.due-date' }),
+      header: intl.formatMessage({ id: 'billing.service-billing.header.due-date' }),
       id: 'dueDate',
       sortable: true,
-      sortColumn: EnumSubscriptionBillingSortField.DUE_DATE,
+      sortColumn: EnumServiceBillingSortField.DUE_DATE,
       width: 100,
       cell: (
         rowIndex: number,
-        column: Column<SubscriptionBilling, EnumSubscriptionBillingSortField>,
-        row: SubscriptionBilling,
-        handleAction?: cellActionHandler<SubscriptionBilling, EnumSubscriptionBillingSortField>
+        column: Column<ServiceBilling, EnumServiceBillingSortField>,
+        row: ServiceBilling,
+        handleAction?: cellActionHandler<ServiceBilling, EnumServiceBillingSortField>
       ): React.ReactNode => (
         <FormattedDate value={row.dueDate.toDate()} day='numeric' month='numeric' year='numeric' />
       ),
     }, {
-      header: intl.formatMessage({ id: 'billing.subscription-billing.header.price' }),
+      header: intl.formatMessage({ id: 'billing.service-billing.header.price' }),
       id: 'netPrice',
       headerStyle: { textAlign: 'right' },
       sortable: false,
       className: classes.alightRight,
       width: 120,
       cell: (
-        rowIndex: number, column: Column<SubscriptionBilling, EnumSubscriptionBillingSortField>, row: SubscriptionBilling, handleAction?: cellActionHandler<SubscriptionBilling, EnumSubscriptionBillingSortField>
+        rowIndex: number, column: Column<ServiceBilling, EnumServiceBillingSortField>, row: ServiceBilling, handleAction?: cellActionHandler<ServiceBilling, EnumServiceBillingSortField>
       ): React.ReactNode => {
         return (
           <b>
@@ -326,14 +351,14 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
         )
       },
     }, {
-      header: intl.formatMessage({ id: 'billing.subscription-billing.header.tax' }),
+      header: intl.formatMessage({ id: 'billing.service-billing.header.tax' }),
       id: 'tax',
       headerStyle: { textAlign: 'right' },
       sortable: false,
       className: classes.alightRight,
       width: 120,
       cell: (
-        rowIndex: number, column: Column<SubscriptionBilling, EnumSubscriptionBillingSortField>, row: SubscriptionBilling, handleAction?: cellActionHandler<SubscriptionBilling, EnumSubscriptionBillingSortField>
+        rowIndex: number, column: Column<ServiceBilling, EnumServiceBillingSortField>, row: ServiceBilling, handleAction?: cellActionHandler<ServiceBilling, EnumServiceBillingSortField>
       ): React.ReactNode => {
         return (
           <b>
@@ -342,15 +367,15 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
         )
       },
     }, {
-      header: intl.formatMessage({ id: 'billing.subscription-billing.header.total-price' }),
+      header: intl.formatMessage({ id: 'billing.service-billing.header.total-price' }),
       id: 'totalPrice',
       headerStyle: { textAlign: 'right' },
       sortable: true,
-      sortColumn: EnumSubscriptionBillingSortField.TOTAL_PRICE,
+      sortColumn: EnumServiceBillingSortField.TOTAL_PRICE,
       className: classes.alightRight,
       width: 120,
       cell: (
-        rowIndex: number, column: Column<SubscriptionBilling, EnumSubscriptionBillingSortField>, row: SubscriptionBilling, handleAction?: cellActionHandler<SubscriptionBilling, EnumSubscriptionBillingSortField>
+        rowIndex: number, column: Column<ServiceBilling, EnumServiceBillingSortField>, row: ServiceBilling, handleAction?: cellActionHandler<ServiceBilling, EnumServiceBillingSortField>
       ): React.ReactNode => {
         return (
           <b>
@@ -361,43 +386,43 @@ function subscriptionBillingColumns(intl: IntlShape, props: SubscriptionBillingT
     }]);
 }
 
-const statusToBackGround = (status: EnumSubscriptionBillingStatus): string => {
+const statusToBackGround = (status: EnumServiceBillingStatus): string => {
   switch (status) {
-    case EnumSubscriptionBillingStatus.DUE:
+    case EnumServiceBillingStatus.DUE:
       return '#FBC02D';
-    case EnumSubscriptionBillingStatus.FAILED:
+    case EnumServiceBillingStatus.FAILED:
       return '#E64A19';
-    case EnumSubscriptionBillingStatus.PAID:
-    case EnumSubscriptionBillingStatus.NO_CHARGE:
+    case EnumServiceBillingStatus.PAID:
+    case EnumServiceBillingStatus.NO_CHARGE:
       return '#4CAF50';
   }
 };
 
-interface SubscriptionBillingTableProps extends WithStyles<typeof styles> {
+interface ServiceBillingTableProps extends WithStyles<typeof styles> {
   config: ApplicationConfiguration,
   intl: IntlShape,
   loading?: boolean;
   mode?: EnumBillingViewMode;
   pagination: PageRequest,
-  query: SubscriptionBillingQuery,
-  result: PageResult<SubscriptionBilling> | null,
-  selected: SubscriptionBilling[],
-  sorting: Sorting<EnumSubscriptionBillingSortField>[];
-  addToSelection?: (rows: SubscriptionBilling[]) => void,
+  query: ServiceBillingQuery,
+  result: PageResult<ServiceBilling> | null,
+  selected: ServiceBilling[],
+  sorting: Sorting<EnumServiceBillingSortField>[];
+  addToSelection?: (rows: ServiceBilling[]) => void,
   find: (
-    pageRequest?: PageRequest, sorting?: Sorting<EnumSubscriptionBillingSortField>[]
-  ) => Promise<PageResult<SubscriptionBilling> | null>,
-  removeFromSelection?: (rows: SubscriptionBilling[]) => void,
+    pageRequest?: PageRequest, sorting?: Sorting<EnumServiceBillingSortField>[]
+  ) => Promise<PageResult<ServiceBilling> | null>,
+  removeFromSelection?: (rows: ServiceBilling[]) => void,
   resetSelection?: () => void;
   setPager: (page: number, size: number) => void,
-  setSorting: (sorting: Sorting<EnumSubscriptionBillingSortField>[]) => void,
+  setSorting: (sorting: Sorting<EnumServiceBillingSortField>[]) => void,
   viewPayIn: (key: string) => void;
-  viewUseStatistics: (data: SubscriptionBilling) => void;
+  viewUseStatistics: (data: ServiceBilling) => void;
 }
 
-class SubscriptionBillingTable extends React.Component<SubscriptionBillingTableProps> {
+class ServiceBillingTable extends React.Component<ServiceBillingTableProps> {
 
-  constructor(props: SubscriptionBillingTableProps) {
+  constructor(props: ServiceBillingTableProps) {
     super(props);
 
     this.handleAction = this.handleAction.bind(this);
@@ -407,7 +432,7 @@ class SubscriptionBillingTable extends React.Component<SubscriptionBillingTableP
     mode: EnumBillingViewMode.DEFAULT,
   }
 
-  handleAction(action: string, index: number, column: Column<SubscriptionBilling, EnumSubscriptionBillingSortField>, row: SubscriptionBilling): void {
+  handleAction(action: string, index: number, column: Column<ServiceBilling, EnumServiceBillingSortField>, row: ServiceBilling): void {
     if (row) {
       switch (action) {
         case EnumAction.ViewAsset: {
@@ -445,7 +470,7 @@ class SubscriptionBillingTable extends React.Component<SubscriptionBillingTableP
 
     return (
       <>
-        <MaterialTable<SubscriptionBilling, EnumSubscriptionBillingSortField>
+        <MaterialTable<ServiceBilling, EnumServiceBillingSortField>
           intl={intl}
           columns={subscriptionBillingColumns(intl, this.props)}
           rows={result ? result.items : []}
@@ -478,7 +503,7 @@ class SubscriptionBillingTable extends React.Component<SubscriptionBillingTableP
 }
 
 // Apply styles
-const styledComponent = withStyles(styles)(SubscriptionBillingTable);
+const styledComponent = withStyles(styles)(ServiceBillingTable);
 
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);

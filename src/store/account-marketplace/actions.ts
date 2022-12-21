@@ -3,9 +3,11 @@ import {
   AccountSubscription,
   EnumMarketplaceAccountSortField,
   EnumSubscriptionSortField,
+  EnumUserServiceSortField,
   MarketplaceAccount,
   MarketplaceAccountQuery,
   MarketplaceAccountSummary,
+  UserService,
 } from 'model/account-marketplace';
 
 import {
@@ -50,31 +52,33 @@ import {
   PAYOUT_SEARCH_INIT,
   PAYOUT_SEARCH_FAILURE,
   PAYOUT_SEARCH_COMPLETE,
-  SUBSCRIPTION_SET_PAGER,
-  SUBSCRIPTION_RESET_PAGER,
-  SUBSCRIPTION_SET_SORTING,
-  SUBSCRIPTION_SEARCH_INIT,
-  SUBSCRIPTION_SEARCH_FAILURE,
-  SUBSCRIPTION_SEARCH_COMPLETE,
-  SUB_BILLING_SET_PAGER,
-  SUB_BILLING_RESET_PAGER,
-  SUB_BILLING_SET_SORTING,
-  SUB_BILLING_SEARCH_INIT,
-  SUB_BILLING_SEARCH_FAILURE,
-  SUB_BILLING_SEARCH_COMPLETE,
+  BILLABLE_SERVICE_SET_PAGER,
+  BILLABLE_SERVICE_RESET_PAGER,
+  BILLABLE_SERVICE_SET_SORTING,
+  BILLABLE_SERVICE_SEARCH_INIT,
+  BILLABLE_SERVICE_SEARCH_FAILURE,
+  BILLABLE_SERVICE_SEARCH_COMPLETE,
+  SERVICE_BILLING_SET_PAGER,
+  SERVICE_BILLING_RESET_PAGER,
+  SERVICE_BILLING_SET_SORTING,
+  SERVICE_BILLING_SEARCH_INIT,
+  SERVICE_BILLING_SEARCH_FAILURE,
+  SERVICE_BILLING_SEARCH_COMPLETE,
+  SET_SERVICE_TYPE,
   SET_TAB_INDEX,
 } from './types';
 import {
+  EnumBillableServiceType,
   EnumOrderSortField,
   EnumPayInSortField,
   EnumPayOutSortField,
-  EnumSubscriptionBillingSortField,
+  EnumServiceBillingSortField,
   EnumTransferSortField,
   Order,
   PayInItem,
   PayInType,
   PayOut,
-  SubscriptionBilling,
+  ServiceBilling,
 } from 'model/order';
 
 
@@ -346,49 +350,49 @@ export function searchPayOutComplete(result: PageResult<PayOut>): AccountActions
   };
 }
 
-export function setSubscriptionPager(page: number, size: number): AccountActions {
+export function setServicePager(page: number, size: number): AccountActions {
   return {
-    type: SUBSCRIPTION_SET_PAGER,
+    type: BILLABLE_SERVICE_SET_PAGER,
     page,
     size,
   };
 }
 
-export function resetSubscriptionPager(): AccountActions {
+export function resetServicePager(): AccountActions {
   return {
-    type: SUBSCRIPTION_RESET_PAGER,
+    type: BILLABLE_SERVICE_RESET_PAGER,
   };
 }
 
-export function setSubscriptionSorting(sorting: Sorting<EnumSubscriptionSortField>[]): AccountActions {
+export function setServiceSorting(sorting: Sorting<EnumSubscriptionSortField | EnumUserServiceSortField>[]): AccountActions {
   return {
-    type: SUBSCRIPTION_SET_SORTING,
+    type: BILLABLE_SERVICE_SET_SORTING,
     sorting,
   };
 }
 
-export function searchSubscriptionInit(): AccountActions {
+export function searchServiceInit(): AccountActions {
   return {
-    type: SUBSCRIPTION_SEARCH_INIT,
+    type: BILLABLE_SERVICE_SEARCH_INIT,
   };
 }
 
-export function searchSubscriptionFailure(): AccountActions {
+export function searchServiceFailure(): AccountActions {
   return {
-    type: SUBSCRIPTION_SEARCH_FAILURE,
+    type: BILLABLE_SERVICE_SEARCH_FAILURE,
   };
 }
 
-export function searchSubscriptionComplete(result: PageResult<AccountSubscription>): AccountActions {
+export function searchServiceComplete(result: PageResult<AccountSubscription | UserService>): AccountActions {
   return {
-    type: SUBSCRIPTION_SEARCH_COMPLETE,
+    type: BILLABLE_SERVICE_SEARCH_COMPLETE,
     result,
   };
 }
 
 export function setSubBillingPager(page: number, size: number): AccountActions {
   return {
-    type: SUB_BILLING_SET_PAGER,
+    type: SERVICE_BILLING_SET_PAGER,
     page,
     size,
   };
@@ -396,32 +400,32 @@ export function setSubBillingPager(page: number, size: number): AccountActions {
 
 export function resetSubBillingPager(): AccountActions {
   return {
-    type: SUB_BILLING_RESET_PAGER,
+    type: SERVICE_BILLING_RESET_PAGER,
   };
 }
 
-export function setSubBillingSorting(sorting: Sorting<EnumSubscriptionBillingSortField>[]): AccountActions {
+export function setSubBillingSorting(sorting: Sorting<EnumServiceBillingSortField>[]): AccountActions {
   return {
-    type: SUB_BILLING_SET_SORTING,
+    type: SERVICE_BILLING_SET_SORTING,
     sorting,
   };
 }
 
 export function searchSubBillingInit(): AccountActions {
   return {
-    type: SUB_BILLING_SEARCH_INIT,
+    type: SERVICE_BILLING_SEARCH_INIT,
   };
 }
 
 export function searchSubBillingFailure(): AccountActions {
   return {
-    type: SUB_BILLING_SEARCH_FAILURE,
+    type: SERVICE_BILLING_SEARCH_FAILURE,
   };
 }
 
-export function searchSubBillingComplete(result: PageResult<SubscriptionBilling>): AccountActions {
+export function searchSubBillingComplete(result: PageResult<ServiceBilling>): AccountActions {
   return {
-    type: SUB_BILLING_SEARCH_COMPLETE,
+    type: SERVICE_BILLING_SEARCH_COMPLETE,
     result,
   };
 }
@@ -430,5 +434,12 @@ export function setTabIndex(tabIndex: number): AccountActions {
   return {
     type: SET_TAB_INDEX,
     tabIndex,
+  };
+}
+
+export function setServiceType(serviceType: EnumBillableServiceType): AccountActions {
+  return {
+    type: SET_SERVICE_TYPE,
+    serviceType,
   };
 }

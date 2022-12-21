@@ -15,6 +15,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
+import Chip from '@material-ui/core/Chip';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -43,7 +44,7 @@ import { setFilter } from 'store/payin/actions';
 // Model
 import { buildPath, DynamicRoutes, StaticRoutes } from 'model/routes';
 import { EnumPaymentMethod } from 'model/enum';
-import { EnumMangopayUserType, Address, CustomerIndividual, CustomerProfessional, Customer } from 'model/account-marketplace';
+import { EnumMangopayUserType, Address, CustomerIndividual, CustomerProfessional, Customer, AccountSubscription, UserService } from 'model/account-marketplace';
 import {
   EnumTransactionStatus,
   BankwirePayIn, PayIn,
@@ -51,12 +52,13 @@ import {
   EnumPayInItemType,
   OrderPayInItem,
   PayInAddress,
-  SubscriptionBillingPayInItem,
+  ServiceBillingPayInItem,
   PayInType,
   CardDirectPayIn,
   Transfer,
   FreePayIn,
-  SubscriptionBilling,
+  ServiceBilling,
+  EnumBillableServiceType,
 } from 'model/order';
 import { EnumPricingModel } from 'model/pricing-model';
 
@@ -110,6 +112,15 @@ const styles = (theme: Theme) => createStyles({
   },
   paper: {
     padding: '6px 16px',
+  },
+  serviceType: {
+    borderRadius: theme.spacing(0.5),
+    fontSize: '0.6rem',
+    height: theme.spacing(2),
+    fontWight: 700,
+    '& span': {
+      padding: theme.spacing(0, 0.5, 0, 0.5),
+    }
   },
   status: {
     color: grey[50],
@@ -572,8 +583,8 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     switch (item.type) {
       case EnumPayInItemType.ORDER:
         return this.renderPayInOrderItem(index, item as OrderPayInItem);
-      case EnumPayInItemType.SUBSCRIPTION_BILLING:
-        return this.renderPayInSubscriptionItem(index, item as SubscriptionBillingPayInItem);
+      case EnumPayInItemType.SERVICE_BILLING:
+        return this.renderPayInServiceBillingItem(index, item as ServiceBillingPayInItem);
     }
   }
 
@@ -631,16 +642,28 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     ));
   }
 
-  renderPayInSubscriptionItem(index: number, payInItem: SubscriptionBillingPayInItem) {
+  renderPayInServiceBillingItem(index: number, payInItem: ServiceBillingPayInItem) {
+    const record = payInItem.serviceBilling;
+    switch (record.type) {
+      case EnumBillableServiceType.SUBSCRIPTION:
+        return this.renderPayInServiceBillingItemSubscription(index, payInItem, record.subscription!);
+      case EnumBillableServiceType.PRIVATE_OGC_SERVICE:
+        return this.renderPayInServiceBillingItemUserService(index, payInItem, record.userService!);
+    }
+    return null;
+  }
+
+  renderPayInServiceBillingItemSubscription(index: number, payInItem: ServiceBillingPayInItem, subscription: AccountSubscription) {
     const { classes, config } = this.props;
-    const record = payInItem.subscriptionBilling;
-    const subscription = record.subscription!;
+    const record = payInItem.serviceBilling;
 
     return (
-      <div key={`subscription-billing-${index}`}>
+      <div key={`service-billing-${index}`}>
         <Grid container>
           <Grid item xs={3}>
-            <Typography variant="caption">Interval</Typography>
+            {index === 0 &&
+              <Typography variant="caption">Interval</Typography>
+            }
             <Typography
               variant="body2"
               color="textSecondary"
@@ -651,7 +674,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
             </Typography>
           </Grid>
           <Grid item xs={3}>
-            <Typography variant="caption">Asset</Typography>
+            <Chip label={'Subscription'} className={classes.serviceType} />
             <Typography
               variant="body2"
               color="textSecondary"
@@ -665,7 +688,9 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
             </Typography>
           </Grid>
           <Grid item xs={4}>
-            <Typography variant="caption">Provider</Typography>
+            {index === 0 &&
+              <Typography variant="caption">Provider</Typography>
+            }
             <Typography
               variant="body2"
               color="textSecondary"
@@ -686,7 +711,61 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     );
   }
 
-  renderUseStats(record: SubscriptionBilling) {
+  renderPayInServiceBillingItemUserService(index: number, payInItem: ServiceBillingPayInItem, service: UserService) {
+    const { classes } = this.props;
+    const record = payInItem.serviceBilling;
+
+    return (
+      <div key={`service-billing-${index}`}>
+        <Grid container>
+          <Grid item xs={3}>
+            {index === 0 &&
+              <Typography variant="caption">Interval</Typography>
+            }
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              <FormattedDate value={record.fromDate.toDate()} day='numeric' month='numeric' year='numeric' />
+              {' - '}
+              <FormattedDate value={record.toDate.toDate()} day='numeric' month='numeric' year='numeric' />
+            </Typography>
+          </Grid>
+          <Grid item xs={3}>
+            <Chip label={'Private OGC Service'} className={classes.serviceType} />
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              {`${service.title} - ${service.version}`}
+            </Typography>
+            <Typography variant="caption">
+              {this.renderUseStats(record)}
+            </Typography>
+          </Grid>
+          <Grid item xs={4}>
+            {index === 0 &&
+              <Typography variant="caption">Provider</Typography>
+            }
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              <FormattedMessage id={'company.title'} />
+            </Typography>
+          </Grid>
+          <Grid container item xs={2} justifyContent={"flex-end"}>
+            <Typography variant="body2" className={classes.alignCenter}>
+              <FormattedNumber value={record.totalPrice} style={'currency'} currency={'EUR'} />
+            </Typography>
+          </Grid>
+        </Grid>
+        <Divider className={classes.divider} />
+      </div>
+    );
+  }
+
+  renderUseStats(record: ServiceBilling) {
     const { pricingModel } = record;
     switch (pricingModel.type) {
       case EnumPricingModel.PER_CALL:
@@ -717,8 +796,8 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     switch (item.type) {
       case EnumPayInItemType.ORDER:
         return this.renderTransferOrderItem(index, item as OrderPayInItem);
-      case EnumPayInItemType.SUBSCRIPTION_BILLING:
-        return this.renderTransferSubscriptionItem(index, item as SubscriptionBillingPayInItem);
+      case EnumPayInItemType.SERVICE_BILLING:
+        return this.renderTransferServiceItem(index, item as ServiceBillingPayInItem);
     }
   }
 
@@ -791,14 +870,21 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     ));
   }
 
-  renderTransferSubscriptionItem(index: number, payInItem: SubscriptionBillingPayInItem) {
+  renderTransferServiceItem(index: number, payInItem: ServiceBillingPayInItem) {
+    switch (payInItem.serviceBilling.type) {
+      case EnumBillableServiceType.SUBSCRIPTION:
+        return this.renderTransferServiceItemSubscription(index, payInItem, payInItem.serviceBilling.subscription!);
+      case EnumBillableServiceType.PRIVATE_OGC_SERVICE:
+        return this.renderTransferServiceItemUserService(index, payInItem, payInItem.serviceBilling.userService!);
+    }
+  }
+
+  renderTransferServiceItemSubscription(index: number, payInItem: ServiceBillingPayInItem, subscription: AccountSubscription) {
     const { classes, config } = this.props;
-    const record = payInItem.subscriptionBilling;
-    const subscription = record.subscription!;
     const transfer = payInItem.transfer;
 
     return (
-      <div key={`subscription-billing-transfer-${index}`}>
+      <div key={`service-billing-transfer-${index}`}>
         <Grid container>
           <Grid item xs={2}>
             <Typography
@@ -837,6 +923,70 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
               <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [subscription.provider!.key])} className={classes.link}>
                 {(subscription.provider! as CustomerProfessional).name}
               </Link>
+            </Typography>
+          </Grid>
+          <Grid container item xs={2} justifyContent={"flex-end"}>
+            <Typography variant="body2" className={classes.alignCenter}>
+              {transfer
+                ? <FormattedNumber value={transfer.fees} style={'currency'} currency={'EUR'} />
+                : <span>-</span>
+              }
+            </Typography>
+          </Grid>
+          <Grid container item xs={2} justifyContent={"flex-end"}>
+            <Typography variant="body2" className={classes.alignCenter}>
+              {transfer
+                ? <FormattedNumber value={transfer.creditedFunds} style={'currency'} currency={'EUR'} />
+                : <span>-</span>
+              }
+            </Typography>
+          </Grid>
+        </Grid>
+        <Divider className={classes.divider} />
+      </div>
+    );
+  }
+
+  renderTransferServiceItemUserService(index: number, payInItem: ServiceBillingPayInItem, service: UserService) {
+    const { classes } = this.props;
+    const transfer = payInItem.transfer;
+
+    return (
+      <div key={`service-billing-transfer-${index}`}>
+        <Grid container>
+          <Grid item xs={2}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              <span className={classes.underline} onClick={() => this.showMangopayTransferPage(transfer!)}>{transfer?.providerId}</span>
+            </Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              {transfer
+                ? <DateTime value={transfer.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
+                : <span>-</span>
+              }
+            </Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              {`${service.title} - ${service.version}`}
+            </Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+            >
+              <FormattedMessage id={'company.title'} />
             </Typography>
           </Grid>
           <Grid container item xs={2} justifyContent={"flex-end"}>

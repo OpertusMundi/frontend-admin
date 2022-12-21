@@ -686,11 +686,11 @@ class Home extends React.Component<HomeProps, HomeState> {
 
                     <ListItem button
                       className={open[EnumSection.Drawer] ? classes.nested : ''}
-                      onClick={(e) => this.onNavigate(e, StaticRoutes.SubscriptionBillingManager)}>
+                      onClick={(e) => this.onNavigate(e, StaticRoutes.ServiceBillingManager)}>
                       <ListItemIcon>
                         <Icon path={mdiClockFast} size="1.5rem" />
                       </ListItemIcon>
-                      <ListItemText primary={_t({ id: 'links.subscription-billing-manager' })} />
+                      <ListItemText primary={_t({ id: 'links.service-billing-manager' })} />
                     </ListItem>
 
                     <ListItem button

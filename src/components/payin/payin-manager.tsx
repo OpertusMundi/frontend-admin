@@ -107,7 +107,7 @@ class PayInManager extends React.Component<PayInManagerProps> {
 
     const pending = payIn.items!.find(i => {
       switch (i.type) {
-        case EnumPayInItemType.SUBSCRIPTION_BILLING:
+        case EnumPayInItemType.SERVICE_BILLING:
           return false;
 
         case EnumPayInItemType.ORDER:

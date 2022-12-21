@@ -2,10 +2,10 @@ import { Moment } from 'moment';
 
 import { LogoutInitAction } from 'store/security/types';
 import { PageResult, PageRequest, Sorting, ObjectResponse } from 'model/response';
-import { EnumSubscriptionBillingBatchSortField, SubscriptionBillingBatch, SubscriptionBillingBatchQuery } from 'model/subscription-billing';
+import { EnumServiceBillingBatchSortField, ServiceBillingBatch, ServiceBillingBatchQuery } from 'model/service-billing';
 
 // State
-export interface SubscriptionBillingBatchManagerState {
+export interface ServiceBillingBatchManagerState {
   configureTask: {
     month: number | null;
     year: number | null;
@@ -13,36 +13,36 @@ export interface SubscriptionBillingBatchManagerState {
   lastUpdated: Moment | null;
   loading: boolean;
   pagination: PageRequest;
-  query: SubscriptionBillingBatchQuery;
-  record: SubscriptionBillingBatch | null;
-  result: PageResult<SubscriptionBillingBatch> | null;
-  selected: SubscriptionBillingBatch[];
-  sorting: Sorting<EnumSubscriptionBillingBatchSortField>[];
+  query: ServiceBillingBatchQuery;
+  record: ServiceBillingBatch | null;
+  result: PageResult<ServiceBillingBatch> | null;
+  selected: ServiceBillingBatch[];
+  sorting: Sorting<EnumServiceBillingBatchSortField>[];
 }
 
 // Actions
-export const SET_PAGER = 'subscription-billing-batch/manager/SET_PAGER';
-export const RESET_PAGER = 'subscription-billing-batch/manager/RESET_PAGER';
+export const SET_PAGER = 'service-billing-batch/manager/SET_PAGER';
+export const RESET_PAGER = 'service-billing-batch/manager/RESET_PAGER';
 
-export const SET_SORTING = 'subscription-billing-batch/manager/SET_SORTING';
+export const SET_SORTING = 'service-billing-batch/manager/SET_SORTING';
 
-export const SET_FILTER = 'subscription-billing-batch/manager/SET_FILTER';
-export const RESET_FILTER = 'subscription-billing-batch/manager/RESET_FILTER';
+export const SET_FILTER = 'service-billing-batch/manager/SET_FILTER';
+export const RESET_FILTER = 'service-billing-batch/manager/RESET_FILTER';
 
-export const SEARCH_INIT = 'subscription-billing-batch/manager/SEARCH_INIT';
-export const SEARCH_FAILURE = 'subscription-billing-batch/manager/SEARCH_FAILURE';
-export const SEARCH_COMPLETE = 'subscription-billing-batch/manager/SEARCH_COMPLETE';
+export const SEARCH_INIT = 'service-billing-batch/manager/SEARCH_INIT';
+export const SEARCH_FAILURE = 'service-billing-batch/manager/SEARCH_FAILURE';
+export const SEARCH_COMPLETE = 'service-billing-batch/manager/SEARCH_COMPLETE';
 
-export const LOAD_RECORD_INIT = 'subscription-billing-batch/manager/LOAD_RECORD_INIT';
-export const LOAD_RECORD_SUCCESS = 'subscription-billing-batch/manager/LOAD_RECORD_SUCCESS';
-export const LOAD_RECORD_FAILURE = 'subscription-billing-batch/manager/LOAD_RECORD_FAILURE';
+export const LOAD_RECORD_INIT = 'service-billing-batch/manager/LOAD_RECORD_INIT';
+export const LOAD_RECORD_SUCCESS = 'service-billing-batch/manager/LOAD_RECORD_SUCCESS';
+export const LOAD_RECORD_FAILURE = 'service-billing-batch/manager/LOAD_RECORD_FAILURE';
 
-export const TOGGLE_BILLING_TASK_FORM = 'subscription-billing-batch/manager/TOGGLE_BILLING_TASK_FORM';
-export const SET_BILLING_TASK_PARAMS = 'subscription-billing-batch/manager/SET_BILLING_TASK_PARAMS';
+export const TOGGLE_BILLING_TASK_FORM = 'service-billing-batch/manager/TOGGLE_BILLING_TASK_FORM';
+export const SET_BILLING_TASK_PARAMS = 'service-billing-batch/manager/SET_BILLING_TASK_PARAMS';
 
-export const CREATE_BILLING_TASK_INIT = 'subscription-billing-batch/manager/CREATE_BILLING_TASK_INIT';
-export const CREATE_BILLING_TASK_SUCCESS = 'subscription-billing-batch/manager/CREATE_BILLING_TASK_SUCCESS';
-export const CREATE_BILLING_TASK_FAILURE = 'subscription-billing-batch/manager/CREATE_BILLING_TASK_FAILURE';
+export const CREATE_BILLING_TASK_INIT = 'service-billing-batch/manager/CREATE_BILLING_TASK_INIT';
+export const CREATE_BILLING_TASK_SUCCESS = 'service-billing-batch/manager/CREATE_BILLING_TASK_SUCCESS';
+export const CREATE_BILLING_TASK_FAILURE = 'service-billing-batch/manager/CREATE_BILLING_TASK_FAILURE';
 
 
 export interface SetPagerAction {
@@ -57,12 +57,12 @@ export interface ResetPagerAction {
 
 export interface SetSortingAction {
   type: typeof SET_SORTING;
-  sorting: Sorting<EnumSubscriptionBillingBatchSortField>[];
+  sorting: Sorting<EnumServiceBillingBatchSortField>[];
 }
 
 export interface SetFilterAction {
   type: typeof SET_FILTER;
-  query: Partial<SubscriptionBillingBatchQuery>;
+  query: Partial<ServiceBillingBatchQuery>;
 }
 
 export interface ResetFilterAction {
@@ -79,7 +79,7 @@ export interface SearchFailureAction {
 
 export interface SearchCompleteAction {
   type: typeof SEARCH_COMPLETE;
-  result: PageResult<SubscriptionBillingBatch>;
+  result: PageResult<ServiceBillingBatch>;
 }
 
 export interface LoadRecordInitAction {
@@ -89,7 +89,7 @@ export interface LoadRecordInitAction {
 
 export interface LoadRecordSuccessAction {
   type: typeof LOAD_RECORD_SUCCESS;
-  record: SubscriptionBillingBatch;
+  record: ServiceBillingBatch;
 }
 
 export interface LoadRecordFailureAction {
@@ -117,17 +117,17 @@ export interface CreateBillingTaskSuccessAction {
   type: typeof CREATE_BILLING_TASK_SUCCESS;
   year: number;
   month: number;
-  response: ObjectResponse<SubscriptionBillingBatch>;
+  response: ObjectResponse<ServiceBillingBatch>;
 }
 
 export interface CreateBillingFailureTask {
   type: typeof CREATE_BILLING_TASK_FAILURE;
   year: number;
   month: number;
-  response: ObjectResponse<SubscriptionBillingBatch | null> | null;
+  response: ObjectResponse<ServiceBillingBatch | null> | null;
 }
 
-export type SubscriptionBillingBatchActions =
+export type ServiceBillingBatchActions =
   | LogoutInitAction
   | SetPagerAction
   | ResetPagerAction

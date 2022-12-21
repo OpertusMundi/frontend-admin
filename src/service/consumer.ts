@@ -2,8 +2,25 @@ import { AxiosRequestConfig } from 'axios';
 
 import { Api } from 'utils/api';
 import { ObjectResponse, PageRequest, Sorting, AxiosPageResponse, PageResult } from 'model/response';
-import { EnumOrderSortField, EnumPayInSortField, EnumSubscriptionBillingSortField, Order, OrderQuery, PayInQuery, PayInType, SubscriptionBilling, SubscriptionBillingQuery } from 'model/order';
-import { EnumSubscriptionSortField, AccountSubscription, SubscriptionQuery } from 'model/account-marketplace';
+import {
+  EnumOrderSortField,
+  EnumPayInSortField,
+  EnumServiceBillingSortField,
+  Order,
+  OrderQuery,
+  PayInQuery,
+  PayInType,
+  ServiceBilling,
+  ServiceBillingQuery,
+} from 'model/order';
+import {
+  AccountSubscription,
+  EnumSubscriptionSortField,
+  EnumUserServiceSortField,
+  SubscriptionQuery,
+  UserService,
+  UserServiceQuery,
+} from 'model/account-marketplace';
 
 export default class ConsumerBillingApi extends Api {
 
@@ -57,19 +74,35 @@ export default class ConsumerBillingApi extends Api {
     return this.get<ObjectResponse<PageResult<AccountSubscription>>>(url);
   }
 
-  public async findServiceBillingRecords(
-    query: Partial<SubscriptionBillingQuery>, pageRequest: PageRequest, sorting: Sorting<EnumSubscriptionBillingSortField>[]
-  ): Promise<AxiosPageResponse<SubscriptionBilling>> {
+  public async findUserServices(
+    query: Partial<UserServiceQuery>, pageRequest: PageRequest, sorting: Sorting<EnumUserServiceSortField>[]
+  ): Promise<AxiosPageResponse<UserService>> {
     const { page, size } = pageRequest;
     const { id: field, order } = sorting[0];
 
-    const queryString = (Object.keys(query) as Array<keyof SubscriptionBillingQuery>)
-      .reduce((result: string[], key: keyof SubscriptionBillingQuery) => {
+    const queryString = (Object.keys(query) as Array<keyof UserServiceQuery>)
+      .reduce((result: string[], key: keyof UserServiceQuery) => {
+        return query[key] !== null ? [...result, `${key}=${query[key]}`] : result;
+      }, []);
+
+    const url = `/action/consumer/user-services?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
+
+    return this.get<ObjectResponse<PageResult<UserService>>>(url);
+  }
+
+  public async findServiceBillingRecords(
+    query: Partial<ServiceBillingQuery>, pageRequest: PageRequest, sorting: Sorting<EnumServiceBillingSortField>[]
+  ): Promise<AxiosPageResponse<ServiceBilling>> {
+    const { page, size } = pageRequest;
+    const { id: field, order } = sorting[0];
+
+    const queryString = (Object.keys(query) as Array<keyof ServiceBillingQuery>)
+      .reduce((result: string[], key: keyof ServiceBillingQuery) => {
         return query[key] !== null ? [...result, `${key}=${query[key]}`] : result;
       }, []);
 
     const url = `/action/consumer/service-billing?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
 
-    return this.get<ObjectResponse<PageResult<SubscriptionBilling>>>(url);
+    return this.get<ObjectResponse<PageResult<ServiceBilling>>>(url);
   }
 }

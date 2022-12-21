@@ -1,9 +1,13 @@
 import { Moment } from 'moment';
-import { CatalogueItem, EnumTopicCategory } from './catalogue';
+import { CatalogueItem, EnumTopicCategory, ResourceIngestionData } from './catalogue';
 import { EnumDataProvider } from './configuration';
 import { EnumAuthProvider } from './enum';
 import { RecurringRegistration } from './order';
 import { EnumMarketplaceRole as EnumRole } from './role';
+import { GeoJSONGeometry } from 'ol/format/GeoJSON';
+import { PerCallPricingModelCommand } from './pricing-model';
+import { Message } from './message';
+import { SimpleHelpdeskAccount } from './account';
 
 export enum EnumActivationStatus {
   PENDING = 'PENDING',
@@ -344,7 +348,7 @@ export interface MarketplaceAccountSummary {
   consumerFunds: number;
   consumerKycLevel: EnumKycLevel;
   consumerName: string;
-  consumerProcessInstance:string;
+  consumerProcessInstance: string;
   consumerUpdatePending: boolean;
   email: string;
   emailVerified: boolean;
@@ -404,10 +408,23 @@ export interface MarketplaceAccount {
   username: string;
 }
 
+export interface SimpleMarketplaceAccount {
+  key: string;
+  username: string;
+  type: EnumAccountType;
+}
+
 export enum EnumSubscriptionStatus {
   CREATED = 'CREATED',
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
+}
+
+export enum EnumUserServiceStatus {
+  PROCESSING = 'PROCESSING',
+  FAILED = 'FAILED',
+  PUBLISHED = 'PUBLISHED',
+  DELETED = 'DELETED',
 }
 
 export enum EnumAssetPurchaseSource {
@@ -424,9 +441,22 @@ export enum EnumSubscriptionSortField {
   STATUS = 'STATUS',
 }
 
+export enum EnumUserServiceSortField {
+  CREATED_ON = 'CREATED_ON',
+  STATUS = 'STATUS',
+  TITLE = 'TITLE',
+  UPDATED_ON = 'UPDATED_ON',
+  VERSION = 'VERSION',
+}
+
 export interface SubscriptionQuery {
   consumerKey?: string;
   providerKey?: string;
+  status: EnumSubscriptionStatus[];
+}
+
+export interface UserServiceQuery {
+  ownerKey?: string;
   status: EnumSubscriptionStatus[];
 }
 
@@ -483,6 +513,38 @@ export interface AccountSubscription {
    * Recurring PayIn registration
    */
   recurringRegistration?: RecurringRegistration;
+}
+
+export enum EnumUserServiceType {
+  WMS = 'WMS',
+  WFS = 'WFS',
+}
+
+export interface UserService {
+  abstractText: string;
+  createdOn: Moment;
+  crs: string;
+  encoding: string;
+  format: string;
+  geometry: GeoJSONGeometry;
+  ingestData: ResourceIngestionData;
+  key: string;
+  owner: SimpleMarketplaceAccount;
+  path: string;
+  fileName: string;
+  fileSize: string;
+  pricingModel: PerCallPricingModelCommand;
+  processDefinition: string;
+  processInstance: string;
+  serviceType: EnumUserServiceType;
+  status: EnumUserServiceStatus;
+  title: string;
+  updatedOn: Moment;
+  version: string;
+  workflowErrorDetails: string;
+  workflowErrorMessages: Message[] | null;
+  helpdeskSetErrorAccount: SimpleHelpdeskAccount;
+  helpdeskErrorMessage: SimpleHelpdeskAccount;
 }
 
 export interface ExternalProviderCommand {

@@ -17,6 +17,7 @@ import DateTime from 'components/common/date-time';
 
 import Icon from '@mdi/react';
 import {
+  mdiFilterCogOutline,
   mdiShoppingOutline,
 } from '@mdi/js';
 
@@ -37,6 +38,7 @@ import { EnumBillingViewMode } from 'model/order';
 import { ApplicationConfiguration } from 'model/configuration';
 
 enum EnumAction {
+  FilterBillingRecords = 'filter-billing-records',
   ViewAsset = 'view-asset',
 };
 
@@ -127,6 +129,15 @@ function subscriptionColumns(intl: IntlShape, props: AccountSubscriptionTablePro
                 onClick={() => handleAction ? handleAction(EnumAction.ViewAsset, rowIndex, column, row) : null}
               >
                 <Icon path={mdiShoppingOutline} className={classes.rowIcon} />
+              </i>
+            </Tooltip>
+          }
+          {row.item &&
+            <Tooltip title={intl.formatMessage({ id: 'billing.user-service.tooltip.filter' })}>
+              <i
+                onClick={() => handleAction ? handleAction(EnumAction.FilterBillingRecords, rowIndex, column, row) : null}
+              >
+                <Icon path={mdiFilterCogOutline} className={classes.rowIcon} />
               </i>
             </Tooltip>
           }

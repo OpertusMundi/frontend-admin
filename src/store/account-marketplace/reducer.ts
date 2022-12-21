@@ -2,8 +2,8 @@ import _ from 'lodash';
 
 import moment from 'utils/moment-localized';
 
-import { Order } from 'model/response';
-import { EnumMarketplaceAccountSortField, EnumSubscriptionSortField } from 'model/account-marketplace';
+import { Order, PageResult, Sorting } from 'model/response';
+import { AccountSubscription, EnumMarketplaceAccountSortField, EnumSubscriptionSortField, EnumUserServiceSortField, UserService } from 'model/account-marketplace';
 
 import {
   LOGOUT_INIT,
@@ -52,25 +52,27 @@ import {
   PAYOUT_SEARCH_INIT,
   PAYOUT_SEARCH_FAILURE,
   PAYOUT_SEARCH_COMPLETE,
-  SUBSCRIPTION_SET_PAGER,
-  SUBSCRIPTION_RESET_PAGER,
-  SUBSCRIPTION_SET_SORTING,
-  SUBSCRIPTION_SEARCH_INIT,
-  SUBSCRIPTION_SEARCH_FAILURE,
-  SUBSCRIPTION_SEARCH_COMPLETE,
-  SUB_BILLING_SET_PAGER,
-  SUB_BILLING_RESET_PAGER,
-  SUB_BILLING_SET_SORTING,
-  SUB_BILLING_SEARCH_INIT,
-  SUB_BILLING_SEARCH_FAILURE,
-  SUB_BILLING_SEARCH_COMPLETE,
+  BILLABLE_SERVICE_SET_PAGER,
+  BILLABLE_SERVICE_RESET_PAGER,
+  BILLABLE_SERVICE_SET_SORTING,
+  BILLABLE_SERVICE_SEARCH_INIT,
+  BILLABLE_SERVICE_SEARCH_FAILURE,
+  BILLABLE_SERVICE_SEARCH_COMPLETE,
+  SERVICE_BILLING_SET_PAGER,
+  SERVICE_BILLING_RESET_PAGER,
+  SERVICE_BILLING_SET_SORTING,
+  SERVICE_BILLING_SEARCH_INIT,
+  SERVICE_BILLING_SEARCH_FAILURE,
+  SERVICE_BILLING_SEARCH_COMPLETE,
   SET_TAB_INDEX,
+  SET_SERVICE_TYPE,
 } from 'store/account-marketplace/types';
-import { EnumOrderSortField, EnumPayInSortField, EnumPayOutSortField, EnumSubscriptionBillingSortField, EnumTransferSortField } from 'model/order';
+import { EnumBillableServiceType, EnumOrderSortField, EnumPayInSortField, EnumPayOutSortField, EnumServiceBillingSortField, EnumTransferSortField } from 'model/order';
 
 const initialState: MarketplaceAccountManagerState = {
   account: null,
   billing: {
+    type: EnumBillableServiceType.SUBSCRIPTION,
     subscriptions: {
       items: null,
       loaded: false,
@@ -82,7 +84,7 @@ const initialState: MarketplaceAccountManagerState = {
         status: [],
       },
       sorting: [{
-        id: EnumSubscriptionBillingSortField.CREATED_ON,
+        id: EnumServiceBillingSortField.CREATED_ON,
         order: Order.DESC,
       }],
     },
@@ -183,6 +185,21 @@ const initialState: MarketplaceAccountManagerState = {
     },
     sorting: [{
       id: EnumTransferSortField.EXECUTED_ON,
+      order: Order.DESC,
+    }],
+  },
+  userServices: {
+    items: null,
+    loaded: false,
+    pagination: {
+      page: 0,
+      size: 10,
+    },
+    query: {
+      status: [],
+    },
+    sorting: [{
+      id: EnumUserServiceSortField.UPDATED_ON,
       order: Order.DESC,
     }],
   },
@@ -615,74 +632,108 @@ export function marketplaceAccountReducer(
         loading: false,
       };
 
-    case SUBSCRIPTION_SET_PAGER:
+    case BILLABLE_SERVICE_SET_PAGER:
       return {
         ...state,
-        subscriptions: {
+        subscriptions: state.billing.type === EnumBillableServiceType.SUBSCRIPTION ? {
           ...state.subscriptions,
           pagination: {
             page: action.page,
             size: action.size,
           },
-        },
+        } : state.subscriptions,
+        userServices: state.billing.type === EnumBillableServiceType.PRIVATE_OGC_SERVICE ? {
+          ...state.userServices,
+          pagination: {
+            page: action.page,
+            size: action.size,
+          },
+        } : state.userServices,
       };
 
-    case SUBSCRIPTION_RESET_PAGER:
+    case BILLABLE_SERVICE_RESET_PAGER:
       return {
         ...state,
-        subscriptions: {
+        subscriptions: state.billing.type === EnumBillableServiceType.SUBSCRIPTION ? {
           ...state.subscriptions,
           pagination: {
             ...initialState.pagination
           },
-        },
+        } : state.subscriptions,
+        userServices: state.billing.type === EnumBillableServiceType.PRIVATE_OGC_SERVICE ? {
+          ...state.userServices,
+          pagination: {
+            ...initialState.pagination
+          },
+        } : state.userServices,
       };
 
-    case SUBSCRIPTION_SET_SORTING:
+    case BILLABLE_SERVICE_SET_SORTING:
       return {
         ...state,
-        subscriptions: {
+        subscriptions: state.billing.type === EnumBillableServiceType.SUBSCRIPTION ? {
           ...state.subscriptions,
-          sorting: action.sorting,
-        },
+          sorting: action.sorting as Sorting<EnumSubscriptionSortField>[],
+        } : state.subscriptions,
+        userServices: state.billing.type === EnumBillableServiceType.PRIVATE_OGC_SERVICE ? {
+          ...state.userServices,
+          sorting: action.sorting as Sorting<EnumUserServiceSortField>[],
+        } : state.userServices,
       };
 
-    case SUBSCRIPTION_SEARCH_INIT:
+    case BILLABLE_SERVICE_SEARCH_INIT:
       return {
         ...state,
         loading: true,
       };
 
-    case SUBSCRIPTION_SEARCH_FAILURE:
+    case BILLABLE_SERVICE_SEARCH_FAILURE:
       return {
         ...state,
-        subscriptions: {
+        subscriptions: state.billing.type === EnumBillableServiceType.SUBSCRIPTION ? {
           ...state.subscriptions,
           items: null,
           pagination: {
             page: 0,
             size: state.pagination.size,
           },
-        },
+        } : state.subscriptions,
+        userServices: state.billing.type === EnumBillableServiceType.PRIVATE_OGC_SERVICE ? {
+          ...state.userServices,
+          items: null,
+          pagination: {
+            page: 0,
+            size: state.pagination.size,
+          },
+        } : state.userServices,
         loading: false,
       };
 
-    case SUBSCRIPTION_SEARCH_COMPLETE:
+    case BILLABLE_SERVICE_SEARCH_COMPLETE:
       return {
         ...state,
-        subscriptions: {
+        subscriptions: state.billing.type === EnumBillableServiceType.SUBSCRIPTION ? {
           ...state.subscriptions,
           loaded: true,
           pagination: {
             page: action.result.pageRequest.page,
             size: action.result.pageRequest.size,
           },
-          items: action.result,
-        },
+          items: action.result as PageResult<AccountSubscription>
+        } : state.subscriptions,
+        userServices: state.billing.type === EnumBillableServiceType.PRIVATE_OGC_SERVICE ? {
+          ...state.userServices,
+          loaded: true,
+          pagination: {
+            page: action.result.pageRequest.page,
+            size: action.result.pageRequest.size,
+          },
+          items: action.result as PageResult<UserService>,
+        } : state.userServices,
         loading: false,
       };
 
-    case SUB_BILLING_SET_PAGER:
+    case SERVICE_BILLING_SET_PAGER:
       return {
         ...state,
         billing: {
@@ -697,7 +748,7 @@ export function marketplaceAccountReducer(
         },
       };
 
-    case SUB_BILLING_RESET_PAGER:
+    case SERVICE_BILLING_RESET_PAGER:
       return {
         ...state,
         billing: {
@@ -711,7 +762,7 @@ export function marketplaceAccountReducer(
         },
       };
 
-    case SUB_BILLING_SET_SORTING:
+    case SERVICE_BILLING_SET_SORTING:
       return {
         ...state,
         billing: {
@@ -723,13 +774,13 @@ export function marketplaceAccountReducer(
         },
       };
 
-    case SUB_BILLING_SEARCH_INIT:
+    case SERVICE_BILLING_SEARCH_INIT:
       return {
         ...state,
         loading: true,
       };
 
-    case SUB_BILLING_SEARCH_FAILURE:
+    case SERVICE_BILLING_SEARCH_FAILURE:
       return {
         ...state,
         billing: {
@@ -746,7 +797,7 @@ export function marketplaceAccountReducer(
         loading: false,
       };
 
-    case SUB_BILLING_SEARCH_COMPLETE:
+    case SERVICE_BILLING_SEARCH_COMPLETE:
       return {
         ...state,
         billing: {
@@ -762,6 +813,15 @@ export function marketplaceAccountReducer(
           },
         },
         loading: false,
+      };
+
+    case SET_SERVICE_TYPE:
+      return {
+        ...state,
+        billing: {
+          ...state.billing,
+          type: action.serviceType,
+        },
       };
 
     default:

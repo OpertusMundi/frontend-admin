@@ -27,7 +27,7 @@ import { processInstanceHistoryReducer } from './process-instance-history/reduce
 import { providerReducer } from './provider/reducer';
 import { securityReducer } from './security/reducer';
 import { sendMessageDialogReducer } from './message/reducer';
-import { subscriptionBillingReducer } from './subscription-billing/reducer';
+import { serviceBillingReducer } from './service-billing/reducer';
 import { transferReducer } from './transfer/reducer';
 import { userInboxReducer } from './message-inbox-user/reducer';
 import { viewportReducer } from './viewport/reducer';
@@ -45,7 +45,7 @@ export const rootReducer = Redux.combineReducers({
     order: orderReducer,
     payin: payInReducer,
     payout: payOutReducer,
-    subscriptionBilling: subscriptionBillingReducer,
+    serviceBilling: serviceBillingReducer,
     transfer: transferReducer,
   }),
   message: Redux.combineReducers({

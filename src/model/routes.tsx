@@ -20,7 +20,7 @@ import PayInToolbar from 'components/payin/toolbar/payin-toolbar';
 import PayOutToolbar from 'components/payout/toolbar/payout-toolbar';
 import ProcessInstanceToolbar from 'components/workflow/toolbar/process-instance';
 import ProcessInstanceHistoryToolbar from 'components/workflow/toolbar/process-instance-history';
-import SubscriptionBillingToolbar from 'components/subscription-billing-batch/toolbar';
+import ServiceBillingToolbar from 'components/service-billing-batch/toolbar';
 
 /**
  * Icons
@@ -105,7 +105,7 @@ const ProcessInstanceHistoryManager = '/workflows/process-instances-history';
 const Profile = '/profile';
 const ProviderManager = '/providers'
 const SettingsManager = '/settings';
-const SubscriptionBillingManager = '/billing/subscription-billing';
+const ServiceBillingManager = '/billing/service-billing';
 const TransferManager = '/billing/transfers';
 
 export const StaticRoutes = {
@@ -134,7 +134,7 @@ export const StaticRoutes = {
   ProcessInstanceHistoryManager,
   ProcessInstanceTaskManager,
   SettingsManager,
-  SubscriptionBillingManager,
+  ServiceBillingManager,
   TransferManager,
 };
 
@@ -301,7 +301,7 @@ export const routes: RouteRegistry = {
     description: 'OGC Service Pricing Model',
     title: 'links.pricing-model-manager',
     defaultTitle: 'OGC Service Pricing Model',
-    links: [Dashboard, SubscriptionBillingManager],
+    links: [Dashboard, ServiceBillingManager],
   },
   [OrderManager]: {
     icon: (className?: string) => (<Icon path={mdiPackageVariantClosed} size="1.5rem" className={className} />),
@@ -324,15 +324,15 @@ export const routes: RouteRegistry = {
     defaultTitle: 'Pay Outs',
     links: defaultLinks
   },
-  [SubscriptionBillingManager]: {
+  [ServiceBillingManager]: {
     icon: (className?: string) => (<Icon path={mdiClockFast} size="1.5rem" className={className} />),
     description: 'Subscription Billing',
-    title: 'links.subscription-billing-manager',
+    title: 'links.service-billing-manager',
     defaultTitle: 'Subscription Billing',
     links: defaultLinks,
     toolbarComponent: (route: Route): React.ReactNode => {
       return (
-        <SubscriptionBillingToolbar route={route} />
+        <ServiceBillingToolbar route={route} />
       );
     }
   },

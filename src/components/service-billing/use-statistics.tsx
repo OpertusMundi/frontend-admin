@@ -1,12 +1,13 @@
 import React from 'react';
 
 // State, routing and localization
-import { injectIntl, IntlShape, FormattedDate, FormattedNumber } from 'react-intl';
+import { injectIntl, IntlShape, FormattedDate, FormattedNumber, FormattedMessage } from 'react-intl';
 
 // Components
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
+import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
@@ -21,7 +22,7 @@ import {
 import clsx from 'clsx';
 
 // Model
-import { SubscriptionBilling } from 'model/order';
+import { ServiceBilling } from 'model/order';
 import { EnumPricingModel } from 'model/pricing-model';
 
 const styles = (theme: Theme) => createStyles({
@@ -34,6 +35,15 @@ const styles = (theme: Theme) => createStyles({
   blockTableDivider: {
     borderTop: '1px solid',
   },
+  label: {
+    borderRadius: theme.spacing(0.5),
+    fontSize: '0.6rem',
+    height: theme.spacing(2),
+    fontWight: 700,
+    '& span': {
+      padding: theme.spacing(0, 0.5, 0, 0.5),
+    }
+  },
   operator: {
 
   },
@@ -44,7 +54,7 @@ const styles = (theme: Theme) => createStyles({
 
 interface UseStatisticsProps extends WithStyles<typeof styles> {
   intl: IntlShape;
-  record: SubscriptionBilling;
+  record: ServiceBilling;
 }
 
 interface BlockRateCost {
@@ -55,6 +65,17 @@ interface BlockRateCost {
 }
 
 class UseStatistics extends React.Component<UseStatisticsProps> {
+
+  public get title(): string {
+    const { record: { subscription, userService } } = this.props;
+    if (subscription) {
+      return subscription.item!.title;
+    }
+    if (userService) {
+      return userService.title;
+    }
+    return '-';
+  }
 
   getBlocks(): BlockRateCost[] {
     const result: BlockRateCost[] = [];
@@ -105,16 +126,16 @@ class UseStatistics extends React.Component<UseStatisticsProps> {
       <Grid container spacing={1} className={classes.wrapper}>
         <Grid item xs={12}>
           <Typography variant="h5" display="block" gutterBottom color="primary">
-            Subscription
+            <FormattedMessage id={`enum.billable-service.${record.type}`} />
           </Typography>
         </Grid>
         <Grid container item xs={12}>
           <Grid container item xs={6} direction={'column'}>
             <Typography variant="caption" display="block" gutterBottom>
-              Asset
+              Title
             </Typography>
             <Typography variant="body1" display="block" gutterBottom>
-              {record.subscription?.item?.title}
+              {this.title}
             </Typography>
           </Grid>
           <Grid container item xs={6} direction={'column'}>
@@ -161,9 +182,16 @@ class UseStatistics extends React.Component<UseStatisticsProps> {
               <Typography variant="caption" display="block" gutterBottom>
                 SKU calls
               </Typography>
-              <Typography variant="body1" display="block" gutterBottom color="primary">
-                {record.skuTotalCalls}
-              </Typography>
+              {record.subscription &&
+                <Typography variant="body1" display="block" gutterBottom color="primary">
+                  {record.skuTotalCalls}
+                </Typography>
+              }
+              {record.userService &&
+                <Typography variant="body1" display="block" gutterBottom color="primary">
+                  <Chip label={'Not Supported'} className={classes.label} />
+                </Typography>
+              }
             </Grid>
           }
           {model.type === EnumPricingModel.PER_ROW &&

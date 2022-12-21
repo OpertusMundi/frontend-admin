@@ -18,19 +18,19 @@ import {
   LOAD_RECORD_INIT,
   LOAD_RECORD_SUCCESS,
   LOAD_RECORD_FAILURE,
-  SubscriptionBillingBatchActions,
-  SubscriptionBillingBatchManagerState,
+  ServiceBillingBatchActions,
+  ServiceBillingBatchManagerState,
   TOGGLE_BILLING_TASK_FORM,
   SET_BILLING_TASK_PARAMS,
   CREATE_BILLING_TASK_INIT,
   CREATE_BILLING_TASK_FAILURE,
   CREATE_BILLING_TASK_SUCCESS,
-} from 'store/subscription-billing/types';
+} from 'store/service-billing/types';
 import {
-  EnumSubscriptionBillingBatchSortField,
-} from 'model/subscription-billing';
+  EnumServiceBillingBatchSortField,
+} from 'model/service-billing';
 
-const initialState: SubscriptionBillingBatchManagerState = {
+const initialState: ServiceBillingBatchManagerState = {
   configureTask: null,
   lastUpdated: null,
   loading: false,
@@ -45,15 +45,15 @@ const initialState: SubscriptionBillingBatchManagerState = {
   result: null,
   selected: [],
   sorting: [{
-    id: EnumSubscriptionBillingBatchSortField.UPDATED_ON,
+    id: EnumServiceBillingBatchSortField.UPDATED_ON,
     order: Order.DESC,
   }],
 };
 
-export function subscriptionBillingReducer(
+export function serviceBillingReducer(
   state = initialState,
-  action: SubscriptionBillingBatchActions
-): SubscriptionBillingBatchManagerState {
+  action: ServiceBillingBatchActions
+): ServiceBillingBatchManagerState {
 
   switch (action.type) {
     case LOGOUT_INIT:

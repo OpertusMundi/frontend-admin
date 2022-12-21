@@ -320,17 +320,18 @@
         "status": "Status"
       },
       "tooltip": {
+        "filter": "Filter billing records",
         "view": "Preview in Marketplace"
       }
     },
-    "subscription-billing": {
+    "service-billing": {
       "header": {
         "actions": " ",
         "consumer": "Consumer",
         "created-on": "Created On",
         "due-date": "Due Date",
         "interval": "Interval",
-        "item": "Asset",
+        "item": "Service",
         "price": "Price",
         "provider": "Provider",
         "status": "Status",
@@ -344,7 +345,7 @@
         "view-statistics": "View Use Statistics"
       }
     },
-    "subscription-billing-batch": {
+    "service-billing-batch": {
       "dialog": {
         "title": "Create Subscription Billing Task"
       },
@@ -387,11 +388,24 @@
       "tooltip": {
         "view-details": "View Transfer"
       }
+    },
+    "user-service": {
+      "header": {
+        "actions": " ",
+        "added-on": "Added On",
+        "title": "Title",
+        "provider": "Provider",
+        "modified-on": "Modified On",
+        "status": "Status"
+      },
+      "tooltip": {
+        "filter": "Filter billing records"
+      }
     }
   },
   "company": {
-    "title": "OpertusMundi",
-    "website": "https://www.opertusmundi.eu/"
+    "title": "Topio",
+    "website": "https://topio.market/"
   },
   "contract": {
     "filter": {
@@ -478,6 +492,10 @@
     }
   },
   "enum": {
+    "billable-service": {
+      "SUBSCRIPTION": "Subscription",
+      "PRIVATE_OGC_SERVICE": "Private OGC Service"
+    },
     "category-topic": {
       "BIOTA": "Biota",
       "BOUNDARIES": "Boundaries",
@@ -556,7 +574,7 @@
     },
     "payin-item-type": {
       "ORDER": "Order",
-      "SUBSCRIPTION_BILLING": "Subscription billing"
+      "SERVICE_BILLING": "Service Billing"
     },
     "payment-method": {
       "FREE": "Free",
@@ -591,13 +609,13 @@
       "ACTIVE": "Active",
       "INACTIVE": "Inactive"
     },
-    "subscription-billing-status": {
+    "service-billing-status": {
       "NO_CHARGE": "No Charge",
       "DUE": "Due",
       "FAILED": "Failed",
       "PAID": "Paid"
     },
-    "subscription-billing-batch-status": {
+    "service-billing-batch-status": {
       "RUNNING": "Running",
       "SUCCEEDED": "Competed",
       "FAILED": "Failed"
@@ -607,6 +625,12 @@
       "CREATED": "New",
       "FAILED": "Failed",
       "SUCCEEDED": "Succeeded"
+    },
+    "user-service-status": {
+      "PROCESSING": "Processing",
+      "FAILED": "Failed",
+      "PUBLISHED": "Published",
+      "DELETED": "Deleted"
     }
   },
   "error": {
@@ -785,7 +809,7 @@
     "profile": "Profile",
     "provider-manager": "Providers",
     "settings": "Settings",
-    "subscription-billing-manager": "Subscription Billing",
+    "service-billing-manager": "Subscription Billing",
     "workflow": {
       "section": "Workflows",
       "incident": {
@@ -1040,6 +1064,8 @@
     "tasks": {
       "task-publish-catalogue-asset-set-error": "Set error by Helpdesk",
       "task-publish-user-service-set-error": "Set error by Helpdesk",
+      "task-consumer-registration-set-error": "Set error by Helpdesk",
+      "task-provider-registration-set-error": "Set error by Helpdesk",
       "task-review": "Review asset draft"
     },
     "tooltip": {

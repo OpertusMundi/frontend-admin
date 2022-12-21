@@ -29,7 +29,7 @@ import {
   OrderPayInItem,
   TransferQuery,
   EnumBillingViewMode,
-  SubscriptionBillingPayInItem
+  ServiceBillingPayInItem
 } from 'model/order';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 import {
@@ -50,8 +50,8 @@ function getPayIn(item: PayInItem): PayIn | null {
   switch (item.type) {
     case EnumPayInItemType.ORDER:
       return (item as OrderPayInItem).order?.payIn || null;
-    case EnumPayInItemType.SUBSCRIPTION_BILLING: {
-      return (item as SubscriptionBillingPayInItem).subscriptionBilling.payIn || null;
+    case EnumPayInItemType.SERVICE_BILLING: {
+      return (item as ServiceBillingPayInItem).serviceBilling.payIn || null;
     }
   }
 }
@@ -60,8 +60,8 @@ function getConsumer(item: PayInItem): Customer | null {
   switch (item.type) {
     case EnumPayInItemType.ORDER:
       return (item as OrderPayInItem).order?.consumer || null;
-    case EnumPayInItemType.SUBSCRIPTION_BILLING: {
-      return (item as SubscriptionBillingPayInItem).subscriptionBilling.subscription?.consumer || null;
+    case EnumPayInItemType.SERVICE_BILLING: {
+      return (item as ServiceBillingPayInItem).serviceBilling.subscription?.consumer || null;
     }
   }
 }
@@ -71,8 +71,8 @@ function getProvider(item: PayInItem): Customer | null {
     case EnumPayInItemType.ORDER:
       // Orders contain only a single item
       return (item as OrderPayInItem).order?.items![0].provider || null;
-    case EnumPayInItemType.SUBSCRIPTION_BILLING: {
-      return (item as SubscriptionBillingPayInItem).subscriptionBilling.subscription?.provider || null;
+    case EnumPayInItemType.SERVICE_BILLING: {
+      return (item as ServiceBillingPayInItem).serviceBilling.subscription?.provider || null;
     }
   }
 }

@@ -19,7 +19,7 @@ import {
 
 // Store
 import { RootState } from 'store';
-import { toggleBillingTaskForm } from 'store/subscription-billing/actions';
+import { toggleBillingTaskForm } from 'store/service-billing/actions';
 
 // Model
 import { Route } from 'model/routes';
@@ -76,7 +76,7 @@ class Toolbar extends React.Component<ToolbarProps> {
 }
 
 const mapState = (state: RootState) => ({
-  configureTask: state.billing.subscriptionBilling.configureTask,
+  configureTask: state.billing.serviceBilling.configureTask,
 });
 
 const mapDispatch = {

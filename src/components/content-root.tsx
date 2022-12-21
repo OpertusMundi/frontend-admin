@@ -58,7 +58,7 @@ const OrderDetails = lazy(() => import('components/order/order-details'));
 const OrderManager = lazy(() => import('components/order/order-manager'));
 const QueryEditor = lazy(() => import('./analytics/query-editor'));
 const SecureRoute = lazy(() => import('components/secure-route'));
-const SubscriptionBillingManager = lazy(() => import('components/subscription-billing-batch/billing-manager'));
+const ServiceBillingManager = lazy(() => import('components/service-billing-batch/billing-manager'));
 const TransferManager = lazy(() => import('components/transfer/transfer-grid'));
 
 class ContentRoot extends React.Component<PropsFromRedux> {
@@ -136,7 +136,7 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             <Route path={StaticRoutes.PayInManager} element={<PayInManager />} />
             <Route path={StaticRoutes.PayOutManager} element={<PayOutManager />} />
             <Route path={StaticRoutes.ProviderManager} element={<ProviderManager />} />
-            <Route path={StaticRoutes.SubscriptionBillingManager} element={<SubscriptionBillingManager />} />
+            <Route path={StaticRoutes.ServiceBillingManager} element={<ServiceBillingManager />} />
             <Route path={StaticRoutes.TransferManager} element={<TransferManager />} />
             <Route path={StaticRoutes.SettingsManager} element={<SettingsManager />} />
             <Route path={StaticRoutes.MaintenanceTasks} element={<MaintenanceTasks />} />

@@ -6,6 +6,7 @@ import {
   CustomerProfessional,
   CustomerType,
   AccountSubscription,
+  UserService,
 } from 'model/account-marketplace';
 import { EffectivePricingModel, PricingModelCommand } from 'model/pricing-model';
 
@@ -36,7 +37,7 @@ export enum EnumCardValidity {
 
 export enum EnumPayInItemType {
   ORDER = 'ORDER',
-  SUBSCRIPTION_BILLING = 'SUBSCRIPTION_BILLING',
+  SERVICE_BILLING = 'SERVICE_BILLING',
 }
 
 export enum EnumTransactionStatus {
@@ -113,7 +114,7 @@ export interface Transfer {
   resultMessage: string;
 }
 
-export enum EnumSubscriptionBillingSortField {
+export enum EnumServiceBillingSortField {
   CREATED_ON = 'CREATED_ON',
   DUE_DATE = 'DUE_DATE',
   FROM_DATE = 'FROM_DATE',
@@ -128,7 +129,7 @@ export enum EnumBillableServiceType {
   PRIVATE_OGC_SERVICE = 'PRIVATE_OGC_SERVICE',
 }
 
-export enum EnumSubscriptionBillingStatus {
+export enum EnumServiceBillingStatus {
   /**
    * A billing record with 0 total price has been created
    */
@@ -174,7 +175,7 @@ export interface ServiceUseStats {
   userKey: string;
 }
 
-export interface SubscriptionBilling {
+export interface ServiceBilling {
   /**
    * Date of creation
    */
@@ -212,6 +213,10 @@ export interface SubscriptionBilling {
    */
   totalRows: number;
   /**
+   * Service type
+   */
+  type: EnumBillableServiceType;
+  /**
    * Total calls used by purchased SKUs. This field is exclusive with field `skuTotalRows`
    */
   skuTotalCalls: number;
@@ -226,7 +231,7 @@ export interface SubscriptionBilling {
   /**
    * Status
    */
-  status: EnumSubscriptionBillingStatus;
+  status: EnumServiceBillingStatus;
   /**
    * Account subscription
    */
@@ -251,12 +256,16 @@ export interface SubscriptionBilling {
    * Date of last update
    */
   updatedOn: Moment;
+  /**
+   * User service
+   */
+  userService?: UserService;
 }
 
-export interface SubscriptionBillingQuery {
+export interface ServiceBillingQuery {
   ownerKey?: string;
   serviceKey?: string;
-  status: EnumSubscriptionBillingStatus[];
+  status: EnumServiceBillingStatus[];
   type?: EnumBillableServiceType;
 }
 
@@ -275,15 +284,15 @@ export interface PayInItem {
   transfer?: Transfer;
 }
 
-export interface SubscriptionBillingPayInItem extends PayInItem {
+export interface ServiceBillingPayInItem extends PayInItem {
   /**
    * Payment item type
    */
-  type: EnumPayInItemType.SUBSCRIPTION_BILLING;
+  type: EnumPayInItemType.SERVICE_BILLING;
   /**
-   * PayIn subscription billing record
+   * PayIn service billing record
    */
-  subscriptionBilling: SubscriptionBilling;
+  serviceBilling: ServiceBilling;
 }
 
 export enum EnumPayInSortField {
@@ -712,7 +721,7 @@ export interface OrderPayInItem extends PayInItem {
 
 export type PayInItemType =
   | OrderPayInItem
-  | SubscriptionBillingPayInItem
+  | ServiceBillingPayInItem
   ;
 
 export enum EnumTransferSortField {
