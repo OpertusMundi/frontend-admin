@@ -51,27 +51,13 @@ class AssetDraftFilters extends React.Component<AssetDraftFiltersProps> {
     this.clear = this.clear.bind(this);
     this.search = this.search.bind(this);
 
-    this.statusOptions = [{
-      value: EnumDraftStatus.DRAFT, label: 'Draft'
-    }, {
-      value: EnumDraftStatus.SUBMITTED, label: 'Submitted'
-    }, {
-      value: EnumDraftStatus.PENDING_HELPDESK_REVIEW, label: 'Pending HelpDesk Review'
-    }, {
-      value: EnumDraftStatus.HELPDESK_REJECTED, label: 'HelpDesk Rejected'
-    }, {
-      value: EnumDraftStatus.PENDING_PROVIDER_REVIEW, label: 'Pending Provider Review'
-    }, {
-      value: EnumDraftStatus.PROVIDER_REJECTED, label: 'Provider Rejected'
-    }, {
-      value: EnumDraftStatus.POST_PROCESSING, label: 'Post Processing'
-    }, {
-      value: EnumDraftStatus.PUBLISHING, label: 'Preparing to Publish'
-    }, {
-      value: EnumDraftStatus.PUBLISHED, label: 'Published'
-    }, {
-      value: EnumDraftStatus.CANCELLED, label: 'Cancelled'
-    }];
+    const _t = this.props.intl.formatMessage;
+
+    this.statusOptions = Object.keys(EnumDraftStatus)
+      .filter(value => isNaN(Number(value)))
+      .map(value => ({
+        value: value as EnumDraftStatus, label: _t({ id: `draft.manager.chip.${value}` })
+      }));
   }
 
   statusOptions: { value: EnumDraftStatus, label: string }[];

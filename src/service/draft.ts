@@ -104,4 +104,11 @@ export default class DraftApi extends Api {
       })
       .catch((err: AxiosError) => blobToJson(err.response?.data as Blob));
   }
+
+  public async deleteDraft(providerKey: string, draftKey: string): Promise<AxiosSimpleResponse> {
+    const url = `/action/provider/${providerKey}/drafts/${draftKey}`;
+
+
+    return this.delete<SimpleResponse>(url);
+  }
 }

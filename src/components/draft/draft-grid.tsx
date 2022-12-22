@@ -19,7 +19,7 @@ import Typography from '@material-ui/core/Typography';
 
 // Icons
 import Icon from '@mdi/react';
-import { mdiCheckOutline, mdiCommentAlertOutline, mdiUndoVariant, mdiWindowClose } from '@mdi/js';
+import { mdiCheckOutline, mdiCommentAlertOutline, mdiTrashCanOutline, mdiUndoVariant, mdiWindowClose } from '@mdi/js';
 
 // Services
 import message from 'service/message';
@@ -63,11 +63,12 @@ const styles = (theme: Theme) => createStyles({
 });
 
 interface AccountManagerState {
-  confirm: boolean;
   contractValidated: boolean;
+  deleteDialog: boolean;
   draft: AssetDraft | null,
   reason: string,
   reasonRequired: boolean,
+  reviewDialog: boolean;
 }
 
 interface AccountManagerProps extends PropsFromRedux, WithStyles<typeof styles> {
@@ -85,6 +86,7 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
 
     this.api = new DraftApi();
 
+    this.deleteDraft = this.deleteDraft.bind(this)
     this.reviewDraft = this.reviewDraft.bind(this);
     this.viewContract = this.viewContract.bind(this);
     this.viewDraft = this.viewDraft.bind(this);
@@ -92,11 +94,12 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
   }
 
   state: AccountManagerState = {
-    confirm: false,
     contractValidated: false,
+    deleteDialog: false,
     draft: null,
     reason: '',
     reasonRequired: false,
+    reviewDialog: false,
   }
 
   handleReasonChange(reason: string) {
@@ -107,23 +110,23 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
     this.setState({ contractValidated });
   }
 
-  showConfirmDialog(draft: AssetDraft): void {
+  showReviewDialog(draft: AssetDraft): void {
     this.setState({
-      confirm: true,
+      reviewDialog: true,
       draft,
     });
   }
 
-  hideConfirmDialog(): void {
+  hideReviewDialog(): void {
     this.setState({
-      confirm: false,
+      reviewDialog: false,
       draft: null,
       reason: '',
       reasonRequired: false,
     });
   }
 
-  confirmDialogHandler(action: DialogAction): void {
+  confirmReviewDialogHandler(action: DialogAction): void {
     const { draft, reason } = this.state;
 
     switch (action.key) {
@@ -136,7 +139,7 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
 
                 message.info('draft.message.accept-success');
 
-                this.hideConfirmDialog();
+                this.hideReviewDialog();
               } else {
                 const messages = localizeErrorCodes(this.props.intl, response.data);
                 message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
@@ -161,7 +164,7 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
 
                 message.warn('draft.message.reject-success');
 
-                this.hideConfirmDialog();
+                this.hideReviewDialog();
               } else {
                 const messages = localizeErrorCodes(this.props.intl, response.data);
                 message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
@@ -175,11 +178,56 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
         break;
       }
       case EnumDialogAction.Cancel:
-        this.hideConfirmDialog();
+        this.hideReviewDialog();
         break;
     }
   }
 
+  showDeleteDialog(draft: AssetDraft): void {
+    this.setState({
+      deleteDialog: true,
+      draft,
+    });
+  }
+
+  hideDeleteDialog(): void {
+    this.setState({
+      deleteDialog: false,
+      draft: null,
+    });
+  }
+
+  confirmDeleteDialogHandler(action: DialogAction): void {
+    const { draft } = this.state;
+
+    switch (action.key) {
+      case EnumDialogAction.Yes: {
+        if (draft) {
+          this.api.deleteDraft(draft.publisher.id, draft.key)
+            .then((response) => {
+              if (response.data.success) {
+                this.find();
+
+                message.info('draft.message.delete-success');
+
+                this.hideDeleteDialog();
+              } else {
+                const messages = localizeErrorCodes(this.props.intl, response.data);
+                message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+              }
+            })
+            .catch((err: AxiosError<SimpleResponse>) => {
+              const messages = localizeErrorCodes(this.props.intl, err.response?.data);
+              message.errorHtml(messages, () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+            });
+        }
+        break;
+      }
+      case EnumDialogAction.Cancel:
+        this.hideDeleteDialog();
+        break;
+    }
+  }
 
   componentDidMount() {
     this.find();
@@ -199,8 +247,12 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
     const record = result?.items.find(d => d.key === key);
 
     if (record) {
-      this.showConfirmDialog(record);
+      this.showReviewDialog(record);
     }
+  }
+
+  deleteDraft(draft: AssetDraft): void {
+    this.showDeleteDialog(draft);
   }
 
   viewDraft(asset: AssetDraft): void {
@@ -277,6 +329,7 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
               setPager={setPager}
               setSorting={(sorting: Sorting<EnumSortField>[]) => this.setSorting(sorting)}
               addToSelection={addToSelection}
+              deleteDraft={this.deleteDraft}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
               reviewDraft={this.reviewDraft}
@@ -289,6 +342,7 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
           </Paper>
         </div>
         {this.renderReviewDialog()}
+        {this.renderDeleteDialog()}
       </>
     );
   }
@@ -296,9 +350,9 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
   renderReviewDialog() {
     const _t = this.props.intl.formatMessage;
 
-    const { confirm, draft: record, reason, reasonRequired, contractValidated } = this.state;
+    const { reviewDialog, draft: record, reason, reasonRequired, contractValidated } = this.state;
 
-    if (!confirm || !record) {
+    if (!reviewDialog || !record) {
       return null;
     }
     const contractValidationRequired = record.command.contractTemplateType === EnumContractType.UPLOADED_CONTRACT;
@@ -324,15 +378,15 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
             iconClass: () => (<Icon path={mdiUndoVariant} size="1.5rem" />)
           }
         ]}
-        handleClose={() => this.hideConfirmDialog()}
-        handleAction={(action) => this.confirmDialogHandler(action)}
+        handleClose={() => this.hideReviewDialog()}
+        handleAction={(action) => this.confirmReviewDialogHandler(action)}
         header={
           <span>
             <i className={'mdi mdi-comment-question-outline mr-2'}></i>
             <FormattedMessage id="view.shared.dialog.title" />
           </span>
         }
-        open={confirm}
+        open={reviewDialog}
       >
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -376,6 +430,48 @@ class AssetDraftManager extends React.Component<AccountManagerProps, AccountMana
     );
   }
 
+  renderDeleteDialog() {
+    const _t = this.props.intl.formatMessage;
+    const { deleteDialog, draft: record } = this.state;
+
+    if (!deleteDialog || !record) {
+      return null;
+    }
+
+    return (
+      <Dialog
+        actions={[
+          {
+            key: EnumDialogAction.Yes,
+            label: _t({ id: 'view.shared.action.delete' }),
+            iconClass: () => (<Icon path={mdiTrashCanOutline} size="1.5rem" />),
+            color: 'secondary',
+          }, {
+            key: EnumDialogAction.Cancel,
+            label: _t({ id: 'view.shared.action.cancel' }),
+            iconClass: () => (<Icon path={mdiUndoVariant} size="1.5rem" />)
+          }
+        ]}
+        handleClose={() => this.hideDeleteDialog()}
+        handleAction={(action) => this.confirmDeleteDialogHandler(action)}
+        header={
+          <span>
+            <i className={'mdi mdi-comment-question-outline mr-2'}></i>
+            <FormattedMessage id="view.shared.dialog.title" />
+          </span>
+        }
+        open={deleteDialog}
+      >
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <FormattedMessage id="draft.message.delete-draft" values={{
+              title: (<b>{record.title}</b>), version: (<b>{record.version}</b>)
+            }} />
+          </Grid>
+        </Grid>
+      </Dialog>
+    );
+  }
 }
 
 const mapState = (state: RootState) => ({

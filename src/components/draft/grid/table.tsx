@@ -33,13 +33,14 @@ import { EnumSortField, AssetDraft, AssetDraftQuery, EnumDraftStatus, EnumContra
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 enum EnumAction {
+  Delete = 'delete',
   Review = 'review',
   View = 'view',
   ViewContract = 'contract',
   ViewProcessInstance = 'view-process-instance',
 };
 
-function statusToChip(value: EnumDraftStatus, classes: WithStyles<typeof styles>, intl: IntlShape): React.ReactElement | undefined {
+function statusToChip(value: EnumDraftStatus, props: AssetDraftTableProps, intl: IntlShape): React.ReactElement | undefined {
   let path: string;
   let color: 'default' | 'primary' | 'secondary' = 'default';
 
@@ -80,7 +81,7 @@ function statusToChip(value: EnumDraftStatus, classes: WithStyles<typeof styles>
 
   return (
     <Chip
-      avatar={<Avatar><Icon path={path} className={classes.classes.avatarIcon} /></Avatar>}
+      avatar={<Avatar><Icon path={path} className={props.classes.avatarIcon} /></Avatar>}
       label={intl.formatMessage({ id: `draft.manager.chip.${value}` })}
       variant="outlined"
       color={color}
@@ -88,7 +89,8 @@ function statusToChip(value: EnumDraftStatus, classes: WithStyles<typeof styles>
   );
 }
 
-function draftColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<AssetDraft, EnumSortField>[] {
+function draftColumns(intl: IntlShape, props: AssetDraftTableProps): Column<AssetDraft, EnumSortField>[] {
+  const { classes } = props;
   return (
     [{
       header: intl.formatMessage({ id: 'draft.manager.header.actions' }),
@@ -98,6 +100,13 @@ function draftColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
         rowIndex: number, column: Column<AssetDraft, EnumSortField>, row: AssetDraft, handleAction?: cellActionHandler<AssetDraft, EnumSortField>
       ): React.ReactNode => (
         <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+          <Tooltip title={intl.formatMessage({ id: 'draft.manager.tooltip.delete' })}>
+            <i
+              onClick={() => handleAction ? handleAction(EnumAction.Delete, rowIndex, column, row) : null}
+            >
+              <Icon path={mdiTrashCanOutline} className={[EnumDraftStatus.PUBLISHING, EnumDraftStatus.PUBLISHED].includes(row.status) ? classes.rowIconDisabled : classes.rowIcon} />
+            </i>
+          </Tooltip>
           {row.status !== EnumDraftStatus.DRAFT &&
             <Tooltip title={intl.formatMessage({ id: 'draft.manager.tooltip.view-process-instance' })}>
               <i
@@ -107,7 +116,7 @@ function draftColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
                   path={
                     row.status === EnumDraftStatus.CANCELLED ? mdiDatabaseAlertOutline : mdiDatabaseCogOutline
                   }
-                  className={classes.classes.rowIcon}
+                  className={classes.rowIcon}
                 />
               </i>
             </Tooltip>
@@ -117,7 +126,7 @@ function draftColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.View, rowIndex, column, row) : null}
               >
-                <Icon path={mdiShoppingOutline} className={classes.classes.rowIcon} />
+                <Icon path={mdiShoppingOutline} className={classes.rowIcon} />
               </i>
             </Tooltip>
           }
@@ -127,14 +136,14 @@ function draftColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
                 <i
                   onClick={() => handleAction ? handleAction(EnumAction.View, rowIndex, column, row) : null}
                 >
-                  <Icon path={mdiLink} className={classes.classes.rowIcon} />
+                  <Icon path={mdiLink} className={classes.rowIcon} />
                 </i>
               </Tooltip>
               <Tooltip title={intl.formatMessage({ id: 'draft.manager.tooltip.review' })}>
                 <i
                   onClick={() => handleAction ? handleAction(EnumAction.Review, rowIndex, column, row) : null}
                 >
-                  <Icon path={mdiCommentTextOutline} className={classes.classes.rowIcon} />
+                  <Icon path={mdiCommentTextOutline} className={classes.rowIcon} />
                 </i>
               </Tooltip>
               {row.command.contractTemplateType === EnumContractType.UPLOADED_CONTRACT &&
@@ -142,7 +151,7 @@ function draftColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
                   <i
                     onClick={() => handleAction ? handleAction(EnumAction.ViewContract, rowIndex, column, row) : null}
                   >
-                    <Icon path={mdiFileSign} className={classes.classes.rowIcon} />
+                    <Icon path={mdiFileSign} className={classes.rowIcon} />
                   </i>
                 </Tooltip>
               }
@@ -158,7 +167,7 @@ function draftColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
       sortColumn: EnumSortField.STATUS,
       cell: (
         rowIndex: number, column: Column<AssetDraft, EnumSortField>, row: AssetDraft, handleAction?: cellActionHandler<AssetDraft, EnumSortField>
-      ): React.ReactNode => statusToChip(row.status, classes, intl)
+      ): React.ReactNode => statusToChip(row.status, props, intl)
     }, {
       header: intl.formatMessage({ id: 'draft.manager.header.provider' }),
       id: 'account.profile.provider.name',
@@ -205,28 +214,34 @@ const styles = (theme: Theme) => createStyles({
     marginRight: 8,
     cursor: 'pointer',
   },
+  rowIconDisabled: {
+    width: 18,
+    marginRight: 8,
+    opacity: 0.3,
+  },
 });
 
 interface AssetDraftTableProps extends WithStyles<typeof styles> {
   intl: IntlShape,
+  loading?: boolean;
+  pagination: PageRequest,
+  query: AssetDraftQuery,
+  result: PageResult<AssetDraft> | null,
+  selected: AssetDraft[],
+  sorting: Sorting<EnumSortField>[];
+  addToSelection: (rows: AssetDraft[]) => void,
+  deleteDraft: (asset: AssetDraft) => void;
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumSortField>[]
   ) => Promise<PageResult<AssetDraft> | null>,
-  query: AssetDraftQuery,
-  result: PageResult<AssetDraft> | null,
-  pagination: PageRequest,
-  selected: AssetDraft[],
-  setPager: (page: number, size: number) => void,
-  setSorting: (sorting: Sorting<EnumSortField>[]) => void,
-  addToSelection: (rows: AssetDraft[]) => void,
   removeFromSelection: (rows: AssetDraft[]) => void,
   resetSelection: () => void;
-  sorting: Sorting<EnumSortField>[];
   reviewDraft: (key: string) => void;
+  setPager: (page: number, size: number) => void,
+  setSorting: (sorting: Sorting<EnumSortField>[]) => void,
   viewContract: (providerKey: string, draftKey: string) => void;
   viewDraft: (asset: AssetDraft) => void;
   viewProcessInstance: (businessKey: string, completed: boolean) => void;
-  loading?: boolean;
 }
 
 class AssetDraftTable extends React.Component<AssetDraftTableProps> {
@@ -240,6 +255,12 @@ class AssetDraftTable extends React.Component<AssetDraftTableProps> {
   handleAction(action: string, index: number, column: Column<AssetDraft, EnumSortField>, row: AssetDraft): void {
     if (row.key) {
       switch (action) {
+        case EnumAction.Delete:
+          if ([EnumDraftStatus.PUBLISHING, EnumDraftStatus.PUBLISHED].includes(row.status)) {
+            return;
+          }
+          this.props.deleteDraft(row);
+          break;
         case EnumAction.Review:
           this.props.reviewDraft(row.key);
           break;
@@ -263,12 +284,12 @@ class AssetDraftTable extends React.Component<AssetDraftTableProps> {
   }
 
   render() {
-    const { intl, classes, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
+    const { intl, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
 
     return (
       <MaterialTable<AssetDraft, EnumSortField>
         intl={intl}
-        columns={draftColumns(intl, { classes })}
+        columns={draftColumns(intl, this.props)}
         rows={result ? result.items : []}
         pagination={{
           rowsPerPageOptions: [10, 20, 50],

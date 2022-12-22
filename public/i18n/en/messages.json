@@ -456,6 +456,7 @@
         "PENDING_PROVIDER_REVIEW": "Pending Review Provider",
         "PROVIDER_REJECTED": "Rejected Provider",
         "POST_PROCESSING": "Post-Processing",
+        "PUBLISHING": "Preparing to Publish",
         "PUBLISHED": "Published",
         "CANCELLED": "Cancelled"
       },
@@ -473,6 +474,7 @@
       },
       "last-update": "Last updated: ",
       "tooltip": {
+        "delete": "Delete",
         "view-process-instance": "View publish workflow instance",
         "preview": "Preview in Marketplace",
         "review": "Review Draft",
@@ -486,6 +488,9 @@
     "message": {
       "accept-success": "Draft has been accepted",
       "accept-failure": "Operation has failed",
+      "delete-draft": "Delete draft {title} with version {version}?",
+      "delete-success": "Draft has been deleted",
+      "delete-failure": "Operation has failed",
       "reject-success": "Draft has been rejected",
       "reject-failure": "Operation has failed",
       "review-draft": "Accept draft {title} with version {version}. Would you like to continue?"
