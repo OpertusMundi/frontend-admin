@@ -84,6 +84,9 @@ class MessageFilters extends React.Component<MessageFiltersProps> {
   }
 
   onChangeReadStatus(event: React.MouseEvent<HTMLElement>, view: EnumMessageView) {
+    if (!view) {
+      return;
+    }
     this.props.setFilter({
       view,
     });
