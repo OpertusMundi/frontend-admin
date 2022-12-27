@@ -2,7 +2,7 @@ import { Moment } from 'moment';
 
 import { LogoutInitAction } from 'store/security/types';
 import { PageResult, PageRequest, Sorting, ObjectResponse } from 'model/response';
-import { EnumTransferSortField, PayInItem, TransferQuery, Transfer } from 'model/order';
+import { EnumTransferSortField, TransferQuery, Transfer, PayInItemType } from 'model/order';
 
 // State
 export interface TransferManagerState {
@@ -11,9 +11,9 @@ export interface TransferManagerState {
   lastUpdated: Moment | null;
   pagination: PageRequest;
   query: TransferQuery;
-  result: PageResult<PayInItem> | null;
+  result: PageResult<PayInItemType> | null;
   sorting: Sorting<EnumTransferSortField>[];
-  response: ObjectResponse<PayInItem> | null;
+  response: ObjectResponse<PayInItemType> | null;
 }
 
 // Actions
@@ -67,7 +67,7 @@ export interface SearchFailureAction {
 
 export interface SearchCompleteAction {
   type: typeof SEARCH_COMPLETE;
-  result: PageResult<PayInItem>;
+  result: PageResult<PayInItemType>;
 }
 
 export interface CreateTransferInitAction {

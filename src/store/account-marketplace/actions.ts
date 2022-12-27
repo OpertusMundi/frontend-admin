@@ -75,7 +75,7 @@ import {
   EnumServiceBillingSortField,
   EnumTransferSortField,
   Order,
-  PayInItem,
+  PayInItemType,
   PayInType,
   PayOut,
   ServiceBilling,
@@ -303,7 +303,7 @@ export function searchTransferFailure(): AccountActions {
   };
 }
 
-export function searchTransferComplete(result: PageResult<PayInItem>): AccountActions {
+export function searchTransferComplete(result: PageResult<PayInItemType>): AccountActions {
   return {
     type: TRANSFER_SEARCH_COMPLETE,
     result,

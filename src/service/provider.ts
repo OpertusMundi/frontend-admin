@@ -2,7 +2,7 @@ import { AxiosRequestConfig } from 'axios';
 
 import { Api } from 'utils/api';
 import { ObjectResponse, PageRequest, Sorting, AxiosPageResponse, PageResult } from 'model/response';
-import { EnumPayOutSortField, EnumTransferSortField, PayInItem, PayOut, PayOutQuery, TransferQuery } from 'model/order';
+import { EnumPayOutSortField, EnumTransferSortField, PayInItemType, PayOut, PayOutQuery, TransferQuery } from 'model/order';
 
 export default class ProviderBillingApi extends Api {
 
@@ -12,7 +12,7 @@ export default class ProviderBillingApi extends Api {
 
   public async findTransfers(
     query: Partial<TransferQuery>, pageRequest: PageRequest, sorting: Sorting<EnumTransferSortField>[]
-  ): Promise<AxiosPageResponse<PayInItem>> {
+  ): Promise<AxiosPageResponse<PayInItemType>> {
     const { page, size } = pageRequest;
     const { id: field, order } = sorting[0];
 
@@ -23,7 +23,7 @@ export default class ProviderBillingApi extends Api {
 
     const url = `/action/provider/transfers?page=${page}&size=${size}&${queryString.join('&')}&orderBy=${field}&order=${order}`;
 
-    return this.get<ObjectResponse<PageResult<PayInItem>>>(url);
+    return this.get<ObjectResponse<PageResult<PayInItemType>>>(url);
   }
 
   public async findPayOuts(

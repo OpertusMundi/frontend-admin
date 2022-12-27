@@ -67,7 +67,7 @@ import {
   EnumTransferSortField,
   Order,
   OrderQuery,
-  PayInItem,
+  PayInItemType,
   PayInQuery,
   PayInType,
   PayOut,
@@ -239,7 +239,7 @@ export const findPayIns = (
 
 export const findTransfers = (
   pageRequest?: PageRequest, sorting?: Sorting<EnumTransferSortField>[]
-): ThunkResult<PageResult<PayInItem> | null> => async (dispatch, getState) => {
+): ThunkResult<PageResult<PayInItemType> | null> => async (dispatch, getState) => {
   // Get query form state (filters are always set synchronously)
   const query: Partial<TransferQuery> = {
     providerKey: getState().account.marketplace.account?.key,

@@ -262,8 +262,10 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     return key || null;
   }
 
-  changeServiceType(event: React.MouseEvent<HTMLElement>, type: EnumBillableServiceType) {
-    this.props.setServiceType(type);
+  changeServiceType(event: React.MouseEvent<HTMLElement>, serviceType: EnumBillableServiceType) {
+    if (serviceType) {
+      this.props.setServiceType(serviceType);
+    }
     // Fetch data on the next event to refresh state first
     setTimeout(() => this.loadTabContent(this.props.tabIndex), 0);
   }

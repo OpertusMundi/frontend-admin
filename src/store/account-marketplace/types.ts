@@ -23,7 +23,7 @@ import {
   EnumTransferSortField,
   Order,
   OrderQuery,
-  PayInItem,
+  PayInItemType,
   PayInQuery,
   PayInType,
   PayOut,
@@ -84,7 +84,7 @@ export interface MarketplaceAccountManagerState {
     sorting: Sorting<EnumSubscriptionSortField>[];
   },
   transfers: {
-    items: PageResult<PayInItem> | null;
+    items: PageResult<PayInItemType> | null;
     loaded: boolean;
     pagination: PageRequest;
     query: TransferQuery,
@@ -322,7 +322,7 @@ export interface SearchTransferFailureAction {
 
 export interface SearchTransferCompleteAction {
   type: typeof TRANSFER_SEARCH_COMPLETE;
-  result: PageResult<PayInItem>;
+  result: PageResult<PayInItemType>;
 }
 
 export interface SetPayOutPagerAction {

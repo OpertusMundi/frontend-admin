@@ -348,6 +348,9 @@ export function marketplaceAccountReducer(
         subscriptions: {
           ...initialState.subscriptions,
         },
+        userServices: {
+          ...initialState.userServices,
+        },
         tabIndex: action.tabIndex === null ? state.tabIndex : action.tabIndex,
       };
 

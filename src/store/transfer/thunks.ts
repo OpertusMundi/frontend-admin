@@ -13,14 +13,14 @@ import TransferApi from 'service/transfer';
 
 // Model
 import { PageRequest, Sorting, PageResult, ObjectResponse } from 'model/response';
-import { EnumTransferSortField, PayInItem, Transfer } from 'model/order';
+import { EnumTransferSortField, PayInItemType, Transfer } from 'model/order';
 
 // Helper thunk result type
 type ThunkResult<R> = ThunkAction<Promise<R>, RootState, unknown, TransferActions>;
 
 export const find = (
   pageRequest?: PageRequest, sorting?: Sorting<EnumTransferSortField>[]
-): ThunkResult<PageResult<PayInItem> | null> => async (dispatch, getState) => {
+): ThunkResult<PageResult<PayInItemType> | null> => async (dispatch, getState) => {
   // Get query form state (filters are always set synchronously)
   const query = getState().billing.transfer.query;
 

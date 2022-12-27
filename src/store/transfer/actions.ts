@@ -1,5 +1,5 @@
 import { PageResult, Sorting } from 'model/response';
-import { EnumTransferSortField, PayInItem, TransferQuery, Transfer } from 'model/order';
+import { EnumTransferSortField, PayInItemType, TransferQuery, Transfer } from 'model/order';
 
 import {
   TransferActions,
@@ -64,7 +64,7 @@ export function searchFailure(): TransferActions {
   };
 }
 
-export function searchComplete(result: PageResult<PayInItem>): TransferActions {
+export function searchComplete(result: PageResult<PayInItemType>): TransferActions {
   return {
     type: SEARCH_COMPLETE,
     result,

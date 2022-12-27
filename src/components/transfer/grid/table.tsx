@@ -3,19 +3,23 @@ import React from 'react';
 // Components
 import { Link } from 'react-router-dom';
 
-import { injectIntl, IntlShape, FormattedNumber } from 'react-intl';
+import { injectIntl, IntlShape, FormattedNumber, FormattedMessage } from 'react-intl';
 
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
+import Chip from '@material-ui/core/Chip';
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
 import DateTime from 'components/common/date-time';
 
 // Icons
 import Icon from '@mdi/react';
 import {
+  mdiAccountCogOutline,
+  mdiArrowRightBoldOutline,
+  mdiClockFast,
   mdiContentCopy,
-  mdiTransferRight,
+  mdiPackageVariantClosed,
 } from '@mdi/js';
 
 // Model
@@ -25,11 +29,12 @@ import {
   EnumTransferSortField,
   EnumTransactionStatus,
   PayIn,
-  PayInItem,
   OrderPayInItem,
   TransferQuery,
   EnumBillingViewMode,
-  ServiceBillingPayInItem
+  ServiceBillingPayInItem,
+  PayInItemType,
+  EnumBillableServiceType
 } from 'model/order';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 import {
@@ -46,33 +51,12 @@ enum EnumAction {
   CopyReferenceNumber = 'copy-reference-number',
 };
 
-function getPayIn(item: PayInItem): PayIn | null {
+function getPayIn(item: PayInItemType): PayIn | null {
   switch (item.type) {
     case EnumPayInItemType.ORDER:
       return (item as OrderPayInItem).order?.payIn || null;
     case EnumPayInItemType.SERVICE_BILLING: {
       return (item as ServiceBillingPayInItem).serviceBilling.payIn || null;
-    }
-  }
-}
-
-function getConsumer(item: PayInItem): Customer | null {
-  switch (item.type) {
-    case EnumPayInItemType.ORDER:
-      return (item as OrderPayInItem).order?.consumer || null;
-    case EnumPayInItemType.SERVICE_BILLING: {
-      return (item as ServiceBillingPayInItem).serviceBilling.subscription?.consumer || null;
-    }
-  }
-}
-
-function getProvider(item: PayInItem): Customer | null {
-  switch (item.type) {
-    case EnumPayInItemType.ORDER:
-      // Orders contain only a single item
-      return (item as OrderPayInItem).order?.items![0].provider || null;
-    case EnumPayInItemType.SERVICE_BILLING: {
-      return (item as ServiceBillingPayInItem).serviceBilling.subscription?.provider || null;
     }
   }
 }
@@ -134,7 +118,35 @@ const styles = (theme: Theme) => createStyles({
   }
 });
 
-function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTransferSortField>[] {
+function renderItemType(payin: PayInItemType, props: TransferTableProps, intl: IntlShape) {
+  switch (payin.type) {
+    case EnumPayInItemType.ORDER:
+      return (
+        <Chip
+          icon={<Icon path={mdiPackageVariantClosed} size="1.5rem" />}
+          label={intl.formatMessage({ id: `enum.payin-item-type.${EnumPayInItemType.ORDER}` })}
+          color="primary"
+          variant="outlined"
+        />
+      );
+
+    case EnumPayInItemType.SERVICE_BILLING:
+      const serviceBilling = payin.serviceBilling;
+      return (
+        <Chip
+          icon={<Icon
+            path={serviceBilling.type === EnumBillableServiceType.SUBSCRIPTION ? mdiClockFast : mdiAccountCogOutline}
+            size="1.5rem"
+          />}
+          label={`${intl.formatMessage({ id: `enum.billable-service.${serviceBilling.type}` })}`}
+          color="primary"
+          variant="outlined"
+        />
+      );
+  }
+}
+
+function transferColumns(props: TransferTableProps): Column<PayInItemType, EnumTransferSortField>[] {
   const { intl, classes } = props;
 
   return (
@@ -144,7 +156,7 @@ function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTrans
       width: 80,
       hidden: true,
       cell: (
-        rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
+        rowIndex: number, column: Column<PayInItemType, EnumTransferSortField>, row: PayInItemType, handleAction?: cellActionHandler<PayInItemType, EnumTransferSortField>
       ): React.ReactNode => (
         <div className={classes.compositeLabelLeft}>
 
@@ -157,7 +169,7 @@ function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTrans
       sortable: true,
       sortColumn: EnumTransferSortField.REFERENCE_NUMBER,
       cell: (
-        rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
+        rowIndex: number, column: Column<PayInItemType, EnumTransferSortField>, row: PayInItemType, handleAction?: cellActionHandler<PayInItemType, EnumTransferSortField>
       ): React.ReactNode => {
         const payIn = getPayIn(row);
         return (
@@ -174,21 +186,61 @@ function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTrans
         );
       }
     }, {
+      header: intl.formatMessage({ id: 'billing.payin.header.type' }),
+      id: 'type',
+      sortable: false,
+      cell: (
+        rowIndex: number, column: Column<PayInItemType, EnumTransferSortField>, row: PayInItemType, handleAction?: cellActionHandler<PayInItemType, EnumTransferSortField>
+      ): React.ReactNode => {
+        return renderItemType(row, props, intl);
+      },
+    }, {
       header: intl.formatMessage({ id: 'billing.transfer.header.consumer' }),
       id: 'consumer',
       sortable: false,
       cell: (
-        rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
+        rowIndex: number, column: Column<PayInItemType, EnumTransferSortField>, row: PayInItemType, handleAction?: cellActionHandler<PayInItemType, EnumTransferSortField>
       ): React.ReactNode => {
-        const consumer = getConsumer(row);
-        const consumerName = consumer ? getCustomerName(consumer) : '';
+        let link: React.ReactNode | null = null;
+        switch (row.type) {
+          case EnumPayInItemType.ORDER: {
+            const consumer = row.order.consumer || null;
+            const consumerName = consumer ? getCustomerName(consumer) : '';
+            link = (
+              <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [consumer!.key])} className={classes.link}>
+                {consumerName}
+              </Link>
+            );
+            break;
+          }
+
+          case EnumPayInItemType.SERVICE_BILLING: {
+            const serviceBilling = row.serviceBilling;
+            if (serviceBilling.subscription) {
+              const consumer = serviceBilling.subscription.consumer || null;
+              const consumerName = consumer ? getCustomerName(consumer) : '';
+              link = (
+                <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [consumer!.key])} className={classes.link}>
+                  {consumerName}
+                </Link>
+              );
+            }
+            if (serviceBilling.userService) {
+              const owner = serviceBilling.userService.owner;
+              link = (
+                <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [owner.key])} className={classes.link}>
+                  {owner.username}
+                </Link>
+              );
+            }
+            break;
+          }
+        }
 
         return (
           <div className={classes.compositeLabel}>
             <div className={classes.labelPayInContainer}>
-              <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [consumer!.key])} className={classes.link}>
-                {consumerName}
-              </Link>
+              {link}
             </div>
           </div>
         )
@@ -199,9 +251,9 @@ function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTrans
       sortable: false,
       hidden: props.mode === EnumBillingViewMode.PROVIDER,
       cell: (
-        rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
+        rowIndex: number, column: Column<PayInItemType, EnumTransferSortField>, row: PayInItemType, handleAction?: cellActionHandler<PayInItemType, EnumTransferSortField>
       ): React.ReactNode => {
-        return (<Icon path={mdiTransferRight} size={'1.2rem'} style={{ margin: '0 10' }} />);
+        return (<Icon path={mdiArrowRightBoldOutline} size={'1.2rem'} style={{ margin: '0 10' }} />);
       }
     }, {
       header: intl.formatMessage({ id: 'billing.transfer.header.provider' }),
@@ -209,17 +261,45 @@ function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTrans
       sortable: false,
       hidden: props.mode === EnumBillingViewMode.PROVIDER,
       cell: (
-        rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
+        rowIndex: number, column: Column<PayInItemType, EnumTransferSortField>, row: PayInItemType, handleAction?: cellActionHandler<PayInItemType, EnumTransferSortField>
       ): React.ReactNode => {
-        const provider = getProvider(row);
-        const providerName = provider ? getCustomerName(provider) : '';
+        let link: React.ReactNode | null = null;
+        switch (row.type) {
+          case EnumPayInItemType.ORDER:
+            // Orders contain only a single item
+            const provider = row.order.items![0].provider || null;
+            const providerName = provider ? getCustomerName(provider) : '';
+            link = (
+              <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [provider!.key])} className={classes.link}>
+                {providerName}
+              </Link>
+            );
+            break;
+
+          case EnumPayInItemType.SERVICE_BILLING: {
+            const serviceBilling = row.serviceBilling;
+            if (serviceBilling.subscription) {
+              const provider = serviceBilling.subscription.provider || null;
+              const providerName = provider ? getCustomerName(provider) : '';
+              link = (
+                <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [provider!.key])} className={classes.link}>
+                  {providerName}
+                </Link>
+              );
+            }
+            if (serviceBilling.userService) {
+              link = (
+                <FormattedMessage id={'company.title'} />
+              );
+            }
+            break;
+          }
+        }
 
         return (
           <div className={classes.compositeLabel}>
             <div className={classes.labelPayInContainer}>
-              <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [provider!.key])} className={classes.link}>
-                {providerName}
-              </Link>
+              {link}
             </div>
           </div>
         )
@@ -231,7 +311,7 @@ function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTrans
       sortable: false,
       className: classes.alightRight,
       cell: (
-        rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
+        rowIndex: number, column: Column<PayInItemType, EnumTransferSortField>, row: PayInItemType, handleAction?: cellActionHandler<PayInItemType, EnumTransferSortField>
       ): React.ReactNode => {
         return (
           <b>
@@ -247,7 +327,7 @@ function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTrans
       sortColumn: EnumTransferSortField.FUNDS,
       className: classes.alightRight,
       cell: (
-        rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
+        rowIndex: number, column: Column<PayInItemType, EnumTransferSortField>, row: PayInItemType, handleAction?: cellActionHandler<PayInItemType, EnumTransferSortField>
       ): React.ReactNode => {
         return (
           <b>
@@ -263,7 +343,7 @@ function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTrans
       sortColumn: EnumTransferSortField.FEES,
       className: classes.alightRight,
       cell: (
-        rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
+        rowIndex: number, column: Column<PayInItemType, EnumTransferSortField>, row: PayInItemType, handleAction?: cellActionHandler<PayInItemType, EnumTransferSortField>
       ): React.ReactNode => {
         return (
           <b>
@@ -278,9 +358,9 @@ function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTrans
       sortColumn: EnumTransferSortField.EXECUTED_ON,
       cell: (
         rowIndex: number,
-        column: Column<PayInItem, EnumTransferSortField>,
-        row: PayInItem,
-        handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
+        column: Column<PayInItemType, EnumTransferSortField>,
+        row: PayInItemType,
+        handleAction?: cellActionHandler<PayInItemType, EnumTransferSortField>
       ): React.ReactNode => (
         row?.transfer?.executedOn ?
           <DateTime value={row?.transfer?.executedOn?.toDate()} day='numeric' month='numeric' year='numeric' />
@@ -293,7 +373,7 @@ function transferColumns(props: TransferTableProps): Column<PayInItem, EnumTrans
       sortable: true,
       sortColumn: EnumTransferSortField.STATUS,
       cell: (
-        rowIndex: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem, handleAction?: cellActionHandler<PayInItem, EnumTransferSortField>
+        rowIndex: number, column: Column<PayInItemType, EnumTransferSortField>, row: PayInItemType, handleAction?: cellActionHandler<PayInItemType, EnumTransferSortField>
       ): React.ReactNode => {
 
         return (
@@ -331,9 +411,9 @@ interface TransferTableProps extends WithStyles<typeof styles> {
   intl: IntlShape,
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumTransferSortField>[]
-  ) => Promise<PageResult<PayInItem> | null>,
+  ) => Promise<PageResult<PayInItemType> | null>,
   query: TransferQuery,
-  result: PageResult<PayInItem> | null,
+  result: PageResult<PayInItemType> | null,
   pagination: PageRequest,
   setPager: (page: number, size: number) => void,
   setSorting: (sorting: Sorting<EnumTransferSortField>[]) => void,
@@ -354,7 +434,7 @@ class TransferTable extends React.Component<TransferTableProps> {
     mode: EnumBillingViewMode.DEFAULT,
   }
 
-  handleAction(action: string, index: number, column: Column<PayInItem, EnumTransferSortField>, row: PayInItem): void {
+  handleAction(action: string, index: number, column: Column<PayInItemType, EnumTransferSortField>, row: PayInItemType): void {
     if (row) {
       switch (action) {
         case EnumAction.CopyReferenceNumber:
@@ -375,7 +455,7 @@ class TransferTable extends React.Component<TransferTableProps> {
 
     return (
       <>
-        <MaterialTable<PayInItem, EnumTransferSortField>
+        <MaterialTable<PayInItemType, EnumTransferSortField>
           intl={intl}
           columns={transferColumns(this.props)}
           rows={result ? result.items : []}
