@@ -20,6 +20,7 @@ import {
   mdiContentCopy,
   mdiDatabaseCogOutline,
   mdiMessageTextOutline,
+  mdiReceiptOutline,
 } from '@mdi/js';
 
 // Model
@@ -33,6 +34,7 @@ import { copyToClipboard } from 'utils/clipboard';
 
 enum EnumAction {
   CopyReferenceNumber = 'copy-reference-number',
+  DownloadInvoice = 'download-invoice',
   SendMessage = 'send-message',
   ViewProcessInstance = 'view-process-instance',
 };
@@ -74,6 +76,14 @@ function orderColumns(intl: IntlShape, props: OrderTableProps): Column<Order, En
                 onClick={() => handleAction ? handleAction(EnumAction.ViewProcessInstance, rowIndex, column, row) : null}
               >
                 <Icon path={mdiDatabaseCogOutline} className={classes.rowIconAction} />
+              </i>
+            </Tooltip>
+          }
+          {
+            row.payIn?.invoicePrinted &&
+            <Tooltip title={intl.formatMessage({ id: 'billing.payin.tooltip.download-invoice' })}>
+              <i onClick={() => handleAction ? handleAction(EnumAction.DownloadInvoice, rowIndex, column, row) : null}>
+                <Icon path={mdiReceiptOutline} className={classes.rowIconAction} />
               </i>
             </Tooltip>
           }
@@ -337,6 +347,7 @@ interface OrderTableProps extends WithStyles<typeof styles> {
   removeFromSelection?: (rows: Order[]) => void;
   resetSelection?: () => void;
   sendMessage: (row: Order) => void;
+  downloadInvoice: (row: Order) => void,
   setPager: (page: number, size: number) => void;
   setSorting: (sorting: Sorting<EnumOrderSortField>[]) => void;
   viewProcessInstance: (processInstance: string) => void;
@@ -359,9 +370,11 @@ class OrderTable extends React.Component<OrderTableProps> {
       switch (action) {
         case EnumAction.CopyReferenceNumber:
           const value = row.referenceNumber;
-
           copyToClipboard(value);
+          break;
 
+        case EnumAction.DownloadInvoice:
+          this.props.downloadInvoice(row);
           break;
 
         case EnumAction.SendMessage:

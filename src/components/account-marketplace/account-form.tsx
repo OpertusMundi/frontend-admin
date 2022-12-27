@@ -90,6 +90,7 @@ import AccountApi from 'service/account-marketplace';
 // Utilities
 import { FieldMapperFunc, localizeErrorCodes } from 'utils/error';
 import { getContactFromPayOut } from 'utils/chat';
+import { download as downloadInvoice } from 'utils/invoice';
 
 // Model
 import { buildPath, DynamicRoutes, StaticRoutes } from 'model/routes';
@@ -249,6 +250,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     };
 
     this.changeServiceType = this.changeServiceType.bind(this);
+    this.downloadInvoice = this.downloadInvoice.bind(this);
     this.setExternalProvider = this.setExternalProvider.bind(this);
     this.setOpenDatasetProvider = this.setOpenDatasetProvider.bind(this);
     this.viewPayIn = this.viewPayIn.bind(this);
@@ -562,6 +564,12 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
     this.findServiceBillingRecords();
   }
 
+  downloadInvoice(row?: PayInType): void {
+    if (row) {
+      downloadInvoice(row.key);
+    }
+  }
+
   viewProcessInstance(processInstance: string): void {
     const path = buildPath(DynamicRoutes.ProcessInstanceView, null, { processInstance });
     this.props.navigate(path);
@@ -847,6 +855,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
             <Grid item xs={12}>
               <Paper className={classes.paperTable}>
                 <OrderTable
+                  downloadInvoice={(order) => this.downloadInvoice(order.payIn)}
                   find={this.props.findOrders}
                   loading={loading}
                   mode={EnumBillingViewMode.CONSUMER}
@@ -887,6 +896,7 @@ class MarketplaceAccountForm extends React.Component<MarketplaceAccountFormProps
             <Grid item xs={12}>
               <Paper className={classes.paperTable}>
                 <PayInTable
+                  downloadInvoice={this.downloadInvoice}
                   find={this.props.findPayIns}
                   loading={loading}
                   mode={EnumBillingViewMode.CONSUMER}

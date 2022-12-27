@@ -26,6 +26,9 @@ import { addToSelection, removeFromSelection, resetFilter, resetSelection, setFi
 import { find } from 'store/order/thunks';
 import { toggleSendMessageDialog } from 'store/message/actions';
 
+// Utilities
+import { download as downloadInvoice } from 'utils/invoice';
+
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
@@ -73,6 +76,7 @@ class OrderManager extends React.Component<OrderManagerProps> {
   constructor(props: OrderManagerProps) {
     super(props);
 
+    this.downloadInvoice = this.downloadInvoice.bind(this);
     this.viewProcessInstance = this.viewProcessInstance.bind(this);
   }
 
@@ -86,6 +90,12 @@ class OrderManager extends React.Component<OrderManagerProps> {
         message.errorHtml("Find operation has failed", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
       }
     });
+  }
+
+  downloadInvoice(row: Order): void {
+    if (row) {
+      downloadInvoice(row.key);
+    }
   }
 
   viewProcessInstance(processInstance: string): void {
@@ -164,6 +174,7 @@ class OrderManager extends React.Component<OrderManagerProps> {
         <Paper className={classes.paperTable}>
           <OrderTable
             addToSelection={addToSelection}
+            downloadInvoice={this.downloadInvoice}
             find={this.props.find}
             loading={loading}
             pagination={pagination}

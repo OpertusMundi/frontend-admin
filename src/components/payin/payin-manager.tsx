@@ -27,6 +27,9 @@ import { find } from 'store/payin/thunks';
 import { createTransfer } from 'store/transfer/thunks';
 import { toggleSendMessageDialog } from 'store/message/actions';
 
+// Utilities
+import { download as downloadInvoice } from 'utils/invoice';
+
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { PageRequest, Sorting } from 'model/response';
@@ -75,6 +78,7 @@ class PayInManager extends React.Component<PayInManagerProps> {
     super(props);
 
     this.createTransfer = this.createTransfer.bind(this);
+    this.downloadInvoice = this.downloadInvoice.bind(this);
     this.viewPayIn = this.viewPayIn.bind(this);
     this.viewProcessInstance = this.viewProcessInstance.bind(this);
   }
@@ -89,6 +93,12 @@ class PayInManager extends React.Component<PayInManagerProps> {
         message.errorHtml("Find operation has failed", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
       }
     });
+  }
+
+  downloadInvoice(row: PayInType): void {
+    if (row) {
+      downloadInvoice(row.key);
+    }
   }
 
   viewPayIn(key: string): void {
@@ -248,6 +258,7 @@ class PayInManager extends React.Component<PayInManagerProps> {
               sorting={sorting}
               addToSelection={addToSelection}
               createTransfer={this.createTransfer}
+              downloadInvoice={this.downloadInvoice}
               find={this.props.find}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}

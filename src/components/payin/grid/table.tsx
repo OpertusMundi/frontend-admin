@@ -24,6 +24,7 @@ import {
   mdiDatabaseCogOutline,
   mdiMessageTextOutline,
   mdiPackageVariantClosed,
+  mdiReceiptOutline,
   mdiWalletPlusOutline,
 } from '@mdi/js';
 
@@ -42,6 +43,7 @@ import { copyToClipboard } from 'utils/clipboard';
 
 enum EnumAction {
   CopyReferenceNumber = 'copy-reference-number',
+  DownloadInvoice = 'download-invoice',
   SendMessage = 'send-message',
   TransferFunds = 'transfer-funds',
   ViewProcessInstance = 'view-process-instance',
@@ -290,6 +292,14 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayInType
               </i>
             </Tooltip>
           }
+          {
+            row?.invoicePrinted &&
+            <Tooltip title={intl.formatMessage({ id: 'billing.payin.tooltip.download-invoice' })}>
+              <i onClick={() => handleAction ? handleAction(EnumAction.DownloadInvoice, rowIndex, column, row) : null}>
+                <Icon path={mdiReceiptOutline} className={classes.rowIconAction} />
+              </i>
+            </Tooltip>
+          }
         </div>
       ),
     }, {
@@ -445,6 +455,7 @@ interface PayInTableProps extends WithStyles<typeof styles> {
   selected: PayInType[],
   sorting: Sorting<EnumPayInSortField>[];
   addToSelection?: (rows: PayInType[]) => void,
+  downloadInvoice: (row: PayInType) => void,
   createTransfer?: (payIn: PayInType) => void;
   find: (
     pageRequest?: PageRequest, sorting?: Sorting<EnumPayInSortField>[]
@@ -476,6 +487,10 @@ class PayInTable extends React.Component<PayInTableProps> {
         case EnumAction.CopyReferenceNumber:
           const value = row.referenceNumber;
           copyToClipboard(value);
+          break;
+
+        case EnumAction.DownloadInvoice:
+          this.props.downloadInvoice(row);
           break;
 
         case EnumAction.SendMessage:

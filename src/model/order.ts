@@ -379,6 +379,10 @@ export interface PayIn {
    */
   key: string;
   /**
+   * `True` if the invoice is printed
+   */
+  invoicePrinted: boolean;
+  /**
    * PayIn payments. A PayIn may include a single order or multiple subscription billing records
    */
   items?: PayInItemType[];
@@ -697,7 +701,7 @@ export interface Order {
   deliveryMethod: EnumDeliveryMethod;
   items?: OrderItem[];
   key: string;
-  payIn?: PayIn;
+  payIn?: PayInType;
   paymentMethod: EnumPaymentMethod
   referenceNumber: string;
   status: EnumOrderStatus;

@@ -1,6 +1,7 @@
-import { AxiosRequestConfig } from 'axios';
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { Api } from 'utils/api';
+import { blobToJson } from 'utils/file';
 import { ObjectResponse, PageRequest, Sorting, AxiosPageResponse, PageResult, AxiosObjectResponse } from 'model/response';
 import { EnumPayInSortField, PayInQuery, PayInType } from 'model/order';
 
@@ -28,5 +29,18 @@ export default class PayInApi extends Api {
     const url = `/action/billing/payins/${key}`;
 
     return this.get<ObjectResponse<PayInType>>(url);
+  }
+
+  public async downloadInvoice(key: string): Promise<AxiosResponse<Blob>> {
+    const url = `/action/billing/payins/${key}/invoice`;
+
+    return this.get<Blob>(url, {
+      responseType: 'blob',
+    })
+      .then((response: AxiosResponse<Blob>) => {
+
+        return Promise.resolve(response);
+      })
+      .catch((err: AxiosError) => blobToJson(err.response?.data as Blob));
   }
 }

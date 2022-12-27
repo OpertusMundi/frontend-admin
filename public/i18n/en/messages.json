@@ -245,6 +245,7 @@
         "transfer-pending": "Cannot create transfer. Order {referenceNumber} is pending with status {status}"
       },
       "tooltip": {
+        "download-invoice": "Download invoice",
         "transfer-funds": "Transfer funds to provider wallet",
         "transfer-funds-completed": "Funds have been transferred",
         "view-details": "View PayIn",
