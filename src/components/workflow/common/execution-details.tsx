@@ -13,10 +13,12 @@ import Avatar from '@material-ui/core/Avatar';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
+import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
+import Typography from '@material-ui/core/Typography';
 
 import { red } from '@material-ui/core/colors';
 
@@ -26,12 +28,13 @@ import {
   mdiAccountOutline,
   mdiClockFast,
   mdiDatabaseCogOutline,
+  mdiKeyOutline,
 } from '@mdi/js';
 
 // Model
 import { ApplicationConfiguration } from 'model/configuration';
 import { MarketplaceAccount } from 'model/account-marketplace';
-import { ActiveProcessInstanceDetails } from 'model/bpm-process-instance';
+import { ProcessInstanceDetails } from 'model/bpm-process-instance';
 
 const styles = (theme: Theme) => createStyles({
   avatar: {
@@ -54,7 +57,7 @@ const styles = (theme: Theme) => createStyles({
 interface ExecutionDetailsProps extends WithStyles<typeof styles> {
   intl: IntlShape;
   config: ApplicationConfiguration;
-  processInstance: ActiveProcessInstanceDetails;
+  processInstance: ProcessInstanceDetails;
 }
 
 class ExecutionDetails extends React.Component<ExecutionDetailsProps> {
@@ -100,6 +103,8 @@ class ExecutionDetails extends React.Component<ExecutionDetailsProps> {
       1000 * ((instance.endTime ? instance.endTime.unix() : moment().unix()) - instance.startTime.unix())
     ).humanize();
 
+    const title = `${instance.processDefinitionName.split(' ').map(w => _.capitalize(w)).join(' ')} ${processDefinition ? processDefinition.versionTag : ''}`;
+
     return (
       <Card className={classes.card}>
         <CardHeader
@@ -108,7 +113,20 @@ class ExecutionDetails extends React.Component<ExecutionDetailsProps> {
               <Icon path={mdiDatabaseCogOutline} size="1.5rem" />
             </Avatar>
           }
-          title={`${instance.processDefinitionName.split(' ').map(w => _.capitalize(w)).join(' ')} ${processDefinition ? processDefinition.versionTag : ''}`}
+          title={(
+            <Grid container>
+              <Grid item xs={12}>
+                <Typography variant="body1">
+                  {title}
+                </Typography>
+              </Grid>
+              <Grid container item xs={12}>
+                <Typography variant="caption">
+                  {`Key: ${instance.processDefinitionKey}`}
+                </Typography>
+              </Grid>
+            </Grid>
+          )}
         ></CardHeader>
         <CardContent>
           <List disablePadding>

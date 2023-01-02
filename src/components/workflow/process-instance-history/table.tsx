@@ -27,7 +27,8 @@ enum EnumAction {
   View = 'view',
 };
 
-function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<ProcessInstance, EnumProcessInstanceHistorySortField>[] {
+function workflowColumns(props: ProcessInstanceTableProps): Column<ProcessInstance, EnumProcessInstanceHistorySortField>[] {
+  const { classes, intl } = props;
   return (
     [{
       header: intl.formatMessage({ id: 'workflow.header.instance.actions' }),
@@ -44,7 +45,7 @@ function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
             <i
               onClick={() => handleAction ? handleAction(EnumAction.View, rowIndex, column, row) : null}
             >
-              <Icon path={mdiDatabaseCogOutline} className={classes.classes.rowIconAction} />
+              <Icon path={mdiDatabaseCogOutline} className={classes.rowIconAction} />
             </i>
           </Tooltip>
         </div>
@@ -91,12 +92,12 @@ function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
         row: ProcessInstance,
         handleAction?: cellActionHandler<ProcessInstance, EnumProcessInstanceHistorySortField>
       ): React.ReactNode => (
-        <div className={classes.classes.compositeLabel}>
+        <div className={classes.compositeLabel}>
           <div>{row.businessKey}</div>
           <i
             onClick={() => handleAction ? handleAction(EnumAction.CopyBusinessKey, rowIndex, column, row) : null}
           >
-            <Icon path={mdiContentCopy} className={classes.classes.rowIconAction} />
+            <Icon path={mdiContentCopy} className={classes.rowIconAction} />
           </i>
         </div>
       ),
@@ -200,13 +201,13 @@ class ProcessInstanceTable extends React.Component<ProcessInstanceTableProps> {
   }
 
   render() {
-    const { intl, classes, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
+    const { intl, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
 
     return (
       <>
         <MaterialTable<ProcessInstance, EnumProcessInstanceHistorySortField>
           intl={intl}
-          columns={workflowColumns(intl, { classes })}
+          columns={workflowColumns(this.props)}
           rows={result ? result.items : []}
           pagination={{
             rowsPerPageOptions: [10, 20, 50],

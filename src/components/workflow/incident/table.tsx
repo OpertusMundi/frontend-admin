@@ -31,7 +31,8 @@ enum EnumAction {
   RetryExternalTask = 'retry,'
 };
 
-function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<Incident, EnumIncidentSortField>[] {
+function workflowColumns(intl: IntlShape, props: IncidentTableProps): Column<Incident, EnumIncidentSortField>[] {
+  const { classes } = props;
   return (
     [{
       header: intl.formatMessage({ id: 'workflow.header.incident.actions' }),
@@ -48,14 +49,14 @@ function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
             <i
               onClick={() => handleAction ? handleAction(EnumAction.RetryExternalTask, rowIndex, column, row) : null}
             >
-              <Icon path={mdiAutorenew} className={classes.classes.rowIconAction} />
+              <Icon path={mdiAutorenew} className={classes.rowIconAction} />
             </i>
           </Tooltip>
           <Tooltip title={intl.formatMessage({ id: 'workflow.tooltip.incident.process-instance' })}>
             <i
               onClick={() => handleAction ? handleAction(EnumAction.ViewProcessInstance, rowIndex, column, row) : null}
             >
-              <Icon path={mdiDatabaseCogOutline} className={classes.classes.rowIconAction} />
+              <Icon path={mdiDatabaseCogOutline} className={classes.rowIconAction} />
             </i>
           </Tooltip>
           {row.taskErrorDetails &&
@@ -63,7 +64,7 @@ function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.ViewErrorDetails, rowIndex, column, row) : null}
               >
-                <Icon path={mdiBugOutline} className={classes.classes.rowIconAction} />
+                <Icon path={mdiBugOutline} className={classes.rowIconAction} />
               </i>
             </Tooltip>
           }
@@ -112,12 +113,12 @@ function workflowColumns(intl: IntlShape, classes: WithStyles<typeof styles>): C
         row: Incident,
         handleAction?: cellActionHandler<Incident, EnumIncidentSortField>
       ): React.ReactNode => (
-        <div className={classes.classes.compositeLabel}>
+        <div className={classes.compositeLabel}>
           <div>{row.businessKey}</div>
           <i
             onClick={() => handleAction ? handleAction(EnumAction.CopyBusinessKey, rowIndex, column, row) : null}
           >
-            <Icon path={mdiContentCopy} className={classes.classes.rowIconAction} />
+            <Icon path={mdiContentCopy} className={classes.rowIconAction} />
           </i>
         </div>
       ),
@@ -213,13 +214,13 @@ class IncidentTable extends React.Component<IncidentTableProps> {
   }
 
   render() {
-    const { intl, classes, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
+    const { intl, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
 
     return (
       <>
         <MaterialTable<Incident, EnumIncidentSortField>
           intl={intl}
-          columns={workflowColumns(intl, { classes })}
+          columns={workflowColumns(intl, this.props)}
           rows={result ? result.items : []}
           pagination={{
             rowsPerPageOptions: [10, 20, 50],

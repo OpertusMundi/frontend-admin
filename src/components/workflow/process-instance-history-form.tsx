@@ -1,5 +1,4 @@
 import qs from 'qs';
-import moment from 'utils/moment-localized';
 import React from 'react';
 import { AxiosError } from 'axios';
 
@@ -19,10 +18,6 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemText from '@material-ui/core/ListItemText';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
@@ -33,6 +28,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import Spinner from 'components/spinner';
 
 import {
+  ExecutionDetails,
   ProcessDefinitionDiagram,
   ProcessInstanceTimeline,
   ProcessInstanceVariables,
@@ -42,7 +38,6 @@ import {
 import Icon from '@mdi/react';
 import {
   mdiAccountOutline,
-  mdiClockFast,
   mdiCloudOffOutline,
   mdiCodeJson,
   mdiDatabaseCogOutline,
@@ -157,50 +152,6 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
     );
   }
 
-  renderDetails(): React.ReactElement | null {
-    const { classes, processInstance } = this.props;
-
-    if (!processInstance) {
-      return null;
-    }
-
-    const { instance, owner = null } = processInstance;
-    const duration = moment.duration(
-      1000 * ((instance.endTime ? instance.endTime.unix() : moment().unix()) - instance.startTime.unix())
-    ).humanize();
-
-    return (
-      <Card className={classes.card}>
-        <CardHeader
-          avatar={
-            <Avatar className={classes.avatar}>
-              <Icon path={mdiDatabaseCogOutline} size="1.5rem" />
-            </Avatar>
-          }
-          title={instance.processDefinitionName}
-        ></CardHeader>
-        <CardContent>
-          <List disablePadding>
-            <ListItem className={classes.listItem}>
-              <ListItemAvatar>
-                {this.getAccountAvatar(owner || null)}
-              </ListItemAvatar>
-              <ListItemText primary={'Owner'} secondary={owner ? owner.username : 'System'} />
-            </ListItem>
-            <ListItem className={classes.listItem}>
-              <ListItemAvatar>
-                <Avatar className={classes.small}>
-                  <Icon path={mdiClockFast} size="1.2rem" />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={'Duration'} secondary={duration} />
-            </ListItem>
-          </List>
-        </CardContent>
-      </Card>
-    );
-  }
-
   renderVariables(): React.ReactElement | null {
     const { processInstance: instance } = this.props;
 
@@ -247,7 +198,7 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
           <Grid container item xs={12}>
             <Grid container item xs={12} lg={5} justifyContent="space-around">
               <Grid item xs={12}>
-                {this.renderDetails()}
+                <ExecutionDetails config={config} processInstance={processInstance} />
               </Grid>
               <Grid item xs={12}>
                 {this.renderVariables()}

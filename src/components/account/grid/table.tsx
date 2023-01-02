@@ -27,7 +27,8 @@ enum EnumAction {
   ResetPassword = 'reset-password',
 };
 
-function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<HelpdeskAccount, EnumHelpdeskAccountSortField>[] {
+function accountColumns(intl: IntlShape, props: AccountTableProps): Column<HelpdeskAccount, EnumHelpdeskAccountSortField>[] {
+  const { classes } = props;
   return (
     [{
       header: intl.formatMessage({ id: 'account.helpdesk.header.actions' }),
@@ -41,21 +42,21 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
             <i
               onClick={() => handleAction ? handleAction(EnumAction.Edit, rowIndex, column, row) : null}
             >
-              <Icon path={mdiPencilOutline} className={classes.classes.rowIcon} />
+              <Icon path={mdiPencilOutline} className={classes.rowIcon} />
             </i>
           </Tooltip>
           <Tooltip title={intl.formatMessage({ id: 'account.helpdesk.tooltip.delete' })}>
             <i
               onClick={() => handleAction ? handleAction(EnumAction.Delete, rowIndex, column, row) : null}
             >
-              <Icon path={mdiTrashCanOutline} className={classes.classes.rowIcon} />
+              <Icon path={mdiTrashCanOutline} className={classes.rowIcon} />
             </i>
           </Tooltip>
           <Tooltip title={intl.formatMessage({ id: 'account.helpdesk.tooltip.reset-password' })}>
             <i
               onClick={() => handleAction ? handleAction(EnumAction.ResetPassword, rowIndex, column, row) : null}
             >
-              <Icon path={mdiFormTextboxPassword} className={classes.classes.rowIcon} />
+              <Icon path={mdiFormTextboxPassword} className={classes.rowIcon} />
             </i>
           </Tooltip>
           {!row.registeredToIdp &&
@@ -63,7 +64,7 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
               <i
                 onClick={() => handleAction ? handleAction(EnumAction.RegisterToIdp, rowIndex, column, row) : null}
               >
-                <Icon path={mdiSecurity} className={classes.classes.rowIcon} />
+                <Icon path={mdiSecurity} className={classes.rowIcon} />
               </i>
             </Tooltip>
           }
@@ -79,7 +80,7 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
         if (row?.image && row?.imageMimeType) {
           const url = `data:${row.imageMimeType};base64,${row.image}`;
           return (
-            <Avatar alt={row.email} src={url || undefined} variant="circular" className={classes.classes.avatar} />
+            <Avatar alt={row.email} src={url || undefined} variant="circular" className={classes.avatar} />
           );
         }
         return null;
@@ -93,7 +94,7 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
       cell: (
         rowIndex: number, column: Column<HelpdeskAccount, EnumHelpdeskAccountSortField>, row: HelpdeskAccount, handleAction?: cellActionHandler<HelpdeskAccount, EnumHelpdeskAccountSortField>
       ): React.ReactNode => (
-        <Link to={buildPath(DynamicRoutes.AccountUpdate, [row.id + ''])} className={classes.classes.link}>
+        <Link to={buildPath(DynamicRoutes.AccountUpdate, [row.id + ''])} className={classes.link}>
           {row.email}
         </Link>
       ),
@@ -118,9 +119,9 @@ function accountColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Co
       cell: (
         rowIndex: number, column: Column<HelpdeskAccount, EnumHelpdeskAccountSortField>, row: HelpdeskAccount, handleAction?: cellActionHandler<HelpdeskAccount, EnumHelpdeskAccountSortField>
       ): React.ReactNode => (
-        <div className={classes.classes.roles}>
+        <div className={classes.roles}>
           {row && row.roles && row.roles.map((r) => (
-            <div key={r} className={classes.classes.role}>
+            <div key={r} className={classes.role}>
               <FormattedMessage id={`enum.role.${r}`} />
             </div>
           ))}
@@ -222,12 +223,12 @@ class AccountTable extends React.Component<AccountTableProps> {
   }
 
   render() {
-    const { intl, classes, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
+    const { intl, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
 
     return (
       <MaterialTable<HelpdeskAccount, EnumHelpdeskAccountSortField>
         intl={intl}
-        columns={accountColumns(intl, { classes })}
+        columns={accountColumns(intl, this.props)}
         rows={result ? result.items : []}
         pagination={{
           rowsPerPageOptions: [10, 20, 50],

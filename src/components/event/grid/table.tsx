@@ -63,10 +63,11 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-function applicationToChip(value: string, classes: WithStyles<typeof styles>, intl: IntlShape): React.ReactElement | undefined {
+function applicationToChip(value: string, props: EventTableProps): React.ReactElement | undefined {
+  const { classes, intl } = props;
   return (
     <Chip
-      avatar={<Avatar><Icon path={mdiCogOutline} className={classes.classes.chipIcon} /></Avatar>}
+      avatar={<Avatar><Icon path={mdiCogOutline} className={classes.chipIcon} /></Avatar>}
       label={intl.formatMessage({ id: `event.application.${value}` })}
       variant="outlined"
       color={'primary'}
@@ -74,7 +75,8 @@ function applicationToChip(value: string, classes: WithStyles<typeof styles>, in
   );
 }
 
-function levelToChip(value: EnumEventLevel, classes: WithStyles<typeof styles>, intl: IntlShape): React.ReactElement | undefined {
+function levelToChip(value: EnumEventLevel, props: EventTableProps): React.ReactElement | undefined {
+  const { classes, intl } = props;
   let path: string;
   let color: 'default' | 'primary' | 'secondary' = 'default';
 
@@ -98,7 +100,7 @@ function levelToChip(value: EnumEventLevel, classes: WithStyles<typeof styles>, 
 
   return (
     <Chip
-      avatar={<Avatar><Icon path={path} className={classes.classes.chipIcon} /></Avatar>}
+      avatar={<Avatar><Icon path={path} className={classes.chipIcon} /></Avatar>}
       label={intl.formatMessage({ id: `event.level.${value}` })}
       variant="outlined"
       color={color}
@@ -106,7 +108,8 @@ function levelToChip(value: EnumEventLevel, classes: WithStyles<typeof styles>, 
   );
 }
 
-function eventColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Column<Event, EnumEventSortField>[] {
+function eventColumns(props: EventTableProps): Column<Event, EnumEventSortField>[] {
+  const { classes, intl } = props;
   return (
     [{
       header: intl.formatMessage({ id: 'event.header.actions' }),
@@ -123,7 +126,7 @@ function eventColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
             <i
               onClick={() => handleAction ? handleAction(EnumAction.ViewErrorDetails, rowIndex, column, row) : null}
             >
-              <Icon path={mdiBugOutline} className={classes.classes.rowIconAction} />
+              <Icon path={mdiBugOutline} className={classes.rowIconAction} />
             </i>
           </Tooltip>
         </div>
@@ -135,7 +138,7 @@ function eventColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
       sortable: false,
       cell: (
         rowIndex: number, column: Column<Event, EnumEventSortField>, row: Event, handleAction?: cellActionHandler<Event, EnumEventSortField>
-      ): React.ReactNode => levelToChip(row.level, classes, intl)
+      ): React.ReactNode => levelToChip(row.level, props)
     }, {
       header: intl.formatMessage({ id: 'event.header.application' }),
       id: 'application',
@@ -144,7 +147,7 @@ function eventColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
       sortColumn: EnumEventSortField.APPLICATION,
       cell: (
         rowIndex: number, column: Column<Event, EnumEventSortField>, row: Event, handleAction?: cellActionHandler<Event, EnumEventSortField>
-      ): React.ReactNode => applicationToChip(row.application, classes, intl)
+      ): React.ReactNode => applicationToChip(row.application, props)
     }, {
       header: intl.formatMessage({ id: 'event.header.user-name' }),
       id: 'userName',
@@ -180,16 +183,16 @@ function eventColumns(intl: IntlShape, classes: WithStyles<typeof styles>): Colu
         row: Event,
         handleAction?: cellActionHandler<Event, EnumEventSortField>
       ): React.ReactNode => (
-        <div className={classes.classes.compositeLabel}>
+        <div className={classes.compositeLabel}>
           <div>
-            <Typography variant="caption" gutterBottom className={classes.classes.message}>
+            <Typography variant="caption" gutterBottom className={classes.message}>
               {row.message}
             </Typography>
           </div>
           <i
             onClick={() => handleAction ? handleAction(EnumAction.CopyException, rowIndex, column, row) : null}
           >
-            <Icon path={mdiContentCopy} className={classes.classes.rowIconAction} />
+            <Icon path={mdiContentCopy} className={classes.rowIconAction} />
           </i>
         </div>
 
@@ -243,13 +246,13 @@ class EventTable extends React.Component<EventTableProps> {
   }
 
   render() {
-    const { intl, classes, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
+    const { intl, result, setPager, pagination, find, selected, sorting, setSorting, loading } = this.props;
 
     return (
       <>
         <MaterialTable<Event, EnumEventSortField>
           intl={intl}
-          columns={eventColumns(intl, { classes })}
+          columns={eventColumns(this.props)}
           rows={result ? result.items : []}
           pagination={{
             rowsPerPageOptions: [10, 20, 50],
