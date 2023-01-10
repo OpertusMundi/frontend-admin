@@ -68,13 +68,14 @@
         "delete-execute": "Delete all user data",
         "delete-processing": "User data is being deleted",
         "kyc-refresh": "Refresh KYC level",
+        "refresh-wallet": "Refresh wallet funds",
         "send-message": "Send message",
         "toggle-tester": "Toggle tester status",
         "view-assets": "View purchased assets and service subscriptions",
         "view-details": "View details",
         "view-finance": "View finance",
         "view-orders": "View orders",
-        "vendor-details": "Vendor account"
+        "vendor-details": "View vendor account parent"
       },
       "dialog": {
         "create-payout-header": "Create PayOut",
@@ -131,6 +132,7 @@
       "delete-confirm-account-details": "Select this option if you want to delete the account",
       "delete-user-started": "Workflow for deleting user has started successfully",
       "delete-user-data-started": "Workflow for deleting all user data has started successfully",
+      "delete-user-failure": "Failed to start workflow for deleting user data",
       "external-provider-confirm": "Are you sure you want to update provider roles?",
       "external-provider-notes": "To continue, type the company name in the text box below.",
       "kyc-refresh-failure": "Failed to refresh KYC level",
@@ -144,7 +146,9 @@
       "set-open-dataset-provider-confirm": "Role for Open Dataset provider with be assigned to customer {company}. Would you like to continue?",
       "set-open-dataset-provider-warning": "Adding the role will enable the publishing of Open Datasets for the selected vendor",
       "toggle-tester-failure": "Failed to toggle tester status",
-      "toggle-tester-success": "Tester status has been updated"
+      "toggle-tester-success": "Tester status has been updated",
+      "wallet-funds-refresh-failure": "Failed to update wallet funds",
+      "wallet-funds-refresh-success": "Wallet funds have been updated successfully"
     }
   },
   "billing": {
@@ -576,7 +580,8 @@
       "ASSET_REGISTRATION": "Asset registration",
       "CANCELLED": "Cancelled",
       "REFUNDED": "Refunded",
-      "SUCCEEDED": "Completed"
+      "SUCCEEDED": "Completed",
+      "REFUND": "Refunded"
     },
     "payin-item-type": {
       "ORDER": "Order",
@@ -606,6 +611,15 @@
       "DEVELOPER": "Developer",
       "USER": "User"
     },
+    "refund-reason-type": {
+      "NotSpecified": "Not Specified",
+      "BANKACCOUNT_INCORRECT": "Incorrect bank account",
+      "BANKACCOUNT_HAS_BEEN_CLOSED": "Bank account has been closed",
+      "OWNER_DOT_NOT_MATCH_BANKACCOUNT": "Owner does not match bank account",
+      "WITHDRAWAL_IMPOSSIBLE_ON_SAVINGS_ACCOUNTS": "Withdrawal not possible on savings account",
+      "INITIALIZED_BY_CLIENT": "Initialized by the client",
+      "OTHER": "Other"
+    },
     "subscription": {
       "MONTHLY": "Monthly Payments",
       "ANNUAL": "Annual Payments"
@@ -630,7 +644,8 @@
       "NotSpecified": "Not Specified",
       "CREATED": "New",
       "FAILED": "Failed",
-      "SUCCEEDED": "Succeeded"
+      "SUCCEEDED": "Succeeded",
+      "REFUND": "Refunded"
     },
     "user-service-status": {
       "PROCESSING": "Processing",
