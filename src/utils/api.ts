@@ -48,14 +48,13 @@ export class Api {
       .catch((error: AxiosError) => this.handleError(error));
   }
 
-  protected submit<T = any>(url: string, data?: FormData, config: AxiosRequestConfig = {}): Promise<AxiosResponse<T>> {
+  protected submit<T = any>(url: string, data?: FormData): Promise<AxiosResponse<T>> {
     const headers = {
       'Content-Type': 'application/x-www-form-urlencoded'
     };
 
-    config = {
-      ...config,
-      headers: config.headers ? { ...config.headers, ...headers } : { ...headers },
+    const config: AxiosRequestConfig = {
+      headers,
     };
 
     return this.api.post<T>(url, data, config)

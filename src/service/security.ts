@@ -24,11 +24,7 @@ export class SecurityApi extends Api {
   public async logout(): Promise<AxiosObjectResponse<CsrfResult>> {
     const url = `/logout`;
 
-    const config = {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    };
-
-    return this.submit<ObjectResponse<CsrfResult>>(url, undefined, config);
+    return this.submit<ObjectResponse<CsrfResult>>(url, undefined);
   }
 
 }
