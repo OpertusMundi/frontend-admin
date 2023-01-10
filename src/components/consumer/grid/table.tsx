@@ -15,6 +15,7 @@ import {
   mdiCogSyncOutline,
   mdiEmailAlertOutline,
   mdiMessageTextOutline,
+  mdiWalletOutline,
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
@@ -28,6 +29,7 @@ import { PageRequest, PageResult, Sorting } from 'model/response';
 import clsx from 'clsx';
 
 enum EnumAction {
+  RefreshWallet = 'refresh-wallet',
   SendMessage = 'send-message',
 };
 
@@ -47,6 +49,13 @@ function consumerColumns(intl: IntlShape, props: ConsumerTableProps): Column<Mar
               onClick={() => handleAction ? handleAction(EnumAction.SendMessage, rowIndex, column, row) : null}
             >
               <Icon path={mdiMessageTextOutline} className={classes.rowIconAction} style={{ marginTop: 2 }} />
+            </i>
+          </Tooltip>
+          <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.refresh-wallet' })}>
+            <i
+              onClick={() => handleAction ? handleAction(EnumAction.RefreshWallet, rowIndex, column, row) : null}
+            >
+              <Icon path={mdiWalletOutline} className={classes.rowIconAction} style={{ marginTop: 2 }} />
             </i>
           </Tooltip>
         </div>
@@ -205,9 +214,10 @@ interface ConsumerTableProps extends WithStyles<typeof styles> {
   setPager: (page: number, size: number) => void,
   setSorting: (sorting: Sorting<EnumMarketplaceAccountSortField>[]) => void,
   addToSelection: (rows: MarketplaceAccountSummary[]) => void,
-  sendMessage: (row: MarketplaceAccountSummary) => void;
+  refreshWallet: (row: MarketplaceAccountSummary) => void;
   removeFromSelection: (rows: MarketplaceAccountSummary[]) => void,
   resetSelection: () => void;
+  sendMessage: (row: MarketplaceAccountSummary) => void;
   sorting: Sorting<EnumMarketplaceAccountSortField>[];
   loading?: boolean;
 }
@@ -225,6 +235,10 @@ class ConsumerTable extends React.Component<ConsumerTableProps> {
   ): void {
     if (row.key) {
       switch (action) {
+        case EnumAction.RefreshWallet:
+          this.props.refreshWallet(row);
+          break;
+
         case EnumAction.SendMessage:
           this.props.sendMessage(row);
           break;

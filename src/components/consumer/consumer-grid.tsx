@@ -14,10 +14,11 @@ import Typography from '@material-ui/core/Typography';
 
 // Icons
 import Icon from '@mdi/react';
-import { mdiCommentAlertOutline } from '@mdi/js';
+import { mdiCommentAlertOutline, mdiWalletOutline } from '@mdi/js';
 
 // Services
 import message from 'service/message';
+import MarketplaceAccountApi from 'service/account-marketplace';
 
 // Store
 import { RootState } from 'store';
@@ -61,6 +62,16 @@ interface ConsumerManagerProps extends PropsFromRedux, WithStyles<typeof styles>
 
 class ConsumerManager extends React.Component<ConsumerManagerProps> {
 
+  private accountApi: MarketplaceAccountApi;
+
+  constructor(props: ConsumerManagerProps) {
+    super(props);
+
+    this.accountApi = new MarketplaceAccountApi();
+
+    this.refreshWallet = this.refreshWallet.bind(this);
+  }
+
   componentDidMount() {
     this.find();
   }
@@ -71,6 +82,26 @@ class ConsumerManager extends React.Component<ConsumerManagerProps> {
         message.errorHtml("Find operation has failed", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
       }
     });
+  }
+
+  refreshWallet(row: MarketplaceAccountSummary): void {
+    this.accountApi.refreshWalletFunds(row.key)
+      .then((response) => {
+        if (response.data!.success) {
+          message.infoHtml(
+            <FormattedMessage
+              id={'account-marketplace.message.wallet-funds-refresh-success'}
+            />,
+            () => (<Icon path={mdiWalletOutline} size="3rem" />),
+          );
+          this.find();
+        } else {
+          message.error('account-marketplace.message.wallet-funds-refresh-failure');
+        }
+      })
+      .catch(() => {
+        message.error('account-marketplace.message.wallet-funds-refresh-failure');
+      });
   }
 
   setSorting(sorting: Sorting<EnumMarketplaceAccountSortField>[]): void {
@@ -138,6 +169,7 @@ class ConsumerManager extends React.Component<ConsumerManagerProps> {
               setPager={setPager}
               setSorting={(sorting: Sorting<EnumMarketplaceAccountSortField>[]) => this.setSorting(sorting)}
               addToSelection={addToSelection}
+              refreshWallet={this.refreshWallet}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
               sendMessage={(row: MarketplaceAccountSummary) => this.showSendMessageDialog(row)}

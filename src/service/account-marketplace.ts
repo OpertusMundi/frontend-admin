@@ -107,6 +107,12 @@ export default class MarketplaceAccountApi extends Api {
     return this.put<unknown, ObjectResponse<MarketplaceAccount>>(url, null);
   }
 
+  public async refreshWalletFunds(key: string): Promise<AxiosObjectResponse<MarketplaceAccount>> {
+    const url = `/action/marketplace/accounts/${key}/wallet-funds`;
+
+    return this.put<unknown, ObjectResponse<MarketplaceAccount>>(url, null);
+  }
+
   public async toggleTester(key: string): Promise<AxiosObjectResponse<MarketplaceAccount>> {
     const url = `/action/marketplace/accounts/${key}/tester`;
 

@@ -20,6 +20,7 @@ import {
   mdiMessageTextOutline,
   mdiShieldRefreshOutline,
   mdiTrashCanOutline,
+  mdiWalletOutline,
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
@@ -37,6 +38,7 @@ import { EnumMarketplaceRole } from 'model/role';
 enum EnumAction {
   DeleteAllUserData = 'delete-all-user-data',
   KycRefresh = 'kyc-refresh',
+  RefreshWallet = 'refresh-wallet',
   SendMessage = 'send-message',
   ToggleTester = 'toggle-tester',
   VendorDetails = 'vendor-details',
@@ -61,13 +63,20 @@ function accountColumns(props: AccountTableProps): Column<MarketplaceAccountSumm
               <Icon path={mdiMessageTextOutline} className={classes.rowIconAction} style={{ marginTop: 2 }} />
             </i>
           </Tooltip>
+          {row.type === EnumAccountType.OPERTUSMUNDI && (row.consumer || row.provider) &&
+            <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.refresh-wallet' })}>
+              <i
+                onClick={() => handleAction ? handleAction(EnumAction.RefreshWallet, rowIndex, column, row) : null}
+              >
+                <Icon path={mdiWalletOutline} className={classes.rowIconAction} style={{ marginTop: 2 }} />
+              </i>
+            </Tooltip>
+          }
           {row.type === EnumAccountType.VENDOR &&
             <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.vendor-details' })}>
-              <i
-                onClick={() => handleAction ? handleAction(EnumAction.VendorDetails, rowIndex, column, row) : null}
-              >
+              <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [row.parentKey + ''])} className={classes.link}>
                 <Icon path={mdiDomain} className={classes.rowIconAction} />
-              </i>
+              </Link>
             </Tooltip>
           }
           {row.type === EnumAccountType.OPERTUSMUNDI && (row.consumer || row.provider) &&
@@ -346,6 +355,7 @@ interface AccountTableProps extends WithStyles<typeof styles> {
     pageRequest?: PageRequest, sorting?: Sorting<EnumMarketplaceAccountSortField>[]
   ) => Promise<PageResult<MarketplaceAccountSummary> | null>;
   refreshKycStatus: (row: MarketplaceAccountSummary) => void;
+  refreshWallet: (row: MarketplaceAccountSummary) => void;
   removeFromSelection: (rows: MarketplaceAccountSummary[]) => void;
   resetSelection: () => void;
   sendMessage: (row: MarketplaceAccountSummary) => void;
@@ -376,6 +386,11 @@ class AccountTable extends React.Component<AccountTableProps> {
         case EnumAction.KycRefresh:
           this.props.refreshKycStatus(row);
           break;
+
+        case EnumAction.RefreshWallet:
+          this.props.refreshWallet(row);
+          break;
+
 
         case EnumAction.SendMessage:
           this.props.sendMessage(row);

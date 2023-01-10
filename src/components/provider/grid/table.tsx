@@ -16,6 +16,7 @@ import {
   mdiCogSyncOutline,
   mdiEmailAlertOutline,
   mdiMessageTextOutline,
+  mdiWalletOutline,
 } from '@mdi/js';
 
 import MaterialTable, { cellActionHandler, Column } from 'components/material-table';
@@ -30,6 +31,7 @@ import clsx from 'clsx';
 
 enum EnumAction {
   CreatePayOut = 'create-payout',
+  RefreshWallet = 'refresh-wallet',
   SendMessage = 'send-message',
 };
 
@@ -49,6 +51,13 @@ function providerColumns(intl: IntlShape, props: ProviderTableProps): Column<Mar
               onClick={() => handleAction ? handleAction(EnumAction.SendMessage, rowIndex, column, row) : null}
             >
               <Icon path={mdiMessageTextOutline} className={classes.rowIconAction} style={{ marginTop: 2 }} />
+            </i>
+          </Tooltip>
+          <Tooltip title={intl.formatMessage({ id: 'account.marketplace.tooltip.refresh-wallet' })}>
+            <i
+              onClick={() => handleAction ? handleAction(EnumAction.RefreshWallet, rowIndex, column, row) : null}
+            >
+              <Icon path={mdiWalletOutline} className={classes.rowIconAction} style={{ marginTop: 2 }} />
             </i>
           </Tooltip>
           {row.providerKycLevel === EnumKycLevel.REGULAR &&
@@ -246,6 +255,7 @@ interface ProviderTableProps extends WithStyles<typeof styles> {
   setPager: (page: number, size: number) => void,
   setSorting: (sorting: Sorting<EnumMarketplaceAccountSortField>[]) => void,
   addToSelection: (rows: MarketplaceAccountSummary[]) => void,
+  refreshWallet: (row: MarketplaceAccountSummary) => void;
   removeFromSelection: (rows: MarketplaceAccountSummary[]) => void,
   resetSelection: () => void;
   sendMessage: (row: MarketplaceAccountSummary) => void;
@@ -268,6 +278,10 @@ class ProviderTable extends React.Component<ProviderTableProps> {
       switch (action) {
         case EnumAction.CreatePayOut:
           this.props.createPayOut(row.key);
+          break;
+
+        case EnumAction.RefreshWallet:
+          this.props.refreshWallet(row);
           break;
 
         case EnumAction.SendMessage:

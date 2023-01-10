@@ -17,7 +17,7 @@ import Typography from '@material-ui/core/Typography';
 
 // Icons
 import Icon from '@mdi/react';
-import { mdiShieldBugOutline, mdiCommentAlertOutline, mdiShieldRefreshOutline, mdiTrashCan, mdiUndoVariant, mdiTrashCanOutline, mdiShredder } from '@mdi/js';
+import { mdiShieldBugOutline, mdiCommentAlertOutline, mdiShieldRefreshOutline, mdiTrashCan, mdiUndoVariant, mdiTrashCanOutline, mdiShredder, mdiWalletOutline } from '@mdi/js';
 
 // Services
 import message from 'service/message';
@@ -91,6 +91,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
 
     this.deleteAllUserData = this.deleteAllUserData.bind(this);
     this.refreshKycStatus = this.refreshKycStatus.bind(this);
+    this.refreshWallet = this.refreshWallet.bind(this);
     this.toggleTester = this.toggleTester.bind(this);
   }
 
@@ -157,7 +158,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
               }
             })
             .catch(() => {
-              message.error('account-marketplace.message.kyc-refresh-failure');
+              message.error('account-marketplace.message.delete-user-failure');
             });
         }
         break;
@@ -205,6 +206,26 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
       })
       .catch(() => {
         message.error('account-marketplace.message.kyc-refresh-failure');
+      });
+  }
+
+  refreshWallet(row: MarketplaceAccountSummary): void {
+    this.api.refreshWalletFunds(row.key)
+      .then((response) => {
+        if (response.data!.success) {
+          message.infoHtml(
+            <FormattedMessage
+              id={'account-marketplace.message.wallet-funds-refresh-success'}
+            />,
+            () => (<Icon path={mdiWalletOutline} size="3rem" />),
+          );
+          this.find();
+        } else {
+          message.error('account-marketplace.message.wallet-funds-refresh-failure');
+        }
+      })
+      .catch(() => {
+        message.error('account-marketplace.message.wallet-funds-refresh-failure');
       });
   }
 
@@ -308,6 +329,7 @@ class AccountManager extends React.Component<AccountManagerProps, AccountManager
               deleteAllUserData={this.deleteAllUserData}
               find={this.props.find}
               refreshKycStatus={this.refreshKycStatus}
+              refreshWallet={this.refreshWallet}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
               sendMessage={(row: MarketplaceAccountSummary) => this.showSendMessageDialog(row)}

@@ -356,6 +356,7 @@ export interface MarketplaceAccountSummary {
   imageMimeType: string;
   key: string;
   locale: string;
+  parentKey: string | null;
   pendingPayoutFunds: number;
   pendingPayoutFundsUpdatedOn: Moment | null;
   profile: Profile;

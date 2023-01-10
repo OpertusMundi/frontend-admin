@@ -28,7 +28,6 @@ import {
   mdiAccountOutline,
   mdiClockFast,
   mdiDatabaseCogOutline,
-  mdiKeyOutline,
 } from '@mdi/js';
 
 // Model

@@ -22,6 +22,7 @@ import {
   mdiBankTransferOut,
   mdiCommentAlertOutline,
   mdiUndoVariant,
+  mdiWalletOutline,
 } from '@mdi/js';
 
 // Services
@@ -150,6 +151,7 @@ class ProviderManager extends React.Component<ProviderManagerProps, ProviderMana
     this.payOutApi = new PayOutApi();
 
     this.createPayOut = this.createPayOut.bind(this);
+    this.refreshWallet = this.refreshWallet.bind(this);
   }
 
   state: ProviderManagerState = {
@@ -168,6 +170,26 @@ class ProviderManager extends React.Component<ProviderManagerProps, ProviderMana
       })
       .catch((err) => {
         message.errorHtml("Failed to update wallet funds", () => (<Icon path={mdiCommentAlertOutline} size="3rem" />));
+      });
+  }
+
+  refreshWallet(row: MarketplaceAccountSummary): void {
+    this.accountApi.refreshWalletFunds(row.key)
+      .then((response) => {
+        if (response.data!.success) {
+          message.infoHtml(
+            <FormattedMessage
+              id={'account-marketplace.message.wallet-funds-refresh-success'}
+            />,
+            () => (<Icon path={mdiWalletOutline} size="3rem" />),
+          );
+          this.find();
+        } else {
+          message.error('account-marketplace.message.wallet-funds-refresh-failure');
+        }
+      })
+      .catch(() => {
+        message.error('account-marketplace.message.wallet-funds-refresh-failure');
       });
   }
 
@@ -312,6 +334,7 @@ class ProviderManager extends React.Component<ProviderManagerProps, ProviderMana
               setPager={setPager}
               setSorting={(sorting: Sorting<EnumMarketplaceAccountSortField>[]) => this.setSorting(sorting)}
               addToSelection={addToSelection}
+              refreshWallet={this.refreshWallet}
               removeFromSelection={removeFromSelection}
               resetSelection={resetSelection}
               sendMessage={(row: MarketplaceAccountSummary) => this.showSendMessageDialog(row)}
