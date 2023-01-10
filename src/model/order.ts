@@ -40,6 +40,48 @@ export enum EnumPayInItemType {
   SERVICE_BILLING = 'SERVICE_BILLING',
 }
 
+export enum EnumTransactionType {
+  /**
+   * Not specified.
+   */
+  NotSpecified = 'NotSpecified',
+  /**
+   * PAYIN transaction type.
+   */
+  PAYIN = 'PAYIN',
+  /**
+   * PAYOUT transaction type.
+   */
+  PAYOUT = 'PAYOUT',
+  /**
+   * TRANSFER transaction type.
+   */
+  TRANSFER = 'TRANSFER',
+}
+
+export enum EnumTransactionNature {
+  /**
+   * Not specified.
+   */
+  NotSpecified = 'NotSpecified',
+  /**
+   * REGULAR transaction nature.
+   */
+  REGULAR = 'REGULAR',
+  /**
+   * REFUND transaction nature.
+   */
+  REFUND = 'REFUND',
+  /**
+   * REPUDIATION transaction nature.
+   */
+  REPUDIATION = 'REPUDIATION',
+  /**
+   * SETTLEMENT transaction nature.
+   */
+  SETTLEMENT = 'SETTLEMENT'
+}
+
 export enum EnumTransactionStatus {
   /**
    * Not specified.
@@ -59,6 +101,37 @@ export enum EnumTransactionStatus {
   FAILED = 'FAILED',
 }
 
+export enum EnumRefundReasonType {
+  /**
+   * Not specified.
+   */
+  NotSpecified = 'NotSpecified',
+  /**
+   * Incorrect bank account.
+   */
+  BANKACCOUNT_INCORRECT = 'BANKACCOUNT_INCORRECT',
+  /**
+   * Closed bank account.
+   */
+  BANKACCOUNT_HAS_BEEN_CLOSED = 'BANKACCOUNT_HAS_BEEN_CLOSED',
+  /**
+   * Owner-bank account mismatch.
+   */
+  OWNER_DOT_NOT_MATCH_BANKACCOUNT = 'OWNER_DOT_NOT_MATCH_BANKACCOUNT',
+  /**
+   * Withdrawal impossible on savings accounts.
+   */
+  WITHDRAWAL_IMPOSSIBLE_ON_SAVINGS_ACCOUNTS = 'WITHDRAWAL_IMPOSSIBLE_ON_SAVINGS_ACCOUNTS',
+  /**
+   * Initialized by client.
+   */
+  INITIALIZED_BY_CLIENT = 'INITIALIZED_BY_CLIENT',
+  /**
+   * Other.
+   */
+  OTHER = 'OTHER'
+}
+
 export interface BrowserInfo {
   colorDepth: number;
   javaEnabled: boolean;
@@ -75,7 +148,12 @@ export interface PayInAddress extends Address {
   lastName: string;
 }
 
-export interface Transfer {
+export interface Transaction {
+  transactionId?: string;
+  transactionType: EnumTransactionType;
+}
+
+export interface Transfer extends Transaction {
   /**
    * Transfer unique key
    */
@@ -369,7 +447,7 @@ export interface PayInStatus {
   updatedOn: Moment;
 }
 
-export interface PayIn {
+export interface PayIn extends Transaction {
   /**
    * Payment method
    */
@@ -446,6 +524,10 @@ export interface PayIn {
    * Provider error message
    */
   providerResultMessage?: string;
+  /**
+   * PayIn refund
+   */
+  refund?: Refund;
 }
 
 export interface FreePayIn extends PayIn {
@@ -764,16 +846,31 @@ export interface PayOutCommand {
   debitedFunds: number;
 }
 
-export interface Refund {
-  refund: string
-  refundCreatedOn: Moment;
-  refundExecutedOn: Moment | null;
-  refundStatus: EnumTransactionStatus;
-  refundReasonType: string;
+export interface Refund extends Transaction {
+  authorId?: string;
+  creationDate: Moment;
+  creditedFunds: number;
+  creditedUserId?: string;
+  creditedWalletId?: string;
+  currency: string;
+  debitedFunds: number;
+  debitedWalletId?: string;
+  executionDate: Moment;
+  fees: number;
+  initialTransactionId?: string;
+  initialTransactionType: EnumTransactionType
+  key: string;
+  resultCode: string;
+  resultMessage: string;
+  transactionId?: string;
+  transactionNature: EnumTransactionNature;
+  transactionStatus: EnumTransactionStatus;
+  transactionType: EnumTransactionType;
+  refundReasonType: EnumRefundReasonType;
   refundReasonMessage: string;
 }
 
-export interface PayOut {
+export interface PayOut extends Transaction {
   /**
    * Payout platform unique key
    */
@@ -824,7 +921,6 @@ export interface PayOut {
    */
   bankwireRef: string;
   provider?: CustomerProfessional;
-  providerPayOut?: string;
   providerResultCode?: string;
   providerResultMessage?: string;
   refund?: Refund;

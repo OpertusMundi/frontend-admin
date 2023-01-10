@@ -121,15 +121,15 @@ function orderColumns(intl: IntlShape, props: OrderTableProps): Column<Order, En
       cell: (
         rowIndex: number, column: Column<Order, EnumOrderSortField>, row: Order, handleAction?: cellActionHandler<Order, EnumOrderSortField>
       ): React.ReactNode => {
-
+        const refund = row?.payIn?.refund;
         return (
           <div className={classes.compositeLabelCenter}>
             {row?.status &&
               <div
                 className={classes.labelOrderStatus}
-                style={{ background: statusToBackGround(row.status) }}
+                style={{ background: statusToBackGround(row) }}
               >
-                {intl.formatMessage({ id: `enum.order-status.${row.status}` })}
+                {intl.formatMessage({ id: `enum.order-status.${refund ? 'REFUND' : row.status}` })}
               </div>
             }
           </div>
@@ -223,10 +223,6 @@ function orderColumns(intl: IntlShape, props: OrderTableProps): Column<Order, En
 }
 
 const styles = (theme: Theme) => createStyles({
-  root: {
-    display: 'flex',
-    padding: 0,
-  },
   rowIcon: {
     width: 18,
     marginRight: 8,
@@ -319,8 +315,11 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-const statusToBackGround = (status: EnumOrderStatus): string => {
-  switch (status) {
+const statusToBackGround = (row: Order): string => {
+  if (row.payIn?.refund) {
+    return '#616161';
+  }
+  switch (row.status) {
     case EnumOrderStatus.SUCCEEDED:
       return '#2E7D32';
     case EnumOrderStatus.CANCELLED:

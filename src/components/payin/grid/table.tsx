@@ -114,9 +114,12 @@ function renderItems(payin: PayInType, props: PayInTableProps, intl: IntlShape) 
 }
 
 const styles = (theme: Theme) => createStyles({
-  root: {
-    display: 'flex',
-    padding: 0,
+  amount: {
+    fontWeight: 700,
+  },
+  amountRefunded: {
+    fontWeight: 700,
+    textDecoration: 'line-through',
   },
   rowIcon: {
     width: 18,
@@ -271,6 +274,7 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayInType
             </Tooltip>
           }
           {
+            !row.refund &&
             props.createTransfer &&
             row.status === EnumTransactionStatus.SUCCEEDED &&
             !hasTransfer(row) && row.paymentMethod !== EnumPaymentMethod.FREE &&
@@ -344,15 +348,25 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayInType
       cell: (
         rowIndex: number, column: Column<PayInType, EnumPayInSortField>, row: PayInType, handleAction?: cellActionHandler<PayInType, EnumPayInSortField>
       ): React.ReactNode => {
-
+        const refundReasonType = row?.refund?.refundReasonType;
+        const refundReasonMessage = row?.refund?.refundReasonMessage || '';
         return (
           <div className={classes.labelPayInContainer}>
             {row?.status &&
               <div
                 className={classes.labelPayInStatus}
-                style={{ background: statusToBackGround(row.status) }}
+                style={{ background: statusToBackGround(row) }}
               >
-                {intl.formatMessage({ id: `enum.transaction-status.${row.status}` })}
+                {intl.formatMessage({ id: `enum.transaction-status.${row.refund ? 'REFUND' : row.status}` })}
+              </div>
+            }
+            {row?.status && row.refund &&
+              <div className={classes.labelPayInMessage}>
+                <Typography variant="caption">
+                  {'Reason : '}
+                  {intl.formatMessage({ id: `enum.refund-reason-type.${refundReasonType}` })}
+                  {`${refundReasonMessage ? ' - ' : ''}${refundReasonMessage}`}
+                </Typography>
               </div>
             }
             {row?.status === EnumTransactionStatus.FAILED &&
@@ -414,9 +428,9 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayInType
         rowIndex: number, column: Column<PayInType, EnumPayInSortField>, row: PayInType, handleAction?: cellActionHandler<PayInType, EnumPayInSortField>
       ): React.ReactNode => {
         return (
-          <b>
+          <span className={row.refund ? classes.amountRefunded : classes.amount}>
             <FormattedNumber value={row.totalPrice} style={'currency'} currency={row.currency} />
-          </b>
+          </span>
         )
       },
     }, {
@@ -435,8 +449,11 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayInType
     }]);
 }
 
-const statusToBackGround = (status: EnumTransactionStatus): string => {
-  switch (status) {
+const statusToBackGround = (row: PayInType): string => {
+  if (row.refund) {
+    return '#616161';
+  }
+  switch (row.status) {
     case EnumTransactionStatus.SUCCEEDED:
       return '#4CAF50';
     case EnumTransactionStatus.FAILED:

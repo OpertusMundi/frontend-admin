@@ -147,7 +147,7 @@ class PayOutDetails extends React.Component<PayOutDetailsProps> {
   }
 
   showMangopayPayoutPage(payout: PayOut) {
-    window.open(`https://dashboard.sandbox.mangopay.com/PayOut/${payout.providerPayOut}`);
+    window.open(`https://dashboard.sandbox.mangopay.com/PayOut/${payout.transactionId}`);
   }
 
   showMangopayBankAccountPage(user: string, bankAccount: string) {
@@ -223,7 +223,7 @@ class PayOutDetails extends React.Component<PayOutDetailsProps> {
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Provider Transaction</Typography>
           <Typography gutterBottom>
-            <span className={classes.underline} onClick={() => this.showMangopayPayoutPage(payout)}>{payout.providerPayOut}</span>
+            <span className={classes.underline} onClick={() => this.showMangopayPayoutPage(payout)}>{payout.transactionId}</span>
           </Typography>
         </Grid>
         <Grid item xs={8}>
