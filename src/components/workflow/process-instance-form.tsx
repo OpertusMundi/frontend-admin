@@ -128,7 +128,7 @@ class ProcessInstance extends React.Component<ProcessInstanceProps, ProcessInsta
   }
 
   loadData() {
-    const params = qs.parse(this.props.location.search.substr(1));
+    const params = qs.parse(this.props.location.search.substring(1));
     const businessKey = params['businessKey'] as string || null;
     const processInstance = params['processInstance'] as string || null;
 

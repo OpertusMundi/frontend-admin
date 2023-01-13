@@ -105,7 +105,7 @@ class ProcessInstanceHistory extends React.Component<ProcessInstanceHistoryProps
   }
 
   componentDidMount() {
-    const params = qs.parse(this.props.location.search.substr(1));
+    const params = qs.parse(this.props.location.search.substring(1));
 
     if (params['businessKey'] || params['processInstance']) {
       this.props.findOne(params['businessKey'] as string, params['processInstance'] as string)
