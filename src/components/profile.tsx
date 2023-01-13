@@ -150,15 +150,12 @@ class Profile extends React.Component<ProfileFormProps, ProfileFormState> {
 
   private fileEditRef: React.RefObject<HTMLInputElement>;
 
-  private imageRef: React.RefObject<HTMLImageElement>;
-
   private form: any;
 
   constructor(props: ProfileFormProps) {
     super(props);
 
     this.fileEditRef = React.createRef<HTMLInputElement>();
-    this.imageRef = React.createRef<HTMLImageElement>();
 
     const { profile } = props;
 
@@ -182,6 +179,11 @@ class Profile extends React.Component<ProfileFormProps, ProfileFormState> {
     return !this.state.avatar;
   }
 
+  get imageSrc(): string | null {
+    const { avatar } = this.state;
+    return avatar ? `data:${avatar?.imageMimeType};base64,${avatar?.image}` : null;
+  }
+
   onFileSelect(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
 
@@ -201,10 +203,6 @@ class Profile extends React.Component<ProfileFormProps, ProfileFormState> {
       if (response.success) {
         this.form.resetForm();
         message.info('message.avatar-changed');
-
-        if (this.imageRef.current) {
-          this.imageRef.current.src = '';
-        }
 
         this.setState({
           avatar: null,
@@ -253,18 +251,14 @@ class Profile extends React.Component<ProfileFormProps, ProfileFormState> {
       const result = reader.result;
 
       if (result) {
-        if (this.imageRef.current) {
-          this.imageRef.current.src = result as string;
+        const parts = (result as string).split(/;|:|,/, 4);
 
-          const parts = (result as string).split(/;|:|,/, 4);
-
-          this.setState({
-            avatar: {
-              image: parts[3],
-              imageMimeType: parts[1],
-            },
-          });
-        }
+        this.setState({
+          avatar: {
+            image: parts[3],
+            imageMimeType: parts[1],
+          },
+        });
       }
     }, false);
 
@@ -330,17 +324,6 @@ class Profile extends React.Component<ProfileFormProps, ProfileFormState> {
     }
   }
 
-  componentDidMount() {
-    // Refresh image the first time the component is loaded
-    if (this.state.avatar) {
-      const { profile } = this.props;
-
-      if (this.imageRef.current) {
-        this.imageRef.current.src = `data:${profile?.imageMimeType};base64,${profile?.image}`;
-      }
-    }
-  }
-
   render() {
     const _t = this.props.intl.formatMessage;
 
@@ -377,17 +360,18 @@ class Profile extends React.Component<ProfileFormProps, ProfileFormState> {
               {!avatar &&
                 <AddPhotoAlternateOutlinedIcon style={{ fontSize: '4rem' }} className={classes.avatarImagePlaceholder} />
               }
-              <img
-                className={
-                  clsx(
-                    classes.avatarImage, {
-                    [classes.hidden]: !avatar,
-                  })
-                }
-                src={'/image.png'}
-                alt={_t({ id: 'profile.form.avatar-image-title' })}
-                ref={this.imageRef}
-              />
+              {this.imageSrc &&
+                <img
+                  className={
+                    clsx(
+                      classes.avatarImage, {
+                      [classes.hidden]: !avatar,
+                    })
+                  }
+                  src={this.imageSrc}
+                  alt={_t({ id: 'profile.form.avatar-image-title' })}
+                />
+              }
             </CardContent>
             <CardActions disableSpacing className={classes.cardActions}>
               <Button
