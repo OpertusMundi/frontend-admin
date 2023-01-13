@@ -362,8 +362,8 @@ function transferColumns(props: TransferTableProps): Column<PayInItemType, EnumT
         row: PayInItemType,
         handleAction?: cellActionHandler<PayInItemType, EnumTransferSortField>
       ): React.ReactNode => (
-        row?.transfer?.executedOn ?
-          <DateTime value={row?.transfer?.executedOn?.toDate()} day='numeric' month='numeric' year='numeric' />
+        row?.transfer?.executionDate ?
+          <DateTime value={row?.transfer?.executionDate?.toDate()} day='numeric' month='numeric' year='numeric' />
           :
           null
       ),
@@ -378,15 +378,15 @@ function transferColumns(props: TransferTableProps): Column<PayInItemType, EnumT
 
         return (
           <div className={classes.labelPayInContainer}>
-            {row.transfer?.status &&
+            {row.transfer?.transactionStatus &&
               <div
                 className={classes.labelPayInStatus}
-                style={{ background: statusToBackGround(row.transfer!.status) }}
+                style={{ background: statusToBackGround(row.transfer!.transactionStatus) }}
               >
-                {intl.formatMessage({ id: `enum.transaction-status.${row.transfer!.status}` })}
+                {intl.formatMessage({ id: `enum.transaction-status.${row.transfer!.transactionStatus}` })}
               </div>
             }
-            {row.transfer?.status === EnumTransactionStatus.FAILED &&
+            {row.transfer?.transactionStatus === EnumTransactionStatus.FAILED &&
               <div className={classes.labelPayInMessage}>
                 {`${row?.transfer?.resultCode} - ${row?.transfer?.resultMessage}`}
               </div>

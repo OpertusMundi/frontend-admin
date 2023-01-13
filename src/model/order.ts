@@ -155,41 +155,77 @@ export interface Transaction {
 
 export interface Transfer extends Transaction {
   /**
-   * Transfer unique key
+   * Transfer unique identifier
    */
   key: string;
   /**
-   * Funds debited from buyer's wallet and credited to seller's wallet
+   * The amount of the debited funds
+   */
+  debitedFunds: number;
+  /**
+   * The amount of credited funds
    */
   creditedFunds: number;
   /**
-   * Platform fees
+   * The amount of client (Topio) fees
    */
   fees: number;
   /**
-   * Transaction status
+   * The currency in ISO-4217 format
    */
-  status: EnumTransactionStatus;
+  currency: string;
   /**
-   * Date of creation in ISO format
+   * The ID of the wallet that was debited
    */
-  createdOn: Moment;
+  debitedWalletId?: string;
   /**
-   * Date of execution in ISO format
+   * The ID of the wallet where money will be credited
    */
-  executedOn: Moment;
+  creditedWalletId?: string;
   /**
-   * Provider identifier
+   * A user's ID
    */
-  providerId: string;
+  authorId?: string;
   /**
-   * Provider error code
+   * The user ID who is credited (defaults to the owner of the wallet)
+   */
+  creditedUserId?: string;
+  /**
+   * When the transaction created
+   */
+  creationDate: Moment;
+  /**
+   * When the transaction happened
+   */
+  executionDate: Moment;
+  /**
+   * The result code
    */
   resultCode: string;
   /**
-   * Provider error message
+   * A verbal explanation of the `ResultCode`
    */
   resultMessage: string;
+  /**
+   * The transaction ID
+   */
+  transactionId?: string;
+  /**
+   * The status of the transaction
+   */
+  transactionStatus: EnumTransactionStatus;
+  /**
+   * The nature of the transaction
+   */
+  transactionNature: EnumTransactionNature;
+  /**
+   * The type of the transaction
+   */
+  transactionType: EnumTransactionType;
+  /**
+   * Transfer refund
+   */
+  refund?: Refund;
 }
 
 export enum EnumServiceBillingSortField {

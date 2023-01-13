@@ -59,6 +59,7 @@ import {
   FreePayIn,
   ServiceBilling,
   EnumBillableServiceType,
+  Refund,
 } from 'model/order';
 import { EnumPricingModel } from 'model/pricing-model';
 
@@ -112,6 +113,13 @@ const styles = (theme: Theme) => createStyles({
   },
   paper: {
     padding: '6px 16px',
+  },
+  refundType: {
+    color: grey[50],
+    background: '#757575',
+    borderRadius: theme.spacing(0.5),
+    padding: theme.spacing(0.5),
+    display: 'inline-block',
   },
   serviceType: {
     borderRadius: theme.spacing(0.5),
@@ -202,13 +210,18 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     }
   }
 
-  showMangopayPage(payin: PayInType) {
+  showMangopayPayInPage(payin: PayInType) {
     window.open(`https://dashboard.sandbox.mangopay.com/PayIn/${payin.providerPayIn}`);
   }
 
   showMangopayTransferPage(transfer: Transfer) {
-    window.open(`https://dashboard.sandbox.mangopay.com/Transfer/${transfer.providerId}`);
+    window.open(`https://dashboard.sandbox.mangopay.com/Transfer/${transfer.transactionId}`);
   }
+
+  showMangopayRefundPage(refund: Refund) {
+    window.open(`https://dashboard.sandbox.mangopay.com/Refund/${refund.transactionId}`);
+  }
+
 
   showPayInManager(e: React.MouseEvent, payin: PayInType) {
     e.preventDefault();
@@ -309,6 +322,72 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     }
   }
 
+  renderRefund(refund: Refund): React.ReactNode {
+    const { classes } = this.props;
+    return (
+      <Grid container>
+        <Grid item xs={12}>
+          <Typography variant="h6" gutterBottom className={classes.title}>
+            <FormattedMessage id={'billing.payin.details.sections.refund'} />
+          </Typography>
+        </Grid>
+        <Grid item xs={4}>
+          <Typography className={classes.inline} variant="caption">Created On</Typography>
+          <Typography gutterBottom>
+            <DateTime value={refund.creationDate.toDate()} day='numeric' month='numeric' year='numeric' />
+          </Typography>
+        </Grid>
+        <Grid item xs={4}>
+          <Typography className={classes.inline} variant="caption">Executed On</Typography>
+          <Typography gutterBottom>
+            {refund.executionDate
+              ? <DateTime value={refund.executionDate.toDate()} day='numeric' month='numeric' year='numeric' />
+              : '-'
+            }
+          </Typography>
+        </Grid>
+        <Grid item xs={4}>
+          <Typography className={classes.inline} variant="caption">Status</Typography>
+          <Typography
+            gutterBottom
+            className={classes.status}
+            style={{ background: this.mapStatusToColor(refund.transactionStatus) }}
+          >
+            <FormattedMessage id={`enum.transaction-status.${refund.transactionStatus}`} />
+          </Typography>
+        </Grid>
+        <Grid item xs={4}>
+          <Typography className={classes.inline} variant="caption">Provider Transaction</Typography>
+          <Typography gutterBottom>
+            <span className={classes.underline} onClick={() => this.showMangopayRefundPage(refund)}>{refund.transactionId}</span>
+          </Typography>
+        </Grid>
+        <Grid item xs={8}>
+          <Typography className={classes.inline} variant="caption">Provider Result</Typography>
+          <Typography gutterBottom>
+            {refund.resultCode ? `${refund.resultCode} - ${refund.resultMessage}` : '-'}
+          </Typography>
+        </Grid>
+        <Grid item xs={4}>
+          <Typography className={classes.inline} variant="caption">Reason Type</Typography>
+          <Typography gutterBottom component={'span'} className={classes.refundType}>
+            {refund.refundReasonType ? (
+              <FormattedMessage id={`enum.refund-reason-type.${refund.refundReasonType}`} />
+            ) : (
+              '-'
+            )}
+          </Typography>
+        </Grid>
+        <Grid item xs={4}>
+          <Typography className={classes.inline} variant="caption">Reason Message</Typography>
+          <Typography gutterBottom>
+            {refund.refundReasonMessage ? `${refund.refundReasonMessage}` : '-'}
+          </Typography>
+        </Grid>
+      </Grid >
+    );
+  }
+
   renderFreePaymentDetails(payin: FreePayIn): React.ReactNode {
     const { classes } = this.props;
 
@@ -316,7 +395,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="h6" gutterBottom className={classes.title}>
-            <FormattedMessage id={'billing.payin.details.sections.status'} />
+            <FormattedMessage id={'billing.payin.details.sections.transaction'} />
           </Typography>
         </Grid>
         <Grid item xs={4}>
@@ -336,7 +415,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
         </Grid>
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Status</Typography>
-          <Typography gutterBottom className={classes.status} style={{ background: this.mapStatusToColor(payin) }}>
+          <Typography gutterBottom className={classes.status} style={{ background: this.mapStatusToColor(payin.status) }}>
             <FormattedMessage id={`enum.transaction-status.${payin.status}`} />
           </Typography>
         </Grid>
@@ -352,7 +431,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="h6" gutterBottom className={classes.title}>
-            <FormattedMessage id={'billing.payin.details.sections.status'} />
+            <FormattedMessage id={'billing.payin.details.sections.transaction'} />
           </Typography>
         </Grid>
         <Grid item xs={4}>
@@ -372,19 +451,14 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
         </Grid>
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Status</Typography>
-          <Typography gutterBottom className={classes.status} style={{ background: this.mapStatusToColor(payin) }}>
+          <Typography gutterBottom className={classes.status} style={{ background: this.mapStatusToColor(payin.status) }}>
             <FormattedMessage id={`enum.transaction-status.${payin.status}`} />
-          </Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Typography variant="h6" gutterBottom className={classes.title}>
-            <FormattedMessage id={'billing.payin.details.sections.transaction'} />
           </Typography>
         </Grid>
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Provider Transaction</Typography>
           <Typography gutterBottom>
-            <span className={classes.underline} onClick={() => this.showMangopayPage(payin)}>{payin.providerPayIn}</span>
+            <span className={classes.underline} onClick={() => this.showMangopayPayInPage(payin)}>{payin.providerPayIn}</span>
           </Typography>
         </Grid>
         <Grid item xs={8}>
@@ -422,7 +496,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="h6" gutterBottom className={classes.title}>
-            <FormattedMessage id={'billing.payin.details.sections.status'} />
+            <FormattedMessage id={'billing.payin.details.sections.transaction'} />
           </Typography>
         </Grid>
         <Grid item xs={4}>
@@ -442,19 +516,14 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
         </Grid>
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Status</Typography>
-          <Typography gutterBottom className={classes.status} style={{ background: this.mapStatusToColor(payin) }}>
+          <Typography gutterBottom className={classes.status} style={{ background: this.mapStatusToColor(payin.status) }}>
             <FormattedMessage id={`enum.transaction-status.${payin.status}`} />
-          </Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Typography variant="h6" gutterBottom className={classes.title}>
-            <FormattedMessage id={'billing.payin.details.sections.transaction'} />
           </Typography>
         </Grid>
         <Grid item xs={4}>
           <Typography className={classes.inline} variant="caption">Provider Transaction</Typography>
           <Typography gutterBottom>
-            <span className={classes.underline} onClick={() => this.showMangopayPage(payin)}>{payin.providerPayIn}</span>
+            <span className={classes.underline} onClick={() => this.showMangopayPayInPage(payin)}>{payin.providerPayIn}</span>
           </Typography>
         </Grid>
         <Grid item xs={8}>
@@ -509,8 +578,8 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     )
   }
 
-  mapStatusToColor(payin: PayIn) {
-    switch (payin.status) {
+  mapStatusToColor(status: EnumTransactionStatus) {
+    switch (status) {
       case EnumTransactionStatus.FAILED:
         return '#f44336';
       case EnumTransactionStatus.SUCCEEDED:
@@ -560,6 +629,9 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
         ></CardHeader>
         <CardContent className={classes.cardContent}>
           {this.renderPaymentDetails(payin)}
+          {payin.refund &&
+            this.renderRefund(payin.refund!)
+          }
           <Grid container spacing={2}>
             <Grid item container direction="column" xs={12} sm={6}>
               <Typography variant="h6" gutterBottom className={classes.title}>
@@ -809,13 +881,33 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     return order.items!.map((orderItem, orderItemIndex) => (
       <div key={`order-${itemIndex}-item-${orderItemIndex}`}>
         <Grid container>
-          <Grid item xs={2}>
+          <Grid item xs={1}>
             <Typography
               variant="body2"
               color="textSecondary"
             >
-              <span className={classes.underline} onClick={() => this.showMangopayTransferPage(transfer!)}>{transfer?.providerId}</span>
+              <span
+                className={classes.underline}
+                onClick={() => this.showMangopayTransferPage(transfer!)}
+              >
+                {transfer?.transactionId}
+              </span>
             </Typography>
+          </Grid>
+          <Grid item xs={1}>
+            {transfer?.refund &&
+              <Typography
+                variant="body2"
+                color="textSecondary"
+              >
+                <span
+                  className={classes.underline}
+                  onClick={() => this.showMangopayRefundPage(transfer!.refund!)}
+                >
+                  {transfer!.refund!.transactionId}
+                </span>
+              </Typography>
+            }
           </Grid>
           <Grid item xs={2}>
             <Typography
@@ -823,7 +915,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
               color="textSecondary"
             >
               {transfer
-                ? <DateTime value={transfer.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
+                ? <DateTime value={transfer.creationDate.toDate()} day='numeric' month='numeric' year='numeric' />
                 : <span>-</span>
               }
             </Typography>
@@ -886,13 +978,28 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     return (
       <div key={`service-billing-transfer-${index}`}>
         <Grid container>
-          <Grid item xs={2}>
+          <Grid item xs={1}>
             <Typography
               variant="body2"
               color="textSecondary"
             >
-              <span className={classes.underline} onClick={() => this.showMangopayTransferPage(transfer!)}>{transfer?.providerId}</span>
+              <span className={classes.underline} onClick={() => this.showMangopayTransferPage(transfer!)}>{transfer?.transactionId}</span>
             </Typography>
+          </Grid>
+          <Grid item xs={1}>
+            {transfer?.refund &&
+              <Typography
+                variant="body2"
+                color="textSecondary"
+              >
+                <span
+                  className={classes.underline}
+                  onClick={() => this.showMangopayRefundPage(transfer!.refund!)}
+                >
+                  {transfer!.refund!.transactionId}
+                </span>
+              </Typography>
+            }
           </Grid>
           <Grid item xs={2}>
             <Typography
@@ -900,7 +1007,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
               color="textSecondary"
             >
               {transfer
-                ? <DateTime value={transfer.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
+                ? <DateTime value={transfer.creationDate.toDate()} day='numeric' month='numeric' year='numeric' />
                 : <span>-</span>
               }
             </Typography>
@@ -954,13 +1061,28 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
     return (
       <div key={`service-billing-transfer-${index}`}>
         <Grid container>
-          <Grid item xs={2}>
+          <Grid item xs={1}>
             <Typography
               variant="body2"
               color="textSecondary"
             >
-              <span className={classes.underline} onClick={() => this.showMangopayTransferPage(transfer!)}>{transfer?.providerId}</span>
+              <span className={classes.underline} onClick={() => this.showMangopayTransferPage(transfer!)}>{transfer?.transactionId}</span>
             </Typography>
+          </Grid>
+          <Grid item xs={1}>
+            {transfer?.refund &&
+              <Typography
+                variant="body2"
+                color="textSecondary"
+              >
+                <span
+                  className={classes.underline}
+                  onClick={() => this.showMangopayRefundPage(transfer!.refund!)}
+                >
+                  {transfer!.refund!.transactionId}
+                </span>
+              </Typography>
+            }
           </Grid>
           <Grid item xs={2}>
             <Typography
@@ -968,7 +1090,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
               color="textSecondary"
             >
               {transfer
-                ? <DateTime value={transfer.createdOn.toDate()} day='numeric' month='numeric' year='numeric' />
+                ? <DateTime value={transfer.creationDate.toDate()} day='numeric' month='numeric' year='numeric' />
                 : <span>-</span>
               }
             </Typography>
@@ -1041,7 +1163,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
                 <FormattedNumber value={payin.totalPrice} style={'currency'} currency={payin.currency} />
               </Typography>
             </ListItem>
-            {payin.status === EnumTransactionStatus.SUCCEEDED && payin.paymentMethod !== EnumPaymentMethod.FREE && transferFunds === 0 &&
+            {payin.status === EnumTransactionStatus.SUCCEEDED && payin.paymentMethod !== EnumPaymentMethod.FREE && transferFunds === 0 && transferFees === 0 &&
               <>
                 <Divider />
                 <ListItem className={classes.listItemTotalDetails}>
@@ -1053,7 +1175,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
                 </ListItem>
               </>
             }
-            {transferFunds > 0 &&
+            {(transferFunds > 0 || transferFees > 0) &&
               <>
                 <Divider />
                 <ListItem className={classes.listItemTotalDetails}>
@@ -1098,8 +1220,11 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
         <CardContent className={classes.cardContent}>
           <List disablePadding>
             <Grid container>
-              <Grid item xs={2}>
+              <Grid item xs={1}>
                 <Typography variant="caption">Provider Transfer</Typography>
+              </Grid>
+              <Grid item xs={1}>
+                <Typography variant="caption">Provider Refund</Typography>
               </Grid>
               <Grid item xs={2}>
                 <Typography variant="caption">Date</Typography>
@@ -1141,7 +1266,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
   }
 
   render() {
-    const { transferFunds } = this.state;
+    const { transferFunds, transferFees } = this.state;
     const { payin = null } = this.props;
 
     if (!payin) {
@@ -1161,7 +1286,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
         <Grid item xs={12}>
           {this.renderPayInItems()}
         </Grid>
-        {transferFunds > 0 &&
+        {(transferFunds > 0 || transferFees > 0) &&
           <Grid item xs={12}>
             {this.renderTransferItems()}
           </Grid>
