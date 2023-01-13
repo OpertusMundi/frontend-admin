@@ -54,6 +54,7 @@ import {
   mdiWrenchClockOutline,
   mdiCardAccountPhoneOutline,
   mdiCashClock,
+  mdiDatabaseCogOutline,
 } from '@mdi/js';
 
 /**
@@ -547,13 +548,14 @@ export const routes: RouteRegistry = {
     },
   },
   [ProcessInstanceView]: {
+    icon: (className?: string) => (<Icon path={mdiDatabaseCogOutline} size="1.5rem" className={className} />),
     description: 'Process Instance',
     title: 'links.workflow.process-instance.instance',
     defaultTitle: 'Process Instance',
     links: defaultLinks,
-    toolbarComponent: (): React.ReactNode => {
+    toolbarComponent: (route: Route): React.ReactNode => {
       return (
-        <ProcessInstanceToolbar />
+        <ProcessInstanceToolbar route={route} />
       );
     }
   },
