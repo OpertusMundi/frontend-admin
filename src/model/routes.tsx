@@ -148,7 +148,7 @@ const AccountUpdate = '/helpdesk/users/record/update/:id';
 const ContractCreate = '/contract/create';
 const ContractUpdate = '/contract/update/:id';
 const DraftContractViewer = '/drafts/provider/:providerKey/draft/:draftKey/contract';
-const OrderTimeline = '/billing/order/:key/timeline';
+const OrderView = '/billing/order/:key';
 const MarketplaceAccountView = '/marketplace/users/record/:key';
 const PayInView = '/billing/payin/:key';
 const PayOutView = '/billing/payout/:key';
@@ -164,7 +164,7 @@ export const DynamicRoutes = {
   ContractUpdate,
   DraftContractViewer,
   MarketplaceAccountView,
-  OrderTimeline,
+  OrderView,
   PayInView,
   PayOutView,
   ProcessInstanceView,
@@ -514,7 +514,7 @@ export const routes: RouteRegistry = {
       );
     }
   },
-  [OrderTimeline]: {
+  [OrderView]: {
     description: 'Order Timeline',
     title: 'links.billing.order.timeline',
     defaultTitle: 'Order Timeline',

@@ -50,6 +50,7 @@ interface ClientBaseMessage {
 }
 
 export interface ClientMessage extends ClientBaseMessage {
+  attributes?: { [index: string]: string };
   recipientId: string | null;
   recipient?: ClientContact | null;
   reply: string | null;

@@ -673,7 +673,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
               variant="body2"
               color="textSecondary"
             >
-              <Link to={buildPath(DynamicRoutes.OrderTimeline, [order.key])} className={classes.link}>
+              <Link to={buildPath(DynamicRoutes.OrderView, [order.key])} className={classes.link}>
                 {order.referenceNumber}
               </Link>
             </Typography>

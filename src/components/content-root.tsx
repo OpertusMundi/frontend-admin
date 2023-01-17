@@ -116,7 +116,7 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             <Route path={DynamicRoutes.ContractCreate} element={<ContractForm />} />
             <Route path={DynamicRoutes.ContractUpdate} element={<ContractForm />} />
             <Route path={DynamicRoutes.DraftContractViewer} element={<DraftContractViewer />} />
-            <Route path={DynamicRoutes.OrderTimeline} element={<OrderDetails />} />
+            <Route path={DynamicRoutes.OrderView} element={<OrderDetails />} />
             <Route path={DynamicRoutes.MarketplaceAccountView} element={<MarketplaceAccountView />} />
             <Route path={DynamicRoutes.ProcessInstanceHistoryView} element={<ProcessInstanceHistoryForm />} />
             <Route path={DynamicRoutes.ProcessInstanceView} element={<ProcessInstanceForm />} />

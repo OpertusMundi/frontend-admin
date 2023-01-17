@@ -99,7 +99,7 @@ function orderColumns(intl: IntlShape, props: OrderTableProps): Column<Order, En
         rowIndex: number, column: Column<Order, EnumOrderSortField>, row: Order, handleAction?: cellActionHandler<Order, EnumOrderSortField>
       ): React.ReactNode => (
         <div className={classes.compositeLabelJustified}>
-          <Link to={buildPath(DynamicRoutes.OrderTimeline, [row.key])} className={classes.link}>
+          <Link to={buildPath(DynamicRoutes.OrderView, [row.key])} className={classes.link}>
             {row.referenceNumber}
           </Link>
           {row.referenceNumber &&
