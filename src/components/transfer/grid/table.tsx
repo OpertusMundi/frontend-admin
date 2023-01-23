@@ -24,10 +24,10 @@ import {
 
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
+import { EnumTransactionStatus } from 'model/transaction';
 import {
   EnumPayInItemType,
   EnumTransferSortField,
-  EnumTransactionStatus,
   PayIn,
   OrderPayInItem,
   TransferQuery,

@@ -19,8 +19,7 @@ import { mdiCommentAlertOutline } from '@mdi/js';
 
 // Model
 import { PageRequest, PageResult, Sorting } from 'model/response';
-import { EnumTransactionStatus } from 'model/transaction';
-import { EnumPayInSortField, PayIn, PayInQuery } from 'model/order';
+import { EnumDisputeStatus, EnumDisputeSortField, Dispute, DisputeQuery } from 'model/dispute';
 
 // Services
 import message from 'service/message';
@@ -39,20 +38,20 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-interface PayInFiltersProps extends WithStyles<typeof styles> {
+interface DisputeFiltersProps extends WithStyles<typeof styles> {
   intl: IntlShape,
-  query: PayInQuery,
-  setFilter: (query: Partial<PayInQuery>) => void,
+  query: DisputeQuery,
+  setFilter: (query: Partial<DisputeQuery>) => void,
   resetFilter: () => void,
   find: (
-    pageRequest?: PageRequest, sorting?: Sorting<EnumPayInSortField>[]
-  ) => Promise<PageResult<PayIn> | null>,
+    pageRequest?: PageRequest, sorting?: Sorting<EnumDisputeSortField>[]
+  ) => Promise<PageResult<Dispute> | null>,
   disabled: boolean,
 }
 
-class PayInFilters extends React.Component<PayInFiltersProps> {
+class DisputeFilters extends React.Component<DisputeFiltersProps> {
 
-  constructor(props: PayInFiltersProps) {
+  constructor(props: DisputeFiltersProps) {
     super(props);
 
     this.clear = this.clear.bind(this);
@@ -61,14 +60,14 @@ class PayInFilters extends React.Component<PayInFiltersProps> {
     const _t = props.intl.formatMessage;
 
     this.statusOptions = [];
-    for (const value in EnumTransactionStatus) {
+    for (const value in EnumDisputeStatus) {
       this.statusOptions.push({
-        value: value as EnumTransactionStatus, label: _t({ id: `enum.transaction-status.${value}` })
+        value: value as EnumDisputeStatus, label: _t({ id: `enum.dispute-status.${value}` })
       });
     }
   }
 
-  statusOptions: { value: EnumTransactionStatus, label: string }[];
+  statusOptions: { value: EnumDisputeStatus, label: string }[];
 
   find(): void {
     this.props.find({ page: 0, size: 10 }).then((result) => {
@@ -96,31 +95,7 @@ class PayInFilters extends React.Component<PayInFiltersProps> {
     return (
       <form onSubmit={this.search} noValidate autoComplete="off">
         <Grid container spacing={3} justifyContent={'space-between'}>
-          <Grid item sm={2} xs={12}>
-            <TextField
-              id="referenceNumber"
-              label={_t({ id: 'billing.payin.filter.reference-number' })}
-              variant="standard"
-              margin="normal"
-              className={classes.textField}
-              value={query.referenceNumber || ''}
-              onChange={e => setFilter({ referenceNumber: e.target.value })}
-            />
-          </Grid>
-
-          <Grid item sm={2} xs={12}>
-            <TextField
-              id="email"
-              label={_t({ id: 'billing.payin.filter.email' })}
-              variant="standard"
-              margin="normal"
-              className={classes.textField}
-              value={query.email || ''}
-              onChange={e => setFilter({ email: e.target.value })}
-            />
-          </Grid>
-
-          <Grid item sm={6} xs={12}>
+          <Grid item sm={4} xs={12}>
             <Autocomplete
               style={{ marginTop: 16 }}
               multiple
@@ -134,7 +109,7 @@ class PayInFilters extends React.Component<PayInFiltersProps> {
                 <TextField
                   {...params}
                   variant="standard"
-                  label={_t({ id: 'billing.payin.filter.status' })}
+                  label={_t({ id: 'billing.dispute.filter.status' })}
                 />
               )}
             />
@@ -171,7 +146,7 @@ class PayInFilters extends React.Component<PayInFiltersProps> {
 }
 
 // Apply styles
-const styledComponent = withStyles(styles)(PayInFilters);
+const styledComponent = withStyles(styles)(DisputeFilters);
 
 // Inject i18n resources
 const localizedComponent = injectIntl(styledComponent);

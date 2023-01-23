@@ -28,6 +28,7 @@ const ConsumerManager = lazy(() => import('components/consumer/consumer-grid'));
 const ContractForm = lazy(() => import('components/contract/contract-form'));
 const ContactFormManager = lazy(() => import('components/contact-form/contact-form-grid'));
 const ContractManager = lazy(() => import('components/contract/contract-grid'));
+const DisputeManager = lazy(() => import('components/dispute/dispute-manager'));
 const DraftContractViewer = lazy(() => import('components/draft/contract-viewer/contract-viewer'));
 const EventManager = lazy(() => import('components/event/event-manager'));
 const HelpdeskAccountManager = lazy(() => import('components/account/account-grid'));
@@ -57,6 +58,7 @@ const ProviderManager = lazy(() => import('components/provider/provider-grid'));
 const OrderDetails = lazy(() => import('components/order/order-details'));
 const OrderManager = lazy(() => import('components/order/order-manager'));
 const QueryEditor = lazy(() => import('./analytics/query-editor'));
+const RefundManager = lazy(() => import('components/refund/refund-manager'));
 const SecureRoute = lazy(() => import('components/secure-route'));
 const ServiceBillingManager = lazy(() => import('components/service-billing-batch/billing-manager'));
 const TransferManager = lazy(() => import('components/transfer/transfer-grid'));
@@ -126,6 +128,7 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             {/* Static */}
             <Route path={StaticRoutes.Analytics} element={<QueryEditor />} />
             <Route path={StaticRoutes.Dashboard} element={<DashboardComponent />} />
+            <Route path={StaticRoutes.DisputeManager} element={<DisputeManager />} />
             <Route path={StaticRoutes.ConsumerManager} element={<ConsumerManager />} />
             <Route path={StaticRoutes.ContactFormManager} element={<ContactFormManager />} />
             <Route path={StaticRoutes.ContractManager} element={<ContractManager />} />
@@ -144,6 +147,7 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             <Route path={StaticRoutes.MessageInboxHelpdesk} element={<MessageInboxHelpdesk />} />
             <Route path={StaticRoutes.MessageInboxUser} element={<MessageInboxUser />} />
             <Route path={StaticRoutes.Profile} element={<Profile />} />
+            <Route path={StaticRoutes.RefundManager} element={<RefundManager />} />
 
             {/* Secured paths */}
             <Route path={StaticRoutes.HelpdeskAccountManager} element={<SecureRoute roles={[EnumRole.ADMIN]} />}>

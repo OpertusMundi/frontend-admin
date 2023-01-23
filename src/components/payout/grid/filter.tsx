@@ -19,7 +19,8 @@ import { mdiCommentAlertOutline } from '@mdi/js';
 
 // Model
 import { PageRequest, PageResult, Sorting } from 'model/response';
-import { EnumTransactionStatus, EnumPayOutSortField, PayOut, PayOutQuery } from 'model/order';
+import { EnumTransactionStatus } from 'model/transaction';
+import { EnumPayOutSortField, PayOut, PayOutQuery } from 'model/order';
 
 // Services
 import message from 'service/message';

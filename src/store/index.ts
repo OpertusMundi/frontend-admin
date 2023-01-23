@@ -9,6 +9,7 @@ import { configurationReducer } from './config/reducer';
 import { consumerReducer } from './consumer/reducer';
 import { contactFormReducer } from './contact-form/reducer';
 import { contractReducer } from './contract/reducer';
+import { disputeReducer } from './dispute/reducer';
 import { draftReducer } from './draft/reducer';
 import { eventReducer } from './event/reducer';
 import { helpdeskAccountReducer } from './account/reducer';
@@ -25,6 +26,7 @@ import { processInstanceReducer } from './process-instance/reducer';
 import { processInstanceTaskReducer } from './process-instance-task/reducer';
 import { processInstanceHistoryReducer } from './process-instance-history/reducer';
 import { providerReducer } from './provider/reducer';
+import { refundReducer } from './refund/reducer';
 import { securityReducer } from './security/reducer';
 import { sendMessageDialogReducer } from './message/reducer';
 import { serviceBillingReducer } from './service-billing/reducer';
@@ -42,9 +44,11 @@ export const rootReducer = Redux.combineReducers({
   }),
   analytics: analyticsReducer,
   billing: Redux.combineReducers({
+    dispute: disputeReducer,
     order: orderReducer,
     payin: payInReducer,
     payout: payOutReducer,
+    refund: refundReducer,
     serviceBilling: serviceBillingReducer,
     transfer: transferReducer,
   }),

@@ -75,7 +75,7 @@ class Toolbar extends React.Component<ToolbarProps> {
         <div className={classes.container}>
           <Icon path={mdiPackageVariantClosed} size="1.5rem" className={classes.icon} />
           <Typography component="h6" variant="h6" color="inherit" noWrap>
-            Order {timeline.order.referenceNumber}
+            {`Order ${timeline.order.referenceNumber}${timeline.order.payIn?.refund ? ' - REFUNDED' : ''}`}
           </Typography>
         </div>
         {payIn &&

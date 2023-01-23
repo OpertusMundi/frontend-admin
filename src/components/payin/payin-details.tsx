@@ -44,24 +44,39 @@ import { setFilter } from 'store/payin/actions';
 // Model
 import { buildPath, DynamicRoutes, StaticRoutes } from 'model/routes';
 import { EnumPaymentMethod } from 'model/enum';
-import { EnumMangopayUserType, Address, CustomerIndividual, CustomerProfessional, Customer, AccountSubscription, UserService } from 'model/account-marketplace';
+import {
+  AccountSubscription,
+  Address,
+  Customer,
+  CustomerIndividual,
+  CustomerProfessional,
+  EnumMangopayUserType,
+  UserService,
+} from 'model/account-marketplace';
+import {
+  EnumPricingModel,
+} from 'model/pricing-model';
 import {
   EnumTransactionStatus,
-  BankwirePayIn, PayIn,
-  PayInItem,
-  EnumPayInItemType,
-  OrderPayInItem,
-  PayInAddress,
-  ServiceBillingPayInItem,
-  PayInType,
-  CardDirectPayIn,
-  Transfer,
-  FreePayIn,
-  ServiceBilling,
-  EnumBillableServiceType,
+} from 'model/transaction';
+import {
   Refund,
+} from 'model/refund';
+import {
+  BankwirePayIn,
+  CardDirectPayIn,
+  EnumBillableServiceType,
+  EnumPayInItemType,
+  FreePayIn,
+  OrderPayInItem,
+  PayIn,
+  PayInAddress,
+  PayInItem,
+  PayInType,
+  ServiceBillingPayInItem,
+  Transfer,
+  ServiceBilling,
 } from 'model/order';
-import { EnumPricingModel } from 'model/pricing-model';
 
 // Service
 import PayInApi from 'service/payin';

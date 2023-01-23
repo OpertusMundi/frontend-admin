@@ -55,6 +55,8 @@ import {
   mdiCardAccountPhoneOutline,
   mdiCashClock,
   mdiDatabaseCogOutline,
+  mdiCreditCardRefundOutline,
+  mdiForumOutline,
 } from '@mdi/js';
 
 /**
@@ -86,6 +88,7 @@ const ConsumerManager = '/consumers';
 const ContractManager = '/contract';
 const ContactFormManager = '/contact-forms';
 const Dashboard = '/dashboard';
+const DisputeManager = '/billing/disputes';
 const DraftManager = '/drafts';
 const EventManager = '/events';
 const HelpdeskAccountManager = '/helpdesk/users';
@@ -105,6 +108,7 @@ const ProcessInstanceTaskManager = '/workflows/process-instance-tasks';
 const ProcessInstanceHistoryManager = '/workflows/process-instances-history';
 const Profile = '/profile';
 const ProviderManager = '/providers'
+const RefundManager = '/billing/refunds';
 const SettingsManager = '/settings';
 const ServiceBillingManager = '/billing/service-billing';
 const TransferManager = '/billing/transfers';
@@ -115,6 +119,7 @@ export const StaticRoutes = {
   ContactFormManager,
   ContractManager,
   Dashboard,
+  DisputeManager,
   IncidentManager,
   MaintenanceTasks,
   Map,
@@ -134,6 +139,7 @@ export const StaticRoutes = {
   ProcessInstanceManager,
   ProcessInstanceHistoryManager,
   ProcessInstanceTaskManager,
+  RefundManager,
   SettingsManager,
   ServiceBillingManager,
   TransferManager,
@@ -221,6 +227,18 @@ export const routes: RouteRegistry = {
     description: 'Reset user password',
   },
   // Static
+  [Analytics]: {
+    icon: (className?: string) => (<Icon path={mdiChartBarStacked} size="1.5rem" className={className} />),
+    description: 'Analytics',
+    title: 'links.analytics',
+    defaultTitle: 'Analytics',
+    links: [Dashboard],
+    toolbarComponent: (route: Route): React.ReactNode => {
+      return (
+        <AnalyticsToolbar route={route} />
+      );
+    },
+  },
   [Dashboard]: {
     icon: (className?: string) => (<Icon path={mdiViewDashboardOutline} size="1.5rem" className={className} />),
     description: 'Initial page',
@@ -254,17 +272,12 @@ export const routes: RouteRegistry = {
     defaultTitle: 'Master Contract List',
     links: defaultLinks
   },
-  [Analytics]: {
-    icon: (className?: string) => (<Icon path={mdiChartBarStacked} size="1.5rem" className={className} />),
-    description: 'Analytics',
-    title: 'links.analytics',
-    defaultTitle: 'Analytics',
-    links: [Dashboard],
-    toolbarComponent: (route: Route): React.ReactNode => {
-      return (
-        <AnalyticsToolbar route={route} />
-      );
-    },
+  [DisputeManager]: {
+    icon: (className?: string) => (<Icon path={mdiForumOutline} size="1.5rem" className={className} />),
+    description: 'Disputes',
+    title: 'links.disputes-manager',
+    defaultTitle: 'Disputes',
+    links: defaultLinks
   },
   [Map]: {
     icon: (className?: string) => (<Icon path={mdiMapOutline} size="1.5rem" className={className} />),
@@ -323,6 +336,13 @@ export const routes: RouteRegistry = {
     description: 'Pay Outs',
     title: 'links.payout-manager',
     defaultTitle: 'Pay Outs',
+    links: defaultLinks
+  },
+  [RefundManager]: {
+    icon: (className?: string) => (<Icon path={mdiCreditCardRefundOutline} size="1.5rem" className={className} />),
+    description: 'Refunds',
+    title: 'links.refund-manager',
+    defaultTitle: 'Refunds',
     links: defaultLinks
   },
   [ServiceBillingManager]: {

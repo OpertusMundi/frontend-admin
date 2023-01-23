@@ -35,11 +35,9 @@ import { findOne } from 'store/payout/thunks';
 
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
+import { EnumTransactionStatus } from 'model/transaction';
 import { EnumMangopayUserType, Address, CustomerIndividual, CustomerProfessional, Customer } from 'model/account-marketplace';
-import {
-  EnumTransactionStatus,
-  PayOut,
-} from 'model/order';
+import { PayOut } from 'model/order';
 
 // Service
 import PayOutApi from 'service/payout';

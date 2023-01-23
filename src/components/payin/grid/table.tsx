@@ -31,7 +31,8 @@ import {
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { EnumKycLevel, EnumMangopayUserType, CustomerIndividual, CustomerProfessional } from 'model/account-marketplace';
-import { EnumBillingViewMode, EnumPayInItemType, EnumPayInSortField, EnumTransactionStatus, PayInQuery, PayInType } from 'model/order';
+import { EnumTransactionStatus } from 'model/transaction';
+import { EnumBillingViewMode, EnumPayInItemType, EnumPayInSortField, PayInQuery, PayInType } from 'model/order';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 import { EnumPaymentMethod } from 'model/enum';
 
@@ -62,6 +63,9 @@ const getCustomerName = (payin: PayInType): string => {
 }
 
 function mapStatusToColor(payin: PayInType) {
+  if (payin.refund) {
+    return '#f44336';
+  }
   switch (payin.status) {
     case EnumTransactionStatus.FAILED:
       return '#f44336';

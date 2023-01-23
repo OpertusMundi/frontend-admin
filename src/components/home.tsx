@@ -68,6 +68,7 @@ import {
   mdiCardAccountPhoneOutline,
   mdiCalendarClockOutline,
   mdiCashClock,
+  mdiCreditCardRefundOutline,
 } from '@mdi/js';
 
 // Utilities
@@ -670,6 +671,23 @@ class Home extends React.Component<HomeProps, HomeState> {
                       <ListItemText primary={_t({ id: 'links.payout-manager' })} />
                     </ListItem>
 
+                    <ListItem button
+                      className={open[EnumSection.Drawer] ? classes.nested : ''}
+                      onClick={(e) => this.onNavigate(e, StaticRoutes.RefundManager)}>
+                      <ListItemIcon>
+                        <Icon path={mdiCreditCardRefundOutline} size="1.5rem" />
+                      </ListItemIcon>
+                      <ListItemText primary={_t({ id: 'links.refund-manager' })} />
+                    </ListItem>
+
+                    <ListItem button
+                      className={open[EnumSection.Drawer] ? classes.nested : ''}
+                      onClick={(e) => this.onNavigate(e, StaticRoutes.DisputeManager)}>
+                      <ListItemIcon>
+                        <Icon path={mdiForumOutline} size="1.5rem" />
+                      </ListItemIcon>
+                      <ListItemText primary={_t({ id: 'links.dispute-manager' })} />
+                    </ListItem>
                   </List>
                 </Collapse>
 

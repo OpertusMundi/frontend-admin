@@ -163,6 +163,21 @@
         "wallet": "Wallet"
       }
     },
+    "dispute": {
+      "filter": {
+        "status": "Status"
+      },
+      "header": {
+        "consumer": "Consumer",
+        "contest-deadline-on": "Contest Deadline",
+        "created-on": "Created On",
+        "credited-funds": "Credited Funds",
+        "disputed-funds": "Disputed Funds",
+        "reference-number": "Reference Key",
+        "status": "Status"
+      },
+      "last-update": "Last updated: "
+    },
     "order": {
       "filter": {
         "consumer": "Consumer Email",
@@ -314,6 +329,21 @@
       "tooltip": {
         "view-details": "View PayIn"
       }
+    },
+    "refund": {
+      "filter": {
+        "reason": "Reason"
+      },
+      "header": {
+        "consumer": "Consumer",
+        "executed-on": "Executed On",
+        "funds": "Funds",
+        "provider": "Provider",
+        "reason": "Reason",
+        "status": "Status",
+        "transaction-ref": "Transaction Reference"
+      },
+      "last-update": "Last updated: "
     },
     "subscription": {
       "header": {
@@ -541,6 +571,14 @@
       "DIGITAL_PLATFORM": "Platform Digital",
       "DIGITAL_PROVIDER": "Provider Digital",
       "PHYSICAL_PROVIDER": "Provider Physical"
+    },
+    "dispute-status": {
+      "CREATED": "Created",
+      "PENDING_CLIENT_ACTION": "Pending client action",
+      "SUBMITTED": "Submitted",
+      "PENDING_BANK_ACTION": "Pending bank action",
+      "REOPENED_PENDING_CLIENT_ACTION": "Reopened and pending client action",
+      "CLOSED": "Closed"
     },
     "effective-pricing-model": {
       "UNDEFINED": "-",
@@ -812,6 +850,7 @@
     "draft": {
       "contract-viewer": "Draft contract viewer"
     },
+    "dispute-manager": "Disputes",
     "draft-manager": "Asset Drafts",
     "event-manager": "System Events",
     "settings-manager": "Settings",
@@ -830,6 +869,7 @@
     "transfer-manager": "Transfers",
     "profile": "Profile",
     "provider-manager": "Providers",
+    "refund-manager": "Refunds",
     "settings": "Settings",
     "service-billing-manager": "Subscription Billing",
     "workflow": {

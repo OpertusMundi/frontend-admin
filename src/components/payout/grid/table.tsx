@@ -25,7 +25,8 @@ import {
 // Model
 import { buildPath, DynamicRoutes } from 'model/routes';
 import { EnumKycLevel, CustomerProfessional } from 'model/account-marketplace';
-import { EnumBillingViewMode, EnumPayOutSortField, EnumTransactionStatus, PayOut, PayOutQuery } from 'model/order';
+import { EnumTransactionStatus } from 'model/transaction';
+import { EnumBillingViewMode, EnumPayOutSortField, PayOut, PayOutQuery } from 'model/order';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 
 // Helper methods

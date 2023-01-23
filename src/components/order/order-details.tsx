@@ -60,7 +60,8 @@ import { findOne } from 'store/order/thunks';
 // Model
 import { EnumPaymentMethod } from 'model/enum';
 import { EnumMangopayUserType, Address, CustomerIndividual, CustomerProfessional } from 'model/account-marketplace';
-import { EnumOrderStatus, Order, BankwirePayIn, EnumTransactionStatus } from 'model/order';
+import { EnumTransactionStatus } from 'model/transaction';
+import { EnumOrderStatus, Order, BankwirePayIn } from 'model/order';
 
 // Service
 import OrderApi from 'service/order';
@@ -357,6 +358,7 @@ class OrderDetails extends React.Component<OrderTimelineProps> {
     if (history.length === 0) {
       return null;
     }
+    const refund = order.payIn?.refund;
     const steps = history
       .sort((a, b) => a.statusUpdatedOn.isBefore(b.statusUpdatedOn) ? -1 : 1)
       .map((h, index) => (
@@ -370,7 +372,7 @@ class OrderDetails extends React.Component<OrderTimelineProps> {
             <TimelineDot style={{ background: this.mapStatusToColor(order, h.status) }}>
               {this.mapStatusToIcon(order, h.status)}
             </TimelineDot>
-            {history.length - 1 !== index &&
+            {(history.length - 1 !== index || refund) &&
               <TimelineConnector />
             }
           </TimelineSeparator>
@@ -386,6 +388,37 @@ class OrderDetails extends React.Component<OrderTimelineProps> {
           </TimelineContent>
         </TimelineItem>
       ));
+    if (order.payIn?.refund) {
+      const refund = order.payIn.refund;
+
+      steps.push((
+        <TimelineItem key={`status-refund}`}>
+          <TimelineOppositeContent>
+            <Typography variant="body2" color="textSecondary">
+              <DateTime value={refund.executionDate.toDate()} day='numeric' month='numeric' year='numeric' />
+            </Typography>
+          </TimelineOppositeContent>
+          <TimelineSeparator>
+            <TimelineDot style={{ background: '#757575' }}>
+              <Icon path={mdiCreditCardRefundOutline} size="1.5rem" />
+            </TimelineDot>
+          </TimelineSeparator>
+          <TimelineContent>
+            <Paper elevation={3} className={classes.paper}>
+              <Typography variant="h6" component="h1">
+                Refund
+              </Typography>
+              <Typography component={'p'}>
+                <FormattedMessage id={`enum.refund-reason-type.${refund.refundReasonType}`} />
+              </Typography>
+              <Typography component={'p'}>
+                {refund.refundReasonMessage}
+              </Typography>
+            </Paper>
+          </TimelineContent>
+        </TimelineItem>
+      ));
+    }
 
     return (
       <Timeline align="alternate">

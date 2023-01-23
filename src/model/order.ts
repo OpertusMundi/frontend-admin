@@ -1,5 +1,9 @@
 import { Moment } from 'moment';
-import { EnumPaymentMethod, EnumDeliveryMethod, EnumRecurringPaymentType } from 'model/enum';
+import {
+  EnumPaymentMethod,
+  EnumDeliveryMethod,
+  EnumRecurringPaymentType,
+} from 'model/enum';
 import {
   Address,
   BankAccount,
@@ -8,7 +12,18 @@ import {
   AccountSubscription,
   UserService,
 } from 'model/account-marketplace';
-import { EffectivePricingModel, PricingModelCommand } from 'model/pricing-model';
+import {
+  EffectivePricingModel,
+  PricingModelCommand,
+} from 'model/pricing-model';
+import {
+  EnumTransactionNature,
+  EnumTransactionStatus,
+  EnumTransactionType,
+} from 'model/transaction';
+import {
+  Refund,
+} from 'model/refund';
 
 export enum EnumBillingViewMode {
   DEFAULT = 'DEFAULT',
@@ -38,98 +53,6 @@ export enum EnumCardValidity {
 export enum EnumPayInItemType {
   ORDER = 'ORDER',
   SERVICE_BILLING = 'SERVICE_BILLING',
-}
-
-export enum EnumTransactionType {
-  /**
-   * Not specified.
-   */
-  NotSpecified = 'NotSpecified',
-  /**
-   * PAYIN transaction type.
-   */
-  PAYIN = 'PAYIN',
-  /**
-   * PAYOUT transaction type.
-   */
-  PAYOUT = 'PAYOUT',
-  /**
-   * TRANSFER transaction type.
-   */
-  TRANSFER = 'TRANSFER',
-}
-
-export enum EnumTransactionNature {
-  /**
-   * Not specified.
-   */
-  NotSpecified = 'NotSpecified',
-  /**
-   * REGULAR transaction nature.
-   */
-  REGULAR = 'REGULAR',
-  /**
-   * REFUND transaction nature.
-   */
-  REFUND = 'REFUND',
-  /**
-   * REPUDIATION transaction nature.
-   */
-  REPUDIATION = 'REPUDIATION',
-  /**
-   * SETTLEMENT transaction nature.
-   */
-  SETTLEMENT = 'SETTLEMENT'
-}
-
-export enum EnumTransactionStatus {
-  /**
-   * Not specified.
-   */
-  NotSpecified = 'NotSpecified',
-  /**
-   * CREATED transaction status.
-   */
-  CREATED = 'CREATED',
-  /**
-   * SUCCEEDED transaction status.
-   */
-  SUCCEEDED = 'SUCCEEDED',
-  /**
-   * FAILED transaction status.
-   */
-  FAILED = 'FAILED',
-}
-
-export enum EnumRefundReasonType {
-  /**
-   * Not specified.
-   */
-  NotSpecified = 'NotSpecified',
-  /**
-   * Incorrect bank account.
-   */
-  BANKACCOUNT_INCORRECT = 'BANKACCOUNT_INCORRECT',
-  /**
-   * Closed bank account.
-   */
-  BANKACCOUNT_HAS_BEEN_CLOSED = 'BANKACCOUNT_HAS_BEEN_CLOSED',
-  /**
-   * Owner-bank account mismatch.
-   */
-  OWNER_DOT_NOT_MATCH_BANKACCOUNT = 'OWNER_DOT_NOT_MATCH_BANKACCOUNT',
-  /**
-   * Withdrawal impossible on savings accounts.
-   */
-  WITHDRAWAL_IMPOSSIBLE_ON_SAVINGS_ACCOUNTS = 'WITHDRAWAL_IMPOSSIBLE_ON_SAVINGS_ACCOUNTS',
-  /**
-   * Initialized by client.
-   */
-  INITIALIZED_BY_CLIENT = 'INITIALIZED_BY_CLIENT',
-  /**
-   * Other.
-   */
-  OTHER = 'OTHER'
 }
 
 export interface BrowserInfo {
@@ -880,30 +803,6 @@ export interface PayOutQuery {
 
 export interface PayOutCommand {
   debitedFunds: number;
-}
-
-export interface Refund extends Transaction {
-  authorId?: string;
-  creationDate: Moment;
-  creditedFunds: number;
-  creditedUserId?: string;
-  creditedWalletId?: string;
-  currency: string;
-  debitedFunds: number;
-  debitedWalletId?: string;
-  executionDate: Moment;
-  fees: number;
-  initialTransactionId?: string;
-  initialTransactionType: EnumTransactionType
-  key: string;
-  resultCode: string;
-  resultMessage: string;
-  transactionId?: string;
-  transactionNature: EnumTransactionNature;
-  transactionStatus: EnumTransactionStatus;
-  transactionType: EnumTransactionType;
-  refundReasonType: EnumRefundReasonType;
-  refundReasonMessage: string;
 }
 
 export interface PayOut extends Transaction {
