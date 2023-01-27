@@ -584,13 +584,13 @@ class Home extends React.Component<HomeProps, HomeState> {
                   <ListItemText primary={_t({ id: 'links.dashboard' })} />
                 </ListItem>
 
-                <ListItem button
+                {/* <ListItem button
                   onClick={(e) => this.onNavigate(e, StaticRoutes.Analytics)}>
                   <ListItemIcon>
                     <Icon path={mdiChartBarStacked} size="1.5rem" />
                   </ListItemIcon>
                   <ListItemText primary={_t({ id: 'links.analytics' })} />
-                </ListItem>
+                </ListItem> */}
 
                 <ListItem button
                   onClick={(e) => this.onNavigate(e, StaticRoutes.ContractManager)}>
