@@ -559,6 +559,14 @@
       "UTILITIES_COMMUNICATION": "Utilities & Communication",
       "undefined": "No Topic"
     },
+    "contact-form-type": {
+      "NONE": "Contact Form",
+      "DATA_MATCH": "Data matching"
+    },
+    "contact-form-status": {
+      "PENDING": "Pending",
+      "COMPLETED": "Completed"
+    },
     "contract-status": {
       "DRAFT": "Draft",
       "HISTORY": "History Record",

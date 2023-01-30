@@ -55,7 +55,6 @@ import {
   mdiBankTransferOut,
   mdiBugOutline,
   mdiFinance,
-  mdiChartBarStacked,
   mdiTray,
   mdiTrayFull,
   mdiWalletOutline,
@@ -65,10 +64,10 @@ import {
   mdiClockFast,
   mdiWrenchClockOutline,
   mdiCogs,
-  mdiCardAccountPhoneOutline,
   mdiCalendarClockOutline,
   mdiCashClock,
   mdiCreditCardRefundOutline,
+  mdiCardAccountMailOutline,
 } from '@mdi/js';
 
 // Utilities
@@ -765,7 +764,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                       onClick={(e) => this.onNavigate(e, StaticRoutes.ContactFormManager)}>
                       <ListItemIcon>
                         <Badge overlap="rectangular" badgeContent={pendingForms} color="secondary" invisible={pendingForms === 0 || !open[EnumSection.Message]}>
-                          <Icon path={mdiCardAccountPhoneOutline} size="1.5rem" />
+                          <Icon path={mdiCardAccountMailOutline} size="1.5rem" />
                         </Badge>
                       </ListItemIcon>
                       <ListItemText primary={_t({ id: 'links.contact-forms' })} />

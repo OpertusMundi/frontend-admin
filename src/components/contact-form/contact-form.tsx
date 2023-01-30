@@ -4,22 +4,30 @@ import React from 'react';
 import clsx from 'clsx';
 
 // State, routing and localization
-import { injectIntl, IntlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, IntlShape } from 'react-intl';
 
 // Components
 import { createStyles, Grid, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
+import Avatar from '@material-ui/core/Avatar';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
-import Avatar from '@material-ui/core/Avatar';
+import Chip from '@material-ui/core/Chip';
 import Typography from '@material-ui/core/Typography';
 
 import { DateTime } from 'components/common';
 
+// Icons
+import Icon from '@mdi/react';
+import {
+  mdiCableData,
+  mdiCardAccountMailOutline,
+} from '@mdi/js';
+
 // Model
-import { ContactForm } from 'model/contact-form';
+import { ContactForm, EnumContactFormStatus, EnumContactFormType } from 'model/contact-form';
 
 const styles = (theme: Theme) => createStyles({
   card: {
@@ -47,6 +55,10 @@ const styles = (theme: Theme) => createStyles({
     "&:last-child": {
       padding: theme.spacing(1, 2, 1, 1),
     },
+  },
+  chipAvatarIcon: {
+    width: 16,
+    color: '#ffffff',
   },
   media: {
     height: 0,
@@ -90,6 +102,38 @@ class ContactFormComponent extends React.Component<ContactFormComponentProps> {
   static defaultProps = {
     selected: false,
   }
+
+  renderTags() {
+    const { classes, form: { status, type } } = this.props;
+
+    return (
+      <Grid container justifyContent={'flex-end'} spacing={1}>
+        <Grid item>
+          <Chip
+            avatar={
+              <Avatar>
+                <Icon
+                  path={type === EnumContactFormType.NONE ? mdiCardAccountMailOutline : mdiCableData}
+                  className={classes.chipAvatarIcon}
+                />
+              </Avatar>
+            }
+            label={<FormattedMessage id={`enum.contact-form-type.${type}`} />}
+            variant="outlined"
+            color={'default'}
+          />
+        </Grid>
+        <Grid item>
+          <Chip
+            label={<FormattedMessage id={`enum.contact-form-status.${status}`} />}
+            variant="outlined"
+            color={status === EnumContactFormStatus.COMPLETED ? 'primary' : 'secondary'}
+          />
+        </Grid>
+      </Grid>
+    );
+  }
+
   render() {
     const { classes, form, selected } = this.props;
     const { email, firstName, lastName, message, createdAt } = form;
@@ -150,6 +194,7 @@ class ContactFormComponent extends React.Component<ContactFormComponentProps> {
           >
             {message}
           </Typography>
+          {this.renderTags()}
         </CardContent>
       </Card>
     );

@@ -52,7 +52,7 @@ import {
   mdiAccountWrenchOutline,
   mdiClockFast,
   mdiWrenchClockOutline,
-  mdiCardAccountPhoneOutline,
+  mdiCardAccountMailOutline,
   mdiCashClock,
   mdiDatabaseCogOutline,
   mdiCreditCardRefundOutline,
@@ -254,7 +254,7 @@ export const routes: RouteRegistry = {
     links: defaultLinks
   },
   [ContactFormManager]: {
-    icon: (className?: string) => (<Icon path={mdiCardAccountPhoneOutline} size="1.5rem" className={className} />),
+    icon: (className?: string) => (<Icon path={mdiCardAccountMailOutline} size="1.5rem" className={className} />),
     description: 'Contact Forms',
     title: 'links.contact-forms',
     defaultTitle: 'Contact Forms',

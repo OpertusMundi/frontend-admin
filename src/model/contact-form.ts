@@ -1,14 +1,19 @@
 import { Moment } from 'moment';
 
 export enum EnumContactFormStatus {
-  PENDING,
-  COMPLETED,
+  PENDING = 'PENDING',
+  COMPLETED = 'COMPLETED',
 }
 
 export enum EnumContactFormSortField {
   CREATED_AT = 'CREATED_AT',
   EMAIL = 'EMAIL',
   STATUS = 'STATUS',
+}
+
+export enum EnumContactFormType {
+  NONE = 'NONE',
+  DATA_MATCH = 'DATA_MATCH',
 }
 
 export interface ContactForm {
@@ -25,6 +30,7 @@ export interface ContactForm {
   processDefinition: string;
   processInstance: string;
   status: EnumContactFormStatus;
+  type: EnumContactFormType;
   updatedAt: Moment;
 }
 
