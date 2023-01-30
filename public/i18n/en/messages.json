@@ -205,6 +205,7 @@
         "delivery-details": "Delivery",
         "order-summary": "Order Details",
         "payment-details": "Payment details",
+        "provider-details": "Provider",
         "order-details-header": "Reference Number {referenceNumber}",
         "timeline-header": "Timeline",
         "status": {

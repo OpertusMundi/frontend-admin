@@ -9,6 +9,8 @@ import { FormattedMessage, FormattedNumber, injectIntl, IntlShape } from 'react-
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
 
+import { Link } from 'react-router-dom';
+
 import Avatar from '@material-ui/core/Avatar';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -435,6 +437,8 @@ class OrderDetails extends React.Component<OrderTimelineProps> {
       return null;
     }
 
+    const orderItem = order.items![0];
+
     return (
       <Grid container item xs={12} justifyContent="flex-start">
         <Card className={classes.card}>
@@ -513,6 +517,16 @@ class OrderDetails extends React.Component<OrderTimelineProps> {
                 </Typography>
                 <Grid container>
                   {this.renderDeliveryDetails(order)}
+                </Grid>
+              </Grid>
+              <Grid item container direction="column" xs={12} sm={6}>
+                <Typography variant="h6" gutterBottom className={classes.title}>
+                  <FormattedMessage id={'billing.order.details.provider-details'} />
+                </Typography>
+                <Grid container>
+                  <Link to={buildPath(DynamicRoutes.MarketplaceAccountView, [orderItem.provider!.key])} className={classes.link}>
+                    {(orderItem.provider! as CustomerProfessional).name}
+                  </Link>
                 </Grid>
               </Grid>
             </Grid>
