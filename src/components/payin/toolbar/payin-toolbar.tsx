@@ -66,7 +66,7 @@ class Toolbar extends React.Component<ToolbarProps> {
         <div className={classes.container}>
           <Icon path={mdiBankTransferIn} size="1.5rem" className={classes.icon} />
           <Typography component="h6" variant="h6" color="inherit" noWrap>
-            {`Pay In ${record.referenceNumber}${record.refund ? ' - REFUNDED' : ''}`}
+            {`Pay In ${record.referenceNumber}${record.refund ? ' - REFUNDED' : record.dispute ? ' - DISPUTED' : ''}`}
           </Typography>
         </div>
         {processInstance &&

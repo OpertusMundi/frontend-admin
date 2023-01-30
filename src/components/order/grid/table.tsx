@@ -122,6 +122,8 @@ function orderColumns(intl: IntlShape, props: OrderTableProps): Column<Order, En
         rowIndex: number, column: Column<Order, EnumOrderSortField>, row: Order, handleAction?: cellActionHandler<Order, EnumOrderSortField>
       ): React.ReactNode => {
         const refund = row?.payIn?.refund;
+        const dispute = row?.payIn?.dispute;
+        const statusResourceId = refund ? 'REFUND' : dispute ? 'DISPUTE' : row.status;
         return (
           <div className={classes.compositeLabelCenter}>
             {row?.status &&
@@ -129,7 +131,7 @@ function orderColumns(intl: IntlShape, props: OrderTableProps): Column<Order, En
                 className={classes.labelOrderStatus}
                 style={{ background: statusToBackGround(row) }}
               >
-                {intl.formatMessage({ id: `enum.order-status.${refund ? 'REFUND' : row.status}` })}
+                {intl.formatMessage({ id: `enum.order-status.${statusResourceId}` })}
               </div>
             }
           </div>
@@ -223,6 +225,10 @@ function orderColumns(intl: IntlShape, props: OrderTableProps): Column<Order, En
 }
 
 const styles = (theme: Theme) => createStyles({
+  amountRefunded: {
+    fontWeight: 700,
+    textDecoration: 'line-through',
+  },
   rowIcon: {
     width: 18,
     marginRight: 8,
@@ -231,10 +237,6 @@ const styles = (theme: Theme) => createStyles({
     width: 18,
     marginRight: 8,
     cursor: 'pointer',
-  },
-  avatar: {
-    width: theme.spacing(4),
-    height: theme.spacing(4),
   },
   link: {
     color: 'inherit',
@@ -307,17 +309,14 @@ const styles = (theme: Theme) => createStyles({
     minWidth: 100,
     justifyContent: 'center'
   },
-  marginLeft: {
-    marginLeft: theme.spacing(1),
-  },
-  marginRight: {
-    marginRight: theme.spacing(1),
-  },
 });
 
 const statusToBackGround = (row: Order): string => {
   if (row.payIn?.refund) {
     return '#616161';
+  }
+  if (row.payIn?.dispute) {
+    return '#f44336';
   }
   switch (row.status) {
     case EnumOrderStatus.SUCCEEDED:

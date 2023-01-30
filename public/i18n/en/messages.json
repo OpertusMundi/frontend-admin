@@ -339,6 +339,7 @@
         "consumer": "Consumer",
         "executed-on": "Executed On",
         "funds": "Funds",
+        "initial-transaction-type": "Type",
         "provider": "Provider",
         "reason": "Reason",
         "status": "Status",
@@ -581,6 +582,25 @@
       "DIGITAL_PROVIDER": "Provider Digital",
       "PHYSICAL_PROVIDER": "Provider Physical"
     },
+    "dispute-reason-type": {
+      "DUPLICATE": "Duplicate",
+      "FRAUD": "Fraud",
+      "PRODUCT_UNACCEPTABLE": "Product unacceptable",
+      "UNKNOWN": "Unknown",
+      "OTHER": "Other",
+      "REFUND_CONVERSION_RATE": "Refund conversion rate",
+      "LATE_FAILURE_INSUFFICIENT_FUNDS": "Insufficient funds",
+      "LATE_FAILURE_CONTACT_USER": "Contact user",
+      "LATE_FAILURE_BANKACCOUNT_CLOSED": "Bank account closed",
+      "LATE_FAILURE_BANKACCOUNT_INCOMPATIBLE": "Bank account incompatible",
+      "LATE_FAILURE_BANKACCOUNT_INCORRECT": "Incorrect bank account",
+      "AUTHORIZATION_DISPUTED": "Authorization disputed",
+      "TRANSACTION_NOT_RECOGNIZED": "Transaction not recognized",
+      "PRODUCT_NOT_PROVIDED": "Product not provided",
+      "CANCELED_REOCCURRING_TRANSACTION": "Canceled reoccurring transaction",
+      "REFUND_NOT_PROCESSED": "Refund not processed",
+      "COUNTERFEIT_PRODUCT": "Counterfeit product"
+    },
     "dispute-status": {
       "CREATED": "Created",
       "PENDING_CLIENT_ACTION": "Pending client action",
@@ -629,7 +649,8 @@
       "CANCELLED": "Cancelled",
       "REFUNDED": "Refunded",
       "SUCCEEDED": "Completed",
-      "REFUND": "Refunded"
+      "REFUND": "Refunded",
+      "DISPUTE": "Disputed"
     },
     "payin-item-type": {
       "ORDER": "Order",
@@ -693,7 +714,13 @@
       "CREATED": "New",
       "FAILED": "Failed",
       "SUCCEEDED": "Succeeded",
-      "REFUND": "Refunded"
+      "REFUND": "Refunded",
+      "DISPUTE": "Disputed"
+    },
+    "transaction-type": {
+      "PAYIN": "PayIn",
+      "PAYOUT": "PayOut",
+      "TRANSFER": "Transfer"
     },
     "user-service-status": {
       "PROCESSING": "Processing",

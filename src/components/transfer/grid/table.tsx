@@ -34,7 +34,7 @@ import {
   EnumBillingViewMode,
   ServiceBillingPayInItem,
   PayInItemType,
-  EnumBillableServiceType
+  EnumBillableServiceType,
 } from 'model/order';
 import { PageRequest, PageResult, Sorting } from 'model/response';
 import {
@@ -375,13 +375,28 @@ function transferColumns(props: TransferTableProps): Column<PayInItemType, EnumT
       cell: (
         rowIndex: number, column: Column<PayInItemType, EnumTransferSortField>, row: PayInItemType, handleAction?: cellActionHandler<PayInItemType, EnumTransferSortField>
       ): React.ReactNode => {
-
+        const refund = row.transfer?.refund;
+        if (refund) {
+          return (
+            <div className={classes.labelPayInContainer}>
+              <div
+                className={classes.labelPayInStatus}
+                style={{ background: statusToBackGround(row) }}
+              >
+                {'REFUND'}
+              </div>
+              <div className={classes.labelPayInMessage}>
+                <FormattedMessage id={`enum.refund-reason-type.${refund.refundReasonType}`} />
+              </div>
+            </div>
+          )
+        }
         return (
           <div className={classes.labelPayInContainer}>
             {row.transfer?.transactionStatus &&
               <div
                 className={classes.labelPayInStatus}
-                style={{ background: statusToBackGround(row.transfer!.transactionStatus) }}
+                style={{ background: statusToBackGround(row) }}
               >
                 {intl.formatMessage({ id: `enum.transaction-status.${row.transfer!.transactionStatus}` })}
               </div>
@@ -397,8 +412,11 @@ function transferColumns(props: TransferTableProps): Column<PayInItemType, EnumT
     }]);
 }
 
-const statusToBackGround = (status: EnumTransactionStatus): string => {
-  switch (status) {
+const statusToBackGround = (row: PayInItemType): string => {
+  if (row.transfer?.refund) {
+    return '#616161';
+  }
+  switch (row.transfer?.transactionStatus) {
     case EnumTransactionStatus.SUCCEEDED:
       return '#4CAF50';
     case EnumTransactionStatus.FAILED:

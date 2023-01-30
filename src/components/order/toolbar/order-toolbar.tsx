@@ -69,13 +69,15 @@ class Toolbar extends React.Component<ToolbarProps> {
 
     const processInstance = timeline.order?.payIn?.processInstance;
     const payIn = timeline.order?.payIn?.key;
+    const refund = timeline.order.payIn?.refund;
+    const dispute = timeline.order.payIn?.dispute;
 
     return (
       <div className={classes.container}>
         <div className={classes.container}>
           <Icon path={mdiPackageVariantClosed} size="1.5rem" className={classes.icon} />
           <Typography component="h6" variant="h6" color="inherit" noWrap>
-            {`Order ${timeline.order.referenceNumber}${timeline.order.payIn?.refund ? ' - REFUNDED' : ''}`}
+            {`Order ${timeline.order.referenceNumber}${refund ? ' - REFUNDED' : dispute ? ' - DISPUTED' : ''}`}
           </Typography>
         </div>
         {payIn &&

@@ -63,7 +63,7 @@ const getCustomerName = (payin: PayInType): string => {
 }
 
 function mapStatusToColor(payin: PayInType) {
-  if (payin.refund) {
+  if (payin.dispute || payin.refund) {
     return '#f44336';
   }
   switch (payin.status) {
@@ -278,7 +278,7 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayInType
             </Tooltip>
           }
           {
-            !row.refund &&
+            !row.refund && !row.dispute &&
             props.createTransfer &&
             row.status === EnumTransactionStatus.SUCCEEDED &&
             !hasTransfer(row) && row.paymentMethod !== EnumPaymentMethod.FREE &&
@@ -354,6 +354,9 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayInType
       ): React.ReactNode => {
         const refundReasonType = row?.refund?.refundReasonType;
         const refundReasonMessage = row?.refund?.refundReasonMessage || '';
+        const disputeReasonType = row?.dispute?.reasonType;
+        const disputeReasonMessage = row?.dispute?.reasonMessage || '';
+        const statusResourceId = row.refund ? 'REFUND' : row.dispute ? 'DISPUTE' : row.status
         return (
           <div className={classes.labelPayInContainer}>
             {row?.status &&
@@ -361,7 +364,7 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayInType
                 className={classes.labelPayInStatus}
                 style={{ background: statusToBackGround(row) }}
               >
-                {intl.formatMessage({ id: `enum.transaction-status.${row.refund ? 'REFUND' : row.status}` })}
+                {intl.formatMessage({ id: `enum.transaction-status.${statusResourceId}` })}
               </div>
             }
             {row?.status && row.refund &&
@@ -370,6 +373,15 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayInType
                   {'Reason : '}
                   {intl.formatMessage({ id: `enum.refund-reason-type.${refundReasonType}` })}
                   {`${refundReasonMessage ? ' - ' : ''}${refundReasonMessage}`}
+                </Typography>
+              </div>
+            }
+            {row?.status && row.dispute &&
+              <div className={classes.labelPayInMessage}>
+                <Typography variant="caption">
+                  {'Dispute : '}
+                  {intl.formatMessage({ id: `enum.dispute-reason-type.${disputeReasonType}` })}
+                  {`${disputeReasonMessage ? ' - ' : ''}${disputeReasonMessage}`}
                 </Typography>
               </div>
             }
@@ -456,6 +468,9 @@ function payinColumns(intl: IntlShape, props: PayInTableProps): Column<PayInType
 const statusToBackGround = (row: PayInType): string => {
   if (row.refund) {
     return '#616161';
+  }
+  if (row.dispute) {
+    return '#f44336';
   }
   switch (row.status) {
     case EnumTransactionStatus.SUCCEEDED:

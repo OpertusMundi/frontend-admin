@@ -160,6 +160,26 @@ function refundColumns(intl: IntlShape, props: RefundTableProps): Column<Refund,
         </div>
       ),
     }, {
+      header: intl.formatMessage({ id: 'billing.refund.header.initial-transaction-type' }),
+      id: 'initialTransactionType',
+      sortable: false,
+      sortColumn: EnumRefundSortField.REASON_TYPE,
+      cell: (
+        rowIndex: number, column: Column<Refund, EnumRefundSortField>, row: Refund, handleAction?: cellActionHandler<Refund, EnumRefundSortField>
+      ): React.ReactNode => {
+
+        return (
+          <div className={classes.labelRefundContainer}>
+            <div
+              className={classes.labelRefundStatus}
+              style={{ background: '#0277BD' }}
+            >
+              {intl.formatMessage({ id: `enum.transaction-type.${row.initialTransactionType}` })}
+            </div>
+          </div>
+        )
+      },
+    }, {
       header: intl.formatMessage({ id: 'billing.refund.header.reason' }),
       id: 'reason',
       sortable: true,

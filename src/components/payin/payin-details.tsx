@@ -136,7 +136,12 @@ const styles = (theme: Theme) => createStyles({
     padding: theme.spacing(0.5),
     display: 'inline-block',
   },
-  serviceType: {
+  status: {
+    color: grey[50],
+    borderRadius: theme.spacing(0.5),
+    padding: theme.spacing(0.5),
+  },
+  tag: {
     borderRadius: theme.spacing(0.5),
     fontSize: '0.6rem',
     height: theme.spacing(2),
@@ -145,11 +150,7 @@ const styles = (theme: Theme) => createStyles({
       padding: theme.spacing(0, 0.5, 0, 0.5),
     }
   },
-  status: {
-    color: grey[50],
-    borderRadius: theme.spacing(0.5),
-    padding: theme.spacing(0.5),
-  },
+
   total: {
     fontWeight: 700,
   },
@@ -761,7 +762,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
             </Typography>
           </Grid>
           <Grid item xs={3}>
-            <Chip label={'Subscription'} className={classes.serviceType} />
+            <Chip label={'Subscription'} className={classes.tag} />
             <Typography
               variant="body2"
               color="textSecondary"
@@ -819,7 +820,7 @@ class PayInDetails extends React.Component<PayInDetailsProps, PayInDetailsState>
             </Typography>
           </Grid>
           <Grid item xs={3}>
-            <Chip label={'Private OGC Service'} className={classes.serviceType} />
+            <Chip label={'Private OGC Service'} className={classes.tag} />
             <Typography
               variant="body2"
               color="textSecondary"

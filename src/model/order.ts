@@ -24,6 +24,9 @@ import {
 import {
   Refund,
 } from 'model/refund';
+import {
+  Dispute,
+} from './dispute';
 
 export enum EnumBillingViewMode {
   DEFAULT = 'DEFAULT',
@@ -443,6 +446,10 @@ export interface PayIn extends Transaction {
    * PayIn creation date in ISO format
    */
   createdOn: Moment
+  /**
+   * PayIn dispute
+   */
+  dispute: Dispute;
   /**
    * PayIn execution date in ISO format
    */
