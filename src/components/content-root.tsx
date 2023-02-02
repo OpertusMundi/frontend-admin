@@ -11,7 +11,7 @@ import { RootState } from 'store';
 import { toggleSendMessageDialog } from 'store/message/actions';
 
 // Components
-import DashboardComponent from 'components/dashboard';
+import DashboardComponent from 'components/dashboard/dashboard';
 import ErrorPage from 'components/error-page';
 import Home from 'components/home';
 import Login from 'components/login';

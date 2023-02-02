@@ -484,6 +484,18 @@
       "set-default": "Set default contract"
     }
   },
+  "dashboard": {
+    "charts": {
+      "dispute": {
+        "title": "Disputes"
+      }
+    },
+    "parts": {
+      "dispute": {
+        "card-header": "Disputes"
+      }
+    }
+  },
   "draft": {
     "manager": {
       "chip": {

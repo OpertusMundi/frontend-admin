@@ -6,6 +6,8 @@ import { injectIntl, IntlShape } from 'react-intl';
 // Store
 import { RootState } from 'store';
 
+import { getSystemStatus } from 'store/dashboard/thunks';
+
 // Material UI
 import { createStyles, WithStyles } from '@material-ui/core';
 import { Theme, withStyles } from '@material-ui/core/styles';
@@ -17,7 +19,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 
-import { red, blue } from '@material-ui/core/colors';
+import { blue } from '@material-ui/core/colors';
 
 // Icons
 import Icon from '@mdi/react';
@@ -27,17 +29,22 @@ import {
 } from '@mdi/js';
 
 // Components
+import OpenLayers from 'components/map';
 import ReactECharts from 'echarts-for-react';
 
-import OpenLayers from 'components/map';
+import DisputeStatus from 'components/dashboard/parts/dispute';
 
 // Services
 import AnalyticsApi from 'service/analytics';
 
 // Model
-import { EnumSalesQueryMetric, SalesQuery, DataSeries } from 'model/analytics';
+import { EnumSalesQueryMetric, SalesQuery, DataSeries, EnumTemporalUnit } from 'model/analytics';
+
 
 const styles = (theme: Theme) => createStyles({
+  avatarBlue: {
+    backgroundColor: blue[500],
+  },
   container: {
     padding: 8,
   },
@@ -64,12 +71,6 @@ const styles = (theme: Theme) => createStyles({
   cardActions: {
     justifyContent: 'flex-end',
   },
-  avatarRed: {
-    backgroundColor: red[500],
-  },
-  avatarBlue: {
-    backgroundColor: blue[500],
-  }
 });
 
 interface DashboardComponentProps extends WithStyles<typeof styles>, PropsFromRedux {
@@ -102,7 +103,12 @@ class DashboardComponent extends React.Component<DashboardComponentProps, Dashbo
         enabled: true,
       },
       metric: EnumSalesQueryMetric.SUM_SALES,
+      time: {
+        unit: EnumTemporalUnit.MONTH,
+      }
     };
+
+    this.props.getSystemStatus();
 
     this.analyticsApi.executeSalesQuery(areaQuery)
       .then((response) => {
@@ -119,8 +125,11 @@ class DashboardComponent extends React.Component<DashboardComponentProps, Dashbo
           // Normalize values to range [0,1]
           features.features.forEach((f) => {
             const value = f.properties.value;
-
-            f.properties.value = (value - min) / (max - min);
+            if (min === max) {
+              f.properties.value = 1;
+            } else {
+              f.properties.value = (value - min) / (max - min);
+            }
           });
           this.setState({
             features,
@@ -133,6 +142,9 @@ class DashboardComponent extends React.Component<DashboardComponentProps, Dashbo
         enabled: true,
       },
       metric: EnumSalesQueryMetric.SUM_SALES,
+      time: {
+        unit: EnumTemporalUnit.MONTH,
+      }
     };
 
     this.analyticsApi.executeSalesQuery(segmentQuery)
@@ -206,72 +218,81 @@ class DashboardComponent extends React.Component<DashboardComponentProps, Dashbo
       }]
     };
   }
+
   render() {
-    const { classes, config } = this.props;
+    const { classes, config, dashboard } = this.props;
     const { features } = this.state;
 
     const options = this.getOptions();
 
     return (
-      <Grid container spacing={2}>
-        {features &&
-          <Grid item xs={6}>
-            <Card className={classes.card}>
-              <CardHeader
-                avatar={
-                  <Avatar className={classes.avatarRed}>
-                    <Icon path={mdiMapOutline} size="1.5rem" />
-                  </Avatar>
-                }
-                title={'Sales by Region'}
-                subheader="Heatmap of total sales based on customer location"
-              ></CardHeader>
-              <Divider />
-              <CardContent>
-                <div className={classes.mapContainer}>
-                  <OpenLayers.Map
-                    center={[1522457.20, 6393383.34]}
-                    maxZoom={19}
-                    minZoom={3}
-                    zoom={4}
-                    height={'100%'}
-                  >
-                    <OpenLayers.Layers>
-                      <OpenLayers.Layer.BingMaps
-                        applicationKey={config.bingMaps?.applicationKey}
-                        imagerySet={'Road'}
-                      />
-                      <OpenLayers.Layer.HeatMap
-                        features={features}
-                        blur={65}
-                        radius={55}
-                      />
-                    </OpenLayers.Layers>
-                  </OpenLayers.Map>
-                </div>
-              </CardContent>
-            </Card>
+
+      <Grid container>
+        {dashboard.data?.disputes &&
+          <Grid item>
+            <DisputeStatus disputes={dashboard.data!.disputes} />
           </Grid>
         }
-        {options &&
-          <Grid item xs={6}>
-            <Card className={classes.card}>
-              <CardHeader
-                avatar={
-                  <Avatar className={classes.avatarBlue}>
-                    <Icon path={mdiShapeOutline} size="1.5rem" />
-                  </Avatar>
-                }
-                title={'Sales by Segment'}
-                subheader="Bar chart with total sales business segment"
-              ></CardHeader>
-              <Divider />
-              <CardContent>
-                <ReactECharts option={options} className={classes.chartContainer} />
-              </CardContent>
-            </Card>
-          </Grid>
-        }
+        <Grid container item spacing={2}>
+          {features &&
+            <Grid item xs={6}>
+              <Card className={classes.card}>
+                <CardHeader
+                  avatar={
+                    <Avatar className={classes.avatarBlue}>
+                      <Icon path={mdiMapOutline} size="1.5rem" />
+                    </Avatar>
+                  }
+                  title={'Sales by Region'}
+                  subheader="Heatmap of total sales based on customer location"
+                ></CardHeader>
+                <Divider />
+                <CardContent>
+                  <div className={classes.mapContainer}>
+                    <OpenLayers.Map
+                      center={[1522457.20, 6393383.34]}
+                      maxZoom={19}
+                      minZoom={3}
+                      zoom={4}
+                      height={'100%'}
+                    >
+                      <OpenLayers.Layers>
+                        <OpenLayers.Layer.BingMaps
+                          applicationKey={config.bingMaps?.applicationKey}
+                          imagerySet={'Road'}
+                        />
+                        <OpenLayers.Layer.HeatMap
+                          features={features}
+                          blur={65}
+                          radius={55}
+                        />
+                      </OpenLayers.Layers>
+                    </OpenLayers.Map>
+                  </div>
+                </CardContent>
+              </Card>
+            </Grid>
+          }
+          {options &&
+            <Grid item xs={6}>
+              <Card className={classes.card}>
+                <CardHeader
+                  avatar={
+                    <Avatar className={classes.avatarBlue}>
+                      <Icon path={mdiShapeOutline} size="1.5rem" />
+                    </Avatar>
+                  }
+                  title={'Sales by Segment'}
+                  subheader="Bar chart with total sales business segment"
+                ></CardHeader>
+                <Divider />
+                <CardContent>
+                  <ReactECharts option={options} className={classes.chartContainer} />
+                </CardContent>
+              </Card>
+            </Grid>
+          }
+        </Grid>
       </Grid>
     );
   }
@@ -279,9 +300,11 @@ class DashboardComponent extends React.Component<DashboardComponentProps, Dashbo
 
 const mapState = (state: RootState) => ({
   config: state.config,
+  dashboard: state.dashboard,
 });
 
 const mapDispatch = {
+  getSystemStatus: () => getSystemStatus(),
 };
 
 const connector = connect(

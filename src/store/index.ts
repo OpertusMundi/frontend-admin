@@ -9,6 +9,7 @@ import { configurationReducer } from './config/reducer';
 import { consumerReducer } from './consumer/reducer';
 import { contactFormReducer } from './contact-form/reducer';
 import { contractReducer } from './contract/reducer';
+import { dashboardReducer } from './dashboard/reducer';
 import { disputeReducer } from './dispute/reducer';
 import { draftReducer } from './draft/reducer';
 import { eventReducer } from './event/reducer';
@@ -43,6 +44,7 @@ export const rootReducer = Redux.combineReducers({
     provider: providerReducer,
   }),
   analytics: analyticsReducer,
+  dashboard: dashboardReducer,
   billing: Redux.combineReducers({
     dispute: disputeReducer,
     order: orderReducer,
