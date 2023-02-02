@@ -45,12 +45,12 @@ import {
   mdiForumOutline,
   mdiHandshakeOutline,
   mdiLogoutVariant,
-  mdiMapOutline,
+  // mdiMapOutline,
   mdiPackageVariantClosed,
   mdiSignatureFreehand,
   mdiTextBoxCheckOutline,
   mdiTools,
-  mdiViewDashboardOutline,
+  // mdiViewDashboardOutline,
   mdiBankTransferIn,
   mdiBankTransferOut,
   mdiBugOutline,
@@ -575,13 +575,13 @@ class Home extends React.Component<HomeProps, HomeState> {
           <PerfectScrollbar className={classes.menuListScrollbar}>
             <List>
               <div className={classes.menuListWrapper}>
-                <ListItem button
+                {/* <ListItem button
                   onClick={(e) => this.onNavigate(e, StaticRoutes.Dashboard)}>
                   <ListItemIcon>
                     <Icon path={mdiViewDashboardOutline} size="1.5rem" />
                   </ListItemIcon>
                   <ListItemText primary={_t({ id: 'links.dashboard' })} />
-                </ListItem>
+                </ListItem> */}
 
                 {/* <ListItem button
                   onClick={(e) => this.onNavigate(e, StaticRoutes.Analytics)}>
@@ -773,13 +773,13 @@ class Home extends React.Component<HomeProps, HomeState> {
                   </List>
                 </Collapse>
 
-                <ListItem button
+                {/* <ListItem button
                   onClick={(e) => this.onNavigate(e, StaticRoutes.Map)}>
                   <ListItemIcon>
                     <Icon path={mdiMapOutline} size="1.5rem" />
                   </ListItemIcon>
                   <ListItemText primary={_t({ id: 'links.map' })} />
-                </ListItem>
+                </ListItem> */}
 
                 <SecureContent roles={[EnumRole.ADMIN]}>
                   <>

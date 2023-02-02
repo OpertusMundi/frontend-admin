@@ -110,7 +110,7 @@ class ContentRoot extends React.Component<PropsFromRedux> {
           {/* Layout */}
           <Route path="/" element={<Home />}>
             {/* Default component */}
-            <Route path="/" element={<Navigate to={StaticRoutes.Dashboard} replace />} />
+            <Route path="/" element={<Navigate to={StaticRoutes.DraftManager} replace />} />
 
             {/* Dynamic */}
             <Route path={DynamicRoutes.AccountUpdate} element={<AccountForm />} />
