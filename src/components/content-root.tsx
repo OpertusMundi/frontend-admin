@@ -104,8 +104,8 @@ class ContentRoot extends React.Component<PropsFromRedux> {
             occurs after the component hierarchy is rendered due to state change and causes
             /error/404 to render
           */}
-          <Route path={Pages.Login} element={<Navigate to={StaticRoutes.Dashboard} replace />} />
-          <Route path={Pages.ResetPassword} element={<Navigate to={StaticRoutes.Dashboard} replace />} />
+          <Route path={Pages.Login} element={<Navigate to={StaticRoutes.DraftManager} replace />} />
+          <Route path={Pages.ResetPassword} element={<Navigate to={StaticRoutes.DraftManager} replace />} />
 
           {/* Layout */}
           <Route path="/" element={<Home />}>

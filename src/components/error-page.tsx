@@ -63,7 +63,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
               </p>
             </Grid>
             <Grid item>
-              <Link to={StaticRoutes.Dashboard} className={classes.link}>
+              <Link to={StaticRoutes.DraftManager} className={classes.link}>
                 <Button
                   variant="contained"
                   color={color}
