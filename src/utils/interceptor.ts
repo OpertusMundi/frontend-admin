@@ -1,6 +1,6 @@
 import HttpStatus from 'http-status-codes';
 
-import { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import { AxiosResponse, AxiosError, InternalAxiosRequestConfig, AxiosRequestHeaders, AxiosHeaders } from 'axios';
 import { showLoading, hideLoading } from 'react-redux-loading-bar';
 
 import moment from './moment-localized';
@@ -71,26 +71,28 @@ function convertStringToMoment(obj: any): void {
   }
 }
 
-export function csrfRequestInterceptor(value: AxiosRequestConfig): AxiosRequestConfig | Promise<AxiosRequestConfig> {
+export function csrfRequestInterceptor(value: InternalAxiosRequestConfig): InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig> {
   const csrfToken = store ? store.getState().security.csrfToken : null
 
   const required = ['POST', 'PUT', 'DELETE'].includes((value.method as string).toUpperCase());
 
-  const csrfHeader = { 'X-CSRF-TOKEN': csrfToken! };
-
-  const result = csrfToken && required ?
-    {
-      ...value,
-      headers: value.headers ? { ...value.headers, ...csrfHeader } : csrfHeader
+  let headers: AxiosRequestHeaders = value.headers;
+  if (required && csrfToken) {
+    if (!headers) {
+      headers = new AxiosHeaders();
     }
-    : {
-      ...value
-    };
+    headers.set('X-CSRF-TOKEN', csrfToken);
+  }
+
+  const result: InternalAxiosRequestConfig = {
+    ...value,
+    headers,
+  };
 
   return result;
 }
 
-export function momentRequestInterceptor(value: AxiosRequestConfig): AxiosRequestConfig | Promise<AxiosRequestConfig> {
+export function momentRequestInterceptor(value: InternalAxiosRequestConfig): InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig> {
   return {
     ...value
   };
@@ -151,7 +153,7 @@ export function securityErrorInterceptor(error: AxiosError<any>): Promise<AxiosE
   } as AxiosError<SimpleResponse>);
 }
 
-export function loadingRequestInterceptor(value: AxiosRequestConfig): AxiosRequestConfig | Promise<AxiosRequestConfig> {
+export function loadingRequestInterceptor(value: InternalAxiosRequestConfig): InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig> {
   store.dispatch(showLoading());
 
   return {
